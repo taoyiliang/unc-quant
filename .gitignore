@@ -31,3 +31,23 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# latex
+*.lot
+*.lof
+*.poly
+*.mpx
+*.btr
+*.xml
+*.gmv
+*.plt
+*.slh
+*.eps
+*.dat
+*.gp
+*.plugin
+*.outp
+*.patch
+*.txt
+.depend
+

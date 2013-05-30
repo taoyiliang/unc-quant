@@ -1,0 +1,113 @@
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+\usepackage{fullpage}
+\usepackage{graphicx} % support the \includegraphics command and options
+\usepackage{amsmath}
+\newcommand{\drv}[2]{\ensuremath{\frac{\partial #1}{\partial #2}}}
+\newcommand{\ddrv}[2]{\ensuremath{\frac{\partial^2 #1}{\partial #2^2}}}
+\newcommand{\into}{\ensuremath{\int_{-1}^1}}
+\newcommand{\order}[1]{\ensuremath{\mathcal{O}(#1)}}
+\newcommand{\eqn}[1]{\begin{equation} #1 \end{equation}}
+
+\title{Finite Difference Heat Equation}
+\author{Paul Talbot}
+%\date{}
+
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+\section{Numerical Scheme Derivation in 1D}
+We begin with the one-dimensional heat equation
+\eqn{\drv{u(x,t)}{t}=\alpha\ddrv{u}{x},}
+where $u$ is temperature, $t$ is time, $\rho$ is the material density, $C_p$ is the specific heat capacity, $k$ is the conductivity, and $x$ is the one-dimensional axis in space.  We implicitly discretize in time steps with uniform spacing $\Delta_t$.  This leads to
+\eqn{\drv{u(x,t)}{t}\approx\frac{u^{n+1}(x)-u^n(x)}{\Delta_t},}
+\eqn{u(x,t)\approx u^{n+1}(x),\hspace{15pt} n=1,2,...}
+where $n$ is used to denote successive time steps.  These approximations are exact in the limit as $\Delta_t$ reduces to zero, which restores the continuous time spectrum.  Applying this to the heat equation,
+\eqn{\frac{u^{n+1}(x)-u^n(x)}{\Delta_t}=\alpha\ddrv{u^{n+1}(x)}{x}.}
+We similarly apply a uniform spatial discretization in $x$, making use of the second-order central differencing scheme
+\eqn{\ddrv{u(x,t)}{x}\approx\frac{u_{j+1}(t)-2u_{j}(t)+u_{j-1}(t)}{\Delta_x^2},}
+\eqn{u(x,t)\approx u_j(t),\hspace{15pt} j=1,2,..,J ,}
+where $j$ indexes the spatial dimension, with cell $j-1$ being to the left of cell $j$. The heat equation now takes the form
+\eqn{\frac{u^{n+1}_j-u^n_j}{\Delta_t}=\alpha\frac{u_{j+1}^{n+1}-2u_{j}^{n+1}+u_{j-1}^{n+1}}{\Delta_x^2},}
+\eqn{u^{n+1}_j-u^n_j=\Gamma\left(u_{j+1}^{n+1}-2u_{j}^{n+1}+u_{j-1}^{n+1}\right),}
+\eqn{\Gamma\equiv\frac{\Delta_t\alpha}{\Delta_x^2}.}
+Bringing all the implicit $n+1$ terms to the left and explicit $n$ terms to the right,
+\eqn{-\Gamma u_{j+1}^{n+1}+ (1+2\Gamma)u_j^{n+1} -\Gamma u_{j-1}^{n+1}=u_j^n.\label{disc}}
+For the boundary cases,
+\eqn{j=1\to x_{j-1}=x_L,\label{xL}}
+\eqn{j=J\to J_{j+1}=x_R,\label{xR}}
+where $x_L$ and $x_R$ are the left and right faces of the problem, respectively.  Eqs. \eqref{disc} through \eqref{xR} describe a tridiagonal system that can be written as
+\[
+\begin{bmatrix}
+1+2\Gamma & -\Gamma & 0 & 0 &...\\
+-\Gamma & 1+2\Gamma & -\Gamma & 0 &...\\
+0 & -\Gamma & 1+2\Gamma & -\Gamma & ...\\
+ & & ... & & \\
+...& -\Gamma & 1+2\Gamma & -\Gamma & 0\\
+...& 0 & -\Gamma & 1+2\Gamma & -\Gamma\\
+...& 0 & 0 & -\Gamma & 1+2\Gamma
+\end{bmatrix}
+\begin{bmatrix}
+u^{n+1}_1 \\ u^{n+1}_2 \\ u^{n+1}_3 \\ ... \\ u^{n+1}_{J-2} \\ u^{n+1}_{J-1} \\ u^{n+1}_{J}
+\end{bmatrix}
+=
+\begin{bmatrix}
+u^n_1+\Gamma u_L \\ u^n_2 \\ u^n_3 \\ ... \\ u^n_{J-2} \\ u^n_{J-1} \\ u^n_J  +\Gamma u_R
+\end{bmatrix},
+\]
+where $u_L=u(x_L,t)=u(0,t)$ and $u_R=u(x_R,t)=u(L,t)$.  This system can be solved using the Thomas algorithm (TDMA) for each time step, obtaining a forward-marching solution for $u(x,t)$.
+
+
+\section{Test Cases}
+\subsection{Fundamental Solution Initial Condition in 1D}
+We begin with the one-dimensional heat equation
+\eqn{\drv{u(x,t)}{t}=\alpha\ddrv{u}{x},}
+\eqn{\alpha\equiv\frac{\rho C_p}{k},}
+where $u$ is temperature, $t$ is time, $\rho$ is the material density, $C_p$ is the specific heat capacity, $k$ is the conductivity, and $x$ is the one-dimensional axis in space.  We apply vacuum boundary conditions and set the initial temperature as a fundamental solution of the time-independent heat equation,
+\eqn{u(0,t)=u(L,t)=0,}
+\eqn{u(x,0)=u_0\sin{\frac{\pi x}{L}},}
+where $L$ is the problem length and $u_0$ is a constant maximum initial temperature.
+This second-order homogeneous PDE is separable.
+\eqn{u(x,t)\equiv X(x)T(t),}
+\eqn{\frac{1}{\alpha}X(T')=T(X''),}
+\eqn{\frac{T'}{\alpha T}=\frac{X''}{X}.}
+Since the two terms are independent, the two must both be equal to the same constant. Arbitrarily,
+\eqn{\frac{T'}{\alpha T}=\frac{X''}{X}=-\lambda^2.}
+Considering the spatial dimension first,
+\eqn{X''=-\lambda^2X,}
+\eqn{X(x)=c_1\sin{\lambda x}+c_2\cos{\lambda x}.}
+Applying the left boundary condition,
+\eqn{X(0)=0=0+c_2,\hspace{30pt} c_2=0.}
+Applying the left boundary condition,
+\eqn{X(L)=0=c_1\sin{\lambda x},}
+which requires either trivially $c_1=0$ or
+\eqn{\lambda=\frac{n\pi}{L},\hspace{15pt}n=0,1,2,...}
+\eqn{X(x)=c_1\sin{\frac{n\pi x}{L}}.}
+Considering the temporal dimension,
+\eqn{T'+\alpha\lambda^2 T=0.}
+The root of the characteristic equation is
+\eqn{R=\alpha\lambda^2 T,}
+so \eqn{T(t)=c_3e^{-\alpha\lambda^2t}.}
+Combing $X$ and $T$ to obtain the original variable $u$,
+\eqn{u(x,t)=X(x)T(t)=c_4e^{-\alpha\lambda^2t}\sin{\frac{n\pi x}{L}}.}
+The initial condition gives
+\eqn{u(x,0)=u_0\sin{\frac{\pi x}{L}}=c_4\sin{\frac{n\pi x}{L}}.}
+By inspection, the most straightforward solution is
+\eqn{c_4=u_0,\hspace{15pt}n=1,}
+\eqn{u(x,t)=u_0e^{-\alpha\lambda^2t}\sin{\frac{\pi x}{L}}.}
+
+\section{Results}
+
+
+\end{document}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\linewidth]{graph_both_diff}
+\label{diff_res}
+\caption{Diffusive Results}
+\end{figure}

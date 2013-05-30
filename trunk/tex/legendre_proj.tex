@@ -1,0 +1,158 @@
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+\usepackage{fullpage}
+\usepackage{graphicx} % support the \includegraphics command and options
+\usepackage{amsmath}
+\usepackage{amssymb}
+\newcommand{\drv}[2]{\ensuremath{\frac{d #1}{d #2}}}
+\newcommand{\into}{\ensuremath{\int_{-1}^1}}
+\newcommand{\intf}{\ensuremath{\int_{0}^\infty}}
+\newcommand{\inti}{\ensuremath{\int_{x_{i-1/2}}^{x_{i+1/2}}}}
+\newcommand{\intO}{\ensuremath{\int_{4\pi}}}
+\newcommand{\order}[1]{\ensuremath{\mathcal{O}(#1)}}
+
+\title{Deterministic Uncertainty Quantification with Raven}
+\author{\LARGE{Paul Talbot}\\\normalsize{ talbotp@unm.edu}}
+%\date{}
+
+\begin{document}
+%\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Example: Single-Dimensional expansion on [-1,1]}
+Starting with the simplest case, we consider a function of single variable $\zeta=\zeta_1$,
+\begin{equation}
+f(\zeta)=a+b\zeta, \hspace{10pt}\zeta\in[-1,1],
+\end{equation}
+where $a$ and $b$ are arbitrary scalars.  We expand $f(\zeta)$ in normalized Legendre polynomials,
+\begin{align}
+f(\zeta)&=\sum_{i=0}^\infty f_iP_i(\zeta),\\
+ &= \sum_{i=0}^2 f_iP_i(\zeta).
+\end{align}
+We can truncate the sum at 2 terms because we know a priori $f(\zeta)$ is order 1 in $\zeta$, so it can be exactly represented by Legendre polynomials of up to order 1, and we keep the order 2 term simply for demonstration.  Using the orthogonality of the normalized Legendre polynomials, we find the coefficients $f_i$ given by
+\begin{equation}
+f_i=\into f(\zeta)P_i(\zeta)d\zeta.
+\end{equation}
+We can approximate the integral (exactly, as it turns out) with  Gauss-Legendre quadrature,
+\begin{align}
+f_i&=\sum_{\ell=0}^\infty w_\ell f(\zeta_\ell)P_i(\zeta_\ell),\\
+ &=\sum_{\ell=0}^2 w_\ell f(\zeta_\ell)P_i(\zeta_\ell),
+\end{align}
+where once again, because we know the Legendre polynomial order is no greater than 2 and $f(\zeta)$ is order 1, the integral has maximum order 3 and Legendre quadrature can exactly integrate polynomials of order $2n-1=3$ in our case.  It is trivial to insert the values from the Legendre quadrature set and see that the coefficients obtained are
+\begin{equation}
+f_0=\frac{2a}{\sqrt{2}},\hspace{10pt} f_1=b\sqrt\frac{2}{5},\hspace{10pt} f_2=0.
+\end{equation}
+If we reconstruct $f(\zeta)$ using these coefficients and the first three normalized Legendre polynomials, we obtain our original function $a+b\zeta$.
+
+\section{Arbitrary Domain Uniform Uncertainty}
+
+
+PROBLEM
+When I do this, I don't get my function back.  I fill the following table, using $\tilde f(y)$ as the function expanded in polynomials and evaluated on [-1,1] and $f(\xi)$ as the original function expanded on equivalent points [3,7].  I used S2 quadrature and included 2 terms in the polynomial expansion, which should be enough to capture linear behavior.
+\subsection{Calculations}
+I followed the following in calculating the coefficients $f_0$ and $f_1$, with $f(x)=2x+1$.
+\begin{align}
+f_0 &= \int_a^b f(x)P_0(x)dx, \\
+  &= \int_a^b (2x+1)\frac{1}{\sqrt{2}} dx,\\
+  &= \int_{-1}^1 \left[2\left(\frac{b-a}{2}y+\frac{a+b}{2}\right)+1\right]\frac{b-a}{2\sqrt{2}}dy,\\
+  &=\frac{1}{\sqrt{2}}\left(4\frac{a+b}{2}+2\right),
+\end{align}
+\begin{align}
+f_1 &=  \int_a^b f(x)P_1(x)dx, \\
+  &= \int_a^b (2x^2+x)\sqrt\frac{3}{2} dx,\\
+  &=\into \left[2\left(\frac{b-a}{2}y+\frac{a+b}{2}\right)^2+\frac{b-a}{2}y+\frac{a+b}{2}\right]\frac{b-a}{2}\sqrt\frac{3}{2}dy,\\
+  &=\frac{b-a}{2}\sqrt\frac{3}{2}\left[\frac{4}{3}\left(\frac{b-a}{2}\right)^2+4\left(\frac{a+b}{2}\right)+2\frac{a+b}{2}\right].
+\end{align}
+Replacing these in the expansion,
+\begin{align}
+\tilde f(y)&=f_0P_0(y) + f_1P_1(y),\\
+  &=\left[\frac{(b-a)^3}{4}+\frac{3}{4}(b-a)(b+a)^2+\frac{3}{4}(b^2-a^2)\right]y + a + b + 1.
+\end{align}
+
+
+\subsection{Results}
+For sample values I used $a=3,b=7$.
+
+\centering
+\begin{tabular}{c c|c c}
+$y$ & $\xi$ & $\tilde f(y)$ & $f(\xi)$ \\ \hline
+-1 & 3 & -335 & 7 \\
+-1/2 & 4 & -162 & 9 \\
+0 & 5 & 11&11\\
+1/2 & 6 & 184&13\\
+1 & 7 & 357&15
+\end{tabular}
+
+Where am I going wrong?
+%We desire in general that the basis polynomials $B_i$ be flexible enough to have uncertain inputs that use several different bases functions naturally. 
+%In order to assure a shared space for all constituent random inputs $\zeta$, we project these inputs onto a Legendre space corresponding to a uniformly-distributed variable $u\in(0,1)$.  Consider a particular uncertain variable $\zeta_n$ with corresponding probability distribution function (pdf) $f_n(\zeta_n)$ and cumulative distribution function (cdf) $F_n(\zeta_n)$ defined as
+%\begin{equation}
+%F_n(\zeta_n)\equiv \int_{\zeta_{n,0}}^{\zeta_n} f_n(\zeta')d\zeta'.
+%\end{equation}
+%Because $F_n(\zeta_n)\in(0,1)$ we can use this to expand $\zeta_n$ in Legendre polynomials and map onto the uniform zero-to-unity space,
+%\begin{align}
+%\zeta_n=\sum_{\ell=0}^{P_{\zeta_n}} \zeta_{n,\ell} B_{n,\ell}(\zeta_n),\hspace{15pt}
+%        \zeta_{n,\ell}&=\frac{\big(\zeta_n,B_{n,\ell}(\zeta_n)\big)}{\big(B_{n,\ell}(\zeta_n)^2\big)},\\
+%  &=\frac{1}{\big(B_{n,\ell}(\zeta_n)^2\big)}\int_0^1 F_n^{-1}(u)B_{n,\ell}\big(G^{-1}(u)\big)du,
+%\end{align}
+%where $G(\zeta)$ is the cdf for the problem space uncertainty, which we elect to be the uniform distribution cdf.  We approximate this integration further by applying a Legendre quadrature over the support, 
+%\begin{equation}
+%\zeta_{n,\ell}\approx\frac{1}{\big(B_{n,\ell}(\zeta_n)^2\big)}\sum_{q=1}^Q w_q F_n^{-1}(u_q)B_{n,\ell}\big(G^{-1}(u_q)\big).
+%\end{equation}
+%We note here that the inverse of the cdf may not always be analytically obtainable, especially for variables of arbitrary uncertainty distribution, and a numerical method may be needed to simulate the inverse operation.
+
+%To summarize,
+%\begin{align}
+%&U(p;\zeta)=\sum_{i=0}^{I} c_i B_i(\zeta),\\
+%&\hspace{30pt}\zeta=(\zeta_1,\ldots,\zeta_n,\ldots,\zeta_N),\\
+%  &\hspace{60pt}\zeta_n=\sum_{\ell=0}^{L} \zeta_{n,\ell} B_{n,\ell}(\zeta_n),\\
+%    &\hspace{90pt}\zeta_{n,\ell}=\frac{1}{\big(B_{n,\ell}(\zeta_n)^2\big)}
+%                  \sum_{q=1}^Q w_q F_n^{-1}(u_q)B_{n,\ell}\big(G^{-1}(u_q)\big),\\
+%&\hspace{30pt}c_i=\left(\sum_{m_1=1}^{M_1}\cdots\sum_{m_n}^{M_n}\cdots\sum_{m_N}^{M_N}\right) 
+%                  w_m c_{i,m},\\
+%  &\hspace{60pt}w_m=\prod_{h=1}^H w_{m_h},\\
+%  &\hspace{60pt}c_{i,m}=U(p;\zeta_m)B_i(\zeta_m),\\
+%    &\hspace{90pt}\zeta_m=(\zeta_{1,m_1},\zeta_{2,m_2},\cdots,\zeta_{n,m_n},\cdots,\zeta_{N,m_N}),
+%\end{align}
+%\newpage
+%where we use the following variables:
+%\begin{itemize}
+%\item$U$: the solution variable of interest, a function of input parameters as well as possibly space and time.
+%\item $p$: the certain (non-stochastic) problem impact parameters.
+%\item $B_i$: the $i$-th order Legendre polynomial in the basis set that spans $U$ and its uncertainty.
+%\item $c_i$: the coefficient for the $i$-th order basis polynomial $B$.
+%\item $\zeta$: the vector of uncertain parameters in $U$, with arbitrary length $N$.
+%\item $\zeta_n$: An arbitrary uncertain parameter in $U$.
+%\item $B_{n,\ell}$: the $\ell$-th order Legendre polynomial in the basis set that spans a particular uncertain parameter $\zeta_n$.
+%\item $\zeta_{n,\ell}$: the coefficient for the $\ell$-th order basis polynomial $B_{n,\ell}$.
+%\item $w_q$: the Legendre weights in the quadrature approximation to $\zeta_{n,\ell}$.
+%\item $F_n^{-1}(u)$: the inverse of the cdf of a particular random parameter $\zeta_n$.
+%\item $G^{-1}(u)$: the inverse of the uniform distribution cdf.
+%\item $\zeta_m$: the vector of a single realization of all random parameters $\zeta$.
+%\item $\zeta_{n,m}$: a single realization of a single random parameter $\zeta_n$.
+%\item $m_n$: the index for the quadrature abscissa for random parameter $\zeta_n$.
+%\item $w_m$: the product of the weights associated with a single realization $\zeta_m$.
+%\item $c_{i,m}$: the component of $c_i$ from a single realization $\zeta_m$.
+%\end{itemize}
+%% In order to construct $B_i$, then, we first need to construct independent, one-dimensional polynomials $b_p^{(\zeta_j)}(\zeta_j)$ such that
+%%\begin{equation}
+%%B_i(\zeta)=b_{p_1}^{(\zeta_1)}b_{p_2}^{(\zeta_2)}...b_{p_n}^{(\zeta_n)}.
+%%\end{equation}
+%%For $b_p^{(\zeta_j)}(\zeta_j)$, $p$ is a polynomial order index while the superscript $\zeta_j$ says the polynomial is orthogonal in the uncertainty space of uncertain variable $\zeta_j$, making $B_i$ a tensor product over all $p$ and $j$ with some mapping $(p_1,p_2,...,p_n)\to i$.
+
+\end{document}
+
+
+\begin{center}
+\begin{tabular}{c c|c c| c}
+\end{tabular}
+\end{center}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\linewidth]{}
+\caption
+\label{}
+\end{figure}

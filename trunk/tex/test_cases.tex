@@ -1,0 +1,42 @@
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+\usepackage{graphicx} % support the \includegraphics command and options
+\usepackage{amsmath}
+\usepackage{fullpage}
+\usepackage[center]{caption}
+
+\newcommand{\into}{\ensuremath{\int_{-1}^1}}
+
+\title{Python Code Test Cases}
+\author{Paul Talbot}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+\begin{document}
+\maketitle
+
+\section{Stochastic Collocation Class}
+\subsection{TEST: Single Uniform Variable}
+In this test we consider $f(x)=x^2$ with $x$ a random variable uniformly distributed along $\bar x\pm \sigma$, where $\bar x$ is the average value and $\sigma$ is the uncertainty in $x$..  $x$ can be expressed as a function of a random variable $\xi$ distributed from -1 to 1 as
+\begin{equation}
+x(\xi)=\bar x+\sigma \xi,\hspace{20pt}\xi\in[-1,1].
+\end{equation}
+This test evalutes the moments $n$ of $f(x)$ as
+\begin{equation}
+<f(x)^n>\equiv\int P(\xi)f(x)^nd\xi,
+\end{equation}•
+where $P(\xi)$ is the probability distribution function for $xi$.  In this case, for the uniformly-distributed random variable, $P(\xi)$=1/2 for all values of $\xi$.  Because $\xi\in[-1,1]$, we integrate
+\begin{align}
+<f(x)^n>&=\into P(\xi)f(x(\xi))^nd\xi,\nonumber\\
+  &=\frac{1}{2}\into \left(x(\xi)^2\right)^n d\xi,\nonumber\\
+  &=\frac{1}{2}\into \left(\bar x^2+2\bar x\sigma\xi + \sigma^2\xi^2\right)^n d\xi.
+\end{align}
+For this test case, we consider $x$ to be uniformly distributed between $1$ and $2$, so $\sigma=0.5$ and the first three moments are
+\begin{align}
+<f(x)>&=7/3,\\
+<f(x)^2>&=31/5,\\
+<f(x)^3>&=127/7.
+\end{align}
+
+
+\end{document}

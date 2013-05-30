@@ -1,0 +1,43 @@
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+\usepackage{fullpage}
+\usepackage{graphicx} % support the \includegraphics command and options
+\usepackage{amsmath}
+\usepackage{amssymb}
+\newcommand{\drv}[2]{\ensuremath{\frac{d #1}{d #2}}}
+\newcommand{\into}{\ensuremath{\int_{-1}^1}}
+\newcommand{\intz}{\ensuremath{\int_0^1}}
+\newcommand{\intf}{\ensuremath{\int_{-\infty}^\infty}}
+\newcommand{\inti}{\ensuremath{\int_{x_{i-1/2}}^{x_{i+1/2}}}}
+\newcommand{\intO}{\ensuremath{\int_{4\pi}}}
+\newcommand{\order}[1]{\ensuremath{\mathcal{O}(#1)}}
+\newcommand{\He}{\ensuremath{\mbox{He}}}
+
+\title{Deterministic Uncertainty Quantification with Raven}
+\author{\LARGE{Paul Talbot}\\\normalsize{ talbotp@unm.edu}}
+%\date{}
+
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{thesis_introduction}
+\include{thesis_methods}
+
+\appendix
+\include{thesis_apx_distros}
+\end{document}
+
+
+\begin{center}
+\begin{tabular}{c c|c c| c}
+\end{tabular}
+\end{center}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\linewidth]{}
+\caption
+\label{}
+\end{figure}
