@@ -89,6 +89,6 @@ class SC(UQ):
         var=self.randVars[v]
         val=var.revertPt(val)
         temp*=var.samplePoly(indx[v],val)
-        temp*=var.quad.wtFunc(val)
+        #temp*=var.quad.wtFunc(val)
       tot+=temp
     return tot

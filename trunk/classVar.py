@@ -130,7 +130,7 @@ class normVar(var):
   def setDistr(self):
     self.average=self.mean
     self.quad=q.quadStatHermite(self.N)
-    self.dist=spst.norm(self.average,np.sqrt(self.var))
+    self.dist=spst.norm(self.average,self.var)
     self.domain=[float('-inf'),float('inf')]
 
   def sample(self,val=None):
@@ -140,10 +140,10 @@ class normVar(var):
     return self.average+np.sqrt(2*self.var)*val
 
   def samplePt(self,x):
-    return np.sqrt(self.var)*x+self.average
+    return self.var*x+self.average
 
   def revertPt(self,x):
-    return (x-self.average)/np.sqrt(self.var)
+    return (x-self.average)/self.var
 
   def sampleWt(self,o):
     return self.quad.weights[o]

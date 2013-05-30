@@ -61,10 +61,10 @@ class quadLegendre(quadrature):
     return sps.eval_legendre(o,x)*np.sqrt((2.*o+1.)/2.)
 
   def wtFunc(self,x):
-    return 1.0
+    return 2.0
 
   def invWtFunc(self,x):
-    return 1.0
+    return 0.5
 
 
 class quadShiftLegendre(quadrature):
@@ -123,10 +123,12 @@ class quadStatHermite(quadrature):
     self.poly=sps.hermitenorm
 
   def wtFunc(self,x):
-    return np.exp(-x**2/2.)
+    return 1#np.exp(-x**2/2.)
+# ACTUALLY is inverse of the sum of the weights
 
   def invWtFunc(self,x):
-    return np.exp(x**2/2.)
+    return 1#np.exp(x**2/2.)
+# ACTUALLY is the sum of the weights
 
 
 
