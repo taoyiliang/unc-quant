@@ -4,7 +4,9 @@ import random as rand
 import classQuadrature as q
 import scipy.special as sps
 import scipy.stats as spst
+from scipy.misc import factorial
 
+#============================================================================\
 class var():
   def __init__(self,name,unc,paramIndex=[],N=2):
     self.name=name
@@ -44,10 +46,8 @@ class var():
 
   def UQval(self,el):
     pass
-
   def UQwts(self,el):
     pass
-
   def UQpolySample(self,n,el):
     pass
 
@@ -55,16 +55,17 @@ class var():
     pass
   def setDistr(self):
     pass
-  def sampleMC(self):
+  def sample(self,val=None):
     pass
-  def sampleSC(self):
+  def samplePt(self):
     pass
-  def sampleSCn(self):
+  def sampleWt(self):
     pass
   def samplePoly(self):
     pass
 
 
+#============================================================================\
 class uniVar(var):
   def setUnc(self):
     self.uncType='uniform'
@@ -91,28 +92,28 @@ class uniVar(var):
 
   def sample(self,val=None):
     if val==None:
-      return self.sampleMC()
-    #return self.low+val*(self.hi-self.low)
+      return self.low+rand.random()*(self.hi-self.low)
     return self.average+val*self.range
 
-  def sampleMC(self):
-    return self.low+rand.random()*(self.hi-self.low)
-
-  def sampleSC(self,n):
-    return self.average+self.range*self.quad.ords[n]
-
-  def samplePoly(self,n,x):
-    return sps.eval_legendre(n,x)
-
-  def samplePt(self,o):
+  def samplePt(self,x):
     '''samples equivalent point on [-1,1]'''
-    return self.quad.ords[o]*self.range+self.average
+    return x*self.range+self.average
+
+  def revertPt(self,x):
+    '''returns from [-1,1] to [a,b]'''
+    return (x-self.average)/self.range
 
   def sampleWt(self,o):
     '''samples equivalent weight for [-1,1]'''
     return self.quad.weights[o]/self.range
 
+  def samplePoly(self,n,x,norm=True):
+    '''samples Legendre polynomial of order n at x, default normalized.'''
+    if norm: return sps.eval_legendre(n,x)*np.sqrt((2.*n+1.)/2.)
+    else: return sps.eval_legendre(n,x)
 
+
+#============================================================================\
 class normVar(var):
   '''
   A variable with normally-distributed uncertainty.
@@ -132,21 +133,22 @@ class normVar(var):
     self.dist=spst.norm(self.average,np.sqrt(self.var))
     self.domain=[float('-inf'),float('inf')]
 
-  def sampleMC(self):
-    Z=np.sqrt(-2.0*np.log(rand.random()))*np.cos(2.0*np.pi*rand.random())
-    return np.sqrt(self.var)*Z+self.mean
-
-  def sampleSC(self,n):
-    #return self.average+self.var*self.quad.ords[n]
-    return self.average+np.sqrt(2.*self.var)*self.quad.ords[n]
-
   def sample(self,val=None):
     if val==None:
-      return self.sampleMC()
-    return self.average+np.sqrt(self.var)*val
+      Z=np.sqrt(-2.0*np.log(rand.random()))*np.cos(2.0*np.pi*rand.random())
+      return np.sqrt(self.var)*Z+self.mean
+    return self.average+np.sqrt(2*self.var)*val
 
-  def samplePt(self,o):
-    return self.quad.ords[o] #FIXME
+  def samplePt(self,x):
+    return np.sqrt(self.var)*x+self.average
+
+  def revertPt(self,x):
+    return (x-self.average)/np.sqrt(self.var)
 
   def sampleWt(self,o):
-    return self.quad.weights[o] #FIXME
+    return self.quad.weights[o]
+
+  def samplePoly(self,n,x,norm=True):
+    if norm: return sps.eval_hermitenorm(n,x)*\
+        (np.sqrt(np.sqrt(2.*np.pi)*factorial(n)))**(-1)
+    else: return sps.eval_hermitenorm(n,x)

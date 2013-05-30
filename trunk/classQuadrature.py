@@ -4,6 +4,7 @@ import orthopoly as op
 import scipy.stats as spst
 import scipy.special as sps
 
+#============================================================================\
 class quadrature():
   '''
   Base class for developing quadrature of any dimension.
@@ -20,10 +21,8 @@ class quadrature():
 
   def setQuad(self):
     pass #not used in base class, defined in subclasses
-
   def getProb(self,x):
     pass #overwritten in subclasses
-
   def setDist(self):
     pass #overwritten
 
@@ -47,20 +46,9 @@ class quadrature():
       result+=arr[n]*self.weights[n]
     return result
 
-class quadNone(quadrature):
-  '''
-  Meant for single-valued, non-distributed variables.
-  '''
-  def setQuad(self):
-    self.quadType='none'
-    self.ords=[0]
-    self.weights=[1]
-    self.order=1
 
+#============================================================================\
 class quadLegendre(quadrature):
-  '''
-  Covers range [-1,1], weight function is 1.
-  '''
   def setQuad(self):
     self.quadType='Legendre'
     self.ords,self.weights = orth.p_roots(self.order)
@@ -78,8 +66,8 @@ class quadLegendre(quadrature):
   def invWtFunc(self,x):
     return 1.0
 
+
 class quadShiftLegendre(quadrature):
-  '''domain [0,1]'''
   def setQuad(self):
     self.quadType='ShiftedLegendre'
     self.ords,self.weights=orth.ps_roots(self.order)
@@ -98,23 +86,11 @@ class quadShiftLegendre(quadrature):
     return 1.0
 
 
-class quadChebyshev(quadrature):
-  '''
-  Covers range [-1,1], weight function is (1-x^2)^(-1/2).
-  '''
-  def setQuad(self):
-    self.quadType='Chebyshev'
-#    self.ords=[]
-#    self.weights=[]
-#    for k in range(self.order):
-#      self.ords.append(np.pi/2.*(2.*k+1.)/self.order)
-#      self.weights.append(np.pi/(self.order))
-    self.ords,self.weights = orth.t_roots(self.order)
-
-  def getProb(self,x):
-    return 1./np.sqrt(1.-x*x)
 
 
+
+
+#============================================================================\
 class quadHermite(quadrature):
   '''
   Covers range [-infty,infty], weight function is exp(-x^2)
@@ -127,11 +103,15 @@ class quadHermite(quadrature):
     self.dist=spst.norm() #FIXME is this true?? exp(-x^2/<<2>>)
     self.poly=sps.hermite
 
-  def wtFunc(self,o):
-    return 1.0 #FIXME!
+  def wtFunc(self,x):
+    return np.exp(-x*x)
 
-  def invWtFunc(self,o):
-    return 1.0 #FIXME!
+  def invWtFunc(self,x):
+    return np.exp(x*x)
+
+
+
+
 
 class quadStatHermite(quadrature):
   def setQuad(self):
@@ -143,13 +123,16 @@ class quadStatHermite(quadrature):
     self.poly=sps.hermitenorm
 
   def wtFunc(self,x):
-    #return 1./(np.sqrt((2.*np.pi)**self.order))*np.exp(-x**2/2.)
     return np.exp(-x**2/2.)
 
   def invWtFunc(self,x):
-    #return np.sqrt((2.*np.pi)**self.order)*np.exp(x**2/2.)
     return np.exp(x**2/2.)
 
+
+
+
+
+#============================================================================\
 class quadLobatto(quadrature):
   def setQuad(self):
     self.quadType='Lobatto'
@@ -159,6 +142,27 @@ class quadLobatto(quadrature):
   def getProb(self,x):
     pass #FIXME
 
+
+
+
+
+
+
+#============================================================================\
+class quadChebyshev(quadrature):
+  def setQuad(self):
+    self.quadType='Chebyshev'
+    self.ords,self.weights = orth.t_roots(self.order)
+
+  def getProb(self,x):
+    return 1./np.sqrt(1.-x*x)
+
+
+
+
+
+
+#============================================================================\
 class quadMulti(quadrature):
   '''
   Combines two or more quadratures to create ordinates, weights, integrate.

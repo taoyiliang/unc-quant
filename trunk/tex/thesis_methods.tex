@@ -61,22 +61,32 @@ We consider a set of eight typical uncertainty distributions and their correspon
 Continuous & Normal & Hermite & $(-\infty,\infty)$ \\
  & Gamma & Laguerre & $[0,\infty)$ \\
  & Beta & Jacobi & $[a,b]$ \\
- & Uniform & Legendre & $[a,b]$ \\ \hline
-Discrete & Poisson & Charlier & \{0,1,2,...\}\\
- & Binomial & Krawtchouk & \{0,1,...,N\}\\
- & Negative Binomial & Meixner & \{0,1,2,...\}\\
- & Hypergeometric & Hahn & \{0,1,...,N\}
+ & Uniform & Legendre & $[a,b]$
 \end{tabular}
 \end{center}
-FIXME get rid of the discontinuous ones?  They're not in scipy.\\
 Definitions and examples of these distributions are included in the appendix.
+\subsubsection{A Note on Scaling Distributions}
+For the distributions described below, integrals are approximated using various Gauss quadratures.  In general, quadrature points for evaluation are easily obtained for standard versions of the distributions; for example, Legendre quadrature evaluates between [-1,1] instead of [$a,b$], and Hermite quadrature evaluates on a distribution with 0 mean and 1 variance instead of $\mu$ mean and $\sigma^2$ variance.  As such, it is practical to scale a distribution with a substitution of variables in order to obtain the standard distribution.  We provide rules for this scaling for each distribution.  Special care must be made when changing variables in the coefficient integrations, however, to include the Jacobian and change of limits where applicable.  The appropriate adjustments are made in the examples below.  
 
-\subsubsection{Example: Single-Dimensional expansion}
-Starting with the simplest case, we consider a function of single uniform-uncertainty variable $\zeta=\zeta_1$,
+The procedures exemplified here start by scaling to the standardized distribution $\zeta$ from the actual distribution $\xi$.  A general rule will be given of the form $\zeta(\xi)$ before performing the analysis to obtain the expansion for $\hat f(\zeta)$.  In order to obtain values using inputs in the distribution of $\xi$, it is only necessary to first make the conversion $\xi(\zeta)$.  For instance, if a uniform uncertainty variable ranges from $a$ to $b$, the conversion rule is
 \begin{equation}
-f(\zeta)=a+b\zeta, \hspace{10pt}\zeta\in[0,1],
+\zeta(\xi)=\frac{b-a}{2}\xi+\frac{a+b}{2},\hspace{20pt}\zeta\in[0,1],
 \end{equation}
-where $a$ and $b$ are arbitrary scalars.  We expand $f(\zeta)$ in normalized shifted Legendre polynomials,
+and, once $\hat f(\zeta)$ is obtained, evaluating $f(\xi)$ is performed by
+\begin{equation}
+f(\xi)=f(\xi(\zeta))=\hat f\left(\frac{2}{b-a}\left[\xi-\frac{a+b}{2}\right]\right).
+\end{equation}
+
+\subsubsection{Example: Single-Dimensional Legendre expansion}
+Starting with the simplest case, we consider a function of a single uniform-uncertainty variable $\zeta$,
+\begin{equation}
+f(\xi)=a+b\xi, \hspace{10pt}\xi\in[a,b],
+\end{equation}
+where $a,b$ are scaling constants.  We can in general scale this function to $a=0,b=1$ using the rule
+\begin{equation}
+\zeta=\frac{b-a}{2}\xi+\frac{a+b}{2},\hspace{20pt}\zeta\in[0,1].
+\end{equation}
+We expand $f(\zeta)$ in normalized shifted Legendre polynomials,
 \begin{align}
 f(\zeta)&=\sum_{i=0}^\infty f_i\tilde P_i(\zeta),\\
  &= \sum_{i=0}^1 f_i\tilde P_i(\zeta).
@@ -95,6 +105,53 @@ where once again, because we know the shifted Legendre polynomial order is no gr
 f_0=a+\frac{b}{2},\hspace{10pt} f_1=\frac{b\sqrt{3}}{6},\hspace{10pt} f_{i>1}=0.
 \end{equation}
 If we reconstruct $f(\zeta)$ using these coefficients and the first three normalized Legendre polynomials, we obtain our original function $a+b\zeta$.
+
+\subsubsection{Example: Single-Dimensional Hermite expansion}
+We now consider a function of a single normal-uncertainty variable $\xi$,
+\begin{equation}
+f(\xi)=\frac{1}{\sqrt{2\pi b}}\exp\left(-\frac{(\xi-a)^2}{2b}\right),\hspace{20pt}\zeta\in(-\infty,\infty),
+\end{equation}
+where $a,b$ are scaling constants.  We can in general scale this function to $a=0,b=1$ using the rule
+\begin{equation}
+\xi=b\zeta+a,
+\end{equation}
+\begin{equation}
+f(\zeta)=\frac{1}{\sqrt{2\pi b}}\exp\left(-\frac{\zeta^2}{2}\right).
+\end{equation}
+We expand similar to the Legendre case but with normalized probabilist Hermite polynomials $\He_n$,
+\begin{equation}
+f(\zeta)=\sum_{i=0}^\infty f_i \He_i(\zeta)W_H(\zeta).
+\end{equation}
+We note here the inclusion of the weighting function $W_H $.  This function is the probability distribution of f(x).  For Gaussian-distributed uncertainty, this is given as
+\begin{equation}
+W_H(\zeta)=e^{-\frac{x^2}{2}}.
+\end{equation}
+In the Legendre case, the weighting function is unity and $W$ was omitted.
+Using orthogonality,
+\begin{equation}
+f_i=\intf f(\zeta)\He_i(\zeta)d\zeta.
+\end{equation}
+To integrate this integral using Hermite quadrature, we first recognize
+\begin{equation}
+\intf f(x)e^{-x^2/2}dx=\intf f(x)W_H(x)=\sum_{\ell=0}^\infty w_\ell f(x_\ell),
+\end{equation}
+\begin{equation}
+\intf f(x)dx=\intf \frac{f(x)}{W_H(x)}W_H(x)dx=\sum_{\ell=0}^\infty w_\ell \frac{f(x_\ell)}{W_H(\ell)}.
+\end{equation}
+We demonstrate the utility of this procedure by example, expanding $f(\zeta)/W_H(\zeta)$,
+\begin{align}
+\intf f(\zeta)dx&=\intf \frac{f(\zeta)}{W_H(\zeta)}W_H(\zeta)d\zeta,\\
+&=\intf \frac{\frac{1}{\sqrt{2\pi b}}\exp\left(-\frac{\zeta^2}{2}\right)}{e^{-\frac{\zeta^2}{2}}}W_H(\zeta)d\zeta,\\
+&=\intf \frac{1}{\sqrt{2\pi b}} W_H(\zeta)d\zeta,\\
+&=\frac{1}{\sqrt{2\pi b}}\sum_{\ell=0}^\infty w_\ell.
+\end{align}
+%The utility of the quadrature choice lies in the fact that $f(x)$ and $W_H(x)$ are similar in form, resulting in simplification.  Thus, our coefficient integral becomes
+Even if $f(\zeta)$ is not identical to $W_H(\zeta)$, it is useful for them to have the same form.  Returning to our coefficient integral,
+\begin{align}
+f_i&=\intf f(\zeta)\He_i(\zeta) d\zeta,\\
+  &=\intf \frac{f(\zeta)\He_i(\zeta)}{W_H(\zeta)}W_H(\zeta)d\zeta,\\
+  &=\sum_{\ell=0}^\infty w_\ell\frac{f(\zeta_\ell)\He_i(\zeta_\ell)}{W_H(\zeta_ell)}.
+\end{align}
 
 \subsubsection{Example: Multivariate Expansion}
 We now consider multidimensional function of $\zeta_1,\zeta_2$,
