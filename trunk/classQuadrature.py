@@ -9,10 +9,8 @@ class quadrature():
   '''
   Base class for developing quadrature of any dimension.
   '''
-  def __init__(self,order=4,a=-1,b=1):
+  def __init__(self,order=4):
     self.quadType=''
-    self.a=a
-    self.b=b
     self.order=order
     self.ords=np.zeros(self.order)
     self.weights=np.zeros(self.order)
@@ -49,6 +47,16 @@ class quadrature():
 
 #============================================================================\
 class quadLegendre(quadrature):
+  def __init__(self,order=4,a=-1,b=1):
+    self.quadType=''
+    self.a=a
+    self.b=b
+    self.order=order
+    self.ords=np.zeros(self.order)
+    self.weights=np.zeros(self.order)
+    self.setQuad()
+    self.setDist()
+
   def setQuad(self):
     self.quadType='Legendre'
     self.ords,self.weights = orth.p_roots(self.order)
@@ -61,10 +69,10 @@ class quadLegendre(quadrature):
     return sps.eval_legendre(o,x)*np.sqrt((2.*o+1.)/2.)
 
   def wtFunc(self,x):
-    return 2.0
+    return 1.0#/(self.hi-self.low)
 
-  def invWtFunc(self,x):
-    return 0.5
+  def probNorm(self,x):
+    return 1.0#*self.hi-self.low
 
 
 class quadShiftLegendre(quadrature):
@@ -82,7 +90,7 @@ class quadShiftLegendre(quadrature):
   def wtFunc(self,x):
     return 1.0
 
-  def invWtFunc(self,x):
+  def probNorm(self,x):
     return 1.0
 
 
@@ -106,7 +114,7 @@ class quadHermite(quadrature):
   def wtFunc(self,x):
     return np.exp(-x*x)
 
-  def invWtFunc(self,x):
+  def probNorm(self,x):
     return np.exp(x*x)
 
 
@@ -126,10 +134,64 @@ class quadStatHermite(quadrature):
     return 1#np.exp(-x**2/2.)
 # ACTUALLY is inverse of the sum of the weights
 
-  def invWtFunc(self,x):
+  def probNorm(self,x):
     return 1#np.exp(x**2/2.)
 # ACTUALLY is the sum of the weights
 
+
+
+
+#============================================================================\
+class quadLaguerre(quadrature):
+  def __init__(self,alpha,order=4):
+    self.quadType=''
+    self.alpha=alpha
+    self.order=order
+    self.ords=np.zeros(self.order)
+    self.weights=np.zeros(self.order)
+    self.setQuad()
+    self.setDist()
+
+  def setQuad(self):
+    self.quadType='GenLaguerre'
+    self.ords,self.weights = orth.la_roots(self.order,self.alpha)
+
+  def setDist(self):
+    self.dist=spst.gamma(self.alpha) #shift from [a,inf] to [0,inf]?
+    #self.poly=sps.genlaguerre
+
+  def wtFunc(self,x):
+    return np.exp(-x)*x**(self.alpha)
+
+  def probNorm(self,x):
+    return 1.#np.exp(x)*x**(-self.alpha)
+
+
+#============================================================================\
+class quadJacobi(quadrature):
+  def __init__(self,alpha,beta,order=4):
+    self.quadType=''
+    self.alpha=alpha
+    self.beta=beta
+    self.order=order
+    self.ords=np.zeros(self.order)
+    self.weights=np.zeros(self.order)
+    self.setQuad()
+    self.setDist()
+
+  def setQuad(self):
+    self.quadType='Jacobi'
+    self.ords,self.weights = orth.j_roots(self.order,self.alpha,self.beta)
+
+  def setDist(self):
+    self.dist=spst.beta(self.alpha,self.beta) #shift from [a,inf] to [0,inf]?
+    #self.poly=sps.genlaguerre
+
+  def wtFunc(self,x):
+    return (1.-x)**self.alpha * (1.+x)**self.beta
+
+  def probNorm(self,x):
+    return 1.
 
 
 

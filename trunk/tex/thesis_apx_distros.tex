@@ -186,5 +186,19 @@ The Weibull distribution ranges from 0 to $\infty$ and has the form
 \end{equation}
 where $\lambda,k$ are the scale and shape parameters, respectively.  Often, $\lambda=1$ and $k$ is the only shaping parameter. TODO finish.
 
+\subsubsection{Truncated Gaussian}
+The truncated Gaussian distribution ranges from $a$ to $b$ and appears as a Gaussian normal distribution truncated at $a$ and $b$ with mean $\mu$ and varianve $\sigma^2$:
+\begin{equation}
+\xi(x;\mu,\sigma,a,b)=\frac{\frac{1}{\sigma}g(\frac{x-\mu}{\sigma})}{G(\frac{b-\mu}{\sigma})-G(\frac{a-\mu}{\sigma})},
+    \hspace{10pt} x\in[a,b],
+\end{equation}
+where $g$ is the pdf of a normal distribution with $\mu=0,\sigma^2=1$ and $G$ is its cdf.  This can be rewritten as
+\begin{equation}
+\xi(x;\mu,\sigma,a,b)=\frac{1}{2\sqrt{s\pi\sigma^2}}\left(
+\frac{\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)}{\erf(\frac{b-\mu}{\sigma\sqrt{2}})-\erf(\frac{a-\mu}{\sigma\sqrt{2}})}
+\right),\hspace{10pt} x\in[a,b],
+\end{equation}
+where erf is the error function.
+
 \subsubsection{Arbitrary}
 Many other distributions may arise in characterizing the uncertainty of input parameters.  In the event none of the above distributions are close enough, using the distribution's ppf to represent it using shifted Legendre polynomials is recommended, with care for the number of terms used.

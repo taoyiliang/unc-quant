@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as p
+import scipy.stats as spst
 
-xs=np.arange(-1,1,0.001)
+xs=np.arange(0,40,0.01)
 
 def func(x):
   return 4*np.exp(-x*x/2.)
@@ -17,9 +18,18 @@ def apx(x):
 act=func(xs)
 apr=apx(xs)
 
-p.plot(xs,act,'k--')
-p.plot(xs,apr,'b-')
 
-print np.sum(abs(apr**2-act**2))/len(xs)
+alpha=2.0
+beta=1.0
+a=20.0
+
+p.plot(xs,spst.gamma(alpha,loc=a,scale=beta).pdf(xs),\
+       label=str(alpha)+','+str(beta)+','+str(a))
+p.legend()
+
+#p.plot(xs,act,'k--')
+#p.plot(xs,apr,'b-')
+
+#print np.sum(abs(apr**2-act**2))/len(xs)
 
 p.show()

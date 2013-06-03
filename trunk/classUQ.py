@@ -20,7 +20,7 @@ class SC(UQ):
     self.coeffs=np.array([])
 
     self.trackPolys=np.zeros(len(self.randVars))
-    self.trackInvWtFunc=np.zeros(len(self.randVars))
+    self.trackProbNorm=np.zeros(len(self.randVars))
     self.trackIndx=np.zeros(len(self.randVars))
     self.trackVarVals=np.zeros(len(self.randVars))
     self.trackWeights=np.zeros(len(self.randVars))
@@ -57,26 +57,19 @@ class SC(UQ):
     toRet = 0
     for el,absc in enumerate(var.quad.ords):
       self.trackIndx[counter]=el
-      self.trackVarVals[counter]=var.samplePt(absc)
+      #self.trackVarVals[counter]=var.samplePt(absc)
+      self.params[var.paramIndex]=var.samplePt(absc)
       self.trackWeights[counter]=var.sampleWt(el)
       self.trackPolys[counter]=var.samplePoly(n,absc)
-      self.trackInvWtFunc[counter]=var.quad.invWtFunc(absc)
-      #self.trackVarVals[counter]=var.UQval(el)
-      #self.trackWeights[counter]=var.UQwts(el)
-      #self.trackPolys[counter]=var.UQpolySample(n,el)
-      #self.trackInvWtFunc[counter]=var.quad.invWtFunc(var.quad.ords[el])
+      self.trackProbNorm[counter]=var.sampleProbNorm(absc)
       if counter==0: # each variable has a set value
-        for v,val in enumerate(self.trackVarVals):
-          var=self.randVars[v]
-          self.params[var.paramIndex]=val
-          #print 'x,ord',self.params,absc
+        #for v,val in enumerate(self.trackVarVals):
+          #var=self.randVars[v]
+          #self.params[var.paramIndex]=val
         tot=self.solver.run(*self.params)
-        #print tot
         toRet+= tot*np.prod(self.trackWeights)*np.prod(self.trackPolys)*\
-            np.prod(self.trackInvWtFunc)
-        #print self.trackWeights,self.trackPolys
+            np.prod(self.trackProbNorm)
       else: toRet+= self.calcCoeffLoop(counter,indx)
-    #print 'toRet',toRet
     return toRet
 
 

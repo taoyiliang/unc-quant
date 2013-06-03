@@ -26,36 +26,42 @@ def runMFS():
 
   solver=Solver()
   scsolve=uq.SC(p,randVars,solver)
-  scsolve.propUQ(8)
+  scsolve.propUQ(4)
   UQsoln=scsolve.UQsoln
 
 # check against mfs
-  xs=np.arange(lox,hix+.2,(hix-lox)/5.)
+  xs=np.linspace(lox,hix,20)
+  ys=xs.copy()
   #ys=np.arange(uy-2.*sy,uy+2.*sy,4.*sy/5.)[:-1]
-  ys=np.arange(0.,1.2,1./5.)
+  #ys=np.arange(0.,1.2,1./5.)
   us=np.zeros([len(xs),len(ys)])
   mfs=us.copy()
   for i in range(len(xs)):
     for j in range(len(ys)):
       us[i,j]=UQsoln([xs[i],ys[j]])
       mfs[i,j]=solver.run(xs[i],ys[j])
-      print xs[i],ys[j],us[i,j],mfs[i,j]
+      #print xs[i],ys[j],us[i,j],mfs[i,j]
   l2norm=np.sqrt(np.sum((us-mfs)**2))
   print '\nl2norm of error is',l2norm
 
 #visualize solution
   import matplotlib.pyplot as plt
-  CS=plt.imshow(np.rot90(us),extent=[0,1,-.1,1.1])
+  CS=plt.imshow(np.rot90(us),extent=[0,1,0,1])
   CB=plt.colorbar(CS)
-  plt.title('Calculated')
-  plt.figure()
-  CS=plt.imshow(np.rot90(mfs),extent=[0,1,-.1,1.1])
+  plt.title('Uniform (%1.0f, %1.0f)\n& Normal (%1.2f, %1.2f)'\
+      %(lox,hix,uy,sy))
+  plt.ylabel('y')
+#  plt.figure()
+  plt.subplot(2,2,3)
+  CS=plt.imshow(np.rot90(np.sqrt((us-mfs)**2)),extent=[0,1,0,1])
   CB=plt.colorbar(CS)
-  plt.title('MFS')
+  plt.title('err, Uniform/Norm')
+  plt.xlabel('x')
+  plt.ylabel('y')
 
-  plt.figure()
-  plt.plot(xs,us[:,-1])
-  plt.show()
+#  plt.figure()
+#  plt.plot(xs,us[:,-1])
+  #plt.show()
 
 if __name__=='__main__':
   runMFS()

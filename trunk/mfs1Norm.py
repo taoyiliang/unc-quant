@@ -7,7 +7,7 @@ class Solver:
   def __init__(self):
     pass
   def run(self,x):
-    return 1.-x#x*x+2.*x+1.
+    return x*x+2.*x+1.
     #return 1./(np.sqrt(2.*np.pi*sig2))*\
     #    np.exp(-(x-u)**2/(2.*sig2))
 
@@ -17,8 +17,8 @@ def runMFS():
   p=[x]
 # designate random variables
   randVars=[]
-  u=0.5
-  s=0.3
+  u=5
+  s=7
   randVars.append(var.normVar('x',[u,s],paramIndex=0))
 
   solver=Solver()
@@ -27,7 +27,7 @@ def runMFS():
   UQsoln=scsolve.UQsoln
 
 # check against mfs
-  xs=np.arange(u-2.*s,u+2.*s,4.*s/50.)[:-1]
+  xs=np.arange(u-2.*s,u+2.*s,4.*s/20.)[:-1]
   mfs=solver.run(xs)
   us=np.zeros_like(xs)
   for i in range(len(xs)):
@@ -39,8 +39,11 @@ def runMFS():
   import matplotlib.pyplot as plt
   plt.plot(xs,mfs,'k-',label='act')
   plt.plot(xs,us,'b.',label='comp',markersize=12)
-  plt.legend()
-  plt.show()
+  plt.title('Normal Unc. (5,7)')
+  #plt.ylabel('f(x)=x*x+2*x+1')
+  #plt.xlabel('x')
+  plt.legend(loc=2)
+  #plt.show()
 
 if __name__=='__main__':
   runMFS()
