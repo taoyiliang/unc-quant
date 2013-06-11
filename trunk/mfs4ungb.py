@@ -34,10 +34,10 @@ def runMFS():
   p=[w,x,y,z]
 # designate random variables
   randVars=[]
-  randVars.append(var.uniVar('w',[low,hiw],paramIndex=0))
-  randVars.append(var.normVar('x',[ux,sx],paramIndex=1))
-  randVars.append(var.betaVar('y',[ay,by,loy,hiy],paramIndex=2))
-  randVars.append(var.gammaVar('z',[az,bz,loz],paramIndex=3))
+  randVars.append(var.uniVar([low,hiw],paramIndex=0))
+  randVars.append(var.normVar([ux,sx],paramIndex=1))
+  randVars.append(var.betaVar([ay,by,loy,hiy],paramIndex=2))
+  randVars.append(var.gammaVar([az,bz,loz],paramIndex=3))
 
   solver=Solver()
   scsolve=uq.SC(p,randVars,solver)

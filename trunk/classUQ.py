@@ -1,5 +1,6 @@
 import numpy as np
 import classQuadrature as q
+import classVar as cv
 import scipy.special as sps
 import scipy.stats as spst
 import os
@@ -27,14 +28,16 @@ class SC(UQ):
 
   #FUNCTIONALITY
   def propUQ(self,order):
-    # ASSUME all are uniform vars on -1,1 -> FIXME
     # make multiquad
     quadOrder=int(round(0.5+(order+1)/2))
     quads=[]
+    #stVars=(cv.uniVar,cv.normVar,
+    #         cv.betaVar),cv.gammaVar)
     for var in self.randVars:
-      var.quad.order=quadOrder
-      var.quad.setQuad()
-      quads.append(var.quad)
+      var.setStandardQuad(order) # also maps non-optimal uncertainties
+      #if not isinstance(var,stVars):
+      #  var.setZeroToOneDist(order)
+      quads.append(var.quadOpt)
     self.quad=q.quadMulti(quads)
     self.coeffs=np.zeros_like(self.quad.wtsm)
     # get variables on correct domain
@@ -47,7 +50,7 @@ class SC(UQ):
     for indx,val in np.ndenumerate(self.coeffs):
       counter=len(self.randVars) #tracks which variable is being eval'd
       self.coeffs[indx]=self.calcCoeffLoop(counter,indx)
-    print self.coeffs
+    #print self.coeffs
 
   def calcCoeffLoop(self,counter,indx):
     counter-=1
@@ -55,21 +58,20 @@ class SC(UQ):
     #print 'coeff',n
     var=self.randVars[counter]
     toRet = 0
-    for el,absc in enumerate(var.quad.ords):
+    for el,absc in enumerate(var.quadOpt.ords):
       self.trackIndx[counter]=el
       #self.trackVarVals[counter]=var.samplePt(absc)
-      self.params[var.paramIndex]=var.samplePt(absc)
-      self.trackWeights[counter]=var.sampleWt(el)
-      self.trackPolys[counter]=var.samplePoly(n,absc)
+      self.params[var.paramIndex]=var.sampleOpt(absc)
+      self.trackWeights[counter]=var.wtOpt(el)
+      self.trackPolys[counter]=var.polyOpt(n)(absc)
       self.trackProbNorm[counter]=var.sampleProbNorm(absc)
+      
       if counter==0: # each variable has a set value
-        #for v,val in enumerate(self.trackVarVals):
-          #var=self.randVars[v]
-          #self.params[var.paramIndex]=val
         tot=self.solver.run(*self.params)
         toRet+= tot*np.prod(self.trackWeights)*np.prod(self.trackPolys)*\
             np.prod(self.trackProbNorm)
       else: toRet+= self.calcCoeffLoop(counter,indx)
+        
     return toRet
 
 
@@ -80,8 +82,8 @@ class SC(UQ):
       #if np.isnan(cof):print 'cof is nan!'
       for v,val in enumerate(vals):
         var=self.randVars[v]
-        val=var.revertPt(val)
-        temp*=var.samplePoly(indx[v],val)
-        #temp*=var.quad.wtFunc(val)
+        val=var.revertPt(val) #this might be difficult
+        temp*=var.polyOpt(indx[v])(val)
+      print val,cof, tot
       tot+=temp
     return tot

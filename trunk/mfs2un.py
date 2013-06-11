@@ -21,8 +21,8 @@ def runMFS():
   p=[x,y]
 # designate random variables
   randVars=[]
-  randVars.append(var.uniVar('x',[lox,hix],paramIndex=0))
-  randVars.append(var.normVar('y',[uy,sy],paramIndex=1))
+  randVars.append(var.uniVar([lox,hix],paramIndex=0))
+  randVars.append(var.normVar([uy,sy],paramIndex=1))
 
   solver=Solver()
   scsolve=uq.SC(p,randVars,solver)

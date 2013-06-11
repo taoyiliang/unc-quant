@@ -19,11 +19,16 @@ class quadrature():
 
   def setQuad(self):
     pass #not used in base class, defined in subclasses
+
   def getProb(self,x):
     pass #overwritten in subclasses
   def setDist(self):
     pass #overwritten
-
+    
+  def resetQuad(self,order):
+    self.order=order
+    self.setQuad()
+    
   def integrate(self,func,mult=1.0):
     result=0
     typecomp=np.array([1.0,2.0])

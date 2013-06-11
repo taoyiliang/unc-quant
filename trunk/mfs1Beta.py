@@ -22,7 +22,7 @@ def runMFS():
   beta=4.
   a=-7.
   b=5.
-  randVars.append(var.betaVar('x',[alpha,beta,a,b],paramIndex=0))
+  randVars.append(var.betaVar([alpha,beta,a,b],paramIndex=0))
 
   solver=Solver()
   scsolve=uq.SC(p,randVars,solver)

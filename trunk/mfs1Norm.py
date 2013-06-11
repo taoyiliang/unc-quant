@@ -19,7 +19,7 @@ def runMFS():
   randVars=[]
   u=5
   s=7
-  randVars.append(var.normVar('x',[u,s],paramIndex=0))
+  randVars.append(var.normVar([u,s],paramIndex=0))
 
   solver=Solver()
   scsolve=uq.SC(p,randVars,solver)

@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import classVar as var
 import classQuadrature as q
 import classUQ as uq
@@ -7,8 +8,8 @@ class Solver:
   def __init__(self):
     pass
   def run(self,x):
-    #return 1.-x
-    return x*x+2.*x+1.
+    return 1.-x
+    #return x*x+2.*x+1.
 
 def runMFS():
 # set non-random variables, set None for randoms
@@ -16,17 +17,17 @@ def runMFS():
   p=[x]
 # designate random variables
   randVars=[]
-  low=-2.
-  hi=5.
-  randVars.append(var.uniVar('x',[low,hi],paramIndex=0))
+  low=0#-2.
+  hi=1#5.
+  randVars.append(var.uniVar([low,hi],paramIndex=0))
 
   solver=Solver()
   scsolve=uq.SC(p,randVars,solver)
-  scsolve.propUQ(4)
+  scsolve.propUQ(8)
   UQsoln=scsolve.UQsoln
 
 # check against mfs
-  xs=np.arange(low,hi,(hi-low)/20.)
+  xs=np.linspace(low,hi,20.)
   mfs=solver.run(xs)
   us=np.zeros_like(xs)
   for i in range(len(xs)):
@@ -36,7 +37,6 @@ def runMFS():
 
 
 #visualize solution
-  import matplotlib.pyplot as plt
   plt.plot(xs,mfs,'k-',label='act')
   plt.plot(xs,us,'b.',label='comp',markersize=12)
   plt.legend(loc=2)
@@ -46,3 +46,4 @@ def runMFS():
 
 if __name__=='__main__':
   runMFS()
+  plt.show()
