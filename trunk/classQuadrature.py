@@ -93,10 +93,10 @@ class quadShiftLegendre(quadrature):
     return sps.eval_sh_legendre(o,x)*np.sqrt(2.*o+1.)
 
   def wtFunc(self,x):
-    return 1.0
+    return 1.
 
   def probNorm(self,x):
-    return 1.0
+    return 1.
 
 
 

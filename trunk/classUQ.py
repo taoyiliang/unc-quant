@@ -63,7 +63,7 @@ class SC(UQ):
       #self.trackVarVals[counter]=var.samplePt(absc)
       self.params[var.paramIndex]=var.sampleOpt(absc)
       self.trackWeights[counter]=var.wtOpt(el)
-      self.trackPolys[counter]=var.polyOpt(n)(absc)
+      self.trackPolys[counter]=var.polyOpt(n)(absc)*var.normOpt(n)
       self.trackProbNorm[counter]=var.sampleProbNorm(absc)
       
       if counter==0: # each variable has a set value
@@ -79,11 +79,12 @@ class SC(UQ):
     tot=0
     for indx,cof in np.ndenumerate(self.coeffs):
       temp=cof
+      print indx,cof
       #if np.isnan(cof):print 'cof is nan!'
       for v,val in enumerate(vals):
         var=self.randVars[v]
         val=var.revertPt(val) #this might be difficult
-        temp*=var.polyOpt(indx[v])(val)
-      print val,cof, tot
+        temp*=var.polyOpt(indx[v])(val)*var.normOpt(indx[v])
+      #print val,cof, tot
       tot+=temp
     return tot

@@ -8,8 +8,9 @@ class Solver:
   def __init__(self):
     pass
   def run(self,x):
-    return 1.-x
-    #return x*x+2.*x+1.
+    #return 1.-x
+    #return 0.5*(1.-x)
+    return x*x+2.*x+1.
 
 def runMFS():
 # set non-random variables, set None for randoms
@@ -17,8 +18,8 @@ def runMFS():
   p=[x]
 # designate random variables
   randVars=[]
-  low=0#-2.
-  hi=1#5.
+  low=-2.
+  hi=5.
   randVars.append(var.uniVar([low,hi],paramIndex=0))
 
   solver=Solver()
@@ -29,6 +30,7 @@ def runMFS():
 # check against mfs
   xs=np.linspace(low,hi,20.)
   mfs=solver.run(xs)
+  #xs2=np.linspace(0,1,20)
   us=np.zeros_like(xs)
   for i in range(len(xs)):
     us[i]=UQsoln([xs[i]])

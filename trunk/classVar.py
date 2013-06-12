@@ -20,15 +20,12 @@ class var():
     self.setUnc()
     self.setDistr()
 
-  def setAnySample(self,quad,toDist,toPoly,norm,order,ps=[]):
-    # ps are shape parameters for the polynomial type
-    # get the number of required poly inputs besides the order
-    #   and check to make sure it matches the number received
-    polyargs=len(inspect.getargspec(toPoly)[0])-\
-      len(inspect.getargspec(toPoly)[3])-1
-    assert(len(ps)==polyargs), 'Incorrect number of inputs for'+\
-      ' poly!'
-    # make the mapping
+  def setZtoSample(self,order,ps=[]):    
+    quad=q.quadShiftLegendre(order) #quad for [0,1]
+    toPoly=sps.sh_legendre
+    def norm(o):
+      return np.sqrt(2.*o+1)
+    toDist=spst.uniform(0,1)
     toPPF=toDist.ppf
     coeffs=np.zeros(order)
     for o in range(order):
@@ -41,65 +38,20 @@ class var():
       new_coeffs=toPoly(c,*ps).c*cof*norm(c)
       sample+=np.poly1d(new_coeffs)
     print 'sample in any\n',sample
-    return sample
-    
-  def setUniSample(self,order):
-    quad=q.quadShiftLegendre(order)
-    toDist=spst.uniform(0,1)
-    toPoly=sps.sh_legendre
-    def norm(o):
-      return np.sqrt(2.*o+1.)
-    self.sampleUni=self.setAnySample(quad,toDist,toPoly,norm,order)
-    return quad,toPoly,toDist,norm
-    #  now you can call sampleUni(x)
-    #    to use the translated x-position from x in [0,1]
-    #    to get the approximate
-    #    corresponding position on the original function
-    
-  def setNormSample(self,order):
-    quad=q.quadStatHermite(order)
-    toDist=spst.norm(0,1)
-    toPoly=sps.hermitenorm
-    def norm(o):
-      return np.sqrt(np.sqrt(2.*np.pi)*factorial(order))
-    self.sampleNorm=self.setAnySample(quad,toDist,toPoly,norm,order)
-    return quad,toPoly,toDist,norm
-    #  sampleNorm(x), x in (-inf,inf)
-    
-  def setGammaSample(self,order,alpha):
-    quad=q.quadLaguerre(alpha,order)
-    toDist=spst.gamma(alpha)
-    toPoly=sps.genlaguerre
-    #FIXME norm
-    norm=1./np.sqrt(sps.gamma(order+alpha+1.)/factorial(order))
-    self.sampleGamma=self.setAnySample(quad,toDist,toPoly,norm,[alpha])
-    return quad,toPoly,toDist,norm
-    #now you can call sampleGamma(x), x in [0,inf)
+    return sample,quad,toPoly,toDist,norm
 
-  def setBetaSample(self,order,alpha,beta):
-    quad=q.quadJacobi(alpha,beta,order)
-    toDist=spst.Beta(alpha,beta)
-    toPoly=sps.jacobi
-    #FIXME norm
-    norm=np.sqrt(
-      (2.*order+alpha+beta+1.)*\
-      sps.gamma(order+alpha+beta+1.)*factorial(order)*\
-      1./(2**(alpha+beta+1.))*\
-      1./(sps.gamma(order+alpha+1.)*sps.gamma(order+beta+1.))
-                )
-    self.sampleBeta=self.setAnySample(quad,toDist,toPoly,norm,[alpha,beta])
-    return quad,toPoly,toDist,norm
+  #TODO someday, translate onto other spaces besides uniform 0..1?
 
   def setStandardQuad(self,order):
-    self.quadOpt,self.polyOpt,self.distOpt,self.normOpt=self.setUniSample(order)
-    self.sampleOpt=self.sampleUni
+    self.sampleOpt,self.quadOpt,self.polyOpt,self.distOpt,self.normOpt=self.setZtoSample(order)
+    #For standard distros, overwrite this member in class
 
   def sample(self,val=None):
     if val==None:
       return self.dist.rvs()
     return self.dist.pdf(val)
 
-  def samplePtOpt(self,val=None):
+  def sampleOpt(self,val=None):
     if val==None:
       return self.distOpt.rvs()
     return self.distOpt.pdf(val)
@@ -128,12 +80,12 @@ class uniVar(var):
       dummy=self.unc[1]
       self.unc[1]=self.unc[0]
       self.unc[0]=dummy
-    self.low=self.unc[0]
-    self.hi=self.unc[1]
+    self.low=float(self.unc[0])
+    self.hi=float(self.unc[1])
 
   def setDistr(self):
     self.average=0.5*(self.low+self.hi)
-    self.quad=q.quadLegendre(self.N)
+    #self.quad=q.quadLegendre(self.N)
     self.range=(self.average-self.low)
     self.dist=spst.uniform(self.low,2.*self.range)
     self.domain=[self.low,self.hi]
@@ -153,11 +105,14 @@ class uniVar(var):
 #FIXME do I really still need this?
   def revertPt(self,x):
     '''returns from [-1,1] to [a,b]'''
-    return (x-self.average)/self.range
+    #return (x-self.average)/(self.range)# [-1,1]
+    return 0.5*(x-self.low)/self.range
+    # this is analytic - numeric way to invert?
 
   def wtOpt(self,o):
     '''samples equivalent weight for [-1,1]'''
-    return self.quadOpt.weights[o]/self.range
+    return self.quadOpt.weights[o]/(2.*self.range)
+    # -> self.range is analytic - way to get otherwise?
 #
 #  def samplePoly(self,n,x,norm=True):
 #    '''samples Legendre polynomial of order n at x, default normalized.'''
@@ -165,7 +120,7 @@ class uniVar(var):
 #    else: return sps.eval_legendre(n,x)
 
   def sampleProbNorm(self,x):
-    return self.range*self.quadOpt.probNorm(x)
+    return self.quadOpt.probNorm(x)*self.range/0.5
 
 #============================================================================\
 class normVar(var):
