@@ -33,6 +33,10 @@ We make use of the probabilist here because of its conformity with the Gaussian 
 \begin{equation}
 \intf \He_m(x)\He_n(x) e^{-x^2/2}dx=\sqrt{2\pi} n! \delta_{nm}.
 \end{equation}
+The weighting function is given by
+\begin{equation}
+W_{\He}(x)=e^{-x^2/2}.
+\end{equation}
 Hermite quadrature integrates exactly functions of the kind
 \begin{equation}
 \intf f(x)e^{-x^2/2}dx=\sum_{\ell=0}^L w_\ell f(x_\ell).
@@ -66,8 +70,12 @@ L^{(\alpha)}_n(x)&=\frac{x^{-\alpha}e^x}{n!}\frac{d^n}{dx^n}\left(e^{-x}x^{n+\al
   &=\frac{(\alpha+1)_n}{n!} {}_1F_1(-n;\alpha+1;x),
 \end{align}
 \begin{equation}
-\int_0^\infty e^x x^\alpha L^{(\alpha)}_m(x) L^{(\alpha)}_n(x)dx=\frac{\Gamma(n+\alpha+1)}{n!}\delta_{mn},
+\int_0^\infty e^{-x} x^\alpha L^{(\alpha)}_m(x) L^{(\alpha)}_n(x)dx=\frac{\Gamma(n+\alpha+1)}{n!}\delta_{mn},
      \hspace{10pt}\alpha>-1.
+\end{equation}
+The weighting function is given by
+\begin{equation}
+W_{L^{(\alpha)}}(x)=e^{-x}x^\alpha.
 \end{equation}
 General Laguerre quadrature exactly integrates functions of the kind
 \begin{equation}
@@ -100,6 +108,10 @@ It should be noted that shifting $P_n(x),x\in[-1,1]$ to $P_n(z),z\in[a,b]$ is pe
 \begin{equation}
 P_n(z)=\frac{b-a}{2}P_n\left(\frac{b-a}{2}x+\frac{a+b}{2}\right),\hspace{10pt}x\in[-1,1],z\in[a,b].
 \end{equation}
+The weighting function is given by
+\begin{equation}
+W_{P}(x)=1.
+\end{equation}
 Legendre quadrature exactly integrates functions of the kind
 \begin{equation}
 \into f(x)dx=\sum_{\ell=0}^L w_\ell f(x_\ell).
@@ -129,6 +141,10 @@ P_n^{(\alpha,\beta)}(x)&=\frac{(-1)^n}{2^nn!}(1-x)^{-\alpha}(1+x)^{-\beta}\frac{
 \into(1-x)^\alpha(1+x)^\beta P_m^{(\alpha,\beta)}(x)P_n^{(\alpha,\beta)}(x)dx=
     \frac{2^{\alpha+\beta+1}}{2n+\alpha+\beta+1}
     \frac{\Gamma(n+\alpha+1)\Gamma(n+\beta+1)}{\Gamma(n+\alpha+\beta+1)n!}\delta_{mn}.
+\end{equation}
+The weighting function is given by
+\begin{equation}
+W_{P^{(\alpha,\beta)}}(x)=(1-x)^\alpha (1+x)^\beta.
 \end{equation}
 Jacobi quadrature exactly integrates functions of the kind
 \begin{equation}
