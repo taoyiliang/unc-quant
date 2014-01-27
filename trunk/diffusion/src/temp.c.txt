@@ -1,0 +1,104 @@
+    if( icell == 0 )
+    {
+      double dx_r = _mesh.x_face[icell+2]-_mesh.x_face[icell+1];
+      int reg_r = _mesh.reg_id[icell+1];
+      double dfn_r = (_matprop.dfn[reg_r]*dx_r + _matprop.dfn[ireg]*dx)/(dx_r+dx);
+      dx_r = (dx_r + dx)*0.5;
+
+      double dx_l = dx;
+      int reg_l = _mesh.reg_id[icell];
+      double dfn_l = _matprop.dfn[ireg];
+
+      double dfn_term   =  dfn_r/dx_r/dx;
+      double dfn_term_r = -dfn_r/dx_r/dx;
+
+
+      if( _left_bc == VACUUM)
+      {
+         dfn_term   += dfn_l*(1+(0.25-dfn_l/dx)/(0.25+dfn_l/dx))/dx_l/dx;;
+      }
+
+      bool fail_flag = _M->SumIntoGlobalValues(icell,1,&dfn_term, &icell);
+      if( fail_flag )
+        fail_flag = _M->InsertGlobalValues(icell,1,&dfn_term, &icell);
+
+      int icell_r = icell+1;
+      fail_flag = _M->SumIntoGlobalValues(icell,1,&dfn_term_r, &icell_r);
+      if( fail_flag)
+        fail_flag = _M->InsertGlobalValues(icell,1,&dfn_term_r, &icell_r);
+    }
+    else if (icell == _mesh.ncells-1)
+    {
+      int reg_l    = _mesh.reg_id[icell-1];
+      double dx_l  = _mesh.x_face[icell]-_mesh.x_face[icell-1];
+      double dfn_l = (_matprop.dfn[reg_l]*dx_l + _matprop.dfn[ireg]*dx)/(dx_l+dx);
+      dx_l = (dx_l + dx)*0.5;
+
+      double dx_r = dx;
+      int reg_r = _mesh.reg_id[icell];
+      double dfn_r = _matprop.dfn[ireg];
+
+      double dfn_term   =  dfn_l/dx_l/dx;
+      double dfn_term_l = -dfn_l/dx_l/dx;
+
+
+      if( _right_bc == VACUUM )
+      {
+        dfn_term += dfn_r*(1+(0.25-dfn_r/dx)/(0.25+dfn_r/dx))/dx_r/dx;
+      }
+
+      bool fail_flag = _M->SumIntoGlobalValues(icell,1,&dfn_term, &icell);
+      if( fail_flag )
+        fail_flag = _M->InsertGlobalValues(icell,1,&dfn_term, &icell);
+
+      int icell_l = icell-1;
+      fail_flag = _M->SumIntoGlobalValues(icell,1,&dfn_term_l, &icell_l);
+      if( fail_flag)
+        fail_flag = _M->InsertGlobalValues(icell,1,&dfn_term_l, &icell_l);
+
+    }
+    else
+    {
+      int reg_l = _mesh.reg_id[icell-1];
+      double dx_l  = _mesh.x_face[icell]-_mesh.x_face[icell-1];
+      double dfn_l = (_matprop.dfn[reg_l]*dx_l + _matprop.dfn[ireg]*dx)/(dx_l+dx);
+      dx_l = (dx_l + dx)*0.5;
+
+      int reg_r = _mesh.reg_id[icell+1];
+      double dx_r = _mesh.x_face[icell+2]-_mesh.x_face[icell+1];
+      double dfn_r = (_matprop.dfn[reg_r]*dx_r + _matprop.dfn[ireg]*dx)/(dx_r+dx);
+      dx_r = (dx_r + dx)*0.5;
+
+      double dfn_term   = (dfn_r/dx_r + dfn_l/dx_l)/dx;
+      double dfn_term_l = -(dfn_l/dx_l)/dx;
+      double dfn_term_r = -(dfn_r/dx_r)/dx;
+
+
+      bool fail_flag = _M->SumIntoGlobalValues(icell,1,&dfn_term, &icell);
+      if( fail_flag)
+        fail_flag = _M->InsertGlobalValues(icell,1,&dfn_term, &icell);
+
+      int icell_r = icell +1;
+      fail_flag = _M->SumIntoGlobalValues(icell,1,&dfn_term_r, &icell_r);
+      if( fail_flag)
+        fail_flag = _M->InsertGlobalValues(icell,1,&dfn_term_r, &icell_r);
+
+      int icell_l = icell-1;
+      fail_flag = _M->SumIntoGlobalValues(icell,1,&dfn_term_l, &icell_l);
+      if( fail_flag)
+        fail_flag = _M->InsertGlobalValues(icell,1,&dfn_term_l, &icell_l);
+
+    }
+
+    double fission_term = 0.0;
+    double absorption_term = _matprop.axs[ireg];
+    double sum_term = -fission_term + absorption_term;
+
+    bool fail_flag = _M->SumIntoGlobalValues(icell,1,&sum_term, &icell);
+
+  }//icell
+  _M->FillComplete();
+
+  return;
+}
+

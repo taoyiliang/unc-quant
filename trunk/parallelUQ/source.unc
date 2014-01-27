@@ -1,0 +1,55 @@
+[Problem]
+  templateFile = 'source.inp'
+  storeFlux    = 0
+  execDir      = '../source/'
+  inputDir     = '../source/'
+  input_editor = 'IE_Source'
+  numprocs     = 4
+[]
+
+[Sampler]
+  active = 'MC'
+  [./SC]
+  [../]
+  [./MC]
+    totalSamples = 1e6
+    solnRange = '0 20'
+    truncate = 3
+  [../]
+[]
+
+[Backend]
+ # active = 'ROM'
+  active = 'PDF'
+  outFile = test.out
+  [./ROM]
+    MCsample = 1
+    samples = 1e6
+    bins = 100
+    checkSolution = 0
+    createPDF = 1
+    stats = 1
+  [../]
+
+  [./PDF]
+    bins = 100
+    low = 0.7
+    hi = 2.0
+  [../]
+[]
+
+[Variables]
+ # names = 'xa D loc S'
+  names = 'xa'
+  [./xa]
+    path = 'Problem/xa'
+    dist = 'normal'
+    args = '0.75 .15'
+  #  dist = 'uniform'
+  #  args = '0.75 0.25'
+    order = 16
+    okRange = '0 inf'
+  [../]
+[]
+
+

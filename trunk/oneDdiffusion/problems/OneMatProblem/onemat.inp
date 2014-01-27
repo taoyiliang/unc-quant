@@ -1,0 +1,36 @@
+[Mesh]
+  nregs = 1
+  dx    = '1.0  '
+  ncells_per_reg = '100 '
+[]
+
+[Material]
+  txs = ' 0.444 '
+  sxs = ' 0.344 '
+  fxs = ' 0.10'
+  nu  = ' 1.0 '
+[]
+
+[BCs]
+  left = 1
+  right = 1
+#  left = REFLECTIVE
+#  right = REFLECTIVE
+[]
+
+[Execution]
+  execution_type = eigenvalue_PI
+
+  keff_tol = 1e-7
+  max_power_its = 10000
+  max_nca_its = 1000
+  max_nda_its = 10
+  nprecons = 5
+
+  max_s_its = 1
+[]
+
+[Output]
+
+  file = flux.out
+[]

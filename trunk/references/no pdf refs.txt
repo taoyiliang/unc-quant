@@ -1,0 +1,3 @@
+A semi-intrusive deterministic approach to uncertainty quantification in non-linear fluid flow problems
+R. Abgrall, P. M. Congedo
+http://www.sciencedirect.com/science/article/pii/S0021999112004263#

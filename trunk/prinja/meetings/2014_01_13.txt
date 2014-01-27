@@ -1,0 +1,20 @@
+
+
+ - Analytic second moments
+let f(X) = a+bx
+ <f(x)^2>=<(a+bx)^2> = <a^2 + 2abx + b^2x^2>
+
+
+ - SCPCE second moment
+<f(x)^2> = < (sum x_n B_n)^2 >
+         = < sum_n x_n B_n sum_m x_m B_m >
+         = < sum_m sum_n x_m x_n B_n B_m >
+         = sum_n (x_n)^2
+
+
+
+TODO
+ - Simple case: f(siga)=S/siga (1-exp(-s/L)), L^2 = D/siga
+   - do mean, variance, pdf by MC, SCPCE
+
+ - 1D case: all 1 material, reflect boundaries, get k->1, do siga(xi)

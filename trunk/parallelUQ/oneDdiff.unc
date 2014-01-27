@@ -1,0 +1,87 @@
+[Problem]
+  templateFile   = 'diffusion.inp'
+  storeFlux      = 0
+  execDir        = '../oneDdiffusion/'
+  inputDir       = '../oneDdiffusion/'
+  input_editor   = 'IE_Diffusion'
+  numprocs       = 4
+  mesh_factor    = 2
+[]
+
+[Sampler]
+  active = 'SC'
+  [./MC]
+    totalSamples = 1e6
+  [../]
+  [./SC]
+  [../]
+[]
+
+[Backend]
+  active = 'ROM'
+ # active = 'PDF'
+  outFile = test.out
+  [./ROM]
+    samples = 1e6 
+    checkSolution = 0
+    createPDF = 1
+    bins = 100
+    stats = 1
+  [../]
+  [./PDF]
+    bins = 100
+    low = 0.7
+    hi = 1.2
+  [../]
+[]
+
+[Variables]
+  # format: material-property-group
+  # Only the sections listed in "names" will be sampled.
+  # names='1D1 1D2 1xa1 1xa2 1xf1 1xf2 1xt1
+  #       2D1 2D2 2xa1 2xa2 2xf1 2xf2 2xt1
+  #       3D1 3D2 3xa1 3xa2 2xt1'
+  #names = '1xa1 1xa2'
+  names = '1xa2'
+
+  #MATERIAL 1
+  [./1D1]
+    path = 'Material/1/g1/D'
+    dist = uniform
+    args = '1.255' #median, range def 10%
+  [../]
+  [./1D2]
+    path = 'Material/1/g2/D'
+    dist = uniform
+    args = '0.211' #median, range def 10%
+  [../]
+  [./1xa1]
+    path = 'Material/1/g1/siga'
+    dist = uniform
+    args = '0.008252' #median, range def 10%
+    order = 6
+  [../]
+  [./1xa2]
+    path = 'Material/1/g2/siga'
+    dist = normal
+    args = '0.09434 0.01' #critical
+   # args = '0.106695 0.01' #subcrit 0.9
+   # args = '0.08455 0.01' #supercrit 1.1
+    order = 2
+  [../]
+  [./1xf1]
+    path = 'Material/1/g1/nsigf'
+    dist = uniform
+    args = '0.04602' #median, range def 10%
+  [../]
+  [./1xf2]
+    path = 'Material/1/g2/nsigf'
+    dist = uniform
+    args = '0.1091' #median, range def 10%
+  [../]
+  [./1xt1]
+    path = 'Material/1/g2/D'
+    dist = uniform
+    args = '0.02533' #median, range def 10%
+  [../]
+[]

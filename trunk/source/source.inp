@@ -1,0 +1,10 @@
+[Problem]
+  xa  = 0.1
+  D   = 0.5
+  loc = 2.0
+  S   = 1.0
+[]
+
+[Output]
+  file = 'run.out'
+[]

@@ -1,0 +1,20 @@
+
+Notes:
+
+SC mean = sum(f_i <P_i>)
+SC 2nd mom = sum(f_i^2)
+   --> var = <k^2> - <k>^2
+
+MC mean = sum(k_i)/N
+MC 2nd mom = 1/(N(N-1)) sum(k^2) ?maybe?
+
+
+TODOs:
+Algorithm
+  - Add MC sampling directly from uncertainty
+  - For MC, SC add capability to calc pdf, mean, stddev
+  - Reject MC,SC samples of impossible values (sigma_a < 0)
+
+Document
+ - Add problem description to Neutron Criticality section
+ - Specify polynomial expansion in terms of k(\siga)
