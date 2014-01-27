@@ -4,7 +4,7 @@ import sys
 class InputEditor:
   def __init__(self,runpath):
     '''constructor'''
-    self.runpath = runpath
+    pass
 
   def storeOutput(self,outFile):
     '''
@@ -67,7 +67,6 @@ class InputEditor:
 
 class IE_Simple(InputEditor):
   def __init__(self,runpath=''):
-   # super(IE_Simple,self).__init__(runpath)
     self.type = 'InputOutput simple'
     self.inp=0
     self.out=0
@@ -100,30 +99,38 @@ class IE_Simple(InputEditor):
 
 class IE_Source(InputEditor):
   def __init__(self,runpath=''):
-    super(IE_Source,self).__init__(runpath)
     self.type = 'InputOutput soure'
+    self.inp=0
+    self.out=0
+
+  def writeInput(self,templateName,inputDir,varList,valList,otherChange,ident):
+    self.inp = valList[0]
+    return 'dud'
 
   def storeOutput(self,outFile):
-    readFile=file(outFile,'r')
-    for line in readFile:
-      if line.split(',')[0]=='res':
-        val=float(line.split(',')[1].strip())
-        #print 'grabbed',val
-        readFile.close()
-        os.system('rm '+outFile+'\n')
-        return val
+    return self.out
+    #readFile=file(outFile,'r')
+    #for line in readFile:
+    #  if line.split(',')[0]=='res':
+    #    val=float(line.split(',')[1].strip())
+    #    #print 'grabbed',val
+    #    readFile.close()
+    #    os.system('rm '+outFile+'\n')
+    #    return val
 
   def runSolve(self,input_file):
     #print os.getcwd(),input_file
-    osstat = os.system('python source.py -i '+input_file+' > /dev/null')
-    if osstat != 0:
-      print 'Run attempt failed with error code',osstat
-      sys.exit()
-    os.system('rm '+input_file)
+    sys.path.insert(0,os.getcwd())
+    from source import g
+    self.out=g(self.inp)
+    #osstat = os.system('python source.py -i '+input_file+' > /dev/null')
+    #if osstat != 0:
+    #  print 'Run attempt failed with error code',osstat
+    #  sys.exit()
+    #os.system('rm '+input_file)
 
 class IE_Diffusion(InputEditor):
   def __init__(self,runpath=''):
-    super(IE_Diffusion,self).__init__(runpath)
     self.type = 'InputOutput diffusion'
 
   def storeOutput(self,outFile):

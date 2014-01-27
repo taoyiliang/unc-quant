@@ -8,8 +8,8 @@ def g(xa,D=0.5,loc=2.0,S=1.0):
   #D = 0.5 #diffusion coefficient
   #loc = 2.0 #depth in cm
   cof = S/xa
-  print '...in source.py...'
-  print 'D,xa:',D,xa
+  #print '...in source.py...'
+  #print 'D,xa:',D,xa
   L = np.sqrt(D/xa)
   flux = cof*(1.0-np.exp(-loc/L))
   return flux
