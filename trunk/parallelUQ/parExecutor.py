@@ -72,7 +72,7 @@ class Executor(object): #base class
     self.execDir    = self.input_file('Problem/execDir'  ,'')
     self.inputDir   = self.input_file('Problem/inputDir' ,'')
     self.input_editor = self.input_file('Problem/input_editor','')
-    torun = 'self.ie = InputEditor.'+self.input_editor+'()'
+    torun = 'self.ie = InputEditor.'+self.input_editor+'(\''+self.execDir+'\')'
     exec torun
 
   def setDirs(self):
