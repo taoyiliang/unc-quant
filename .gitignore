@@ -51,3 +51,9 @@ nosetests.xml
 *.txt
 .depend
 
+#vi
+*~
+*.swp
+
+#python
+*.pyc

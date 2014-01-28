@@ -22,7 +22,6 @@ else: raise IOError('Requires an input file using -i.')
 x = input_file('Problem/x',1.0)
 y = input_file('Problem/y',1.0)
 outFileName = input_file('Output/file','test.out')
-print 'outFileName:',outFileName
 
 result = g(x)
 #result = f(x,y)

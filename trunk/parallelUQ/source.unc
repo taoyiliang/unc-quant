@@ -13,8 +13,8 @@
   [../]
   [./MC]
     totalSamples = 1e6
-    solnRange = '0 20'
-    truncate = 4
+    solnRange = '0 4'
+    truncate = 3
   [../]
 []
 
@@ -29,6 +29,7 @@
     checkSolution = 0
     createPDF = 1
     stats = 1
+    truncate = 3
   [../]
 
   [./PDF]
@@ -47,8 +48,8 @@
     args = '0.75 .15'
   #  dist = 'uniform'
   #  args = '0.75 0.25'
-    order = 16
-    okRange = '0 inf'
+    order = 4
+    okRange = '0 10'
   [../]
 []
 

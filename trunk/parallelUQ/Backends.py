@@ -116,7 +116,7 @@ class Stats(Backend):
     for c in range(len(self.ctrs)):
       self.ctrs[c]=0.5*(self.bounds[c]+self.bounds[c+1])
 
-  def addToBins(self,vals):
+  def addToBins(self,vals,toprint=False):
     for val in vals:
       self.tot1+=val
       self.tot2+=val*val
@@ -130,7 +130,8 @@ class Stats(Backend):
       else:
         i=bisect_left(self.bounds,val)
         self.bins[i-1]+=1
-    print 'Finished run',self.N
+    #if toprint:
+    #  print 'Finished run',self.N
     #print 'at',datetime.datetime.fromtimestamp(time.time())
 
   def savedict(self):
@@ -178,6 +179,8 @@ class Stats(Backend):
     for i,ctr in enumerate(self.ctrs):
       msg=','.join([str(ctr),str(self.bins[i])])
       outFile.writelines(','.join([str(ctr),str(self.bins[i]),])+'\n')
+    outFile.close()
+    print 'Data was saved to',self.outFileName
 
     print '==================================================================='
     print 'Statistics:'
@@ -360,7 +363,7 @@ class ROM(Backend):
       solns[i]=self.sampleROM(vals,histories)
     return solns
 
-  def MCsampleChild(self,num,histories,trials=1000):
+  def MCsampleChild(self,num,histories,trials=1000,trunc=0):
     #print 'MCchild,',trials,'trials'
     np.random.seed()
     trials = int(trials)
@@ -368,12 +371,13 @@ class ROM(Backend):
     for i in range(trials):
       vals=[]
       for var in histories['vars']:
-        vals.append(var.sample())
+        vals.append(var.sample(trunc))
+        #print 'sample',vals[-1]
       solns.append(self.sampleROM(vals,histories))
     self.outq.put(solns)
     #print 'Child',num,'entered',trials,'solns in queue'
 
-  def MCsampleParallel(self,histories,trials=1000):
+  def MCsampleParallel(self,histories,trials=1000,trunc=0):
     self.numprocs = multiprocessing.cpu_count()
     print '  ...using',self.numprocs,'processors...'
     trials = int(trials)
@@ -382,7 +386,6 @@ class ROM(Backend):
     trialsPerProc = int(float(trials)/float(self.numprocs))
     if trialsPerProc >1000:
       trialsPerProc=1000
-
     trialsLeft = trials
     self.ps=[]
     solns=[]
@@ -427,7 +430,7 @@ class ROM(Backend):
           numPs+=1
           self.ps.append(multiprocessing.Process(\
                             target=self.MCsampleChild,\
-                            args=(numPs,histories,newtrials))\
+                            args=(numPs,histories,newtrials,trunc))\
                         )
           self.ps[-1].start()
       #to be finished, 
@@ -456,10 +459,10 @@ class ROM(Backend):
       print 'Only recovered',len(solns),'solutions out of',trials
     return solns
 
-  def makePDF(self,histories,bins,samples=1e6,solns=None):
+  def makePDF(self,histories,bins,samples=1e6,solns=None,trunc=0):
     #TODO better if they don't get stored in memory!
     if solns==None:
-      solns=self.MCsampleParallel(histories,int(samples))
+      solns=self.MCsampleParallel(histories,int(samples),trunc)
     low = min(solns)
     hi = max(solns)
     bounds = np.linspace(low,hi,bins+1)

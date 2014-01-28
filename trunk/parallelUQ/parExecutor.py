@@ -189,6 +189,7 @@ class Executor(object): #base class
     Input: none
     Output: none
     '''
+    trunc = self.input_file('Backend/ROM/truncate',0)
     for btype in self.backends.keys():
       backend = self.backends[btype]
       if btype in ['PDF']:
@@ -227,7 +228,10 @@ class Executor(object): #base class
         if makePDF:
           print '\nConstructing discrete pdf...'
           if MCROMs == None:
-            bins,ctrs=backend.makePDF(self.histories,numbins,samples)
+            bins,ctrs=backend.makePDF(self.histories,
+                                      numbins,
+                                      samples,
+                                      trunc=trunc)
           else:
             bins,ctrs=backend.makePDF(self.histories,
                                       numbins,
@@ -238,6 +242,7 @@ class Executor(object): #base class
           plt.xlabel('Solutions')
           plt.ylabel('Probability')
           #plt.axis([0.9,1.2,0,0.05])
+          print 'dumping to',os.getcwd(),'4.pk'
           pk.dump([ctrs,bins],open('4.pk','wb'))
 
         #write stats out to file
@@ -391,7 +396,7 @@ class MCExec(Executor):
         #need to preset these so they can be filled with nRun?
         self.histories['varPaths'].append(var.path)
         self.histories['varVals']=[]
-      print '  ...uncertain variables:',self.histories['varNames']
+      print '  ...uncertain variables:',self.histories['varNames'],'...'
       #tempOutFile = file('solns.out','w')
     else: #start from restart
       print '\nStarting from restart...'
@@ -407,6 +412,11 @@ class MCExec(Executor):
     runDict={}
     starttime=time.time()
     rcvProc=0
+    lastPrint=0
+    doAPrint = False
+    printFreq = self.input_file('Sampler/MC/printfreq',1000)
+    print '  ...print frequency is',printFreq,'...'
+    print '\nFinished Run | Time Elapsed | Est. Remaining'
     while not self.done:
       #remove dead processses
       for p,proc in enumerate(ps):
@@ -416,17 +426,29 @@ class MCExec(Executor):
           rcvProc+=1
           while not self.outq.empty():
             slns = list(self.outq.get())
-            self.backends['PDF'].addToBins(slns)
+            lastPrint+=len(slns)
+            if lastPrint >= printFreq:
+              self.backends['PDF'].addToBins(slns,True)
+              doAPrint=True
+              lastPrint=0
+            else:
+              self.backends['PDF'].addToBins(slns)
           self.savestate(self.backends['PDF'].savedict())
           if rcvProc==self.numprocs:
             rcvProc=0
-            #print progress
-            finished = trials-trialsLeft
-            elapTime = time.time()-starttime
-            dpdt = float(finished)/float(elapTime)
-            toGo = dt.timedelta(seconds=(int(trialsLeft/dpdt)))
-            print '    Elapsed time (h:m:s):',dt.timedelta(seconds=int(elapTime))
-            print '    Estimated remaining :',toGo
+            if doAPrint:
+              doAPrint = False
+              lastPrint=0
+              #print progress
+              finished = trials-trialsLeft
+              elapTime = time.time()-starttime
+              dpdt = float(finished)/float(elapTime)
+              toGo = dt.timedelta(seconds=(int(trialsLeft/dpdt)))
+              elapTime = dt.timedelta(seconds=int(elapTime))
+              print '%12i |    '%finished +str(elapTime)+'   | ' +str(toGo)+'\r',
+              #print '    Elapsed time (h:m:s):',\
+                    #dt.timedelta(seconds=int(elapTime))
+              #print '    Estimated remaining :',toGo
       if trialsLeft > 0:
         while len(ps)<self.numprocs and not self.done:
           if trialsLeft > trialsPerProc: newtrials = trialsPerProc
@@ -443,6 +465,7 @@ class MCExec(Executor):
           ps[-1].start()
           trackThousand+=1
       self.done = self.outq.empty() and len(ps)==0
+    print '\n'
 
   def runSample(self,prefix,batch,runDict):
     np.random.seed()

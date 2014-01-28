@@ -238,9 +238,10 @@ class Normal(Variable):
 
   def sample(self,nDev=0):
     #be a jerk and force it to be within x stddev
-    x = 2.0 #hand-fixed
+#TODO fix this! It's not reading from input file
+    x = nDev #hand-fixed
     val = self.dist.rvs()
-    if nDev > 0:
-      if not (val>self.mean-x*self.stdev and val<self.mean+x*self.stdev):
+    if x > 0:
+      if not (self.mean-x*self.stdev < val < self.mean+x*self.stdev):
         val = self.sample()
     return val
