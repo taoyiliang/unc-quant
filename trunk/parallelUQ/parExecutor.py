@@ -1,4 +1,5 @@
 import numpy as np
+from math import ceil
 import scipy.stats as stt
 import time
 import datetime as dt
@@ -402,7 +403,12 @@ class MCExec(Executor):
       print '\nStarting from restart...'
       print '  Starting after run',self.total_runs
     print '  ...using',self.numprocs,'processors...'
+
+    printFreq = self.input_file('Sampler/MC/printfreq',1000)
+    print '  ...print frequency is',printFreq,'...'
+
     trialsPerProc = int(trials/float(self.numprocs))
+    trialsPerProc = min(trialsPerProc,int(ceil(printFreq/4)))
     if trialsPerProc > 1000:
       trialsPerProc = 1000
     mesh_size = self.input_file('Problem/mesh_factor',1)
@@ -414,8 +420,6 @@ class MCExec(Executor):
     rcvProc=0
     lastPrint=0
     doAPrint = False
-    printFreq = self.input_file('Sampler/MC/printfreq',1000)
-    print '  ...print frequency is',printFreq,'...'
     print '\nFinished Run | Time Elapsed | Est. Remaining'
     while not self.done:
       #remove dead processses
@@ -486,7 +490,7 @@ class MCExec(Executor):
       if self.solnRange[0] < soln < self.solnRange[1]:
         solns.append(soln)
       else:
-        print 'BAD SOLUTION! tossed',soln
+        print 'WARNING! Solution outside of range.  Tossed',soln,'\n'
     self.outq.put(solns)
 
 

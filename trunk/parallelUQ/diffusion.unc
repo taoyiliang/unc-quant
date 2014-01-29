@@ -9,24 +9,23 @@
 []
 
 [Sampler]
-  active = 'SC'
+  active = 'MC'
   [./MC]
-    convergeAvg = 1e-5
-    convergeVar = 1e-3
-    batch = 100
-    #printfreq = 0.05
+    totalSamples = 1e6
+    printfreq = 10
+    solnRange = '0.7 1.5' #normal
+    truncate = 3
   [../]
   [./SC]
   [../]
 []
 
 [Backend]
-  #active = 'CSV plot2D'
-  active = 'ROM'
-  #active = 'PDF'
+ # active = 'ROM'
+  active = 'PDF'
   outFile = test.out
   [./ROM]
-    samples = 1e5 
+    samples = 1e6 
     checkSolution = 0
     createPDF = 1
     bins = 100
@@ -34,8 +33,8 @@
   [../]
   [./PDF]
     bins = 100
-    low = 0.95
-    hi = 1.05
+    low = 0.7
+    hi = 1.5
   [../]
 []
 
