@@ -15,7 +15,7 @@
 \newcommand{\intO}{\ensuremath{\int_{4\pi}}}
 \newcommand{\order}[1]{\ensuremath{\mathcal{O}(#1)}}
 \newcommand{\He}{\ensuremath{\mbox{He}}}
-\newcommand{\expv}[1]{\ensuremath{\langle #1 \rangle}}
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
 
 \title{Tests for UQ Framework}
 \author{Paul Talbot}
@@ -24,7 +24,7 @@
 \begin{document}
 \maketitle
 \section{Introduction}
-This work outlines the development of an uncertainty quantification (UQ) framework using generalized polynomial choas expansions and stochastic collocation (PCESC), verified using Monte Carlo (MC) sampling.  To verify the several stages of development this framework undergoes in development, we present here several test codes of increasing complexity that the UQ framework will act on.  The four test codes solve four problems: a polynomial expression; 1D semi-infinite medium with uniform source and single material; 1D $k$-eigenvalue neutron diffusion transport with two energy groups and a single material; and a 2D, two energy group $k$-eigenvalue neutron diffusion transport quarter-core benchmark.
+This work outlines the development of an uncertainty quantification (UQ) framework using generalized polynomial chaos expansions and stochastic collocation (PCESC), verified using Monte Carlo (MC) sampling.  To verify the several stages of development this framework undergoes in development, we present here several test codes of increasing complexity that the UQ framework will act on.  The four test codes solve four problems: a polynomial expression; 1D semi-infinite medium with uniform source and single material; 1D $k$-eigenvalue neutron diffusion transport with two energy groups and a single material; and a 2D, two energy group $k$-eigenvalue neutron diffusion transport quarter-core benchmark.
 
 \subsection{Algorithm}
 Each problem-solving code is treated as a black box that reads in an input file and produces a result readable from an output file.  We briefly outline the PCESC process here.  The problem-solving code can be represented as a function $U$ of certain input parameters $p$ and uncertain parameters $\theta(\omega)$, where $\theta$ could be a single parameter or a vector of uncertain parameters and $\omega$ is a single realization in the uncertainty space of $\theta$.  We expand $U(p,\theta)$ in basis polynomials characteristic of the uncertain parameters:
