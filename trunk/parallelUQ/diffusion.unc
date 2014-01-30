@@ -5,7 +5,7 @@
   inputDir       = '../diffusion/'
   input_editor   = 'IE_Diffusion'
   numprocs       = 5
-  mesh_factor    = 2
+  mesh_factor    = 3
 []
 
 [Sampler]
@@ -33,8 +33,8 @@
   [../]
   [./PDF]
     bins = 100
-    low = 0.7
-    hi = 1.5
+    low = 0.9
+    hi = 1.3
   [../]
 []
 
@@ -68,7 +68,7 @@
     path = 'Material/1/g2/siga'
     dist = normal
     args = '0.1003 0.01' #median, range def 10%
-    order = 8
+    order = 32
   [../]
   [./1xf1]
     path = 'Material/1/g1/nsigf'
