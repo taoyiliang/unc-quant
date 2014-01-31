@@ -99,9 +99,10 @@ int main(int argc, char *argv[])
   std::string matName;
   int matLabel;
   std::string prefix;
-  std::vector<double> D,siga,nsigf,sigtr,chi;
+  std::vector<double> D,siga,sigc,nsigf,sigtr,chi;
   D.resize(2);
   siga.resize(2);
+  sigc.resize(2);
   nsigf.resize(2);
   sigtr.resize(2);
   chi.resize(2);
@@ -120,10 +121,11 @@ int main(int argc, char *argv[])
       //cout<<"prefix: "<<prefix<<endl;
       input_file.set_prefix(prefix);
       D[g]     = input_file("D"    ,1.0);
-      siga[g]  = input_file("siga" ,1.0);
       nsigf[g] = input_file("nsigf",1.0);
+      sigc[g]  = input_file("sigc" ,1.0);
       sigtr[g] = input_file("sigtr",1.0);
       chi[g]   = input_file("chi"  ,1.0);
+      siga[g]  = nsigf[g]/2.43+sigc[g];
     }
     mesh.add_material(matLabel,matName,D,siga,nsigf,sigtr,chi);
     //cout<<"  D     "<<mesh.materials[matLabel].D[0]<<" "<<D[1]<<endl;

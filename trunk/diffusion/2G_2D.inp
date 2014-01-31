@@ -27,16 +27,18 @@
     groups = 'g1 g2'
     [./g1]
       D     = 1.255
-      siga  = 0.008252
+     # siga  = 0.008252
       nsigf = 0.004602
+      sigc  = 0.006358
       sigtr = 0.02533
       chi   = 1.0
     [../]
     [./g2]
       D     = 0.211
-      siga  = 0.1003
-      #siga  = 0.10628 #tipping point is between 0.10627 and 0.10628
+     # siga  = 0.1003
+     # siga  = 0.10628 #tipping point is between 0.10627 and 0.10628
       nsigf = 0.1091
+      sigc  = 0.0554
       sigtr = 0.00
       chi   = 0.00
     [../]
@@ -46,15 +48,17 @@
     groups = 'g1 g2'
     [./g1]
       D     = 1.268
-      siga  = 0.007181
+     # siga  = 0.007181
       nsigf = 0.004609
+      sigc  = 0.005284
       sigtr = 0.02767
       chi   = 1.0
     [../]
     [./g2]
       D     = 0.1902
-      siga  = 0.07047
+     # siga  = 0.07047
       nsigf = 0.08675
+      sigc  = 0.03477
       sigtr = 0.00
       chi   = 0.00
     [../]
@@ -64,15 +68,17 @@
     groups = 'g1 g2'
     [./g1]
       D     = 1.259
-      siga  = 0.008002
+     # siga  = 0.008002
       nsigf = 0.004663
+      sigc  = 0.006083
       sigtr = 0.02617
       chi   = 1.0
     [../]
     [./g2]
       D     = 0.2091
-      siga  = 0.08344
+     # siga  = 0.08344
       nsigf = 0.1021
+      sigc  = 0.04142
       sigtr = 0.00
       chi   = 0.00
     [../]
@@ -82,15 +88,17 @@
     groups = 'g1 g2'
     [./g1]
       D     = 1.259
-      siga  = 0.008002
+     # siga  = 0.008002
       nsigf = 0.004663
+      sigc  = 0.006083
       sigtr = 0.02617
       chi   = 1.0
     [../]
     [./g2]
       D     = 0.2091
-      siga  = 0.073324
+     # siga  = 0.073324
       nsigf = 0.1021
+      sigc  = 0.03131
       sigtr = 0.00
       chi   = 0.00
     [../]
@@ -100,15 +108,17 @@
     groups = 'g1 g2'
     [./g1]
       D     = 1.257
-      siga  = 0.0006034
+     # siga  = 0.0006034
       nsigf = 0.00
+      sigc  = 0.0006034
       sigtr = 0.04754
       chi   = 1.0
     [../]
     [./g2]
       D     = 0.1592
-      siga  = 0.01911
+     # siga  = 0.01911
       nsigf = 0.00
+      sigc  = 0.01911
       sigtr = 0.00
       chi   = 0.00
     [../]
