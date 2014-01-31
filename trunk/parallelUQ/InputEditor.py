@@ -145,7 +145,7 @@ class IE_Diffusion(InputEditor):
         return val#float(line.split(',')[1].strip())
 
   def runSolve(self,input_file):
-    osstat = os.system('./TwoDProblem -i '+input_file+' > /dev/null')
+    osstat = os.system('./TwoDProblem -i '+input_file+' &> /dev/null')
     if osstat != 0:
       print 'Run attempt failed with error code',osstat
       sys.exit()
