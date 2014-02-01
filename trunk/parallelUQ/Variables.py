@@ -213,11 +213,16 @@ class Normal(Variable):
     print 'okRange:',self.okRange
     #get order from input file
     if inputfile != None:
-      self.expOrd=inputfile('Variables/'+self.name+'/order',2)
+      self.expOrd = inputfile('Variables/'+self.name+'/exporder',2)
+      self.quadOrd = inputfile('Variables/'+self.name+'/quadorder',-6)
+      if self.quadOrd==-6:
+        self.quadOrd=self.expOrd
     else:
       self.expOrd=expOrd
+      self.quadOrd = int(ceil((self.expOrd+1)/2.0))
+    print '...for var',self.name,'setting exp order',self.expOrd,
+    print 'with quad order',self.quadOrd,'...'
     #quad of order N can do polys of order 2N-1
-    self.quadOrd = int(ceil((self.expOrd+1)/2.0))
     #standard hermite quadrature
     pts,wts = quads.h_roots(self.quadOrd)
     self.pts,self.wts,self.quadOrds=super(Normal,self).checkPoints(pts,wts)

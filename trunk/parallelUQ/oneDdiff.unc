@@ -9,7 +9,7 @@
 []
 
 [Sampler]
-  active = 'MC'
+  active = 'SC'
   [./MC]
     totalSamples = 1e6
   [../]
@@ -18,8 +18,8 @@
 []
 
 [Backend]
- # active = 'ROM'
-  active = 'PDF'
+  active = 'ROM'
+ # active = 'PDF'
   outFile = test.out
   [./ROM]
     samples = 1e6 
@@ -55,15 +55,15 @@
     path = 'Material/1/g1/sigc'
     dist = uniform
     args = '0.006358' #median, range def 10%
-    order = 6
   [../]
   [./1xc2]
     path = 'Material/1/g2/sigc'
     dist = normal
-    args = '0.04438 0.01' #critical
-   # args = '0.055969 0.01' #subcrit 0.9
+   # args = '0.04438 0.01' #critical
+    args = '0.055969 0.01' #subcrit 0.9
    # args = '0.035181 0.01' #supercrit 1.1
-    order = 2
+    exporder = 16
+   # quadorder = 6
   [../]
   [./1xf1]
     path = 'Material/1/g1/nsigf'
