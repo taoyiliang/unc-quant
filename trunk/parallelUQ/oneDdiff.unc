@@ -9,7 +9,7 @@
 []
 
 [Sampler]
-  active = 'SC'
+  active = 'MC'
   [./MC]
     totalSamples = 1e6
   [../]
@@ -18,8 +18,8 @@
 []
 
 [Backend]
-  active = 'ROM'
- # active = 'PDF'
+ # active = 'ROM'
+  active = 'PDF'
   outFile = test.out
   [./ROM]
     samples = 1e6 
@@ -31,18 +31,14 @@
   [./PDF]
     bins = 100
     low = 0.7
-    hi = 1.2
+    hi = 1.65
   [../]
 []
 
 [Variables]
   # format: material-property-group
   # Only the sections listed in "names" will be sampled.
-  # names='1D1 1D2 1xa1 1xa2 1xf1 1xf2 1xt1
-  #       2D1 2D2 2xa1 2xa2 2xf1 2xf2 2xt1
-  #       3D1 3D2 3xa1 3xa2 2xt1'
-  #names = '1xa1 1xa2'
-  names = '1xa2'
+  names = '1xc2'
 
   #MATERIAL 1
   [./1D1]
@@ -55,24 +51,24 @@
     dist = uniform
     args = '0.211' #median, range def 10%
   [../]
-  [./1xa1]
-    path = 'Material/1/g1/siga'
+  [./1xc1]
+    path = 'Material/1/g1/sigc'
     dist = uniform
-    args = '0.008252' #median, range def 10%
+    args = '0.006358' #median, range def 10%
     order = 6
   [../]
-  [./1xa2]
-    path = 'Material/1/g2/siga'
+  [./1xc2]
+    path = 'Material/1/g2/sigc'
     dist = normal
-    args = '0.09434 0.01' #critical
-   # args = '0.106695 0.01' #subcrit 0.9
-   # args = '0.08455 0.01' #supercrit 1.1
+    args = '0.04438 0.01' #critical
+   # args = '0.055969 0.01' #subcrit 0.9
+   # args = '0.035181 0.01' #supercrit 1.1
     order = 2
   [../]
   [./1xf1]
     path = 'Material/1/g1/nsigf'
     dist = uniform
-    args = '0.04602' #median, range def 10%
+    args = '0.004602' #median, range def 10%
   [../]
   [./1xf2]
     path = 'Material/1/g2/nsigf'
