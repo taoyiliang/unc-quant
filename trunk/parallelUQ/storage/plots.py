@@ -4,7 +4,8 @@ import numpy as np
 
 #case = 'poly'
 #case = 'source'
-case = '1dsup'
+#case = '1dsup'
+case = '2d'
 
 douni = False
 
@@ -19,9 +20,9 @@ for line in file(case+'_MC_normal.csv','r'):
     continue
   ctrs.append(float(line.split(',')[0]))
   bins.append(float(line.split(',')[1]))
-plt.plot(ctrs,bins,'ko',label='MC')
+plt.plot(ctrs,bins,'k-',label='MC')
 
-for order in [2,4,8,16]:
+for order in [2,4,8,16,32]:
 #for order in [2]:#,4,8,16]:
   ct,bn=pk.load(file(case+'_SC'+str(order)+'_normal.pk','r'))
   plt.plot(ct,bn,label='SC'+str(order))
@@ -31,7 +32,7 @@ plt.title(case+' Problem, Normal Unc')
 plt.xlabel('Solution Value')
 plt.ylabel('Solution Frequency')
 #plt.axis([0.5,2.5,0,2.1]) #source
-plt.axis([0.7,1.7,0,3.5]) #1d
+plt.axis([0.9,1.1,0,30]) #1d
 #plt.axis([0.6,2,0,2]) #poly
 
 if douni:
