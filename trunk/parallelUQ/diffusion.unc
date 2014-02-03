@@ -5,7 +5,7 @@
   inputDir       = '../diffusion/'
   input_editor   = 'IE_Diffusion'
   numprocs       = 5
-  mesh_factor    = 3
+  mesh_factor    = 2
 []
 
 [Sampler]
@@ -13,7 +13,7 @@
   [./MC]
     totalSamples = 1e6
     printfreq = 10
-    solnRange = '0.7 1.5' #normal
+    solnRange = '0.7 1.2' #normal
     truncate = 3
   [../]
   [./SC]
@@ -25,7 +25,7 @@
   active = 'PDF'
   outFile = test.out
   [./ROM]
-    samples = 1e6 
+    samples = 1e4 
     checkSolution = 0
     createPDF = 1
     bins = 100
@@ -67,7 +67,9 @@
     path = 'Material/1/g2/sigc'
     dist = normal
     args = '0.05540 0.01' #median, range def 10%
-    order = 32
+    exporder = 32
+    quadorder = 64
+    okRange = '0 inf'
   [../]
   [./1xf1]
     path = 'Material/1/g1/nsigf'

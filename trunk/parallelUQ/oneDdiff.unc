@@ -30,8 +30,8 @@
   [../]
   [./PDF]
     bins = 100
-    low = 0.7
-    hi = 1.65
+    low = 0.75
+    hi = 1.7
   [../]
 []
 
@@ -60,9 +60,9 @@
     path = 'Material/1/g2/sigc'
     dist = normal
    # args = '0.04438 0.01' #critical
-    args = '0.055969 0.01' #subcrit 0.9
-   # args = '0.035181 0.01' #supercrit 1.1
-    exporder = 16
+   # args = '0.055969 0.01' #subcrit 0.9
+    args = '0.035181 0.01' #supercrit 1.1
+    exporder = 2
    # quadorder = 6
   [../]
   [./1xf1]

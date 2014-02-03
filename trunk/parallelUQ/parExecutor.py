@@ -384,7 +384,7 @@ class MCExec(Executor):
     trackThousand = 0
     trials = int(self.sampler.totalSamples)
     if not restart:
-      print '\nRunning samples in parallel...'
+      print '\nRunning %1.0e samples in parallel...' %trials
       self.total_runs = -1
       ps=[]
       self.numPs=0
@@ -420,7 +420,9 @@ class MCExec(Executor):
     rcvProc=0
     lastPrint=0
     doAPrint = False
-    print '\nFinished Run | Time Elapsed | Est. Remaining'
+    thrown=0
+    print '\nFinished Run | Time Elapsed | Est. Remaining',
+    print '| Number Discarded Solutions'
     while not self.done:
       #remove dead processses
       for p,proc in enumerate(ps):
@@ -429,7 +431,8 @@ class MCExec(Executor):
           del ps[p]
           rcvProc+=1
           while not self.outq.empty():
-            slns = list(self.outq.get())
+            slns,newthrown = list(self.outq.get())
+            thrown+=newthrown
             lastPrint+=len(slns)
             if lastPrint >= printFreq:
               self.backends['PDF'].addToBins(slns,True)
@@ -449,7 +452,8 @@ class MCExec(Executor):
               dpdt = float(finished)/float(elapTime)
               toGo = dt.timedelta(seconds=(int(trialsLeft/dpdt)))
               elapTime = dt.timedelta(seconds=int(elapTime))
-              print '%12i |    '%finished +str(elapTime)+'   | ' +str(toGo)+'\r',
+              print '%12i |    '%finished +str(elapTime),
+              print '  |    ' +str(toGo)+'     |  ',thrown,'\r',
               #print '    Elapsed time (h:m:s):',\
                     #dt.timedelta(seconds=int(elapTime))
               #print '    Estimated remaining :',toGo
@@ -474,6 +478,7 @@ class MCExec(Executor):
   def runSample(self,prefix,batch,runDict):
     np.random.seed()
     solns=[]
+    nThrown = 0
     for i in range(batch):
       ident = '_'+str(prefix)+'_'+str(i)
       outFileName='run.out'+ident
@@ -490,8 +495,9 @@ class MCExec(Executor):
       if self.solnRange[0] < soln < self.solnRange[1]:
         solns.append(soln)
       else:
-        print 'WARNING! Solution outside of range.  Tossed',soln,'\n'
-    self.outq.put(solns)
+        nThrown+=1
+        #print 'WARNING! Solution outside of range.  Tossed',soln,'\n'
+    self.outq.put([solns,nThrown])
 
 
 if __name__=='__main__':

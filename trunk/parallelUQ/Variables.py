@@ -64,6 +64,7 @@ class Variable(object):
         msg+= self.name+'" discarded for being outside target range ('
         msg+= str(self.okRange[0])+','+str(self.okRange[1])+'): '
         msg+= str(pt)
+        print msg
         continue
       retpts.append(pt)
       retwts.append(wts[p])
