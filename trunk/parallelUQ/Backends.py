@@ -371,7 +371,7 @@ class ROM(Backend):
     for i in range(trials):
       vals=[]
       for var in histories['vars']:
-        vals.append(var.sample(trunc))
+        vals.append(var.sample(trunc=trunc))
         #print 'sample',vals[-1]
       solns.append(self.sampleROM(vals,histories))
     self.outq.put(solns)

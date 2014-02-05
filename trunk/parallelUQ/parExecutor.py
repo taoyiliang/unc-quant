@@ -35,7 +35,7 @@ class Executor(object): #base class
     self.loadSampler()
     self.loadBackends()
     self.clearInputs()
-    self.parallelRun()
+    self.parallelRun(restart=self.restart)
     self.runBackends()
 
   def savestate(self,savedict):
@@ -125,7 +125,7 @@ class Executor(object): #base class
     elif samplerType in ['SC','sc','StochPoly']:
       self.sampler = spr.StochasticPoly(self.varDict,self.input_file)
     else:
-      raise IOError ('Sampler type not recognized: |'+samplerType+'|')
+      raise IOError ('sampler type not recognized: |'+samplerType+'|')
 
   def clearInputs(self):
     '''
@@ -165,6 +165,7 @@ class Executor(object): #base class
         if self.restart:
           loaddict=self.loadRestart()
           runs=backend.loaddict(loaddict)
+          self.total_runs=runs
           self.sampler.restart(runs)
         self.backends['PDF']=backend
       if beType in ['plot2D']:
@@ -280,11 +281,10 @@ class PCESCExec(Executor):
     ps=[]
     wantprocs = self.input_file('Problem/numprocs',1)
     self.numprocs = min(wantprocs,multiprocessing.cpu_count())
-    if not restart:
+    if not self.restart:
       print '\nRunning samples in parallel...'
       self.total_runs = -1
       ps=[]
-      self.numPs=0
       self.done=False
       self.histories={}
       self.histories['varNames']=self.varDict.keys()
@@ -302,6 +302,7 @@ class PCESCExec(Executor):
       print '\nStarting from restart...'
       print '  Starting after run',self.total_runs
     print '  ...using',self.numprocs,'processors...'
+    self.numPs=0
     while not self.done:
       #remove dead processses
       for p,proc in enumerate(ps):
@@ -326,6 +327,7 @@ class PCESCExec(Executor):
             runDict = self.sampler.giveSample()
           self.histories['nRun'].append(self.total_runs)
           self.histories['soln'].append(0) #placeholder
+          #print self.sampler.type
           for key in runDict.keys():
             try: self.histories[key].append(runDict[key])
             except KeyError:
@@ -383,25 +385,27 @@ class MCExec(Executor):
     self.numprocs = min(wantprocs,multiprocessing.cpu_count())
     trackThousand = 0
     trials = int(self.sampler.totalSamples)
+    print '\nRunning %1.0e samples in parallel...' %trials
+    ps=[]
+    self.numPs=0
+    self.done=False
+    self.histories={}
+    self.histories['varNames']=self.varDict.keys()
+    self.histories['vars']=self.varDict.values()
+    self.histories['varPaths']=[]
+    for var in self.varDict.values():
+      #need to preset these so they can be filled with nRun?
+      self.histories['varPaths'].append(var.path)
+      self.histories['varVals']=[]
+    print '  ...uncertain variables:',self.histories['varNames'],'...'
     if not restart:
-      print '\nRunning %1.0e samples in parallel...' %trials
       self.total_runs = -1
-      ps=[]
-      self.numPs=0
-      self.done=False
-      self.histories={}
-      self.histories['varNames']=self.varDict.keys()
-      self.histories['vars']=self.varDict.values()
-      self.histories['varPaths']=[]
-      for var in self.varDict.values():
-        #need to preset these so they can be filled with nRun?
-        self.histories['varPaths'].append(var.path)
-        self.histories['varVals']=[]
-      print '  ...uncertain variables:',self.histories['varNames'],'...'
+      trialsLeft = trials
       #tempOutFile = file('solns.out','w')
     else: #start from restart
       print '\nStarting from restart...'
       print '  Starting after run',self.total_runs
+      trialsLeft = trials - self.total_runs
     print '  ...using',self.numprocs,'processors...'
 
     printFreq = self.input_file('Sampler/MC/printfreq',1000)
@@ -413,7 +417,6 @@ class MCExec(Executor):
       trialsPerProc = 1000
     mesh_size = self.input_file('Problem/mesh_factor',1)
 
-    trialsLeft = trials
     self.done=False
     runDict={}
     starttime=time.time()
@@ -447,13 +450,17 @@ class MCExec(Executor):
               doAPrint = False
               lastPrint=0
               #print progress
+              #FIXME fix for restart case
               finished = trials-trialsLeft
               elapTime = time.time()-starttime
               dpdt = float(finished)/float(elapTime)
               toGo = dt.timedelta(seconds=(int(trialsLeft/dpdt)))
               elapTime = dt.timedelta(seconds=int(elapTime))
               print '%12i |    '%finished +str(elapTime),
-              print '  |    ' +str(toGo)+'     |  ',thrown,'\r',
+              if not self.restart:
+                print '  |    ' +str(toGo)+'    |  ',thrown,'              \r',
+              else:
+                print '  |    <rst>       |  ',thrown,'\r',
               #print '    Elapsed time (h:m:s):',\
                     #dt.timedelta(seconds=int(elapTime))
               #print '    Estimated remaining :',toGo
@@ -502,9 +509,13 @@ class MCExec(Executor):
 
 if __name__=='__main__':
   #run syntax: python parExecutor -i <UQ input file>
+  if '-r' in argv:
+    restart = True
+    print 'setting up restart...'
+  else: restart = False
   if 'mc' in argv:
-    ex = MCExec(argv)
+    ex = MCExec(argv,restart=restart)
   elif 'sc' in argv:
-    ex = PCESCExec(argv)
+    ex = PCESCExec(argv,restart)
   else:
     print 'Need "mc" or "sc" in argument list!'

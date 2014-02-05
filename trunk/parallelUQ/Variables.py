@@ -26,7 +26,7 @@ class Variable(object):
     print 'ERROR no setDist method for',self.distName,'var',self.path
     sys.exit()
 
-  def setQuadrature(self,inputfile,order='dud',verbose=False):
+  def setQuadrature(self,inputfile,expOrd=2,verbose=False):
     if verbose:
       print 'set quadrature for',self.name
     #get acceptable range from input file
@@ -53,6 +53,16 @@ class Variable(object):
       self.okRange=(low,hi)
     else: #no input file?
       self.okRange=(-1e30,1e30)
+    #set expansion, quad orders
+    if inputfile != None:
+      self.expOrd = inputfile('Variables/'+self.name+'/exporder',2)
+      self.quadOrd = inputfile('Variables/'+self.name+'/quadorder',-6)
+      if self.quadOrd==-6:
+        self.quadOrd=self.expOrd
+    else:
+      self.expOrd=expOrd
+      self.quadOrd = int(ceil((self.expOrd+1)/2.0))
+    print '...for var',self.name,'setting exp order',self.expOrd,
 
   def checkPoints(self,pts,wts):
     retpts=[]
@@ -71,7 +81,7 @@ class Variable(object):
       orders.append(p)
     return retpts,retwts,orders
 
-  def sample(self):
+  def sample(self,trunc=0):
     return self.dist.rvs()
 
   def lowhi(self,pct=99.99):
@@ -134,16 +144,8 @@ class Uniform(Variable):
     self.secondmom = 0.5*(low*low + (self.mean+self.range)**2)
 
   def setQuadrature(self,inputfile=None,expOrd=2,verbose=False):
-    super(Uniform,self).setQuadrature(inputfile,order=expOrd,verbose=verbose)
-    print 'okRange:',self.okRange
-    #get order from input file
-    if inputfile != None:
-      self.expOrd=inputfile('Variables/'+self.name+'/order',2)
-    else:
-      self.expOrd=expOrd
-    #quad of order N can do polys of order 2N-1
-    self.quadOrd = int(ceil((self.expOrd+1)/2.0))
-    #standard hermite quadrature
+    super(Uniform,self).setQuadrature(inputfile,expOrd=expOrd,verbose=verbose)
+    #standard Legendre quadrature
     pts,wts = quads.p_roots(self.quadOrd)
     self.pts,self.wts,self.quadOrds=super(Uniform,self).checkPoints(pts,wts)
     self.quaddict = {}
@@ -210,6 +212,81 @@ class Normal(Variable):
     self.secondmom = self.mean**2+self.stdev**2
 
   def setQuadrature(self,inputfile=None,expOrd=2,verbose=False):
+    super(Normal,self).setQuadrature(inputfile,expOrd=expOrd,verbose=verbose)
+    #standard hermite quadrature
+    pts,wts = quads.h_roots(self.quadOrd)
+    self.pts,self.wts,self.quadOrds=super(Normal,self).checkPoints(pts,wts)
+    self.quaddict = {}
+    for o,order in enumerate(self.quadOrds):
+      self.quaddict[order]=(self.pts[o],self.wts[o])
+
+  def norm(self,n):
+    return 1.0/(np.sqrt(np.sqrt(np.pi)*(2.0**n)*factorial(n)))
+
+  def evalNormPoly(self,x,n):
+    norm = self.norm(n)
+    return norm*polys.eval_hermite(n,x)
+
+  def oneDPoly(self,n):
+    norm = self.norm(n)
+    return norm*polys.hermite(n)
+
+  def sample(self,trunc=0):
+    #be a jerk and force it to be within x stddev
+#TODO fix this! It's not reading from input file
+    x = nDev #hand-fixed
+    val = self.dist.rvs()
+    if x > 0:
+      if not (self.mean-x*self.stdev < val < self.mean+x*self.stdev):
+        val = self.sample(trunc=trunc)
+    return val
+
+
+class Lognormal(Variable):
+  def __init__(self,name,path):
+    super(Lognormal,self).__init__(name,path)
+    self.distName='normal'
+
+  def convertToActual(self,x):#TODO
+    return np.sqrt(2)*self.stdev*x+self.mean
+
+  def convertToStandard(self,y):#TODO
+    return (y-self.mean)/(np.sqrt(2)*self.stdev)
+
+  def probWeight(self,x,scale='actual'):#TODO
+    #if scale=='actual':
+    #  coeff = 1#./(self.stdev*np.sqrt(2.*np.pi()))
+    #  main = 1#np.exp(-(x-self.mean)**2/(2.*self.stdev**2))
+    #  return 1#coeff*main
+    #elif scale=='standard':
+    return 1.0/np.sqrt(np.pi)#./np.sqrt(2.*np.pi())*np.exp(-x*x/2.)
+    #else:
+    #  msg = 'variable '+var.name+'.probWeight does not recognize '
+    #  msg+= str(scale)+' (type '+str(type(scale))+')!\n'
+    #  raise IOError(msg)
+
+  def probdens(self,x):#TODO
+    return np.exp(x*x)
+
+  def setDist(self,args):#TODO
+    if len(args)==1:
+      self.mean=float(args[0])
+      self.stdev=0.3*self.mean
+    elif len(args)==2:
+      self.mean=float(args[0])
+      self.stdev=float(args[1])
+    else:
+      print 'ERROR Unrecognized input arguments for',self.name,':',args
+      sys.exit()
+    self.variance = self.stdev*self.stdev
+    expr='self.dist=dists.norm('+str(self.mean)+','+str(self.stdev)+')'
+    exec expr
+    print 'set var',self.path,
+    print 'type,mean,stdev:',self.distName,self.mean,self.stdev
+    self.expval = self.dist.mean()
+    self.secondmom = self.mean**2+self.stdev**2
+
+  def setQuadrature(self,inputfile=None,expOrd=2,verbose=False):#TODO
     super(Normal,self).setQuadrature(inputfile,order=expOrd,verbose=verbose)
     print 'okRange:',self.okRange
     #get order from input file
@@ -231,23 +308,23 @@ class Normal(Variable):
     for o,order in enumerate(self.quadOrds):
       self.quaddict[order]=(self.pts[o],self.wts[o])
 
-  def norm(self,n):
+  def norm(self,n):#TODO
     return 1.0/(np.sqrt(np.sqrt(np.pi)*(2.0**n)*factorial(n)))
 
-  def evalNormPoly(self,x,n):
+  def evalNormPoly(self,x,n):#TODO
     norm = self.norm(n)
     return norm*polys.eval_hermite(n,x)
 
-  def oneDPoly(self,n):
+  def oneDPoly(self,n):#TODO
     norm = self.norm(n)
     return norm*polys.hermite(n)
 
-  def sample(self,nDev=0):
+  def sample(self,trunc=0):#TODO
     #be a jerk and force it to be within x stddev
 #TODO fix this! It's not reading from input file
     x = nDev #hand-fixed
     val = self.dist.rvs()
     if x > 0:
       if not (self.mean-x*self.stdev < val < self.mean+x*self.stdev):
-        val = self.sample()
+        val = self.sample(trunc=trunc)
     return val
