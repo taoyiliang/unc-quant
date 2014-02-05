@@ -56,7 +56,36 @@ p=(D_g,\Sigma_{1,c},\Sigma_{g,s},\nu_g,\Sigma_{g,f},\chi_g),\hspace{20pt}g\in[1,
 \end{equation}
 While $\phi_g(x)$ might also be considered a parameter, it is an output value solved simultaneously with $k$.
 
-For this test code we consider $\theta=\Sigma_{2,c}$ normally distributed as $\theta\in\mathcal{N}(0.0554,0.01^2)$. Tabular data for mean and variance convergence is in Table \ref{tab:2dcrit}, and the pdfs obtained are in Fig. \ref{fig:2dcrit}.  Once again, it is important to note that the Monte Carlo sampling was restricted to values within 3 standard deviations of the mean; as such, the means and variances obtained directly through Monte Carlo sampling are not representative of the full uncertainty space.  This truncation of the distribution is enforced because without such a restriction, it is possible to sample physically untenable values for $\Sigma_{2,c}$, including negative values.
+\subsubsection{Uniform Uncertainty}
+For this test we consider $\theta=\Sigma_{2,c}$ uniformly distributed as $\theta\in\mathcal{N}(0.0454,0.0654s)$. Tabular data for mean and variance convergence is in Table \ref{tab:2dcrit uni}, and the pdfs obtained are in Fig. \ref{fig:2dcrit uni}.
+
+The PCESC runs all made use of order 32 quadrature to integrate chaos moments.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{c c|l l}
+type & runs/order & mean & variance \\ \hline
+MC & $1\times10^6$ & 1.00406413634 & 0.000446173081079 \\
+SC & 2  & 1.00416405471 & 0.000375112851817 \\
+SC & 4  & 1.00416405471 & 0.000390962150246 \\
+SC & 8  & 1.00416405471 & 0.000406864600682 \\
+SC & 16 & 1.00416405471 & 0.000421349517322 \\
+SC & 32 & 1.00416405471 & 0.000425027572716
+\end{tabular}
+\end{center}
+\caption{Convergence of Mean, Variance for 2D2G Case}
+\label{tab:2dcrit uni}
+\end{table}
+
+\begin{figure}[h!]
+\centering
+   \includegraphics[width=\textwidth]{../graphics/2d_uniform_pdfs}
+   \caption{Solution PDF Convergence, 2D2G Case}
+   \label{fig:2dcrit uni}
+\end{figure}
+
+\subsubsection{Normal Uncertainty}
+For this test we consider $\theta=\Sigma_{2,c}$ normally distributed as $\theta\in\mathcal{N}(0.0554,0.01^2)$. Tabular data for mean and variance convergence is in Table \ref{tab:2dcrit}, and the pdfs obtained are in Fig. \ref{fig:2dcrit}.  Once again, it is important to note that the Monte Carlo sampling was restricted to values within 3 standard deviations of the mean; as such, the means and variances obtained directly through Monte Carlo sampling are not representative of the full uncertainty space.  This truncation of the distribution is enforced because without such a restriction, it is possible to sample physically untenable values for $\Sigma_{2,c}$, including negative values.
 
 The PCESC runs all made use of order 32 quadrature to integrate chaos moments.
 
