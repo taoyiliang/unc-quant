@@ -13,8 +13,10 @@
   [./MC]
     totalSamples = 1e6
     printfreq = 10
-    solnRange = '0.7 1.2' #normal
-    truncate = 3
+   # solnRange = '0.9 1.5' #normal
+   # solnRange = '0.7 1.2' #normal
+   # solnRange = '0.93 1.05' #uniform
+    truncate = 3 #only applies to normals
   [../]
   [./SC]
   [../]
@@ -25,7 +27,7 @@
   active = 'PDF'
   outFile = test.out
   [./ROM]
-    samples = 1e4 
+    samples = 1e6 
     checkSolution = 0
     createPDF = 1
     bins = 100
@@ -34,7 +36,7 @@
   [./PDF]
     bins = 100
     low = 0.9
-    hi = 1.3
+    hi = 1.25
   [../]
 []
 
@@ -65,11 +67,13 @@
   [../]
   [./1xc2]
     path = 'Material/1/g2/sigc'
-    dist = normal
+    dist = lognormal
+   # dist = normal
+   # dist = uniform
     args = '0.05540 0.01' #median, range def 10%
     exporder = 32
-    quadorder = 64
-    okRange = '0 inf'
+    quadorder = 32
+   # okRange = '0 inf'
   [../]
   [./1xf1]
     path = 'Material/1/g1/nsigf'

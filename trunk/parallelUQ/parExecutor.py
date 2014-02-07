@@ -405,6 +405,7 @@ class MCExec(Executor):
     else: #start from restart
       print '\nStarting from restart...'
       print '  Starting after run',self.total_runs
+      trialsAtRst = self.total_runs
       trialsLeft = trials - self.total_runs
     print '  ...using',self.numprocs,'processors...'
 
@@ -452,15 +453,18 @@ class MCExec(Executor):
               #print progress
               #FIXME fix for restart case
               finished = trials-trialsLeft
+              if self.restart:
+                finished -= trialsAtRestart
               elapTime = time.time()-starttime
               dpdt = float(finished)/float(elapTime)
               toGo = dt.timedelta(seconds=(int(trialsLeft/dpdt)))
               elapTime = dt.timedelta(seconds=int(elapTime))
-              print '%12i |    '%finished +str(elapTime),
-              if not self.restart:
-                print '  |    ' +str(toGo)+'    |  ',thrown,'              \r',
-              else:
-                print '  |    <rst>       |  ',thrown,'\r',
+              print '%12i | %12s | %12s | %9i' %(finished,elapTime,toGo,thrown),
+              print '                         \r'
+              #if not self.restart:
+              #print '  | %12s | %15i              \r'%(toGo,thrown),
+              #else:
+              #  print '  |    <rst>       |  ',thrown,'\r',
               #print '    Elapsed time (h:m:s):',\
                     #dt.timedelta(seconds=int(elapTime))
               #print '    Estimated remaining :',toGo

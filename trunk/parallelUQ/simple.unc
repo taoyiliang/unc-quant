@@ -8,26 +8,27 @@
 []
 
 [Sampler]
-  active = 'MC'
+  active = 'SC'
   [./SC]
   [../]
   [./MC]
     batch = 100
-    totalSamples = 1e7
+    totalSamples = 1e6
     printfreq = 50000
-    solnRange = '-15 35' #normal
+    solnRange = '1 35' #lognormal
+   # solnRange = '-15 35' #normal
    # solnRange = '6 16' #uniform
     truncate = 0 #number of standard devs either way
   [../]
 []
 
 [Backend]
- # active = 'ROM'
-  active = 'PDF'
+  active = 'ROM'
+ # active = 'PDF'
   outFile = mcu.out
   [./ROM]
     MCsample = 1
-    samples = 1e6
+    samples = 1e4
     checkSolution = 1
     createPDF = 1
     stats = 1
@@ -35,8 +36,10 @@
 
   [./PDF]
     bins = 100
-    low = -10 #normal
+    low = 1 #lognormal
     hi = 35
+   # low = -10 #normal
+   # hi = 35
    # low = 7 #uniform
    # hi = 15
   [../]
@@ -47,10 +50,11 @@
   names = 'x'
   [./x]
     path = 'Problem/x'
-    dist = 'normal'
+   # dist = 'normal'
+    dist = 'lognormal'
    # dist = 'uniform'
     args = '5. 2.'
-    order = 2
+    exporder = 4
   [../]
   [./y]
     path = 'Problem/y'
