@@ -1,5 +1,5 @@
 \section{Semi-Infinite Uniform Source}
-This case is also simply an evaluation of an analytic function, but can't be exactly represented by a basis polynomial.  The solution models the mono-energetic neutron flux at a point inside a 1D semi-infinite homogenous absorbing medium with a uniform source.  The governing PDE for this equation is
+This case is also an evaluation of an analytic function, but can't be exactly represented by a finite polynomial expansion.  The solution models the mono-energetic neutron flux at a point inside a 1D semi-infinite homogenous absorbing medium with a uniform source.  The governing PDE for this equation is
 \begin{equation}
 -D\ddrv{\phi}{x}+\Sigma_a\phi = S,
 \end{equation}
@@ -10,21 +10,20 @@ and its solution is
 \begin{equation}
 L^2\equiv \frac{D}{\Sigma_a}.
 \end{equation}
-where $S$ is the uniform source, $\Sigma_a$ is the material's macroscopic absorption cross sesciton, $D$ is the material's diffusion coefficient, $x$ is a distance into the medium from the boundary, and $\phi$ is the neutron flux.  Restated in the form used by PCESC,
+where $S$ is the uniform source, $\Sigma_a$ is the material's macroscopic absorption cross section, $D$ is the material's diffusion coefficient, $x$ is a distance into the medium from the boundary, and $\phi$ is the neutron flux.  Restated in the form used by PCESC,
 \begin{equation}
 U(p;\theta) = \frac{S}{\theta}\left(1-e^{-\sqrt{\theta} x/\sqrt{D}}\right),
 \end{equation}
-where $p=(S,D,x)$.  For our calculations, we set a source strength of 1 neutron per square centimeter, a sampling distance of 2 centimeters into the material, and a diffusion coefficent of 0.5 per centimeter.
-
-We consider the cases when the absorption cross section $\theta$ has a uniform distribution as well as a normal distribution.   For both cases, the other parameters are as follows.
+where $p=(S,D,x)$.  
+We consider the cases when the absorption cross section $\theta$ has a uniform distribution as well as a normal distribution.   For both cases, parameters $p$ are as follows.
 \begin{align}
 S &= 1.0 \text{ n/cm}^2\text{/s},\\
 D &= 0.5 \text{ /cm},\\
 x &= 2.0 \text{ cm}.
 \end{align}
 
-We allow $\Sigma_a$ to vary either uniformly as $\Sigma_a\in[0.5,1]$ or normally as $\Sigma_a\in\mathcal{N}(0.75,0.15)$ and quantify the uncertainty using stochastic collocation for generalized polynomial expansion as well as Monte Carlo sampling.
-For increasing orders of expansion, the mean and variance obtained are shown along with the run time.
+We allow $\Sigma_a$ to vary uniformly as $\Sigma_a\in[0.5,1]$ or normally as $\Sigma_a\in\mathcal{N}(0.75,0.15)$ and quantify the uncertainty using PCESC as well as Monte Carlo sampling.
+For increasing orders of expansion, the mean and variance obtained are shown along with the run time and are shown in Tables \ref{tab:source uni} and \ref{tab:source norm}.
 \begin{table}
 \begin{center}
 \begin{tabular}{c c|l l}
@@ -37,6 +36,7 @@ SC & 16 & 1.26112339681 & 0.0639754882641
 \end{tabular}
 \end{center}
 \caption{Statistics for Source Problem with Uniform Uncertainty}
+\label{tab:source uni}
 \end{table}
 
 \begin{table}[h!]
@@ -51,6 +51,7 @@ SC & 16 & 1.25569096924 & 0.0492316191611 & 6.88
 \end{tabular}
 \end{center}
 \caption{Statistics for Source Problem with Normal Uncertainty}
+\label{tab:source norm}
 \end{table}
 
 \begin{figure}[h]
@@ -69,7 +70,7 @@ SC & 16 & 1.25569096924 & 0.0492316191611 & 6.88
 \label{fig:sourcepdfs}
 \end{figure}
 
-The PDFs were obtained by Monte Carlo sampling of the polynomial expansion for the SC cases, and obtained directly for the Monte Carlo case, shown in Fig. \ref{fig:sourcepdfs}.  The x-axis is the value of the scalar flux, and the y-axis is the probability of obtaining a particular flux.
+The PDFs were obtained by Monte Carlo sampling of the ROM for the PCESC cases, and obtained directly for the Monte Carlo case, shown in Fig. \ref{fig:sourcepdfs}.  The x-axis is the value of the scalar flux, and the y-axis is the probability of obtaining a particular flux.
 
 
 %\begin{table}

@@ -1,5 +1,8 @@
 \section{Polynomial}
-We include this test case because of the analytic solution, mean, and variance.  The test code simple solves the function evaluation
+We include this test case because of the analytic solution, mean, and variance.  
+
+\subsection{Univariate}
+The test code simply solves the function evaluation
 \begin{equation}
 U(\theta) = 1+2\theta.
 \end{equation}
@@ -15,7 +18,7 @@ m_r(\theta)=\expv{\theta^r}=\int_\Omega P(\theta)\theta^r d\theta.
 
 We consider the cases when $\theta$ has a uniform distribution $\theta\in[3,7]$ as well as a normal distribution $\theta\in\mathcal{N}(5,4)$.  When using PCESC, all coefficients for expansions of polynomial order higher than 1 are zero; thus, only the results for order 2 expansion are shown.
 
-\subsection{Uniform Distribution}
+\subsubsection{Uniform Distribution}
 For a uniformly-distributed variable $\xi\in[a,b]$, the moments are given as
 \begin{equation}
 m_r(\xi)=\int_{a^r}^{b^r} \frac{1}{b^r-a^r}\xi^r d\xi.
@@ -52,12 +55,12 @@ SC & 2 & 11.0 & 5.33333333333 \\
 \label{tab:poly uniform}
 \end{table}
 
-\subsection{Normal Distribution}
+\subsubsection{Normal Distribution}
 For a normally-distributed variable $\xi\in[\mu,\sigma^2]$, the moments are given as
 \begin{equation}
 m_r(\xi)=\int_{-\infty}^\infty \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}\xi^r d\xi.
 \end{equation}
-Of particular interest are the first moment (expected value) and second moment, which we use to calculate variance.
+The analytic statistical measures of interest are
 \begin{align}\label{eq:anl moments norm}
 m_1(\xi)\equiv\expv{\xi}&=\mu,\\
 m_2(\xi)=\expv{\xi^2}&=\mu^2+\sigma^2.
@@ -104,3 +107,39 @@ SC & 2 & 11 & 16 \\
 %\caption{Polynomial Problem Solution Distributions}
 %\label{fig:polypdfs}
 \end{figure}
+
+
+
+\subsection{Bivariate}
+Similar to the univariate case, we add a dimension and define a new function to sample
+\begin{equation}
+U(\vb*{\theta})=U(\theta_1,\theta_2)=\theta_1\qty(1+\theta_2).
+\end{equation}
+We impose independence between the uncertain variables in $\vb*{\theta}$.
+The expected value is given as
+\begin{align}
+\ev{U}&=\ev{\theta_1}+\ev{\theta_1\theta_2},\\
+  &= \ev{\theta_1}\qty(1+\ev{\theta_2}).
+\end{align}
+The second moment is
+\begin{align}
+\ev{U^2}=\ev{\theta_1^2}\qty(1+2\ev{\theta_2}+\ev{\theta_2^2}).
+\end{align}
+
+\subsubsection{Uniform}
+We allow $\vb*{\theta}$ to vary uniformly as
+\begin{align}
+\theta_1 &\in[3,7],\\
+\theta_2 &\in[1,6].
+\end{align}
+Using the derivations for the univariate uniform variable, moments are given explicitly by
+\begin{align}
+\ev{U}&=(5)+(5)\qty(\frac{7}{2}), \\
+  &= \frac{45}{2}.\\
+\ev{U^2} &= \frac{(3)^2+(3)(7)+(7)^2}{3}\qty(1+(1+6)+\frac{(1)^2+(1)(6)+(6)^2}{3}),\\
+  &= 588.\bar1.
+\end{align}
+The variance is
+\begin{equation}
+\text{var}[U]=\ev{U^2}-\ev{U}^2=79.08\bar3.
+\end{equation}
