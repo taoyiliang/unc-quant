@@ -140,7 +140,6 @@ class Uniform(Variable):
       print self.distName,self.mean,self.range
     expr='self.dist=dists.uniform(loc='+str(low)+',scale='+str(2.0*self.range)+')'
     exec expr
-    print low
     print 'Value range (.9999 confidence):',self.dist.interval(0.9999)
     self.expval = self.dist.mean()
     self.secondmom = 0.5*(low*low + (self.mean+self.range)**2)

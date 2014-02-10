@@ -460,14 +460,7 @@ class MCExec(Executor):
               toGo = dt.timedelta(seconds=(int(trialsLeft/dpdt)))
               elapTime = dt.timedelta(seconds=int(elapTime))
               print '%12i | %12s | %12s | %9i' %(finished,elapTime,toGo,thrown),
-              print '                         \r'
-              #if not self.restart:
-              #print '  | %12s | %15i              \r'%(toGo,thrown),
-              #else:
-              #  print '  |    <rst>       |  ',thrown,'\r',
-              #print '    Elapsed time (h:m:s):',\
-                    #dt.timedelta(seconds=int(elapTime))
-              #print '    Estimated remaining :',toGo
+              print '                      \r',
       if trialsLeft > 0:
         while len(ps)<self.numprocs and not self.done:
           if trialsLeft > trialsPerProc: newtrials = trialsPerProc

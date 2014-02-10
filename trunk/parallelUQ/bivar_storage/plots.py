@@ -7,7 +7,8 @@ import numpy as np
 #case = '1dsup'
 case = '2d'
 
-douni = False
+douni = True
+#douni = False
 
 ##### NORMALS
 plt.figure()
@@ -47,14 +48,10 @@ if douni:
       continue
     ctrs.append(float(line.split(',')[0]))
     bins.append(float(line.split(',')[1]))
-  sampler = pk.load(file('source_MC_uniform.pk','rb'))
-  MCbins=sampler['bins']
-  MCctrs=sampler['ctrs']
-  MCbins=np.array(MCbins)/(1e6*0.013)
-  plt.plot(ctrs,bins,'k.',label='MC')
+  plt.plot(ctrs,bins,'k-.',label='MC')
 
-#for order in [2,4,8,16]:
-  for order in [2]:#,4,8,16]:
+  for order in [2,4,8,16,32]:
+  #for order in [2]:#,4,8,16]:
     ct,bn=pk.load(file(case+'_SC'+str(order)+'_uniform.pk','r'))
     plt.plot(ct,bn,label='SC'+str(order))
 
@@ -63,6 +60,6 @@ if douni:
   plt.xlabel('Solution Value')
   plt.ylabel('Solution Frequency')
 #plt.axis([0.5,2.5,0,2.1]) #source
-  plt.axis([7,15,0,0.15]) #poly
+  plt.axis([0.96,1.05,0,100]) #poly
 plt.show()
 

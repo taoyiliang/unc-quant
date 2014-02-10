@@ -3,7 +3,7 @@
   storeFlux    = 0
   execDir      = '../simple/'
   inputDir     = '../simple/'
-  input_editor = 'IE_Simple'
+  input_editor = 'IE_Double'
   numprocs     = 4
 []
 
@@ -13,9 +13,9 @@
   [../]
   [./MC]
     batch = 100
-    totalSamples = 1e6
+    totalSamples = 1e7
     printfreq = 50000
-    solnRange = '1 35' #lognormal
+   # solnRange = '1 35' #lognormal
    # solnRange = '-15 35' #normal
    # solnRange = '6 16' #uniform
     truncate = 0 #number of standard devs either way
@@ -36,32 +36,31 @@
 
   [./PDF]
     bins = 100
-    low = 1 #lognormal
-    hi = 35
+   # low = 1 #lognormal
+   # hi = 35
    # low = -10 #normal
    # hi = 35
-   # low = 7 #uniform
-   # hi = 15
+    low = 6 #uniform
+    hi = 49
   [../]
 []
 
 [Variables]
- # names = 'x y'
-  names = 'x'
+  names = 'x y'
   [./x]
     path = 'Problem/x'
    # dist = 'normal'
-    dist = 'lognormal'
-   # dist = 'uniform'
+   # dist = 'lognormal'
+    dist = 'uniform'
     args = '5. 2.'
-    exporder = 4
+    exporder = 3
   [../]
   [./y]
     path = 'Problem/y'
     dist = 'uniform'
-    args = '3.5 1.25'
+    args = '3.5 2.5'
   #  args = '3.5 0.7142857'
-    order = 6
+    exporder = 3
   [../]
 []
 

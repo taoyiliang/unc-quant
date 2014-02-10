@@ -278,6 +278,7 @@ class ROM(Backend):
 
   def setStats(self,histories):
     #get mean
+    print 'DEBUG: in setStats'
     base=[0]*len(histories['vars'])
     self.mean=float(self.evalSingleTerm(base,histories))
 
@@ -286,9 +287,10 @@ class ROM(Backend):
     maxord=max(max(self.coeffs.keys()))
     for i in range(maxord+1):
       base=[i]*len(histories['vars'])
-      #FIXME this only works for one var right now?
+      #FIXME this only works for one var right now
       try:
         mom2+=float(self.getcoeff(base))**2
+        print 'base:',base,'mom2:',self.getcoeff(base)**2
       except KeyError:
         print 'Failed at getcoeff(',base,')'
         pass
@@ -309,7 +311,6 @@ class ROM(Backend):
     for v,var in enumerate(histories['vars']):
       val = 1.0
       add = var.evalNormPoly(val,base[v])
-      print 'base:',base,'cof',add*cof
       temp *= add
     temp*=cof
     return temp
@@ -443,16 +444,6 @@ class ROM(Backend):
       done *= (trialsLeft == 0)
 
     print 'ran',numPs,'child processes on',self.numprocs,'processers'
-    #for p in self.ps:
-    #  p.start()
-    #i=0
-    #for p in self.ps:
-    #  p.join()
-    #  print 'Child',i,'Done'
-    #  i+=1
-
-    #for i,p in enumerate(self.ps):
-    #  print '  check',i,'is done:',not p.is_alive()
     if len(solns)==trials:
       print 'All solutions successfully recorded.'
     else:
