@@ -42,7 +42,7 @@ The variance is given simply as
 The statistics from MC and PCESC are given in Table \ref{tab:poly uniform} and the pdfs are in Fig. \ref{fig:poly uni}.
 
 
-\begin{table}
+\begin{table}[H]
 \begin{center}
 \begin{tabular}{c c|l l}
 type & runs/order & mean & variance \\ \hline
@@ -51,9 +51,18 @@ MC & $1\times10^7$ & 10.999555712 & 5.3374535046 \\
 SC & 2 & 11.0 & 5.33333333333 \\
 \end{tabular}
 \end{center}
-\caption{Polynomial Test, Uniform Distribution Statistics}
+\caption{Polynomial Test, Monovariate Uniform Distribution Statistics}
 \label{tab:poly uniform}
 \end{table}
+
+\begin{figure}[H]
+\centering
+%  \begin{subfigure}[b]{0.45 \textwidth}
+   \includegraphics[width=0.7\textwidth]{../graphics/poly_uniform_pdfs}
+   \caption{Polynomial Problem, Uniform PDFs}
+      \label{fig:poly uni}
+%  \end{subfigure}
+\end{figure}
 
 \subsubsection{Normal Distribution}
 For a normally-distributed variable $\xi\in[\mu,\sigma^2]$, the moments are given as
@@ -76,7 +85,7 @@ The variance is given simply as
 \end{equation}
 The statistics from MC and PCESC are given in Table \ref{tab:poly normal} and the pdfs are in Fig. \ref{fig:poly norm}.
 
-\begin{table}
+\begin{table}[H]
 \begin{center}
 \begin{tabular}{c c|l l}
 type & runs/order & mean & variance \\ \hline
@@ -85,19 +94,11 @@ MC & $1\times10^7$ & 11.0000448162 & 15.9892244775 \\
 SC & 2 & 11 & 16 \\
 \end{tabular}
 \end{center}
-\caption{Polynomial Test, Normal Distribution Statistics}
+\caption{Polynomial Test, Monovariate Normal Distribution Statistics}
 \label{tab:poly normal}
 \end{table}
 
-\begin{figure}[h]
-\centering
-%  \begin{subfigure}[b]{0.45 \textwidth}
-   \includegraphics[width=0.7\textwidth]{../graphics/poly_uniform_pdfs}
-   \caption{Polynomial Problem, Uniform PDFs}
-      \label{fig:poly uni}
-%  \end{subfigure}
-\end{figure}
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 %  \begin{subfigure}[b]{0.45\textwidth}
    \includegraphics[width=0.7\textwidth]{../graphics/poly_normal_pdfs}
@@ -141,5 +142,28 @@ Using the derivations for the univariate uniform variable, moments are given exp
 \end{align}
 The variance is
 \begin{equation}
-\text{var}[U]=\ev{U^2}-\ev{U}^2=79.08\bar3.
+\text{var}[U]=\ev{U^2}-\ev{U}^2=81.86\bar1.
 \end{equation}
+The analytic, MC, and PCESC statistics are in Table \ref{tab:2v poly uniform}, and the pdfs are show in Fig. \ref{fig:2v poly uni}.
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{c c|l l}
+type & runs/order & mean & variance \\ \hline
+Analytic & - & $45/2$ & $81.86\bar1$ \\
+MC & $1\times10^7$ & 22.4962950638 & 81.8754664265 \\
+SC & (1,1) & 22.5 & 81.8611111111 \\
+\end{tabular}
+\end{center}
+\caption{Polynomial Test, Bivariate Uniform Distribution Statistics}
+\label{tab:2v poly uniform}
+\end{table}
+
+\begin{figure}[H]
+\centering
+%  \begin{subfigure}[b]{0.45 \textwidth}
+   \includegraphics[width=0.7\textwidth]{../graphics/poly_2v_uniform_pdfs}
+   \caption{Polynomial Problem, Bivariate Uniform PDFs}
+      \label{fig:2v poly uni}
+%  \end{subfigure}
+\end{figure}
