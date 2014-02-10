@@ -14,7 +14,7 @@
   [./MC]
     batch = 100
     totalSamples = 1e7
-    printfreq = 50000
+    printfreq = 500
    # solnRange = '1 35' #lognormal
    # solnRange = '-15 35' #normal
    # solnRange = '6 16' #uniform
@@ -28,7 +28,7 @@
   outFile = mcu.out
   [./ROM]
     MCsample = 1
-    samples = 1e4
+    samples = 1e6
     checkSolution = 0
     createPDF = 1
     stats = 1
@@ -53,14 +53,14 @@
    # dist = 'lognormal'
     dist = 'uniform'
     args = '5. 2.'
-    exporder = 3
+    exporder = 2
   [../]
   [./y]
     path = 'Problem/y'
     dist = 'uniform'
     args = '3.5 2.5'
   #  args = '3.5 0.7142857'
-    exporder = 3
+    exporder = 2
   [../]
 []
 

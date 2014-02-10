@@ -56,8 +56,9 @@ class Variable(object):
     else: #no input file?
       self.okRange=(-1e30,1e30)
     #set expansion, quad orders
+    #TODO combine these two ifs someday
     if inputfile != None:
-      self.expOrd = inputfile('Variables/'+self.name+'/exporder',2)
+      self.expOrd = inputfile('Variables/'+self.name+'/exporder',2)+1
       self.quadOrd = inputfile('Variables/'+self.name+'/quadorder',-6)
       if self.quadOrd==-6:
         self.quadOrd=self.expOrd

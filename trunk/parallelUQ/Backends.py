@@ -284,18 +284,23 @@ class ROM(Backend):
 
     #get second moment
     mom2=0
-    maxord=max(max(self.coeffs.keys()))
-    for i in range(maxord+1):
-      base=[i]*len(histories['vars'])
-      #FIXME this only works for one var right now
-      try:
-        mom2+=float(self.getcoeff(base))**2
-        print 'base:',base,'mom2:',self.getcoeff(base)**2
-      except KeyError:
-        print 'Failed at getcoeff(',base,')'
-        pass
+    for cof in self.coeffs.values():
+      mom2+=float(cof)**2
     for var in histories['vars']:
       mom2*=var.probWeight(0,scale='standard')
+    self.var = mom2-self.mean**2
+    #maxord=max(max(self.coeffs.keys()))
+    #for i in range(maxord+1):
+    #  base=[i]*len(histories['vars'])
+      #FIXME this only works for one var right now
+    #  try:
+    #    mom2+=float(self.getcoeff(base))**2
+    #    print 'base:',base,'mom2:',self.getcoeff(base)**2
+    #  except KeyError:
+    #    print 'Failed at getcoeff(',base,')'
+    #    pass
+    #for var in histories['vars']:
+    #  mom2*=var.probWeight(0,scale='standard')
     self.var = mom2-self.mean**2
     print 'stats | mean,mom2,var'
     print self.mean,mom2,self.var

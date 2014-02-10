@@ -34,22 +34,29 @@
 
   [./PDF]
     bins = 100
-    low = 0.6
-    hi = 3.0
+    low = 0.8
+    hi = 1.9
   [../]
 []
 
 [Variables]
  # names = 'xa D loc S'
-  names = 'xa'
+  names = 'xa loc'
   [./xa]
     path = 'Problem/xa'
-    dist = 'normal'
-    args = '0.75 .15'
-  #  dist = 'uniform'
-  #  args = '0.75 0.25'
-    order = 4
-    okRange = '0 10'
+  #  dist = 'normal'
+  #  args = '0.75 .15'
+    dist = 'uniform'
+    args = '0.75 0.25'
+    exporder = 4
+    #okRange = '0 10'
+  [../]
+  [./loc]
+    path = 'Problem/loc'
+    dist = 'uniform'
+    args = '2.0 0.5'
+    exporder = 2
+    #okRange = '0 10'
   [../]
 []
 

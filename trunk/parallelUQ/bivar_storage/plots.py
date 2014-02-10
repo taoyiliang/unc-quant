@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import cPickle as pk
 import numpy as np
 
-case = 'simple'
-#case = 'source'
+#case = 'simple'
+case = 'source'
 #case = '1dsup'
 #case = '2d'
 
@@ -54,7 +54,7 @@ if douni:
     bins.append(float(line.split(',')[1]))
   plt.plot(ctrs,bins,'ko',label='MC')
 
-  for order in ['2-2']:#,4,8,16,32]:
+  for order in ['2-2','2-4','4-2','4-4']:#,4,8,16,32]:
   #for order in [2]:#,4,8,16]:
     ct,bn=pk.load(file(case+'_SC'+order+'_uniform.pk','r'))
     plt.plot(ct,bn,label='SC'+order)

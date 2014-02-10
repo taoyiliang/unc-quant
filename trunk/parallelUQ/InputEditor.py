@@ -106,34 +106,28 @@ class IE_Double(InputEditor):
 class IE_Source(InputEditor):
   def __init__(self,runpath=''):
     self.type = 'InputOutput soure'
-    self.inp=0
+    self.varVals=[]
+    self.varList=[]
     self.out=0
 
   def writeInput(self,templateName,inputDir,varList,valList,otherChange,ident):
-    self.inp = valList[0]
+    self.varList=varList[:]
+    self.varVals=valList[:]
     return 'dud'
 
   def storeOutput(self,outFile):
     return self.out
-    #readFile=file(outFile,'r')
-    #for line in readFile:
-    #  if line.split(',')[0]=='res':
-    #    val=float(line.split(',')[1].strip())
-    #    #print 'grabbed',val
-    #    readFile.close()
-    #    os.system('rm '+outFile+'\n')
-    #    return val
 
   def runSolve(self,input_file):
-    #print os.getcwd(),input_file
     sys.path.insert(0,os.getcwd())
     from source import g
-    self.out=g(self.inp)
-    #osstat = os.system('python source.py -i '+input_file+' > /dev/null')
-    #if osstat != 0:
-    #  print 'Run attempt failed with error code',osstat
-    #  sys.exit()
-    #os.system('rm '+input_file)
+    expr='self.out=g('
+    for v,var in enumerate(self.varList):
+      vname=var.split('/')[-1]
+      expr+=vname+'='+str(self.varVals[v])+','
+    expr=expr[:-1]+')'
+    exec expr
+    #self.out=g(self.inp)
 
 class IE_Diffusion(InputEditor):
   def __init__(self,runpath=''):
