@@ -77,25 +77,31 @@ class IE_Simple(InputEditor):
 
   def storeOutput(self,outFile):
     return self.out
-    #readFile=file(outFile,'r')
-    #for line in readFile:
-    #  if line.split(',')[0]=='res':
-    #    val=float(line.split(',')[1].strip())
-    #    #print 'grabbed',val
-    #    readFile.close()
-    #    os.system('rm '+outFile+'\n')
-    #    return val
 
   def runSolve(self,input_file):
     sys.path.insert(0,os.getcwd())
     from simple import g
     self.out=g(self.inp)
-    #print os.getcwd(),input_file
-    #osstat = os.system('python simple.py -i '+input_file+' > /dev/null')
-    #if osstat != 0:
-    #  print 'Run attempt failed with error code',osstat
-    #  sys.exit()
-    #os.system('rm '+input_file)
+
+class IE_Double(InputEditor):
+  def __init__(self,runpath=''):
+    self.type = 'InputOutput simple'
+    self.x=0
+    self.y=0
+    self.out=0
+
+  def writeInput(self,templateName,inputDir,varList,valList,otherChange,ident):
+    self.x = valList[0]
+    self.y = valList[1]
+    return 'dud'
+
+  def storeOutput(self,outFile):
+    return self.out
+
+  def runSolve(self,input_file):
+    sys.path.insert(0,os.getcwd())
+    from simple import f
+    self.out=f(self.y,self.x)
 
 class IE_Source(InputEditor):
   def __init__(self,runpath=''):
