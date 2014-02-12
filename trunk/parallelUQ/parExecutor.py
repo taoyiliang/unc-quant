@@ -303,6 +303,7 @@ class PCESCExec(Executor):
       print '  Starting after run',self.total_runs
     print '  ...using',self.numprocs,'processors...'
     self.numPs=0
+    finished=0
     while not self.done:
       #remove dead processses
       for p,proc in enumerate(ps):
@@ -311,13 +312,16 @@ class PCESCExec(Executor):
           while not self.outq.empty():
             n,sln = self.outq.get()
             self.histories['soln'][n]=sln
+            finished+=1
+          print 'Runs finished:',finished,
           del ps[p]
           #save state
       if not self.sampler.converged:
         while len(ps)<self.numprocs and not self.sampler.converged:
           self.numPs+=1
           self.total_runs+=1
-          print 'Starting run',self.total_runs
+          #TODO print single line, started/finished runs
+          print 'Runs started:',self.total_runs,'\r',
           try:
             tot1 = self.backends['PDF'].tot1
             tot2 = self.backends['PDF'].tot2
@@ -366,7 +370,7 @@ class PCESCExec(Executor):
     self.ie.runSolve(infile)
     soln = self.ie.storeOutput(outFile)
     self.outq.put([nRun,soln])
-    print '   soln',str(nRun)+':',soln
+    #print 'Finished',str(nRun)+':',soln
 
 
 

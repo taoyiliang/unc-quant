@@ -9,7 +9,7 @@
 []
 
 [Sampler]
-  active = 'MC'
+  active = 'SC'
   [./MC]
     totalSamples = 1e6
     printfreq = 10
@@ -23,8 +23,8 @@
 []
 
 [Backend]
- # active = 'ROM'
-  active = 'PDF'
+  active = 'ROM'
+ # active = 'PDF'
   outFile = test.out
   [./ROM]
     samples = 1e6 
@@ -35,8 +35,8 @@
   [../]
   [./PDF]
     bins = 100
-    low = 0.9
-    hi = 1.25
+    low = 0.92
+    hi = 1.05
   [../]
 []
 
@@ -46,109 +46,39 @@
   # names='1D1 1D2 1xa1 1xa2 1xf1 1xf2 1xt1
   #       2D1 2D2 2xa1 2xa2 2xf1 2xf2 2xt1
   #       3D1 3D2 3xa1 3xa2 2xt1'
-  names = '1xc2'
+  names = '1xc2 1xf2 4xc2 4xf2 5D2'
 
   #MATERIAL 1
-  [./1D1]
-    path = 'Material/1/g1/D'
-    dist = uniform
-    args = '1.255' #median, range def 10%
-  [../]
-  [./1D2]
-    path = 'Material/1/g2/D'
-    dist = uniform
-    args = '0.211' #median, range def 10%
-  [../]
-  [./1xc1]
-    path = 'Material/1/g1/sigc'
-    dist = uniform
-    args = '0.006358' #median, range def 10%
-    order = 6
-  [../]
   [./1xc2]
     path = 'Material/1/g2/sigc'
-    dist = lognormal
-   # dist = normal
-   # dist = uniform
-    args = '0.05540 0.01' #median, range def 10%
-    exporder = 32
-    quadorder = 32
-   # okRange = '0 inf'
-  [../]
-  [./1xf1]
-    path = 'Material/1/g1/nsigf'
     dist = uniform
-    args = '0.04602' #median, range def 10%
+    args = '0.05540 0.0055' #median, range def 10%
+    exporder = 4
   [../]
   [./1xf2]
     path = 'Material/1/g2/nsigf'
     dist = uniform
-    args = '0.1091' #median, range def 10%
-  [../]
-  [./1xt1]
-    path = 'Material/1/g2/D'
-    dist = uniform
-    args = '0.02533' #median, range def 10%
+    args = '0.1091 0.011' #median, range def 10%
+    exporder = 4
   [../]
 
-  #MATERIAL 4
-  [./4D1]
-    path = 'Material/4/g1/D'
-    dist = uniform
-    args = '1.259' #median, range def 10%
-  [../]
-  [./4D2]
-    path = 'Material/4/g2/D'
-    dist = uniform
-    args = '0.2091' #median, range def 10%
-  [../]
-  [./4xc1]
-    path = 'Material/4/g1/sigc'
-    dist = uniform
-    args = '0.006083' #median, range def 10%
-  [../]
   [./4xc2]
     path = 'Material/4/g2/sigc'
     dist = uniform
-    args = '0.04142' #median, range def 10%
-  [../]
-  [./4xf1]
-    path = 'Material/4/g1/nsigf'
-    dist = uniform
-    args = '0.004663 -1.0' #median, range def 10%
+    args = '0.04142 0.0041' #median, range def 10%
+    exporder = 2
   [../]
   [./4xf2]
     path = 'Material/4/g2/nsigf'
     dist = uniform
-    args = '0.1021 -1.0' #median, range def 10%
+    args = '0.1021 0.010' #median, range def 10%
+    exporder = 2
   [../]
 
-  #MATERIAL 5
-  [./5D1]
-    path = 'Material/5/g1/D'
-    dist = uniform
-    args = '1.257' #median, range def 10%
-  [../]
   [./5D2]
     path = 'Material/5/g2/D'
     dist = uniform
-    args = '0.1592' #median, range def 10%
+    args = '0.1592 0.016' #median, range def 10%
+    exporder = 2
   [../]
-  [./5xc1]
-    path = 'Material/5/g1/sigc'
-    dist = uniform
-    args = '0.0006034' #median, range def 10%
-  [../]
-  [./5xc2]
-    path = 'Material/5/g2/sigc'
-    dist = uniform
-    args = '0.01911' #median, range def 10%
-  [../]
-  [./5xt1]
-    path = 'Material/5/g2/sigtr'
-    dist = uniform
-    args = '0.04754' #median, range def 10%
-  [../]
-  
-  #TODO more materials
 []
