@@ -271,9 +271,10 @@ class ROM(Backend):
     varnames=''
     for var in histories['vars']:
       varnames+=var.name+' '
-    print '\nCoefficient solutions: ( ',varnames,')'
-    for key in orderedKeys:
-      print '  ',key,c[key]
+    if len(c)<=16:
+      print '\nCoefficient solutions: ( ',varnames,')'
+      for key in orderedKeys:
+        print '  ',key,c[key]
     self.coeffs=c
 
   def setStats(self,histories):

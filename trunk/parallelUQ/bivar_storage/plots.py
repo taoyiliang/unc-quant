@@ -3,15 +3,24 @@ import cPickle as pk
 import numpy as np
 
 #case = 'simple'
-case = 'source'
+#case = 'source'
 #case = '1dsup'
-#case = '2d'
+case = '2d_5v'
 
 douni = True
 #douni = False
 
 #donorm = True
 donorm = False
+
+cases=['2-2-2-2-2',
+       '4-2-2-2-2',
+       '2-4-2-2-2',
+       '2-2-4-2-2',
+       '2-2-2-4-2',
+       '2-2-2-2-4',
+       '4-4-2-2-2',
+       '6-6-2-2-2']
 
 if donorm:
 ##### NORMALS
@@ -27,7 +36,7 @@ if donorm:
     bins.append(float(line.split(',')[1]))
   plt.plot(ctrs,bins,'k-',label='MC')
 
-  for order in ['2-2']:#,4,8,16,32]:
+  for order in cases:
 #for order in [2]:#,4,8,16]:
     ct,bn=pk.load(file(case+'_SC'+order+'_normal.pk','r'))
     plt.plot(ct,bn,label='SC'+order)
@@ -54,7 +63,7 @@ if douni:
     bins.append(float(line.split(',')[1]))
   plt.plot(ctrs,bins,'ko',label='MC')
 
-  for order in ['2-2','2-4','4-2','4-4']:#,4,8,16,32]:
+  for order in cases:#['2-2','2-4','4-2','4-4']:#,4,8,16,32]:
   #for order in [2]:#,4,8,16]:
     ct,bn=pk.load(file(case+'_SC'+order+'_uniform.pk','r'))
     plt.plot(ct,bn,label='SC'+order)

@@ -65,7 +65,7 @@ class Variable(object):
     else:
       self.expOrd=expOrd
       self.quadOrd = int(ceil((self.expOrd+1)/2.0))
-    print '...for var',self.name,'setting exp order',self.expOrd,
+    print '...for var',self.name,'setting exp order',self.expOrd-1
 
   def checkPoints(self,pts,wts):
     retpts=[]
