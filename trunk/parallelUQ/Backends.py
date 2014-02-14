@@ -234,6 +234,7 @@ class ROM(Backend):
     #TODO need to store vars for poly evals later
     for i,ordset in enumerate(self.expOrds): #poly orders
       c[tuple(ordset)]=0
+      print 'Constructing coefficient',tuple(ordset),'\r',
       for m,soln in enumerate(histories['soln']): #histories (quadpts)
         #valList = histories['varVals'][m]
         temp_order = 1
