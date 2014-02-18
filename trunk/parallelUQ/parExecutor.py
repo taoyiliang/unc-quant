@@ -37,6 +37,7 @@ class Executor(object): #base class
     self.loadInput()
     self.setDirs()
     self.loadVars()
+    self.setCase()
     self.loadSampler()
     self.loadBackends()
     self.clearInputs()
@@ -170,21 +171,16 @@ class Executor(object): #base class
           plt.xlabel('Solutions')
           plt.ylabel('Probability')
           #plt.axis([0.9,1.2,0,0.05])
-          print 'dumping to',os.getcwd(),'4.pk'
-          pk.dump([ctrs,bins],open('4.pk','wb'))
+          #print 'dumping to',os.getcwd(),'4.pk'
+          #pk.dump([ctrs,bins],open('4.pk','wb'))
 
         #write stats out to file
-        if doStats and makePDF:
-          outFile=file(self.BEoutFile,'w')
-          for i,ctr in enumerate(ctrs):
-            msg=','.join([str(ctr),str(bins[i])])
-            outFile.writelines(','.join([str(ctr),str(bins[i]),])+'\n')
-          outFile.close()
-
-      elif btype in ['CSV','csv']:
-        outFileName = self.input_file('Backend/outFile','dud')
-        if outFileName == 'dud': outFileName='out.csv'
-        backend.makeCSV(self.histories,outFileName)
+        #if doStats and makePDF:
+        #  outFile=file(self.BEoutFile,'w')
+        #  for i,ctr in enumerate(ctrs):
+        #    msg=','.join([str(ctr),str(bins[i])])
+        #    outFile.writelines(','.join([str(ctr),str(bins[i]),])+'\n')
+        #  outFile.close()
 
     print 'Executioner complete...'
 
@@ -195,6 +191,12 @@ class Executor(object): #base class
 
 
 class PCESCExec(Executor):
+  def setCase(self):
+    case = ''
+    case+= self.templateFile.split('.')[0]+'_SC_'
+    case+= str(len(self.varDict.keys()))+'var'
+    self.case=case
+
   def loadSampler(self):
     self.sampler = spr.StochasticPoly(self.varDict,self.input_file)
 
@@ -205,7 +207,8 @@ class PCESCExec(Executor):
     Output: none
     '''
     backendTypes = ['ROM']#self.input_file('Backend/active','').split(' ')
-    self.BEoutFile = self.input_file('Backend/outFile','BE.out')
+    self.BEoutFile = self.case+'.SC'
+    #self.input_file('Backend/outFile','BE.out')
     self.backends={}
     for beType in backendTypes:
       if beType == 'ROM':
@@ -214,7 +217,7 @@ class PCESCExec(Executor):
         for var in self.varDict.values():
           orderlist.append(range(var.expOrd))
         tensorprod=list(allcombos(*orderlist))
-        backend = be.ROM(tensorprod)
+        backend = be.ROM(tensorprod,self.BEoutFile)
         self.backends['ROM']=backend
 
   def parallelRun(self,restart=False):
@@ -323,6 +326,12 @@ class PCESCExec(Executor):
 
 
 class MCExec(Executor):
+  def setCase(self):
+    case = ''
+    case+= self.templateFile.split('.')[0]+'_MC_'
+    case+= str(len(self.varDict.keys()))+'var'
+    self.case=case
+
   def savestate(self,savedict):
     curcwd = os.getcwd()
     os.chdir(self.uncDir)
@@ -351,7 +360,8 @@ class MCExec(Executor):
     Output: none
     '''
     backendTypes = ['PDF']#self.input_file('Backend/active','').split(' ')
-    self.BEoutFile = self.input_file('Backend/outFile','BE.out')
+    self.BEoutFile = self.case+'.MC.stats'
+    #self.input_file('Backend/outFile','BE.out')
     self.backends={}
     for beType in backendTypes:
       if beType == 'PDF':

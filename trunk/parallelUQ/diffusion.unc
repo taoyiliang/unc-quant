@@ -11,7 +11,7 @@
 
 [Sampler]
   [./MC]
-    totalSamples = 1e6
+    totalSamples = 1e2
     printfreq = 10
    # solnRange = '0.9 1.5' #normal
    # solnRange = '0.7 1.2' #normal
@@ -23,9 +23,8 @@
 []
 
 [Backend]
-  outFile = test.out
   [./ROM]
-    samples = 1e6 
+    samples = 1e3 
     checkSolution = 0
     createPDF = 1
     bins = 100
@@ -51,32 +50,32 @@
     path = 'Material/1/g2/sigc'
     dist = uniform
     args = '0.05540 0.0055' #median, range def 10%
-    exporder = 12
+    exporder = 2
   [../]
   [./1xf2]
     path = 'Material/1/g2/nsigf'
     dist = uniform
     args = '0.1091 0.011' #median, range def 10%
-    exporder = 12
+    exporder = 2
   [../]
 
   [./4xc2]
     path = 'Material/4/g2/sigc'
     dist = uniform
     args = '0.04142 0.0041' #median, range def 10%
-    exporder = 12
+    exporder = 2
   [../]
   [./4xf2]
     path = 'Material/4/g2/nsigf'
     dist = uniform
     args = '0.1021 0.010' #median, range def 10%
-    exporder = 12
+    exporder = 2
   [../]
 
   [./5D2]
     path = 'Material/5/g2/D'
     dist = uniform
     args = '0.1592 0.016' #median, range def 10%
-    exporder = 12
+    exporder = 2
   [../]
 []
