@@ -1,4 +1,5 @@
 [Problem]
+  executor       = PCESC
   templateFile   = 'diffusion.inp'
   storeFlux      = 0
   execDir        = '../oneDdiffusion/'

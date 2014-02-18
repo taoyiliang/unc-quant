@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import time
 
-def g(xa,D=0.5,loc=2.0,S=1.0):
+def g(xa=0.75,loc=2.0,D=0.5,S=1.0):
   #S = 1.0 #source strength
   #D = 0.5 #diffusion coefficient
   #loc = 2.0 #depth in cm

@@ -1,4 +1,5 @@
 [Problem]
+  executor       = PCESC
   templateFile   = '2G_2D.inp'
   storeFlux      = 0
   execDir        = '../diffusion/'
@@ -9,7 +10,6 @@
 []
 
 [Sampler]
-  active = 'SC'
   [./MC]
     totalSamples = 1e6
     printfreq = 10
@@ -23,8 +23,6 @@
 []
 
 [Backend]
-  active = 'ROM'
- # active = 'PDF'
   outFile = test.out
   [./ROM]
     samples = 1e6 

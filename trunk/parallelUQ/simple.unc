@@ -1,4 +1,5 @@
 [Problem]
+  executor     = MC
   templateFile = 'simple.inp'
   storeFlux    = 0
   execDir      = '../simple/'

@@ -1,4 +1,5 @@
 [Problem]
+  executor     = PCESC
   templateFile = 'source.inp'
   storeFlux    = 0
   execDir      = '../source/'
