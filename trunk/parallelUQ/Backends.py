@@ -225,7 +225,7 @@ class ROM(Backend):
     self.outq=sque()
 
   def makeROM(self,histories,verbose=False):
-    print '\nBuilding ROM...'
+    print '\nBuilding ROM...',time.time()
     c={}
     #for key in histories.keys():
     #  print '  ',key,histories[key]
@@ -234,7 +234,8 @@ class ROM(Backend):
     #TODO need to store vars for poly evals later
     for i,ordset in enumerate(self.expOrds): #poly orders
       c[tuple(ordset)]=0
-      print 'Constructing coefficient',tuple(ordset),'\r',
+      print 'Constructing coefficient',tuple(ordset),
+      print '(%i/%i)' %(i,len(self.expOrds)),'\r',
       for m,soln in enumerate(histories['soln']): #histories (quadpts)
         #valList = histories['varVals'][m]
         temp_order = 1
@@ -259,20 +260,20 @@ class ROM(Backend):
         if abs(c[tuple(ordset)])<1e-12:
           c[tuple(ordset)]=0
     #remove zero coefficients
-    print 'Eliminating near-zero coefficients...'
+    print '\n...eliminating near-zero coefficients...',time.time()
     noelim=True
     for key in c.keys():
       if abs(c[key])<1e-11:
         print '  Coeff',(key),'is less than 1e-11 and was removed'
         del c[key]
         noelim*=False
-    if noelim: print '  ...No coefficients were removed.'
+    if noelim: print '    ...No coefficients were removed.'
     orderedKeys = c.keys()[:]
     orderedKeys.sort()
     varnames=''
     for var in histories['vars']:
       varnames+=var.name+' '
-    if len(c)<=16:
+    if len(c)<=100:
       print '\nCoefficient solutions: ( ',varnames,')'
       for key in orderedKeys:
         print '  ',key,c[key]
@@ -280,7 +281,7 @@ class ROM(Backend):
 
   def setStats(self,histories):
     #get mean
-    print 'DEBUG: in setStats'
+    print 'Running ROM statistics...',time.time()
     base=[0]*len(histories['vars'])
     self.mean=float(self.evalSingleTerm(base,histories))
 
@@ -390,6 +391,7 @@ class ROM(Backend):
     print '  ...using',self.numprocs,'processors...'
     trials = int(trials)
     print '  ...sampling 1e'+str(int(np.log10(trials))),'trials...'
+    print '  ...starting at',time.time()
     #turns out can only handle up to 1400 trials per go
     trialsPerProc = int(float(trials)/float(self.numprocs))
     if trialsPerProc >1000:

@@ -29,7 +29,7 @@
   [./ROM]
     samples = 1e6 
     checkSolution = 0
-    createPDF = 1
+    createPDF = 0
     bins = 100
     stats = 1
   [../]
@@ -47,38 +47,44 @@
   #       2D1 2D2 2xa1 2xa2 2xf1 2xf2 2xt1
   #       3D1 3D2 3xa1 3xa2 2xt1'
   names = '1xc2 1xf2 4xc2 4xf2 5D2'
+  #names = '5D2'
 
   #MATERIAL 1
   [./1xc2]
     path = 'Material/1/g2/sigc'
     dist = uniform
     args = '0.05540 0.0055' #median, range def 10%
-    exporder = 12
+    exporder = 3 #these discovered ad hoc
+    quadorder = 6
   [../]
   [./1xf2]
     path = 'Material/1/g2/nsigf'
     dist = uniform
     args = '0.1091 0.011' #median, range def 10%
-    exporder = 12
+    exporder = 3
+    quadorder = 6
   [../]
 
   [./4xc2]
     path = 'Material/4/g2/sigc'
     dist = uniform
     args = '0.04142 0.0041' #median, range def 10%
-    exporder = 12
+    exporder = 2
+    quadorder = 4
   [../]
   [./4xf2]
     path = 'Material/4/g2/nsigf'
     dist = uniform
     args = '0.1021 0.010' #median, range def 10%
-    exporder = 12
+    exporder = 2
+    quadorder = 4
   [../]
 
   [./5D2]
     path = 'Material/5/g2/D'
     dist = uniform
     args = '0.1592 0.016' #median, range def 10%
-    exporder = 12
+    exporder = 1
+    quadorder = 2
   [../]
 []
