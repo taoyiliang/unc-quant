@@ -17,21 +17,27 @@ from itertools import product as allcombos
 import multiprocessing
 from multiprocessing.queues import SimpleQueue as sque
 
+def newExecutor(exec_type,inp_file,restart):
+  oktypes=['PCESC','MC','MLMC']
+  if exec_type not in oktypes:
+    msg = 'Desired exec type <'+exec_type+'> not recognized.'
+    msg+= '\n    Options include '+str(oktypes)
+    raise IOError(msg)
+  todo = 'ex = '+exec_type+'Exec(inp_file,restart)'
+  exec todo
+  return ex
+
 class Executor(object): #base class
-  '''
-  Class that organizes UQ run.
-  Inputs: argv, should include '-i <input file>
-  Returns: 0
-  '''
-  def __init__(self,argv,restart=False):
+  def __init__(self,inp_file,restart):
     '''Constructor'''
+    print '\nInitializing Executor...'
+    self.input_file = inp_file
     self.restart=restart
-    self.starttime=time.time()
-    print '\nStarting UQ at',dt.datetime.fromtimestamp(self.starttime)
     #run
-    self.loadInput(argv)
+    self.loadInput()
     self.setDirs()
     self.loadVars()
+    self.setCase()
     self.loadSampler()
     self.loadBackends()
     self.clearInputs()
@@ -39,37 +45,13 @@ class Executor(object): #base class
     self.runBackends()
 
   def savestate(self,savedict):
-    curcwd = os.getcwd()
-    os.chdir(self.uncDir)
-    outfile=file('MC.backup.pk','w')
-    pk.dump(savedict,outfile,2)
-    outfile.close()
-    os.chdir(curcwd)
+    print 'Executor has no implemented savestate function!'
 
   def loadRestart(self):
-    print '\nLoading MC restart from',os.getcwd()+'/MC.backup.pk'
-    outfile=file('MC.backup.pk','r')
-    toret = pk.load(outfile)
-    outfile.close()
-    return toret
+    print 'Executor has no implemented loadRestart function!'
 
-  def loadInput(self,argv):
-    '''
-    Loads uncertainty input file and sets problem parameters
-    '''
-    #load uncertainty input
-    cl = GetPot(argv)
-    if cl.search('-i'):
-      inpFileName=''
-      inpFileName=cl.next(inpFileName)
-      self.input_file=GetPot(Filename=inpFileName)
-    else: raise IOError('Requires an input file using -i.')
-    if cl.search('-r'):
-      self.restart=True
-    #load problem-specific information
+  def loadInput(self):
     self.templateFile=self.input_file('Problem/templateFile','')
-    #maxSamples = input_file('Problem/totalSamples',0)
-    self.storeFlux  = self.input_file('Problem/storeFlux',0)
     self.execDir    = self.input_file('Problem/execDir'  ,'')
     self.inputDir   = self.input_file('Problem/inputDir' ,'')
     self.input_editor = self.input_file('Problem/input_editor','')
@@ -110,23 +92,6 @@ class Executor(object): #base class
       self.varDict[var]=Variables.newVar(dist,var,path)
       self.varDict[var].setDist(args)
 
-  def loadSampler(self):
-    '''
-    Loads sampling technique (either MonteCarlo or StochColl)
-    Input: none
-    Output: none
-    '''
-    samplerType = self.input_file('Sampler/active','')
-    if samplerType in ['mc','MC','mC','MonteCarlo','Monte Carlo']:
-      self.solnRange = self.input_file('Sampler/MC/solnRange','-1e10 1e10').split(' ')
-      for i,r in enumerate(self.solnRange):
-        self.solnRange[i]=float(r)
-      self.sampler = spr.MonteCarlo(self.varDict,self.input_file)
-    elif samplerType in ['SC','sc','StochPoly']:
-      self.sampler = spr.StochasticPoly(self.varDict,self.input_file)
-    else:
-      raise IOError ('sampler type not recognized: |'+samplerType+'|')
-
   def clearInputs(self):
     '''
     Deletes old run input files from UQ runs
@@ -146,44 +111,6 @@ class Executor(object): #base class
     #return np.exp(-x*x)
     #return x*x - 2.*x + 0.5
     return 1.+2.*x
-
-  def loadBackends(self):
-    '''
-    Sets up post-processing, including building ROM for SC
-    Input: none
-    Output: none
-    '''
-    backendTypes = self.input_file('Backend/active','').split(' ')
-    self.BEoutFile = self.input_file('Backend/outFile','BE.out')
-    self.backends={}
-    for beType in backendTypes:
-      if beType in ['PDF']:
-        bins = self.input_file('Backend/PDF/bins',100)
-        low  = self.input_file('Backend/PDF/low',0.0)
-        hi   = self.input_file('Backend/PDF/hi',10.0)
-        backend = be.Stats(low,hi,self.BEoutFile,bins)
-        if self.restart:
-          loaddict=self.loadRestart()
-          runs=backend.loaddict(loaddict)
-          self.total_runs=runs
-          self.sampler.restart(runs)
-        self.backends['PDF']=backend
-      if beType in ['plot2D']:
-        backend = be.Plotter2D()
-        self.backends['plot2D']=backend
-      elif beType in ['ROM','rom']:
-        #backend = be.ROM(self.sampler.runords) hello, cancerous problem...
-        #generate tensor product combination of var expansions
-        orderlist=[]
-        for var in self.varDict.values():
-          orderlist.append(range(var.expOrd))
-        tensorprod=list(allcombos(*orderlist))
-        backend = be.ROM(tensorprod)
-        self.backends['ROM']=backend
-      elif beType in ['CSV','csv']:
-        outFileName = self.input_file('Backend/outFile','out.csv')
-        backend = be.CSVMaker(outFileName)
-        self.backends['CSV']=backend
 
   def runBackends(self):
     '''
@@ -244,25 +171,18 @@ class Executor(object): #base class
           plt.xlabel('Solutions')
           plt.ylabel('Probability')
           #plt.axis([0.9,1.2,0,0.05])
-          print 'dumping to',os.getcwd(),'4.pk'
-          pk.dump([ctrs,bins],open('4.pk','wb'))
+          #print 'dumping to',os.getcwd(),'4.pk'
+          #pk.dump([ctrs,bins],open('4.pk','wb'))
 
         #write stats out to file
-        if doStats and makePDF:
-          outFile=file(self.BEoutFile,'w')
-          for i,ctr in enumerate(ctrs):
-            msg=','.join([str(ctr),str(bins[i])])
-            outFile.writelines(','.join([str(ctr),str(bins[i]),])+'\n')
-          outFile.close()
+        #if doStats and makePDF:
+        #  outFile=file(self.BEoutFile,'w')
+        #  for i,ctr in enumerate(ctrs):
+        #    msg=','.join([str(ctr),str(bins[i])])
+        #    outFile.writelines(','.join([str(ctr),str(bins[i]),])+'\n')
+        #  outFile.close()
 
-      elif btype in ['CSV','csv']:
-        outFileName = self.input_file('Backend/outFile','dud')
-        if outFileName == 'dud': outFileName='out.csv'
-        backend.makeCSV(self.histories,outFileName)
-
-    runtime = time.time()-self.starttime
-    plt.show()
-    print 'Executioner complete,',runtime,'seconds'
+    print 'Executioner complete...'
 
 
 
@@ -271,6 +191,35 @@ class Executor(object): #base class
 
 
 class PCESCExec(Executor):
+  def setCase(self):
+    case = ''
+    case+= self.templateFile.split('.')[0]+'_SC_'
+    case+= str(len(self.varDict.keys()))+'var'
+    self.case=case
+
+  def loadSampler(self):
+    self.sampler = spr.StochasticPoly(self.varDict,self.input_file)
+
+  def loadBackends(self):
+    '''
+    Sets up post-processing
+    Input: none
+    Output: none
+    '''
+    backendTypes = ['ROM']#self.input_file('Backend/active','').split(' ')
+    self.BEoutFile = self.case+'.SC'
+    #self.input_file('Backend/outFile','BE.out')
+    self.backends={}
+    for beType in backendTypes:
+      if beType == 'ROM':
+        #TODO bad full tensor product, so fix this
+        orderlist=[]
+        for var in self.varDict.values():
+          orderlist.append(range(var.expOrd))
+        tensorprod=list(allcombos(*orderlist))
+        backend = be.ROM(tensorprod,self.BEoutFile)
+        self.backends['ROM']=backend
+
   def parallelRun(self,restart=False):
     '''
     Runs Sampler in parallel and collects solns
@@ -377,6 +326,56 @@ class PCESCExec(Executor):
 
 
 class MCExec(Executor):
+  def setCase(self):
+    case = ''
+    case+= self.templateFile.split('.')[0]+'_MC_'
+    case+= str(len(self.varDict.keys()))+'var'
+    self.case=case
+
+  def savestate(self,savedict):
+    curcwd = os.getcwd()
+    os.chdir(self.uncDir)
+    outfile=file('MC.backup.pk','w')
+    pk.dump(savedict,outfile,2)
+    outfile.close()
+    os.chdir(curcwd)
+
+  def loadRestart(self):
+    print '\nLoading MC restart from',os.getcwd()+'/MC.backup.pk'
+    outfile=file('MC.backup.pk','r')
+    toret = pk.load(outfile)
+    outfile.close()
+    return toret
+
+  def loadSampler(self):
+    self.solnRange=self.input_file('Sampler/MC/solnRange','-1e30 1e30').split()
+    for i,r in enumerate(self.solnRange):
+      self.solnRange[i]=float(r)
+    self.sampler = spr.MonteCarlo(self.varDict,self.input_file)
+
+  def loadBackends(self):
+    '''
+    Sets up post-processing, including building ROM for SC
+    Input: none
+    Output: none
+    '''
+    backendTypes = ['PDF']#self.input_file('Backend/active','').split(' ')
+    self.BEoutFile = self.case+'.MC.stats'
+    #self.input_file('Backend/outFile','BE.out')
+    self.backends={}
+    for beType in backendTypes:
+      if beType == 'PDF':
+        bins = self.input_file('Backend/PDF/bins',100)
+        low  = self.input_file('Backend/PDF/low',0.0)
+        hi   = self.input_file('Backend/PDF/hi',10.0)
+        backend = be.Stats(low,hi,self.BEoutFile,bins)
+        if self.restart:
+          loaddict=self.loadRestart()
+          runs=backend.loaddict(loaddict)
+          self.total_runs=runs
+          self.sampler.restart(runs)
+        self.backends['PDF']=backend
+
   def parallelRun(self,restart=False):
     '''
     Runs Sampler in parallel and collects solns
@@ -508,15 +507,15 @@ class MCExec(Executor):
     self.outq.put([solns,nThrown])
 
 
-if __name__=='__main__':
+#if __name__=='__main__':
   #run syntax: python parExecutor -i <UQ input file>
-  if '-r' in argv:
-    restart = True
-    print 'setting up restart...'
-  else: restart = False
-  if 'mc' in argv:
-    ex = MCExec(argv,restart=restart)
-  elif 'sc' in argv:
-    ex = PCESCExec(argv,restart)
-  else:
-    print 'Need "mc" or "sc" in argument list!'
+#  if '-r' in argv:
+#    restart = True
+#    print 'setting up restart...'
+#  else: restart = False
+#  if 'mc' in argv:
+#    ex = MCExec(argv,restart=restart)
+#  elif 'sc' in argv:
+#    ex = PCESCExec(argv,restart)
+#  else:
+#    print 'Need "mc" or "sc" in argument list!'

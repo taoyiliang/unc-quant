@@ -1,4 +1,5 @@
 [Problem]
+  executor     = PCESC
   templateFile = 'simple.inp'
   storeFlux    = 0
   execDir      = '../simple/'
@@ -30,7 +31,7 @@
     MCsample = 1
     samples = 1e6
     checkSolution = 0
-    createPDF = 1
+    createPDF = 0
     stats = 1
   [../]
 

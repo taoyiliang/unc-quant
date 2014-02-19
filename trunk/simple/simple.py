@@ -10,7 +10,7 @@ def g(x):
 
 def f(x,y):
   #return x+y
-  return x*x + x*y + y*y
+  return x*(1.+y)
 
 cl = GetPot(sys.argv)
 if cl.search('-i'):

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
 import numpy as np
+import cPickle as pk
 from bisect import bisect_left
 from sys import *
 import os
@@ -219,23 +220,25 @@ class ROM(Backend):
   Uses SC runs to generate Reduced Order Model polynomial representation of
     soln as a function of the uncertain variables
   '''
-  def __init__(self,ords):
-    self.coeffs={}
+  def __init__(self,ords,case):
     self.expOrds = ords
+    self.case = case
+    self.coeffs={}
     self.outq=sque()
 
   def makeROM(self,histories,verbose=False):
-    print '\nBuilding ROM...',time.time()
+    print '\nBuilding ROM...'
     c={}
     #for key in histories.keys():
     #  print '  ',key,histories[key]
     #print 'in histories: varvals'
     #print '  ',histories['varVals']
     #TODO need to store vars for poly evals later
+    cofFile = file(self.case+'.cof','w')
     for i,ordset in enumerate(self.expOrds): #poly orders
-      c[tuple(ordset)]=0
-      print 'Constructing coefficient',tuple(ordset),
-      print '(%i/%i)' %(i,len(self.expOrds)),'\r',
+      ords = tuple(ordset)
+      c[ords]=0
+      print 'Constructing coefficient',ords,'\r',
       for m,soln in enumerate(histories['soln']): #histories (quadpts)
         #valList = histories['varVals'][m]
         temp_order = 1
@@ -255,35 +258,39 @@ class ROM(Backend):
             print '  soln:',soln
             #print '  eval:',temp_var
           temp_order*=temp_var
-        c[tuple(ordset)]+=temp_order*soln
-        #FIXME this is hacky, but eliminates some roundoff errors
-        if abs(c[tuple(ordset)])<1e-12:
-          c[tuple(ordset)]=0
+        c[ords]+=temp_order*soln
+        #this is hacky, but eliminates some roundoff errors
+        if abs(c[ords])<1e-12:
+          c[ords]=0
+      cofFile.writelines(str(ords)+' | %1.8e' %c[ords] +'\n')
+    cofFile.close()
+    print 'Ceofficients written to',os.getcwd()+'/'+self.case+'.cof'
     #remove zero coefficients
-    print '\n...eliminating near-zero coefficients...',time.time()
+    print 'Eliminating near-zero coefficients...'
     noelim=True
     for key in c.keys():
       if abs(c[key])<1e-11:
         print '  Coeff',(key),'is less than 1e-11 and was removed'
         del c[key]
         noelim*=False
-    if noelim: print '    ...No coefficients were removed.'
+    if noelim: print '  ...No coefficients were removed.'
     orderedKeys = c.keys()[:]
     orderedKeys.sort()
     varnames=''
     for var in histories['vars']:
       varnames+=var.name+' '
-    if len(c)<=100:
+    if len(c)<=16:
       print '\nCoefficient solutions: ( ',varnames,')'
       for key in orderedKeys:
         print '  ',key,c[key]
     self.coeffs=c
 
   def setStats(self,histories):
+    outFile = file(self.case+'.stats','w')
     #get mean
-    print 'Running ROM statistics...',time.time()
     base=[0]*len(histories['vars'])
     self.mean=float(self.evalSingleTerm(base,histories))
+    outFile.writelines('Mean,'+str(self.mean)+'\n')
 
     #get second moment
     mom2=0
@@ -292,22 +299,11 @@ class ROM(Backend):
     for var in histories['vars']:
       mom2*=var.probWeight(0,scale='standard')
     self.var = mom2-self.mean**2
-    #maxord=max(max(self.coeffs.keys()))
-    #for i in range(maxord+1):
-    #  base=[i]*len(histories['vars'])
-      #FIXME this only works for one var right now
-    #  try:
-    #    mom2+=float(self.getcoeff(base))**2
-    #    print 'base:',base,'mom2:',self.getcoeff(base)**2
-    #  except KeyError:
-    #    print 'Failed at getcoeff(',base,')'
-    #    pass
-    #for var in histories['vars']:
-    #  mom2*=var.probWeight(0,scale='standard')
-    self.var = mom2-self.mean**2
+    outFile.writelines('Variance,'+str(self.var)+'\n')
+    outFile.writelines('2nd Moment,'+str(mom2)+'\n')
     print 'stats | mean,mom2,var'
     print self.mean,mom2,self.var
-
+    outFile.close()
 
   def getcoeff(self,base):
     return self.coeffs[tuple(base)]
@@ -334,43 +330,43 @@ class ROM(Backend):
       tot+=coef*temp
     return tot
 
-  def MCsampleDict(self,histories,trials=1000,cprFunc=None):
-    solns={}
-    actual={}
-    trials = int(trials)
+  #def MCsampleDict(self,histories,trials=1000,cprFunc=None):
+  #  solns={}
+  #  actual={}
+  #  trials = int(trials)
     #TODO this can be vectored? 
-    for i in range(trials):
-      vals=[]
-      actvals=[]
+  #  for i in range(trials):
+  #    vals=[]
+  #    actvals=[]
       #if trials%(0.1*trials)==0:
       #  print '  completed',i,'/',trials,'trials...'
-      for var in histories['vars']:
+  #    for var in histories['vars']:
         #actvals.append(var.sample())
         #vals.append(var.convertToStandard(actvals[-1]))
-        vals.append(var.sample())
-      solns[tuple(vals)]=self.sampleROM(vals,histories)
-      if cprFunc!=None:
-        actual[tuple(vals)]=cprFunc(*vals)
+  #      vals.append(var.sample())
+  #    solns[tuple(vals)]=self.sampleROM(vals,histories)
+  #    if cprFunc!=None:
+  #      actual[tuple(vals)]=cprFunc(*vals)
         #WARNING: this depends strongly on what order vals is stored!
-    if cprFunc==None:
-      return solns
-    else:
-      return solns,actual
+  #  if cprFunc==None:
+  #    return solns
+  #  else:
+  #    return solns,actual
 
-  def MCsample(self,histories,trials=1000):
-    trials = int(trials)
-    solns=np.zeros(trials)
+  #def MCsample(self,histories,trials=1000):
+  #  trials = int(trials)
+  #  solns=np.zeros(trials)
     #TODO this can be vectored? 
-    for i in range(trials):
+  #  for i in range(trials):
       #if trials%(0.1*trials)==0:
       #  print '  completed',i,'/',trials,'trials...'
-      vals=[]
-      for var in histories['vars']:
+  #    vals=[]
+  #    for var in histories['vars']:
         #actvals.append(var.sample())
         #vals.append(var.convertToStandard(actvals[-1]))
-        vals.append(var.sample())
-      solns[i]=self.sampleROM(vals,histories)
-    return solns
+  #      vals.append(var.sample())
+  #    solns[i]=self.sampleROM(vals,histories)
+  #  return solns
 
   def MCsampleChild(self,num,histories,trials=1000,trunc=0):
     #print 'MCchild,',trials,'trials'
@@ -391,7 +387,6 @@ class ROM(Backend):
     print '  ...using',self.numprocs,'processors...'
     trials = int(trials)
     print '  ...sampling 1e'+str(int(np.log10(trials))),'trials...'
-    print '  ...starting at',time.time()
     #turns out can only handle up to 1400 trials per go
     trialsPerProc = int(float(trials)/float(self.numprocs))
     if trialsPerProc >1000:
@@ -403,6 +398,7 @@ class ROM(Backend):
     done=False
     thqu=half=qu = False
     curTime = time.time()
+    pkFile = self.case+'.samples.pk'
     while not done:
       #printout flags
       if trialsLeft <= 0.75*trials and thqu==False:
@@ -410,16 +406,19 @@ class ROM(Backend):
         elapsed=time.time()-curTime
         curTime=time.time()
         print 'Trials complete:',trials-trialsLeft,'/',trials,',',elapsed,'secs'
+        pk.dump(solns,open(pkFile,'wb'))
       elif trialsLeft <= 0.5*trials and half==False:
         half = True
         elapsed=time.time()-curTime
         curTime=time.time()
         print 'Trials complete:',trials-trialsLeft,'/',trials,',',elapsed,'secs'
+        pk.dump(solns,open(pkFile,'wb'))
       elif trialsLeft <= 0.25*trials and qu==False:
         qu = True
         elapsed=time.time()-curTime
         curTime=time.time()
         print 'Trials complete:',trials-trialsLeft,'/',trials,',',elapsed,'secs'
+        pk.dump(solns,open(pkFile,'wb'))
       #remove dead processes
       for p,proc in enumerate(self.ps):
         if not proc.is_alive():
@@ -452,6 +451,7 @@ class ROM(Backend):
         done*=not p.is_alive()
       done *= (trialsLeft == 0)
 
+    pk.dump(solns,open(pkFile,'wb'))
     print 'ran',numPs,'child processes on',self.numprocs,'processers'
     if len(solns)==trials:
       print 'All solutions successfully recorded.'
@@ -461,6 +461,7 @@ class ROM(Backend):
 
   def makePDF(self,histories,bins,samples=1e6,solns=None,trunc=0):
     #TODO better if they don't get stored in memory!
+    outFile = file(self.case+'.stats','a')
     if solns==None:
       solns=self.MCsampleParallel(histories,int(samples),trunc)
     low = min(solns)
@@ -480,6 +481,11 @@ class ROM(Backend):
     #normalize
     for b in range(len(bins)):
       bins[b]=float(bins[b])/float(len(solns))/widths[b]
+    for c,ctr in enumerate(ctrs):
+      outFile.writelines(str(ctr)+','+str(bins[i])+'\n')
+    outFile.close()
+    print '  ...PDF histogram stats added to',self.case+'.stats'
+    #pk.dump([ctrs,bins],open(outFile,'wb'))
     return bins,ctrs
 
   def OneDPrintPoly(self,histories):

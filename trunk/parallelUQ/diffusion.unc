@@ -1,4 +1,5 @@
 [Problem]
+  executor       = PCESC
   templateFile   = '2G_2D.inp'
   storeFlux      = 0
   execDir        = '../diffusion/'
@@ -9,9 +10,8 @@
 []
 
 [Sampler]
-  active = 'SC'
   [./MC]
-    totalSamples = 1e6
+    totalSamples = 1e2
     printfreq = 10
    # solnRange = '0.9 1.5' #normal
    # solnRange = '0.7 1.2' #normal
@@ -23,11 +23,8 @@
 []
 
 [Backend]
-  active = 'ROM'
- # active = 'PDF'
-  outFile = test.out
   [./ROM]
-    samples = 1e6 
+    samples = 1e3 
     checkSolution = 0
     createPDF = 0
     bins = 100
@@ -54,15 +51,23 @@
     path = 'Material/1/g2/sigc'
     dist = uniform
     args = '0.05540 0.0055' #median, range def 10%
+<<<<<<< HEAD
     exporder = 3 #these discovered ad hoc
     quadorder = 6
+=======
+    exporder = 2
+>>>>>>> 1ba032e24738a61fb30db245361438197706b7ff
   [../]
   [./1xf2]
     path = 'Material/1/g2/nsigf'
     dist = uniform
     args = '0.1091 0.011' #median, range def 10%
+<<<<<<< HEAD
     exporder = 3
     quadorder = 6
+=======
+    exporder = 2
+>>>>>>> 1ba032e24738a61fb30db245361438197706b7ff
   [../]
 
   [./4xc2]
@@ -70,21 +75,31 @@
     dist = uniform
     args = '0.04142 0.0041' #median, range def 10%
     exporder = 2
+<<<<<<< HEAD
     quadorder = 4
+=======
+>>>>>>> 1ba032e24738a61fb30db245361438197706b7ff
   [../]
   [./4xf2]
     path = 'Material/4/g2/nsigf'
     dist = uniform
     args = '0.1021 0.010' #median, range def 10%
     exporder = 2
+<<<<<<< HEAD
     quadorder = 4
+=======
+>>>>>>> 1ba032e24738a61fb30db245361438197706b7ff
   [../]
 
   [./5D2]
     path = 'Material/5/g2/D'
     dist = uniform
     args = '0.1592 0.016' #median, range def 10%
+<<<<<<< HEAD
     exporder = 1
     quadorder = 2
+=======
+    exporder = 2
+>>>>>>> 1ba032e24738a61fb30db245361438197706b7ff
   [../]
 []

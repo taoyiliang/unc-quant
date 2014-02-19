@@ -1,4 +1,5 @@
 [Problem]
+  executor     = PCESC
   templateFile = 'simple.inp'
   storeFlux    = 0
   execDir      = '../simple/'
@@ -13,8 +14,8 @@
   [../]
   [./MC]
     batch = 100
-    totalSamples = 1e6
-    printfreq = 50000
+    totalSamples = 1e5
+    printfreq = 5000
     solnRange = '1 35' #lognormal
    # solnRange = '-15 35' #normal
    # solnRange = '6 16' #uniform
@@ -28,9 +29,9 @@
   outFile = mcu.out
   [./ROM]
     MCsample = 1
-    samples = 1e4
+    samples = 1e3
     checkSolution = 0
-    createPDF = 1
+    createPDF = 0
     stats = 1
   [../]
 
