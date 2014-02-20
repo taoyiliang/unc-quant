@@ -1,20 +1,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-#inputs=['1.cof',
-#        '5.cof',
-#        '10.cof',
-#        '20.cof']
-inputs=[]
-#rng=[1,2,7,8,9,10,20]
-rng=range(1,6)
-for i in rng:
-  inputs.append(str(i)+'.cof')
+inputs=['1xc2.cof',
+        '1xf2.cof',
+        '4xc2.cof',
+        '4xf2.cof',
+        '5D2.cof']
 
 for inp in inputs:
-  try:
-    inFile = file(inp,'r')
-  except IOError:continue
+  inFile = file(inp,'r')
   ords=[]
   cofs=[]
   for line in inFile:
@@ -24,11 +18,10 @@ for inp in inputs:
       ords.append(int(terms[0].strip('(').strip(')').strip(',')))
       cofs.append(newCof)
   cofs=np.log10(np.array(cofs))
-  plt.plot(ords,cofs,'-',label=inp.split('.')[0])
+  plt.plot(ords,cofs,label=inp.split('.')[0])
 
 plt.legend()
 plt.xlabel('Expansion Moment')
-plt.ylabel('log |Coeff|')
-plt.title('1xf2')
+plt.ylabel('log Coefficient')
 plt.show()
 

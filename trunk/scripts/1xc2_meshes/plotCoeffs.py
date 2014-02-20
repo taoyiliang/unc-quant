@@ -29,6 +29,6 @@ for inp in inputs:
 plt.legend()
 plt.xlabel('Expansion Moment')
 plt.ylabel('log |Coeff|')
-plt.title('1xf2')
+plt.title('1xc2')
 plt.show()
 
