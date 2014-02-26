@@ -1,0 +1,96 @@
+[Mesh]
+  matmap = '3 1 1 2 2 3
+            3 1 1 2 2 3
+            3 1 1 2 2 3
+            3 1 1 2 2 3
+            3 1 1 2 2 3
+            3 1 1 2 2 3'
+  nXregs = 6
+  nYregs = 6
+  nx_per_reg = 1
+  ny_per_reg = 1
+  len_Xside = 25 #cm per region
+  len_Yside = 25 #cm per region
+[]
+
+[Material]
+  names = '1 2 3'
+  labels = '1 2 3'
+  [./1]
+    groups = 'g1 g2'
+    [./g1]
+      D     = 0.650
+      siga  = 0.1200
+      nsigf = 0.1000
+      sigtr = 0.50
+      chi   = 1.00
+    [../]
+    [./g2]
+      D     = 0.650
+      siga  = 0.1200
+      nsigf = 0.1000
+      sigtr = 0.00
+      chi   = 0.00
+    [../]
+  [../]
+
+  [./2]
+    groups = 'g1 g2'
+    [./g1]
+      D     = 0.7500
+      siga  = 0.10000
+      nsigf = 0.11000
+      sigtr = 0.50
+      chi   = 1.00
+    [../]
+    [./g2]
+      D     = 0.7500
+      siga  = 0.10000
+      nsigf = 0.11000
+      sigtr = 0.00
+      chi   = 0.00
+    [../]
+  [../]
+
+  [./3]
+    groups = 'g1 g2'
+    [./g1]
+      D     = 1.1500
+      siga  = 0.01000
+      nsigf = 0.0000
+      sigtr = 0.50
+      chi   = 1.00
+    [../]
+    [./g2]
+      D     = 1.1500
+      siga  = 0.01000
+      nsigf = 0.0000
+      sigtr = 0.00
+      chi   = 0.00
+    [../]
+  [../]
+[]
+
+[BCs]
+#0=vacuum, 1=reflective
+  left   = 1
+  right  = 1
+  top    = 1
+  bottom = 1
+[]
+
+[Execution]
+  execution_type = NCA
+
+  keff_tol = 1e-5
+  max_power_its = 10000
+  max_nca_its = 100
+  max_nda_its = 10
+  nprecons = 5
+
+  max_s_its = 1
+[]
+
+[Output]
+  file = flux.out
+[]
