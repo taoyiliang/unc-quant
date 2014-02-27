@@ -1,0 +1,62 @@
+[Mesh]
+  matmap = '1 1 1 1
+            1 1 1 1
+            1 1 1 1
+            1 1 1 1'
+  nXregs = 4
+  nYregs = 4
+  nx_per_reg = 5
+  ny_per_reg = 5
+  sq_per_side = 4
+  len_Xside = 50 #cm, 200 cm total
+  len_Yside = 50 #cm, 200 cm total
+[]
+
+[Material]
+  names = '1'
+  labels = '1'
+  [./1]
+    groups = 'g1 g2'
+    [./g1]
+      D     = 1.255
+      sigc  = 0.008252
+      nsigf = 0.004602
+      sigtr = 0.02533
+      chi   = 1.0
+    [../]
+    [./g2]
+      D     = 0.211
+      sigc  = 0.04438 #critical
+    # sigc  = 0.055969 #subcrit 0.9
+    # sigc  = 0.035181 #supercrit 1.1
+      nsigf = 0.1091
+      sigtr = 0.00
+      chi   = 0.00
+    [../]
+  [../]
+[]
+
+[BCs]
+#0=vacuum, 1=reflective
+  left   = 0
+  right  = 0
+  top    = 1
+  bottom = 1
+[]
+
+[Execution]
+  execution_type = NCA
+
+  keff_tol = 1e-5
+  max_power_its = 10000
+  max_nca_its = 1000
+  max_nda_its = 10
+  nprecons = 5
+
+  max_s_its = 1
+[]
+
+[Output]
+
+  file = flux.out
+[]

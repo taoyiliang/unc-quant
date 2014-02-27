@@ -18,8 +18,6 @@ for line in inFile:
     k=float(ent[1])
     print ent[0],'=',ent[1]
     continue
-  if line.startswith('m1siga2'):
-    continue
   temp=line.split('|')[0]
   newX=float(temp.split(',')[0])
   newY=float(temp.split(',')[1])
@@ -77,7 +75,7 @@ if nX<100 and nY<100 and False:
     tempy = np.ones(len(xs))*y
     plt.plot(xs,tempy,'k-')
 
-addRegions(nX/11)
+addRegions(nX/4)
 plt.title('G1 flux, '+str(nX)+'x'+str(nY)+', k = '+str(k))
 
 plt.figure()
@@ -85,7 +83,7 @@ plt.figure()
 CS2 = plt.imshow(np.rot90(s2),extent=[0,nX,0,nY],interpolation='none')
 plt.colorbar(CS2)
 
-addRegions(nX/11)
+addRegions(nX/4)
 
 plt.title('G2 flux, '+str(nX)+'x'+str(nY)+', k = '+str(k))
 #plt.axis([0,165,0,165])
