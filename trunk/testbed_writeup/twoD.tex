@@ -136,10 +136,12 @@ Region & Energy Group & Parameter & Uncertainty \\ \hline
 \label{tab:2d2g5param}
 \end{table}
 
+To explore the input space, we consider a variety of low-order expansions and one of higher order.  The results are in Table \ref{tab:2dcrit5v}.
+
 \begin{table}[H]
 \begin{center}
 \begin{tabular}{c c|l l}
-type & $\mathcal{O}(\Sigma_{2,c}^1,\Sigma_{2,f}^1,\Sigma_{2,c}^4,\Sigma_{2,f}^4,D^5,)$ & mean & variance \\ \hline
+type & $\mathcal{O}(\Sigma_{2,c}^1,\Sigma_{2,f}^1,\Sigma_{2,c}^4,\Sigma_{2,f}^4,D^5_2)$ & mean & variance \\ \hline
 MC & $1\times10^6$ & 0.995950138052 & 1.34575404516 \\
 SC & (2,2,2,2,2)  & 1.00261445437 & 0.000173828352441 \\
 SC & (4,2,2,2,2)  & 1.00125722573 & 0.000245435396045 \\
@@ -153,7 +155,46 @@ SC & (8,8,8,8,8) & 0.988408029125 & 1.17178207098
 \end{tabular}
 \end{center}
 \caption{Convergence of Mean, Variance for 2D2G Case}
-\label{tab:2dcrit}
+\label{tab:2dcrit5v}
+\end{table}
+
+\paragraph{Convergence Study}
+There are several factors to consider in the selection of expansion orders for each input parameter.  To inform us on appropriate expansion orders, we first consider each input parameter separately.  Because they are independent, holding the other parameters at their means while exploring convergence in expansion order of a single parameter gives an appropriate estimate for each expansion order in a multivariate run.  To increase run speed, we reduce the mesh refinement to its coarsest level (one grid cell per region).  We use 256-order Gauss Legendre quadrature to construct 256 expansion moments for each input parameter separately.  The results are shown in Fig. \ref{fig:2g2d5v coarse cof}.  The y-axis is the log of the magnitude of the expansion coefficient, and the x-axis is the expansion moments sorted by order.  The coefficient magnitude falls of quickly over the first several terms and plateaus for each case; however, the high value plateau for the Region 1 material cross sections suggests a lack of convergence.
+\begin{figure}[H]
+\centering
+   \includegraphics[width=0.7\textwidth]{../graphics/coefficient_decay}
+   \caption{2G2D: Coarse Mesh Coefficient Decay}
+   \label{fig:2g2d5v coarse cof}
+\end{figure}
+We hypothesize that this lack of convergence is because of the discretization error in the solver with such a coarse mesh.   To demonstrate the effect of increasing mesh refinement, we consider only the low-energy capture cross section for the first region (1xc2, $\xs{c}{1}$).  The results are shown in Fig. \ref{fig2g2d 1xc2 cof decay}.
+\begin{figure}[H]
+\centering
+   \includegraphics[width=0.7\textwidth]{../graphics/cof_decay_1xc2_meshes}
+   \caption{2G2D: Coefficients over Mesh Refinement}
+   \label{fig:2g2d 1xc2 cof decay}
+\end{figure}
+It is worth noting that any integer increase in the mesh refinement per region results in a large increase in mesh refinement overall.  The coarsest mesh, using a factor of 1 (1x1 grid cell per region) results in a mesh that is 11x11.  A mesh factor of 2 (2x2 grid cells per region) increases the refinement to 22x22.  This is equivalent to moving from $h=\Delta_x=\Delta_y=15$ cm to $h=7.5$ cm.  For this particular set of parameters, increase the mesh factor from 1 to 2 is plenty to assure good convergence for this cross section.  It can be the shown that the other Region 1 input parameter in this study behaves similarly and converges much further using a mesh factor of 2.
+
+We perform the same convergence study as before, but using the more refined mesh and only continuing to order 32 expansions.  The results are shown in Fig. \ref{fig:2g2d5v fine cof}.  While the first region material cross sections don't converge as far as the fourth region and reflector (fifth region), they do converge much further.  Looking at this plot, we can choose a multivariate expansion order that accurately represents the system.  Table \ref{tab:informed 5v} shows the results of keeping different expansion orders chosen by imposing a coefficient convergence tolerance.  In each case, the quadrature order used is double the expansion order.
+\begin{figure}[H]
+\centering
+   \includegraphics[width=0.7\textwidth]{../graphics/coefficient_decay2}
+   \caption{2G2D: Coarse Mesh Coefficient Decay}
+   \label{fig:2g2d5v fine cof}
+\end{figure}
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{c c c|l l}
+type & tol & $\mathcal{P}(\Sigma_{2,c}^1,\Sigma_{2,f}^1,\Sigma_{2,c}^4,\Sigma_{2,f}^4,D^5_2)$ & mean & variance \\ \hline
+MC & - & - & 0.999064586714 & 0.0262019588485 \\
+SC & 1e-4 & (5, 4, 3, 3, 1) & 1.00191085676 & 0.000202816510815 \\
+SC & 1e-5 & (6, 5, 4, 3, 1) & 1.00112487809 & 0.000554497293737\\
+SC & 1e-6 & (8, 7, 5, 4, 2) & 1.00018130781 & 0.00245280240592 \\
+SC & 1e-8 & (10, 9, 6, 4, 3) & 1.00014901416 & 0.00207327774315
+\end{tabular}
+\end{center}
+\caption{Convergence of Mean, Variance for 2D2G Case, Expansion Tolerances}
+\label{tab:informed 5v}
 \end{table}
 %
 %\begin{figure}[h!]
