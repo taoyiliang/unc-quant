@@ -336,7 +336,7 @@ int main(int argc, char *argv[])
     power_method.run();
   }
 
-  std::cout<<"Final keff: "<<keff<<std::endl;
+  std::cout<<"Final keff: 1 + "<<keff-1.0<<std::endl;
   ////----------------------
   // write solution to file.
   std::string outfile = input_file("Output/file","test.out");  

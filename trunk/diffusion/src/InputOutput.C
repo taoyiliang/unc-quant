@@ -30,7 +30,7 @@ void InputOutput::write2File(std::string outfile, Epetra_Vector& soln, TwoDMesh 
   my_output_file.open (outfile.c_str());
 
   my_output_file << "DIM,"<<mesh.nX<<","<<mesh.nY<<std::endl;
-  my_output_file << "k,"<<k<<std::endl;
+  my_output_file << "k,1+"<<k-1.0<<std::endl;
 
   //my_output_file << "m1siga2,"<<mesh.materials[1].siga[1]<<std::endl;
 
