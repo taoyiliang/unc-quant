@@ -31,26 +31,27 @@
 \begin{document}
 \maketitle
 \section{Introduction}
-This work outlines the development of an uncertainty quantification (UQ) framework using generalized polynomial chaos expansions and stochastic collocation (PCESC), verified using Monte Carlo (MC) sampling.  To verify the several stages this framework undergoes in development, we present here several test codes of increasing complexity that the UQ framework will act on.  The four test codes solve four problems: a polynomial expression; 1D mono-energetic neutron transport in a semi-infinite medium with uniform source and single material; 1D $k$-eigenvalue neutron diffusion transport with two energy groups and a single material; and a 2D, two energy group $k$-eigenvalue neutron diffusion transport quarter-core benchmark.  In all cases, we let $(\Omega,\Sigma,P)$ describe a complete probability space.
+This work outlines the development of an uncertainty quantification (UQ) framework using generalized polynomial chaos expansions and stochastic collocation (PCESC), verified using Monte Carlo (MC) sampling.  The intended use is as a ``black-box wrapper,'' agnostic of the algorithm whose uncertaintly is quantified.  To verify the several stages this framework undergoes in development and its independence from any deterministic solver, we present here several test codes of increasing complexity that the UQ framework will act on.  The four test codes solve four problems: a polynomial expression; 1D mono-energetic neutron transport in a semi-infinite medium with uniform source and single material; 1D $k$-eigenvalue neutron diffusion transport with two energy groups and a single material; and a 2D, two energy group $k$-eigenvalue neutron diffusion transport quarter-core benchmark.
 
 \subsection{Algorithm}
-Each problem-solving code is treated as a black box that reads in an input file and produces a result readable from an output file.  The problem-solving code can be represented as a function $U$ of certain input parameters $p$ and uncertain parameters $\theta(\omega)$, where $\theta$ could be a single parameter or a vector of uncertain parameters and $\omega$ is a single realization in the uncertainty space $\Sigma$.  We expand $U(p,\theta)$ in basis polynomials characteristic of the uncertain parameters:
+Each problem-solving code is treated as a black box that reads in an input file and produces a result readable from an output file.  The problem-solving code can be represented as a function $U$ of certain input parameters $\theta$ in deterministic parameter space $\Theta$ and uncertain parameters $Y(\omega)$ in uncertainty space $\Gamma$, where $Y$ could be a single parameter or a vector of uncertain parameters and $\omega$ is a single realization in the uncertainty space $\Gamma$.  We expand $U(\theta,Y)$ in basis polynomials characteristic of the uncertain parameters:
 \begin{equation}
-U(p;\theta) \approx \sum_{i=0}^I c_i B_I(\theta),
+U(\theta;Y)\approx U_P(\theta;Y) \equiv \sum_{p=0}^P u_p(\theta) \psi_p(Y),
 \end{equation}
-where $c_i$ are expansion coefficients, $B_i$ are the characteristic orthonormal basis polynomials, and the sum is truncated at finite order $I$.  In the limit as $I$ approaches infinity (or if $U(\theta)$ can be expressed exactly as a polynomial of order $I$), there is no approximation.  Ideally the expansion converges after a reasonably small number of terms.
+Generally, we omit the dependency $\theta$ when considering stochastic space ($U(\theta;Y)=U(\theta))$.
+$u_p(\theta)$ are polynomial expansion coefficients, $\psi_p(Y)$ are orthonormal basis polynomials, and the sum is necessarily truncated at finite order $P$.  In the limit as $P$ approaches infinity (or if $U(Y)$ can be expressed exactly as a polynomial of order $P$), there is no approximation.  Ideally the expansion converges after a reasonably small number of terms.
 
 We make use of the orthonormal nature of the polynomial basis to calculate the coefficients $c_i$,
 \begin{equation}
-c_i = \int_\Omega U(\theta)B_i(\theta)d\theta.
+u_p(\theta) = \int_\Gamma U(Y)\psi_p(Y)dY.
 \end{equation}
 With the right choice of polynomials, we can apply quadrature to solve the integral,
 \begin{equation}
-c_i = \sum_{\ell=0}^{L} w_\ell U(\theta_\ell) B_i(\theta_\ell).
+u_p = \sum_{\ell=0}^{L} w_\ell U(Y_\ell) \psi_p(Y_\ell).
 \end{equation}
-In this case we are applying Gaussian quadrature, where an expansion of order $L$ can exactly integrate a polynomial of order $2L-1$.  While the order of the polynomial $B_i(\theta_\ell)$ is $i$, the equivalent polynomial order of $U(\theta_\ell)$ is unknown and must be determined or approximated.  If $U(\theta)$ is scalar, $L$ need only be $(i+1)/2$; this is the low bound for quadrature order.  Coefficient convergence as a function of quadrature order is further explored for some of the cases in this report (see, for example, \S \ref{sec:quadconv}).
+In this case we are applying Gaussian quadrature, where an expansion of order $L$ can exactly integrate a polynomial of order $2L-1$.  While the order of the polynomial $\psi_p(Y_\ell)$ is $p$, the equivalent polynomial order of $U(Y_\ell)$ is unknown and must be determined or approximated.  If $U(Y)$ is scalar, $L$ need only be $(p+1)/2$; this is the low bound for quadrature order.  Coefficient convergence as a function of quadrature order is further explored for some of the cases in this report (see \S \ref{sec:quadconv}).
 
-Once the coefficients are calculated, they in combination with the basis polynomials create a reduced-order model that can be sampled like the original function, but ideally at much less computational expense.  The measure of success for the PCESC algorithm is its ability to preserve the mean and variance of the original function, as well as produce a virtually identical probability density function (pdf) for the solution quantity of interest, $U(p;\theta)$.  The mean, variance, and pdf are confirmed using brute-force Monte Carlo sampling of the original code.
+Once the coefficients are calculated, they in combination with the basis polynomials create a reduced-order model that can be sampled like the original function, but ideally at much less computational expense.  The measure of success for the PCESC algorithm is its ability to preserve the mean and variance of the original function, as well as produce a virtually identical probability density function (pdf) for the solution quantity of interest, $U(\theta;Y)$.  The mean, variance, and pdf are confirmed using brute-force Monte Carlo sampling of the original code.
 
 \include{simple}
 \include{source}
