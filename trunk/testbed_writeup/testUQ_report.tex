@@ -53,10 +53,14 @@ In this case we are applying Gaussian quadrature, where an expansion of order $L
 
 Once the coefficients are calculated, they in combination with the basis polynomials create a reduced-order model that can be sampled like the original function, but ideally at much less computational expense.  The measure of success for the PCESC algorithm is its ability to preserve the mean and variance of the original function, as well as produce a virtually identical probability density function (pdf) for the solution quantity of interest, $U(\theta;Y)$.  The mean, variance, and pdf are confirmed using brute-force Monte Carlo sampling of the original code.
 
-\include{simple}
-\include{source}
-\include{oneD}
-\include{twoD}
+\include{solvers}
+\include{univar}
+\include{multivar}
+
+%\include{simple}
+%\include{source}
+%\include{oneD}
+%\include{twoD}
 
 
 
