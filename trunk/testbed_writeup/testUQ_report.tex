@@ -55,14 +55,19 @@ Once the coefficients are calculated, they in combination with the basis polynom
 
 \include{solvers}
 \include{univar}
+\include{quadrature}
 \include{multivar}
 
 %\include{simple}
 %\include{source}
 %\include{oneD}
 %\include{twoD}
+\section{Conclusions}
+In conclusion, we have shown that the PCESC uncertainty quantification algorithm shows good agreement with both analytic and Monte Carlo results for both univariate and multivariate uncertainty spaces.  The algorithm handles deterministic solvers in a ``black box'' sense, meaning it is agnostic of the complexity of the solver itself, as shown by four solvers ranging from simple polynomial evaluation to nonlinear multigroup diffusion.  In addition, we have shown that convergence for the PCESC method requires careful consideration of both quadrature order for each input parameter as well as the spatial discretization error of the deterministic solver.
 
+We now turn our attention to the applicability of this algorithm.  Because of the exponential growth in expense for multivariate uncertainty spaces using the tensor product polynomial set, the efficiency of PCESC is lost when compared to Monte Carlo with the inclusion of many uncertain variables or a high degree polynomial expansion.  
 
+There are, however, many more efficient methods for constructing the uncertainty space than using a full tensor product system.  We will explore sparse grid quadrature and analysis-of-variance style methods, as well as HDMR methods to reduce the necessary sample space and recovery the efficiency of the PCESC method.
 
 
 
