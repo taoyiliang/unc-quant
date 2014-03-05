@@ -6,6 +6,7 @@ from GetPot import GetPot
 from itertools import product as allcombos
 from sys import *
 import InputEditor as ie
+import IndexSets
 
 def convertTime(timetogo):
   try: hrs = int(timetogo/3600)
@@ -122,18 +123,30 @@ class StochasticPoly(Sampler):
     for var in varDict.values():
       var.setQuadrature(input_file)
     self.varlist = varDict.values()
-    self.pickGaussPoints()
+    #choose the index set
+    #FIXME this has nothing to do with sampling, this is backend!
+    # ask prinja about this!
+    indexSet=input_file('Sampler/SC/indexSet','dud')
+    if indexSet=='dud':
+      print 'Index set not specified; using tensor product.'
+      indexSet='TP'
+    maxorder=input_file('Sampler/SC/maxorder',0)
+    self.pickGaussPoints(indexSet,maxorder)
 
-  def pickGaussPoints(self):
-#TODO reject impossible values to sample from (e.g., negative)
+  def pickGaussPoints(self,iset,maxorder):
+    #TODO change this to use a particular indexing system
     varlist = self.varlist
     orderlist = []
     for var in varlist:
-      #TODO not all orders will be present because toss negatives,
-      #  so how to adjust this?
       orderlist.append(var.quadOrds)
-    #tensor product of runs - not the best solve
-    self.runords = list(allcombos(*orderlist))
+    #get the desired index set
+    if maxorder==0:
+      maxorder=np.max(np.max(orderlist))
+      print 'Max order for index set not specified;',
+      print 'using max from vars:',maxorder
+    self.runords=IndexSets.chooseSet(orderlist,iset,maxorder)
+    print '...size of index set:',len(self.runords),'...'
+    #self.runords = list(allcombos(*orderlist))
 
   def giveSample(self):
     ords = self.runords[self.counter]

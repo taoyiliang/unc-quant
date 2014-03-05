@@ -1,5 +1,6 @@
 [Problem]
   executor       = PCESC
+ # executor       = MC
   templateFile   = '2G_2D.inp'
   storeFlux      = 0
   execDir        = '../diffusion/'
@@ -11,7 +12,7 @@
 
 [Sampler]
   [./MC]
-    totalSamples = 1e2
+    totalSamples = 2e1
     printfreq = 10
    # solnRange = '0.9 1.5' #normal
    # solnRange = '0.7 1.2' #normal
@@ -19,6 +20,8 @@
     truncate = 3 #only applies to normals
   [../]
   [./SC]
+    indexSet = TP
+    #maxorder = 5
   [../]
 []
 
@@ -44,7 +47,7 @@
   #       2D1 2D2 2xa1 2xa2 2xf1 2xf2 2xt1
   #       3D1 3D2 3xa1 3xa2 2xt1'
   names = '1xc2 1xf2 4xc2 4xf2 5D2'
-  #names = '5D2'
+  #names = '1xc2'
 
   #MATERIAL 1
   [./1xc2]

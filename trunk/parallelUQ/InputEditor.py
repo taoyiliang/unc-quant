@@ -137,9 +137,10 @@ class IE_Diffusion(InputEditor):
     readFile=file(outFile,'r')
     for line in readFile:
       if line.split(',')[0]=='k':
-        #print 'grabbed',line.split(',')[1].strip()
         readFile.close()
-        val = float(line.split(',')[1].strip())
+        val = 1.0+float(line.split(',')[1].split('1+')[1].strip())
+        #print 'line:',line[:-1].strip(),
+        #print '  grabbed',val
         if val > 0:
           os.system('rm '+outFile+'\n')
         return val#float(line.split(',')[1].strip())
