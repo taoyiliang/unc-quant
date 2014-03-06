@@ -33,6 +33,8 @@ nosetests.xml
 .pydevproject
 
 # latex
+*.aux
+*.log
 *.lot
 *.lof
 *.poly
