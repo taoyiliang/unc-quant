@@ -117,35 +117,53 @@ class MonteCarlo(Sampler):
     return vals
 
 class StochasticPoly(Sampler):
-  def __init__(self,varDict,input_file):
+  def __init__(self,varDict,input_file,quadSet):
     Sampler.__init__(self,varDict)
     self.type = 'StochasticPoly sampler'
-    for var in varDict.values():
-      var.setQuadrature(input_file)
+    #for var in varDict.values():
+    #  var.setQuadrature(input_file)
     self.varlist = varDict.values()
     #choose the index set
     #FIXME this has nothing to do with sampling, this is backend!
     # ask prinja about this!
-    indexSet=input_file('Sampler/SC/indexSet','dud')
-    if indexSet=='dud':
-      print 'Index set not specified; using tensor product.'
-      indexSet='TP'
-    maxorder=input_file('Sampler/SC/maxorder',0)
-    self.pickGaussPoints(indexSet,maxorder)
+    #indexSet=input_file('Sampler/SC/indexSet','dud')
+    #if indexSet=='dud':
+    #  print 'Index set not specified; using tensor product.'
+    #  indexSet='TP'
+    #maxorder=input_file('Sampler/SC/maxorder',0)
+    #quadFactor = input_file('Sampler/SC/quadFactor',0)
+    #if quadFactor==0:
+    #  print 'WARNING: No quadFactor specified in Sampler/SC; using 2.'
+    #  quadFactor=2
+    self.pickGaussPoints(quadSet)
 
-  def pickGaussPoints(self,iset,maxorder):
-    #TODO change this to use a particular indexing system
-    varlist = self.varlist
-    orderlist = []
-    for var in varlist:
-      orderlist.append(var.quadOrds)
+  def pickGaussPoints(self,quadSet):
+    self.runords = quadSet
+    # first build all the potential max quads combos needed
+    #print '\n\nDEBUG!'
+    #print '\nIndex set:',iset
+    #self.runords=[]
+    #for i,ixs in enumerate(iset):
+    #  ranges=[]
+    #  for v,var in enumerate(self.varlist):
+    #    ranges.append(range(ixs[v]*int(ceil(qfact)))) #TODO
+    #  newEntries=allcombos(*ranges)
+    #  for entry in newEntries:
+    #    if entry not in self.runords:
+    #      self.runords.append(entry)
+    #print '\nQuad set:',self.runords
+    #sys.exit()
+    #varlist = self.varlist
+    #orderlist = []
+    #for var in varlist:
+    #  orderlist.append(var.quadOrds)
     #get the desired index set
-    if maxorder==0:
-      maxorder=np.max(np.max(orderlist))
-      print 'Max order for index set not specified;',
-      print 'using max from vars:',maxorder
-    self.runords=IndexSets.chooseSet(orderlist,iset,maxorder)
-    print '...size of index set:',len(self.runords),'...'
+    #if maxorder==0:
+    #  maxorder=np.max(np.max(orderlist))
+    #  print 'Max order for index set not specified;',
+    #  print 'using max from vars:',maxorder
+    #self.runords=IndexSets.chooseSet(orderlist,iset,maxorder)
+    #print '...size of index set:',len(self.runords),'...'
     #self.runords = list(allcombos(*orderlist))
 
   def giveSample(self):

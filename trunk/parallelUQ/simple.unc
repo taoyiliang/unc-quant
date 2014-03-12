@@ -11,6 +11,8 @@
 [Sampler]
   active = 'SC'
   [./SC]
+    indexSet = HC
+    quadFactor = 2
   [../]
   [./MC]
     batch = 100
@@ -47,22 +49,22 @@
 []
 
 [Variables]
- # names = 'x y'
-  names = 'x'
+  names = 'x y'
+ # names = 'x'
   [./x]
     path = 'Problem/x'
    # dist = 'normal'
     dist = 'lognormal'
    # dist = 'uniform'
     args = '5. 2.'
-    exporder = 4
+    exporder = 3
   [../]
   [./y]
     path = 'Problem/y'
     dist = 'uniform'
     args = '3.5 1.25'
   #  args = '3.5 0.7142857'
-    order = 6
+    exporder = 8
   [../]
 []
 

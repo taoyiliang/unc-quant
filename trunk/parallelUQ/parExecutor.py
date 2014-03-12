@@ -13,6 +13,7 @@ import Backends as be
 import matplotlib.pyplot as plt
 import cPickle as pk
 from itertools import product as allcombos
+import IndexSets
 
 import multiprocessing
 from multiprocessing.queues import SimpleQueue as sque
@@ -41,7 +42,7 @@ class Executor(object): #base class
     self.loadSampler()
     self.loadBackends()
     self.clearInputs()
-    self.parallelRun(restart=self.restart)
+    self.parallelRun()
     self.runBackends()
 
   def savestate(self,savedict):
@@ -100,7 +101,9 @@ class Executor(object): #base class
     '''
     print '\nAttempting to clear old inputs...'
     os.chdir(self.inputDir)
-    os.system('rm '+self.templateFile+'.unc*')
+    fail=os.system('rm '+self.templateFile+'.unc*')
+    if not fail:
+      print '...successfully cleared old input files.'
 
   def cprToActual(self,x):
     '''
@@ -198,7 +201,39 @@ class PCESCExec(Executor):
     self.case=case
 
   def loadSampler(self):
-    self.sampler = spr.StochasticPoly(self.varDict,self.input_file)
+    #TODO this is wrong!
+    #first need to build index set
+    indexranges=[]
+    for var in self.varDict.values():
+      #TODO should I move this elsewhere?
+      var.setQuadrature(self.input_file)
+      indexranges.append(range(var.expOrd))
+    maxorder = np.max(np.max(indexranges))
+    iset=self.input_file('Sampler/SC/indexSet','dud')
+    if iset=='dud':
+      print 'Index set not specified; using tensor product.'
+      iset='TP'
+    self.indexSet = IndexSets.chooseSet(indexranges,iset,maxorder)
+    print '...%i expansion moments used...' %len(self.indexSet)
+    #now make quadrature set
+    multfac = self.input_file('Sampler/SC/quadFactor',0)
+    if multfac==0:
+      print '...Quadrature multiplication factor not specified.'
+      print '     Using 2*(max degree) for quadrature set size.'
+      multfac = 2
+    self.quadSet=[]
+    for i,indx in enumerate(self.indexSet):
+      ranges=[]
+      for n in indx:
+        ranges.append(range(n*multfac+1))
+      newEntries=list(allcombos(*ranges))
+      for ent in newEntries:
+        if ent not in self.quadSet: self.quadSet.append(ent)
+    print '...%i quadrature points used...' %len(self.quadSet)
+    #now load the sampler
+    self.sampler = spr.StochasticPoly(self.varDict,\
+                                      self.input_file,\
+                                      self.quadSet)
 
   def loadBackends(self):
     '''
@@ -220,7 +255,7 @@ class PCESCExec(Executor):
         backend = be.ROM(tensorprod,self.BEoutFile)
         self.backends['ROM']=backend
 
-  def parallelRun(self,restart=False):
+  def parallelRun(self):
     '''
     Runs Sampler in parallel and collects solns
     Input: none
@@ -250,6 +285,7 @@ class PCESCExec(Executor):
     else: #start from restart
       print '\nStarting from restart...'
       print '  Starting after run',self.total_runs
+      trialsAtRestart = self.total_runs
     print '  ...using',self.numprocs,'processors...'
     self.numPs=0
     finished=0
@@ -376,7 +412,7 @@ class MCExec(Executor):
           self.sampler.restart(runs)
         self.backends['PDF']=backend
 
-  def parallelRun(self,restart=False):
+  def parallelRun(self):
     '''
     Runs Sampler in parallel and collects solns
     Input: none
@@ -401,14 +437,15 @@ class MCExec(Executor):
       self.histories['varPaths'].append(var.path)
       self.histories['varVals']=[]
     print '  ...uncertain variables:',self.histories['varNames'],'...'
-    if not restart:
+    if not self.restart:
       self.total_runs = -1
       trialsLeft = trials
+      trialsAtRestart = 0
       #tempOutFile = file('solns.out','w')
     else: #start from restart
       print '\nStarting from restart...'
       print '  Starting after run',self.total_runs
-      trialsAtRst = self.total_runs
+      trialsAtRestart = self.total_runs
       trialsLeft = trials - self.total_runs
     print '  ...using',self.numprocs,'processors...'
 
@@ -456,13 +493,14 @@ class MCExec(Executor):
               #print progress
               #FIXME fix for restart case
               finished = trials-trialsLeft
+              totDone = finished + trialsAtRestart
               if self.restart:
                 finished -= trialsAtRestart
               elapTime = time.time()-starttime
               dpdt = float(finished)/float(elapTime)
               toGo = dt.timedelta(seconds=(int(trialsLeft/dpdt)))
               elapTime = dt.timedelta(seconds=int(elapTime))
-              print '%12i | %12s | %12s | %9i' %(finished,elapTime,toGo,thrown),
+              print '%12i | %12s | %12s | %9i' %(totDone,elapTime,toGo,thrown),
               print '                      \r',
       if trialsLeft > 0:
         while len(ps)<self.numprocs and not self.done:
