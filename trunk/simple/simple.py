@@ -9,8 +9,8 @@ def g(x):
   #return x*x 
 
 def f(x,y):
-  #return x+y
-  return x*(1.+y)
+  return x+y
+  #return x*(1.+y)
 
 cl = GetPot(sys.argv)
 if cl.search('-i'):

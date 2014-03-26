@@ -1,5 +1,6 @@
 [Problem]
-  executor     = PCESC
+  # executor     = PCESC
+  executor     = MC
   templateFile = 'simple.inp'
   storeFlux    = 0
   execDir      = '../simple/'
@@ -30,7 +31,7 @@
  # active = 'PDF'
   outFile = mcu.out
   [./ROM]
-    MCsample = 1
+    MCsample = 0
     samples = 1e3
     checkSolution = 0
     createPDF = 0

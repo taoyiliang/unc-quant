@@ -1,5 +1,6 @@
 [Problem]
   executor     = PCESC
+  # executor     = MC
   templateFile = 'source.inp'
   storeFlux    = 0
   execDir      = '../source/'
@@ -11,6 +12,8 @@
 [Sampler]
   active = 'SC'
   [./SC]
+    indexSet = HC
+    quadFactor = 2
   [../]
   [./MC]
     totalSamples = 1e6
@@ -24,11 +27,10 @@
  # active = 'PDF'
   outFile = test.out
   [./ROM]
-    MCsample = 1
     samples = 1e6
     bins = 100
     checkSolution = 0
-    createPDF = 1
+    createPDF = 0
     stats = 1
     truncate = 3
   [../]

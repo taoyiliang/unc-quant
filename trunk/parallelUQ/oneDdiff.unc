@@ -1,26 +1,29 @@
 [Problem]
-  executor       = PCESC
+  # executor       = PCESC
+  executor       = MC
   templateFile   = 'diffusion.inp'
   storeFlux      = 0
   execDir        = '../oneDdiffusion/'
   inputDir       = '../oneDdiffusion/'
   input_editor   = 'IE_Diffusion'
-  numprocs       = 4
+  numprocs       = 3
   mesh_factor    = 2
 []
 
 [Sampler]
-  active = 'SC'
+  active = 'MC'
   [./MC]
-    totalSamples = 1e6
+    totalSamples = 1e4
   [../]
   [./SC]
+    indexSet = TD
+    quadFactor = 2
   [../]
 []
 
 [Backend]
-  active = 'ROM'
- # active = 'PDF'
+ # active = 'ROM'
+  active = 'PDF'
   outFile = test.out
   [./ROM]
     samples = 1e6 
@@ -39,7 +42,7 @@
 [Variables]
   # format: material-property-group
   # Only the sections listed in "names" will be sampled.
-  names = '1xc2'
+  names = '1xc2 1xf2'
 
   #MATERIAL 1
   [./1D1]

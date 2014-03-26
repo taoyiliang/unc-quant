@@ -20,14 +20,14 @@
     truncate = 3 #only applies to normals
   [../]
   [./SC]
-    indexSet = TP
-    #maxorder = 5
+    indexSet = TD
+    quadfactor = 2
   [../]
 []
 
 [Backend]
   [./ROM]
-    samples = 1e3 
+    samples = 1e4 
     checkSolution = 0
     createPDF = 0
     bins = 100
@@ -46,7 +46,8 @@
   # names='1D1 1D2 1xa1 1xa2 1xf1 1xf2 1xt1
   #       2D1 2D2 2xa1 2xa2 2xf1 2xf2 2xt1
   #       3D1 3D2 3xa1 3xa2 2xt1'
-  names = '1xc2 1xf2 4xc2 4xf2 5D2'
+  #names = '1xc2 1xf2 4xc2 4xf2 5D2'
+  names = '1xc2 1xf2'
   #names = '1xc2'
 
   #MATERIAL 1
@@ -54,15 +55,13 @@
     path = 'Material/1/g2/sigc'
     dist = uniform
     args = '0.05540 0.0055' #median, range def 10%
-    exporder = 3 #these discovered ad hoc
-    quadorder = 6
+    exporder = 5
   [../]
   [./1xf2]
     path = 'Material/1/g2/nsigf'
     dist = uniform
     args = '0.1091 0.011' #median, range def 10%
-    exporder = 3
-    quadorder = 6
+    exporder = 5
   [../]
 
   [./4xc2]
