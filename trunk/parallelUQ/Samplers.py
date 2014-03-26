@@ -120,51 +120,11 @@ class StochasticPoly(Sampler):
   def __init__(self,varDict,input_file,quadSet):
     Sampler.__init__(self,varDict)
     self.type = 'StochasticPoly sampler'
-    #for var in varDict.values():
-    #  var.setQuadrature(input_file)
     self.varlist = varDict.values()
-    #choose the index set
-    #FIXME this has nothing to do with sampling, this is backend!
-    # ask prinja about this!
-    #indexSet=input_file('Sampler/SC/indexSet','dud')
-    #if indexSet=='dud':
-    #  print 'Index set not specified; using tensor product.'
-    #  indexSet='TP'
-    #maxorder=input_file('Sampler/SC/maxorder',0)
-    #quadFactor = input_file('Sampler/SC/quadFactor',0)
-    #if quadFactor==0:
-    #  print 'WARNING: No quadFactor specified in Sampler/SC; using 2.'
-    #  quadFactor=2
     self.pickGaussPoints(quadSet)
 
   def pickGaussPoints(self,quadSet):
     self.runords = quadSet
-    # first build all the potential max quads combos needed
-    #print '\n\nDEBUG!'
-    #print '\nIndex set:',iset
-    #self.runords=[]
-    #for i,ixs in enumerate(iset):
-    #  ranges=[]
-    #  for v,var in enumerate(self.varlist):
-    #    ranges.append(range(ixs[v]*int(ceil(qfact)))) #TODO
-    #  newEntries=allcombos(*ranges)
-    #  for entry in newEntries:
-    #    if entry not in self.runords:
-    #      self.runords.append(entry)
-    #print '\nQuad set:',self.runords
-    #sys.exit()
-    #varlist = self.varlist
-    #orderlist = []
-    #for var in varlist:
-    #  orderlist.append(var.quadOrds)
-    #get the desired index set
-    #if maxorder==0:
-    #  maxorder=np.max(np.max(orderlist))
-    #  print 'Max order for index set not specified;',
-    #  print 'using max from vars:',maxorder
-    #self.runords=IndexSets.chooseSet(orderlist,iset,maxorder)
-    #print '...size of index set:',len(self.runords),'...'
-    #self.runords = list(allcombos(*orderlist))
 
   def giveSample(self):
     ords = self.runords[self.counter]
@@ -173,13 +133,10 @@ class StochasticPoly(Sampler):
     runDict['quadWts']=[]
     runDict['runOrds']=ords
     for v,var in enumerate(self.varlist):
-      #print 'Trying to access:'
-      #print '  var num :',v
-      #print '  var name:',var.name
-      #print '  counter :',self.counter
-      #print '  run[ctr]:',self.runords[self.counter]
-      #print '  point   :',len(var.pts)
-      #std_pt = var.pts[self.runords[self.counter][v]]
+      #print '\n\n'
+      #print 'runords,counter:',self.runords,self.counter
+      #print 'quaddict:',var.quaddict
+      #print 'v,ords',v,ords
       std_pt,wt = var.quaddict[ords[v]]
       act_pt = var.convertToActual(std_pt)
       runDict['varVals'].append(act_pt)

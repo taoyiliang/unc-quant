@@ -205,8 +205,8 @@ class PCESCExec(Executor):
     #first need to build index set
     indexranges=[]
     for var in self.varDict.values():
-      #TODO should I move this elsewhere?
-      var.setQuadrature(self.input_file)
+      # wrong place for this var.setQuadrature(self.input_file)
+      var.setExpansion(self.input_file)
       indexranges.append(range(var.expOrd))
     maxorder = np.max(np.max(indexranges))
     iset=self.input_file('Sampler/SC/indexSet','dud')
@@ -214,6 +214,7 @@ class PCESCExec(Executor):
       print 'Index set not specified; using tensor product.'
       iset='TP'
     self.indexSet = IndexSets.chooseSet(indexranges,iset,maxorder)
+    #TODO do I need the max for each var or just the overall max?
     print '...%i expansion moments used...' %len(self.indexSet)
     #now make quadrature set
     multfac = self.input_file('Sampler/SC/quadFactor',0)
@@ -230,6 +231,12 @@ class PCESCExec(Executor):
       for ent in newEntries:
         if ent not in self.quadSet: self.quadSet.append(ent)
     print '...%i quadrature points used...' %len(self.quadSet)
+    #now stash the quadrature points and weights
+    #  - get the max for each dimension
+    listedOrds=zip(*self.quadSet)
+    for v,var in enumerate(self.varDict.values()):
+      maxOrd=max(listedOrds[v])+1
+      var.setQuadrature(maxOrd)
     #now load the sampler
     self.sampler = spr.StochasticPoly(self.varDict,\
                                       self.input_file,\

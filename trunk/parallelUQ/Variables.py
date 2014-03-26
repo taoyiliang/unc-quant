@@ -28,7 +28,10 @@ class Variable(object):
     print 'ERROR no setDist method for',self.distName,'var',self.path
     sys.exit()
 
-  def setQuadrature(self,inputfile,expOrd=2,verbose=False):
+  def setQuadrature(self,maxOrder):
+    self.quadOrd=maxOrder
+
+  def setExpansion(self,inputfile,expOrd=2,verbose=False):
     if verbose:
       print 'set quadrature for',self.name
     #get acceptable range from input file
@@ -57,14 +60,15 @@ class Variable(object):
       self.okRange=(-1e30,1e30)
     #set expansion, quad orders
     #TODO combine these two ifs someday
+    #FIXME this shouldn't be how quad order is decided.
     if inputfile != None:
       self.expOrd = inputfile('Variables/'+self.name+'/exporder',2)+1
-      self.quadOrd = inputfile('Variables/'+self.name+'/quadorder',-6)
-      if self.quadOrd==-6:
-        self.quadOrd=self.expOrd
+      #self.quadOrd = inputfile('Variables/'+self.name+'/quadorder',-6)
+      #if self.quadOrd==-6:
+      #  self.quadOrd=self.expOrd
     else:
       self.expOrd=expOrd
-      self.quadOrd = int(ceil((self.expOrd+1)/2.0))
+      #self.quadOrd = int(ceil((self.expOrd+1)/2.0))
     print '...for var',self.name,'setting exp order',self.expOrd-1
 
   def checkPoints(self,pts,wts):
@@ -107,9 +111,6 @@ class Uniform(Variable):
   def convertToStandard(self,y):
     return (y-self.mean)/self.range
 
-#  def intvlShiftCoeff(self):
-#    return self.range
-
   def probWeight(self,x,scale='actual'):
     if scale=='actual':
       return 0.5/self.range
@@ -145,8 +146,8 @@ class Uniform(Variable):
     self.expval = self.dist.mean()
     self.secondmom = 0.5*(low*low + (self.mean+self.range)**2)
 
-  def setQuadrature(self,inputfile=None,expOrd=2,verbose=False):
-    super(Uniform,self).setQuadrature(inputfile,expOrd=expOrd,verbose=verbose)
+  def setQuadrature(self,maxOrder,verbose=False):
+    super(Uniform,self).setQuadrature(maxOrder)
     #standard Legendre quadrature
     pts,wts = quads.p_roots(self.quadOrd)
     self.pts,self.wts,self.quadOrds=super(Uniform,self).checkPoints(pts,wts)
@@ -213,8 +214,8 @@ class Normal(Variable):
     self.expval = self.dist.mean()
     self.secondmom = self.mean**2+self.stdev**2
 
-  def setQuadrature(self,inputfile=None,expOrd=2,verbose=False):
-    super(Normal,self).setQuadrature(inputfile,expOrd=expOrd,verbose=verbose)
+  def setQuadrature(self,maxOrder):
+    super(Normal,self).setQuadrature(maxOrder)
     #standard hermite quadrature
     pts,wts = quads.h_roots(self.quadOrd)
     self.pts,self.wts,self.quadOrds=super(Normal,self).checkPoints(pts,wts)
