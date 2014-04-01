@@ -4,7 +4,7 @@ import datetime as dt
 import os
 import sys
 from GetPot import GetPot
-import parExecutor as Exec
+import Executor as Exec
 
 class Driver(object):
   '''Since I want a different executor for MC, MLMC, PCESC,

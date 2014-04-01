@@ -12,7 +12,7 @@
 [Sampler]
   active = 'SC'
   [./SC]
-    indexSet = TP
+    indexSet = HC
     quadFactor = 2
   [../]
   [./MC]
