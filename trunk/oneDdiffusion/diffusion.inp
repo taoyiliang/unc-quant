@@ -1,15 +1,13 @@
 [Mesh]
-  matmap = '1 1 1 1
-            1 1 1 1
-            1 1 1 1
-            1 1 1 1'
-  nXregs = 4
-  nYregs = 4
-  nx_per_reg = 5
-  ny_per_reg = 5
-  sq_per_side = 4
-  len_Xside = 50 #cm, 200 cm total
-  len_Yside = 50 #cm, 200 cm total
+  matmap = '1 1
+            1 1'
+  nXregs = 2
+  nYregs = 2
+  nx_per_reg = 1
+  ny_per_reg = 1
+  sq_per_side = 2
+  len_Xside = 100 #cm, 200 cm total
+  len_Yside = 100 #cm, 200 cm total
 []
 
 [Material]

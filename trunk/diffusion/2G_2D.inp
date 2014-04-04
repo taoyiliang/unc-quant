@@ -12,8 +12,8 @@
             5 5 5 5 5 5 5 5 5 5 5' 
   nXregs = 11
   nYregs = 11
-  nx_per_reg = 10
-  ny_per_reg = 10
+  nx_per_reg = 3
+  ny_per_reg = 3
   sq_per_side = 11
 #  len_side = 15 #cm, 165 cm total
   len_Xside = 15 #cm, 165 cm total
