@@ -1,0 +1,87 @@
+[Problem]
+  # executor       = PCESC
+  executor       = MC
+  templateFile   = 'diffusion.inp'
+  storeFlux      = 0
+  execDir        = '../oneDdiffusion/'
+  inputDir       = '../oneDdiffusion/'
+  input_editor   = 'IE_Diffusion'
+  numprocs       = 3
+  mesh_factor    = 2
+[]
+
+[Sampler]
+  active = 'MC'
+  [./MC]
+    totalSamples = 1e4
+  [../]
+  [./SC]
+    indexSet = TD
+    quadFactor = 2
+  [../]
+[]
+
+[Backend]
+ # active = 'ROM'
+  active = 'PDF'
+  outFile = test.out
+  [./ROM]
+    samples = 1e6 
+    checkSolution = 0
+    createPDF = 1
+    bins = 100
+    stats = 1
+  [../]
+  [./PDF]
+    bins = 100
+    low = 0.75
+    hi = 1.7
+  [../]
+[]
+
+[Variables]
+  # format: material-property-group
+  # Only the sections listed in "names" will be sampled.
+  names = '1xc2 1xf2'
+
+  #MATERIAL 1
+  [./1D1]
+    path = 'Material/1/g1/D'
+    dist = uniform
+    args = '1.255' #median, range def 10%
+  [../]
+  [./1D2]
+    path = 'Material/1/g2/D'
+    dist = uniform
+    args = '0.211' #median, range def 10%
+  [../]
+  [./1xc1]
+    path = 'Material/1/g1/sigc'
+    dist = uniform
+    args = '0.006358' #median, range def 10%
+  [../]
+  [./1xc2]
+    path = 'Material/1/g2/sigc'
+    dist = normal
+   # args = '0.04438 0.01' #critical
+   # args = '0.055969 0.01' #subcrit 0.9
+    args = '0.035181 0.01' #supercrit 1.1
+    exporder = 2
+   # quadorder = 6
+  [../]
+  [./1xf1]
+    path = 'Material/1/g1/nsigf'
+    dist = uniform
+    args = '0.004602' #median, range def 10%
+  [../]
+  [./1xf2]
+    path = 'Material/1/g2/nsigf'
+    dist = uniform
+    args = '0.1091' #median, range def 10%
+  [../]
+  [./1xt1]
+    path = 'Material/1/g2/D'
+    dist = uniform
+    args = '0.02533' #median, range def 10%
+  [../]
+[]

@@ -4,6 +4,22 @@ from itertools import product as allcombos
 # each of these functions should take a list of order lists, as
 # ordlist = [[a,b],[c,d]]
 
+def IndexSetFactory(N,order,setType):
+  okSetTypes = ['HC','TD','TP']#,'ETP'] TODO
+  if setType not in okSetTypes:
+    raise IOError('ERROR: index set type '+setType+' not recognized')
+
+  orderlist=[]
+  for n in range(N):
+    orderlist.append(range(order))
+
+  if setType=='HC':
+    return HyperbolicCross(orderList,order)
+  if setType=='TD':
+    return TotalDegree(orderList,order)
+  if setType=='TP':
+    return TensorProduct(orderList,order)
+
 
 def TensorProduct(orderlist,maxorder=0):
   '''
@@ -11,6 +27,7 @@ def TensorProduct(orderlist,maxorder=0):
     [[a,c],[a,d],[b,c],[b,d]]
   '''
   return list(allcombos(*orderlist))
+
 
 def TotalDegree(orderlist,maxorder):
   '''
@@ -27,6 +44,7 @@ def TotalDegree(orderlist,maxorder):
       tossed+=1
   print 'Discarded',tossed,'indices from TP'
   return end
+
 
 def HyperbolicCross(orderlist,maxorder):
   '''

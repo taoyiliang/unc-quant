@@ -1,0 +1,145 @@
+[Problem]
+  templateFile   = '2G_2D.inp'
+  storeFlux      = 0
+  execDir        = '../diffusion/'
+  inputDir       = '../diffusion/'
+  input_editor   = 'IE_Diffusion'
+[]
+
+[Sampler]
+  active = 'SC'
+  [./MC]
+    totalSamples = 1000
+    samplesPerIter = 10
+    targetVar = 1
+  [../]
+  [./SC]
+  [../]
+[]
+
+[Backend]
+  #active = 'CSV plot2D'
+  active = 'ROM'
+  outFile = test.out
+  [./ROM]
+    samples = 1e6 
+    checkSolution = 0
+    createPDF = 1
+    bins = 100
+  [../]
+[]
+
+[Variables]
+  # format: material-property-group
+  # Only the sections listed in "names" will be sampled.
+  # names='1D1 1D2 1xa1 1xa2 1xf1 1xf2 1xt1
+  #       2D1 2D2 2xa1 2xa2 2xf1 2xf2 2xt1
+  #       3D1 3D2 3xa1 3xa2 2xt1'
+  #names = '1xa1 1xa2'
+  names = '1xa2'
+
+  #MATERIAL 1
+  [./1D1]
+    path = 'Material/1/g1/D'
+    dist = uniform
+    args = '1.255' #median, range def 10%
+  [../]
+  [./1D2]
+    path = 'Material/1/g2/D'
+    dist = uniform
+    args = '0.211' #median, range def 10%
+  [../]
+  [./1xa1]
+    path = 'Material/1/g1/siga'
+    dist = uniform
+    args = '0.008252' #median, range def 10%
+    order = 6
+  [../]
+  [./1xa2]
+    path = 'Material/1/g2/siga'
+    dist = normal
+    args = '0.1003' #median, range def 10%
+    order = 8
+  [../]
+  [./1xf1]
+    path = 'Material/1/g1/nsigf'
+    dist = uniform
+    args = '0.04602' #median, range def 10%
+  [../]
+  [./1xf2]
+    path = 'Material/1/g2/nsigf'
+    dist = uniform
+    args = '0.1091' #median, range def 10%
+  [../]
+  [./1xt1]
+    path = 'Material/1/g2/D'
+    dist = uniform
+    args = '0.02533' #median, range def 10%
+  [../]
+
+  #MATERIAL 4
+  [./4D1]
+    path = 'Material/4/g1/D'
+    dist = uniform
+    args = '1.259' #median, range def 10%
+  [../]
+  [./4D2]
+    path = 'Material/4/g2/D'
+    dist = uniform
+    args = '0.2091' #median, range def 10%
+  [../]
+  [./4xa1]
+    path = 'Material/4/g1/siga'
+    dist = uniform
+    args = '0.008002' #median, range def 10%
+  [../]
+  [./4xa2]
+    path = 'Material/4/g2/siga'
+    dist = uniform
+    args = '0.073324' #median, range def 10%
+  [../]
+  [./4xf1]
+    path = 'Material/4/g1/nsigf'
+    dist = uniform
+    args = '0.004663 -1.0' #median, range def 10%
+  [../]
+  [./4xf2]
+    path = 'Material/4/g2/nsigf'
+    dist = uniform
+    args = '0.1021 -1.0' #median, range def 10%
+  [../]
+  [./4xt1]
+    path = 'Material/4/g2/D'
+    dist = uniform
+    args = '0.02617' #median, range def 10%
+  [../]
+
+  #MATERIAL 5
+  [./5D1]
+    path = 'Material/5/g1/D'
+    dist = uniform
+    args = '1.257' #median, range def 10%
+  [../]
+  [./5D2]
+    path = 'Material/5/g2/D'
+    dist = uniform
+    args = '0.1592' #median, range def 10%
+  [../]
+  [./5xa1]
+    path = 'Material/5/g1/siga'
+    dist = uniform
+    args = '0.0006034' #median, range def 10%
+  [../]
+  [./5xa2]
+    path = 'Material/5/g2/siga'
+    dist = uniform
+    args = '0.01911' #median, range def 10%
+  [../]
+  [./5xt1]
+    path = 'Material/5/g2/sigtr'
+    dist = uniform
+    args = '0.04754' #median, range def 10%
+  [../]
+  
+  #TODO more materials
+[]

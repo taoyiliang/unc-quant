@@ -1,0 +1,66 @@
+[Problem]
+  executor     = PCESC
+  # executor     = MC
+  templateFile = 'source.inp'
+  storeFlux    = 0
+  execDir      = '../source/'
+  inputDir     = '../source/'
+  input_editor = 'IE_Source'
+  numprocs     = 4
+[]
+
+[Sampler]
+  active = 'SC'
+  [./SC]
+    indexSet = HC
+    quadFactor = 2
+  [../]
+  [./MC]
+    totalSamples = 1e6
+    solnRange = '0 4'
+    truncate = 3
+  [../]
+[]
+
+[Backend]
+  active = 'ROM'
+ # active = 'PDF'
+  outFile = test.out
+  [./ROM]
+    samples = 1e6
+    bins = 100
+    checkSolution = 0
+    createPDF = 0
+    stats = 1
+    truncate = 3
+  [../]
+
+  [./PDF]
+    bins = 100
+    low = 0.8
+    hi = 1.9
+  [../]
+[]
+
+[Variables]
+ # names = 'xa D loc S'
+  names = 'xa loc'
+  [./xa]
+    path = 'Problem/xa'
+  #  dist = 'normal'
+  #  args = '0.75 .15'
+    dist = 'uniform'
+    args = '0.75 0.25'
+    exporder = 4
+    #okRange = '0 10'
+  [../]
+  [./loc]
+    path = 'Problem/loc'
+    dist = 'uniform'
+    args = '2.0 0.5'
+    exporder = 2
+    #okRange = '0 10'
+  [../]
+[]
+
+

@@ -1,0 +1,73 @@
+[Problem]
+  # executor     = PCESC
+  executor     = MC
+  templateFile = 'simple.inp'
+  storeFlux    = 0
+  execDir      = '../simple/'
+  inputDir     = '../simple/'
+  input_editor = 'IE_Simple'
+  numprocs     = 4
+[]
+
+[Sampler]
+  active = 'SC'
+  [./SC]
+    indexSet = HC
+    quadFactor = 2
+  [../]
+  [./MC]
+    batch = 100
+    totalSamples = 1e5
+    printfreq = 5000
+    solnRange = '1 35' #lognormal
+   # solnRange = '-15 35' #normal
+   # solnRange = '6 16' #uniform
+    truncate = 0 #number of standard devs either way
+  [../]
+[]
+
+[Backend]
+  active = 'ROM'
+ # active = 'PDF'
+  outFile = mcu.out
+  [./ROM]
+    MCsample = 0
+    samples = 1e3
+    checkSolution = 0
+    createPDF = 0
+    stats = 1
+  [../]
+
+  [./PDF]
+    bins = 100
+    low = 1 #lognormal
+    hi = 35
+   # low = -10 #normal
+   # hi = 35
+   # low = 7 #uniform
+   # hi = 15
+  [../]
+[]
+
+[Variables]
+  names = 'x y'
+ # names = 'x'
+  [./x]
+    path = 'Problem/x'
+   # dist = 'normal'
+   # dist = 'lognormal'
+   # args = '5. 2.'
+    dist = 'uniform'
+    args = '3.5 2.5'
+    exporder = 4
+  [../]
+  [./y]
+    path = 'Problem/y'
+    dist = 'uniform'
+    args = '3.5 2.5'
+  #  args = '3.5 0.7142857'
+    exporder = 8
+  [../]
+[]
+
+

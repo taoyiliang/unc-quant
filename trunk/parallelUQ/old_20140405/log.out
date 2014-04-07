@@ -1,0 +1,2523 @@
+
+Starting UQ at 2014-01-28 09:25:44.554575
+
+Loading uncertain variables...
+set var Problem/x type,mean,range: uniform 5.0 2.0
+3.0
+Value range (.9999 confidence): (3.0002, 6.9998000000000005)
+
+Attempting to clear old inputs...
+
+Running samples in parallel...
+  ...uncertain variables: ['x']
+  ...using 4 processors...
+outFileName: test.out
+outFileName: test.out
+Finished run 1000
+Finished run 2000
+outFileName: test.out
+Finished run 3000
+outFileName: test.out
+Finished run 4000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 5000
+outFileName: test.out
+Finished run 6000
+outFileName: test.out
+Finished run 7000
+outFileName: test.out
+outFileName: test.out
+Finished run 8000
+Finished run 9000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 10000
+outFileName: test.out
+Finished run 11000
+outFileName: test.out
+outFileName: test.out
+Finished run 12000
+Finished run 13000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 14000
+outFileName: test.out
+Finished run 15000
+outFileName: test.out
+Finished run 16000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 17000
+outFileName: test.out
+outFileName: test.out
+Finished run 18000
+outFileName: test.out
+outFileName: test.out
+Finished run 19000
+Finished run 20000
+Finished run 21000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 22000
+outFileName: test.out
+Finished run 23000
+outFileName: test.out
+outFileName: test.out
+Finished run 24000
+Finished run 25000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 26000
+outFileName: test.out
+Finished run 27000
+outFileName: test.out
+Finished run 28000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 29000
+outFileName: test.out
+Finished run 30000
+outFileName: test.out
+Finished run 31000
+outFileName: test.out
+Finished run 32000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+outFileName: test.out
+Finished run 33000
+Finished run 34000
+outFileName: test.out
+Finished run 35000
+outFileName: test.out
+Finished run 36000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 37000
+outFileName: test.out
+outFileName: test.out
+Finished run 38000
+Finished run 39000
+outFileName: test.out
+Finished run 40000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 41000
+outFileName: test.out
+outFileName: test.out
+Finished run 42000
+Finished run 43000
+outFileName: test.out
+Finished run 44000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 45000
+outFileName: test.out
+Finished run 46000
+outFileName: test.out
+outFileName: test.out
+Finished run 47000
+Finished run 48000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 49000
+outFileName: test.out
+Finished run 50000
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 51000
+Finished run 52000
+Finished run 53000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 54000
+outFileName: test.out
+Finished run 55000
+outFileName: test.out
+Finished run 56000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 57000
+outFileName: test.out
+Finished run 58000
+outFileName: test.out
+outFileName: test.out
+Finished run 59000
+Finished run 60000
+outFileName: test.out
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+Finished run 61000
+outFileName: test.out
+outFileName: test.out
+Finished run 62000
+Finished run 63000
+outFileName: test.out
+Finished run 64000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 65000
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 66000
+Finished run 67000
+Finished run 68000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 69000
+outFileName: test.out
+outFileName: test.out
+Finished run 70000
+Finished run 71000
+outFileName: test.out
+Finished run 72000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 73000
+outFileName: test.out
+Finished run 74000
+outFileName: test.out
+Finished run 75000
+outFileName: test.out
+Finished run 76000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 77000
+outFileName: test.out
+Finished run 78000
+outFileName: test.out
+outFileName: test.out
+Finished run 79000
+Finished run 80000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 81000
+outFileName: test.out
+Finished run 82000
+outFileName: test.out
+Finished run 83000
+outFileName: test.out
+Finished run 84000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 85000
+outFileName: test.out
+Finished run 86000
+outFileName: test.out
+Finished run 87000
+outFileName: test.out
+Finished run 88000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 89000
+outFileName: test.out
+Finished run 90000
+outFileName: test.out
+Finished run 91000
+outFileName: test.out
+Finished run 92000
+    Elapsed time (h:m:s): 0:00:00
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 93000
+outFileName: test.out
+Finished run 94000
+outFileName: test.out
+outFileName: test.out
+Finished run 95000
+Finished run 96000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 97000
+outFileName: test.out
+Finished run 98000
+outFileName: test.out
+outFileName: test.out
+Finished run 99000
+Finished run 100000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 101000
+outFileName: test.out
+Finished run 102000
+outFileName: test.out
+Finished run 103000
+outFileName: test.out
+Finished run 104000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 105000
+outFileName: test.out
+outFileName: test.out
+Finished run 106000
+Finished run 107000
+outFileName: test.out
+Finished run 108000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 109000
+outFileName: test.out
+outFileName: test.out
+Finished run 110000
+Finished run 111000
+outFileName: test.out
+Finished run 112000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 113000
+outFileName: test.out
+outFileName: test.out
+Finished run 114000
+Finished run 115000
+outFileName: test.out
+Finished run 116000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 117000
+outFileName: test.out
+Finished run 118000
+outFileName: test.out
+outFileName: test.out
+Finished run 119000
+Finished run 120000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 121000
+outFileName: test.out
+outFileName: test.out
+Finished run 122000
+Finished run 123000
+outFileName: test.out
+Finished run 124000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:09
+outFileName: test.out
+outFileName: test.out
+Finished run 125000
+Finished run 126000
+outFileName: test.out
+outFileName: test.out
+Finished run 127000
+Finished run 128000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:09
+outFileName: test.out
+outFileName: test.out
+Finished run 129000
+outFileName: test.out
+Finished run 130000
+Finished run 131000
+outFileName: test.out
+Finished run 132000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 133000
+outFileName: test.out
+Finished run 134000
+outFileName: test.out
+Finished run 135000
+outFileName: test.out
+Finished run 136000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:09
+outFileName: test.out
+Finished run 137000
+outFileName: test.out
+outFileName: test.out
+Finished run 139000
+outFileName: test.out
+Finished run 140000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:08
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 141000
+Finished run 142000
+Finished run 143000
+outFileName: test.out
+Finished run 144000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:08
+outFileName: test.out
+outFileName: test.out
+Finished run 145000
+Finished run 146000
+outFileName: test.out
+Finished run 147000
+outFileName: test.out
+Finished run 148000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 149000
+outFileName: test.out
+Finished run 150000
+outFileName: test.out
+Finished run 151000
+outFileName: test.out
+Finished run 152000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 153000
+outFileName: test.out
+outFileName: test.out
+Finished run 154000
+Finished run 155000
+outFileName: test.out
+Finished run 156000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:08
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 157000
+Finished run 158000
+Finished run 159000
+outFileName: test.out
+Finished run 160000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 161000
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 162000
+Finished run 163000
+Finished run 164000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 165000
+outFileName: test.out
+Finished run 166000
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 167000
+Finished run 168000
+Finished run 169000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 170000
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 171000
+Finished run 172000
+Finished run 173000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 174000
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 175000
+Finished run 176000
+Finished run 177000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 178000
+outFileName: test.out
+Finished run 179000
+outFileName: test.out
+outFileName: test.out
+Finished run 180000
+Finished run 181000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 182000
+outFileName: test.out
+Finished run 183000
+outFileName: test.out
+outFileName: test.out
+Finished run 184000
+Finished run 185000
+    Elapsed time (h:m:s): 0:00:01
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 186000
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 187000
+Finished run 188000
+Finished run 189000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 190000
+outFileName: test.out
+Finished run 191000
+outFileName: test.out
+Finished run 192000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 193000
+outFileName: test.out
+Finished run 194000
+outFileName: test.out
+outFileName: test.out
+Finished run 195000
+Finished run 196000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 197000
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 198000
+Finished run 199000
+Finished run 200000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 201000
+outFileName: test.out
+Finished run 202000
+outFileName: test.out
+outFileName: test.out
+Finished run 203000
+Finished run 204000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 205000
+outFileName: test.out
+Finished run 206000
+outFileName: test.out
+outFileName: test.out
+Finished run 207000
+Finished run 208000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:08
+outFileName: test.out
+outFileName: test.out
+Finished run 209000
+Finished run 210000
+outFileName: test.out
+outFileName: test.out
+Finished run 211000
+Finished run 212000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:08
+outFileName: test.out
+outFileName: test.out
+Finished run 213000
+Finished run 214000
+outFileName: test.out
+Finished run 215000
+outFileName: test.out
+Finished run 216000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 217000
+outFileName: test.out
+Finished run 218000
+outFileName: test.out
+Finished run 219000
+outFileName: test.out
+Finished run 220000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 221000
+outFileName: test.out
+Finished run 222000
+outFileName: test.out
+Finished run 223000
+outFileName: test.out
+Finished run 224000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:08
+outFileName: test.out
+outFileName: test.out
+Finished run 225000
+Finished run 226000
+outFileName: test.out
+outFileName: test.out
+Finished run 227000
+Finished run 228000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:08
+outFileName: test.out
+Finished run 229000
+outFileName: test.out
+Finished run 230000
+outFileName: test.out
+Finished run 231000
+outFileName: test.out
+Finished run 232000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:08
+outFileName: test.out
+outFileName: test.out
+Finished run 233000
+Finished run 234000
+outFileName: test.out
+Finished run 235000
+outFileName: test.out
+Finished run 236000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:08
+outFileName: test.out
+outFileName: test.out
+Finished run 237000
+Finished run 238000
+outFileName: test.out
+Finished run 239000
+outFileName: test.out
+Finished run 240000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 241000
+outFileName: test.out
+Finished run 242000
+outFileName: test.out
+outFileName: test.out
+Finished run 243000
+outFileName: test.out
+Finished run 244000
+Finished run 245000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 246000
+outFileName: test.out
+Finished run 247000
+outFileName: test.out
+Finished run 248000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 249000
+outFileName: test.out
+Finished run 250000
+outFileName: test.out
+outFileName: test.out
+Finished run 251000
+Finished run 252000
+outFileName: test.out
+Finished run 253000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 254000
+outFileName: test.out
+outFileName: test.out
+Finished run 255000
+Finished run 256000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 257000
+outFileName: test.out
+outFileName: test.out
+Finished run 258000
+Finished run 259000
+outFileName: test.out
+Finished run 260000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 261000
+outFileName: test.out
+outFileName: test.out
+Finished run 262000
+Finished run 263000
+outFileName: test.out
+Finished run 264000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 265000
+outFileName: test.out
+outFileName: test.out
+Finished run 266000
+Finished run 267000
+outFileName: test.out
+outFileName: test.out
+Finished run 268000
+Finished run 269000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 270000
+outFileName: test.out
+Finished run 271000
+outFileName: test.out
+outFileName: test.out
+Finished run 272000
+Finished run 273000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 274000
+outFileName: test.out
+Finished run 275000
+outFileName: test.out
+Finished run 276000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 277000
+outFileName: test.out
+Finished run 278000
+outFileName: test.out
+Finished run 279000
+outFileName: test.out
+Finished run 280000
+    Elapsed time (h:m:s): 0:00:02
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 281000
+outFileName: test.out
+Finished run 282000
+outFileName: test.out
+Finished run 283000
+outFileName: test.out
+Finished run 284000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 285000
+outFileName: test.out
+Finished run 286000
+outFileName: test.out
+Finished run 287000
+outFileName: test.out
+Finished run 288000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 289000
+outFileName: test.out
+outFileName: test.out
+Finished run 290000
+Finished run 291000
+outFileName: test.out
+Finished run 292000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 293000
+outFileName: test.out
+outFileName: test.out
+Finished run 294000
+Finished run 295000
+outFileName: test.out
+Finished run 296000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 297000
+outFileName: test.out
+Finished run 298000
+outFileName: test.out
+Finished run 299000
+outFileName: test.out
+Finished run 300000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:07
+outFileName: test.out
+outFileName: test.out
+Finished run 301000
+Finished run 302000
+outFileName: test.out
+Finished run 303000
+outFileName: test.out
+Finished run 304000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:07
+outFileName: test.out
+outFileName: test.out
+Finished run 305000
+Finished run 306000
+outFileName: test.out
+Finished run 307000
+outFileName: test.out
+Finished run 308000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:07
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 309000
+Finished run 310000
+Finished run 311000
+outFileName: test.out
+Finished run 312000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 313000
+outFileName: test.out
+outFileName: test.out
+Finished run 314000
+Finished run 315000
+outFileName: test.out
+Finished run 316000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 317000
+outFileName: test.out
+Finished run 318000
+outFileName: test.out
+Finished run 319000
+outFileName: test.out
+outFileName: test.out
+Finished run 320000
+Finished run 321000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 322000
+outFileName: test.out
+Finished run 323000
+outFileName: test.out
+outFileName: test.out
+Finished run 324000
+Finished run 325000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 326000
+outFileName: test.out
+Finished run 327000
+outFileName: test.out
+outFileName: test.out
+Finished run 328000
+Finished run 329000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:07
+outFileName: test.out
+Finished run 330000
+outFileName: test.out
+Finished run 331000
+outFileName: test.out
+Finished run 332000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 333000
+outFileName: test.out
+Finished run 334000
+outFileName: test.out
+Finished run 335000
+outFileName: test.out
+Finished run 336000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 337000
+outFileName: test.out
+Finished run 338000
+outFileName: test.out
+Finished run 339000
+outFileName: test.out
+Finished run 340000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:06
+outFileName: test.out
+outFileName: test.out
+Finished run 341000
+Finished run 342000
+outFileName: test.out
+Finished run 343000
+outFileName: test.out
+Finished run 344000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 345000
+outFileName: test.out
+Finished run 346000
+outFileName: test.out
+Finished run 347000
+outFileName: test.out
+Finished run 348000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 349000
+outFileName: test.out
+Finished run 350000
+outFileName: test.out
+Finished run 351000
+outFileName: test.out
+Finished run 352000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 353000
+outFileName: test.out
+Finished run 354000
+outFileName: test.out
+Finished run 355000
+outFileName: test.out
+Finished run 356000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 357000
+outFileName: test.out
+outFileName: test.out
+Finished run 358000
+Finished run 359000
+outFileName: test.out
+Finished run 360000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 361000
+outFileName: test.out
+outFileName: test.out
+Finished run 362000
+Finished run 363000
+outFileName: test.out
+Finished run 364000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 365000
+outFileName: test.out
+Finished run 366000
+outFileName: test.out
+Finished run 367000
+outFileName: test.out
+Finished run 368000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 369000
+outFileName: test.out
+Finished run 370000
+outFileName: test.out
+Finished run 371000
+outFileName: test.out
+Finished run 372000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 373000
+outFileName: test.out
+Finished run 374000
+outFileName: test.out
+Finished run 375000
+outFileName: test.out
+Finished run 376000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 377000
+outFileName: test.out
+Finished run 378000
+outFileName: test.out
+Finished run 379000
+outFileName: test.out
+Finished run 380000
+    Elapsed time (h:m:s): 0:00:03
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 381000
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 382000
+Finished run 383000
+Finished run 384000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 385000
+outFileName: test.out
+Finished run 386000
+outFileName: test.out
+outFileName: test.out
+Finished run 387000
+Finished run 388000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 389000
+outFileName: test.out
+Finished run 390000
+outFileName: test.out
+outFileName: test.out
+Finished run 391000
+Finished run 392000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 393000
+outFileName: test.out
+Finished run 394000
+outFileName: test.out
+outFileName: test.out
+Finished run 395000
+Finished run 396000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 397000
+outFileName: test.out
+Finished run 398000
+outFileName: test.out
+Finished run 399000
+outFileName: test.out
+Finished run 400000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 401000
+outFileName: test.out
+Finished run 402000
+outFileName: test.out
+Finished run 403000
+outFileName: test.out
+Finished run 404000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 405000
+outFileName: test.out
+Finished run 406000
+outFileName: test.out
+Finished run 407000
+outFileName: test.out
+outFileName: test.out
+Finished run 408000
+Finished run 409000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:06
+outFileName: test.out
+Finished run 410000
+outFileName: test.out
+Finished run 411000
+outFileName: test.out
+Finished run 412000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:06
+outFileName: test.out
+outFileName: test.out
+Finished run 413000
+Finished run 414000
+outFileName: test.out
+Finished run 415000
+outFileName: test.out
+Finished run 416000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:06
+outFileName: test.out
+outFileName: test.out
+Finished run 417000
+Finished run 418000
+outFileName: test.out
+Finished run 419000
+outFileName: test.out
+Finished run 420000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+outFileName: test.out
+Finished run 421000
+Finished run 422000
+outFileName: test.out
+Finished run 423000
+outFileName: test.out
+Finished run 424000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 425000
+outFileName: test.out
+Finished run 426000
+outFileName: test.out
+Finished run 427000
+outFileName: test.out
+Finished run 428000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 429000
+outFileName: test.out
+Finished run 430000
+outFileName: test.out
+Finished run 431000
+outFileName: test.out
+Finished run 432000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 433000
+outFileName: test.out
+Finished run 434000
+outFileName: test.out
+Finished run 435000
+outFileName: test.out
+Finished run 436000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 437000
+outFileName: test.out
+Finished run 438000
+outFileName: test.out
+Finished run 439000
+outFileName: test.out
+Finished run 440000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 441000
+outFileName: test.out
+Finished run 442000
+outFileName: test.out
+Finished run 443000
+outFileName: test.out
+Finished run 444000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 445000
+outFileName: test.out
+Finished run 446000
+outFileName: test.out
+Finished run 447000
+outFileName: test.out
+Finished run 448000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 449000
+outFileName: test.out
+Finished run 450000
+outFileName: test.out
+Finished run 451000
+outFileName: test.out
+Finished run 452000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+outFileName: test.out
+Finished run 453000
+Finished run 454000
+outFileName: test.out
+Finished run 455000
+outFileName: test.out
+Finished run 456000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 457000
+outFileName: test.out
+Finished run 458000
+outFileName: test.out
+Finished run 459000
+outFileName: test.out
+Finished run 460000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 461000
+outFileName: test.out
+Finished run 462000
+outFileName: test.out
+Finished run 463000
+outFileName: test.out
+Finished run 464000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 465000
+outFileName: test.out
+outFileName: test.out
+Finished run 466000
+Finished run 467000
+outFileName: test.out
+Finished run 468000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 469000
+outFileName: test.out
+outFileName: test.out
+Finished run 470000
+Finished run 471000
+outFileName: test.out
+Finished run 472000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+outFileName: test.out
+Finished run 473000
+Finished run 474000
+outFileName: test.out
+Finished run 475000
+outFileName: test.out
+Finished run 476000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 477000
+outFileName: test.out
+Finished run 478000
+outFileName: test.out
+outFileName: test.out
+Finished run 479000
+Finished run 480000
+    Elapsed time (h:m:s): 0:00:04
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 481000
+outFileName: test.out
+Finished run 482000
+outFileName: test.out
+Finished run 483000
+outFileName: test.out
+Finished run 484000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 485000
+outFileName: test.out
+Finished run 486000
+outFileName: test.out
+outFileName: test.out
+Finished run 487000
+Finished run 488000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 489000
+outFileName: test.out
+Finished run 490000
+outFileName: test.out
+Finished run 491000
+outFileName: test.out
+Finished run 492000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:05
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 493000
+Finished run 494000
+Finished run 495000
+outFileName: test.out
+Finished run 496000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:05
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 497000
+Finished run 498000
+Finished run 499000
+outFileName: test.out
+Finished run 500000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 501000
+outFileName: test.out
+outFileName: test.out
+Finished run 502000
+Finished run 503000
+outFileName: test.out
+Finished run 504000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 505000
+outFileName: test.out
+Finished run 506000
+outFileName: test.out
+Finished run 507000
+outFileName: test.out
+Finished run 508000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:05
+outFileName: test.out
+Finished run 509000
+outFileName: test.out
+Finished run 510000
+outFileName: test.out
+Finished run 511000
+outFileName: test.out
+Finished run 512000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+outFileName: test.out
+Finished run 513000
+Finished run 514000
+outFileName: test.out
+Finished run 515000
+outFileName: test.out
+Finished run 516000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+outFileName: test.out
+Finished run 517000
+Finished run 518000
+outFileName: test.out
+Finished run 519000
+outFileName: test.out
+Finished run 520000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 521000
+outFileName: test.out
+Finished run 522000
+outFileName: test.out
+outFileName: test.out
+Finished run 523000
+Finished run 524000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 525000
+outFileName: test.out
+outFileName: test.out
+Finished run 526000
+Finished run 527000
+outFileName: test.out
+Finished run 528000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 529000
+outFileName: test.out
+outFileName: test.out
+Finished run 530000
+Finished run 531000
+outFileName: test.out
+Finished run 532000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 533000
+outFileName: test.out
+Finished run 534000
+outFileName: test.out
+outFileName: test.out
+Finished run 535000
+Finished run 536000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 537000
+outFileName: test.out
+Finished run 538000
+outFileName: test.out
+Finished run 539000
+outFileName: test.out
+Finished run 540000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 541000
+outFileName: test.out
+outFileName: test.out
+Finished run 542000
+Finished run 543000
+outFileName: test.out
+Finished run 544000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 545000
+outFileName: test.out
+outFileName: test.out
+Finished run 546000
+Finished run 547000
+outFileName: test.out
+Finished run 548000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 549000
+outFileName: test.out
+Finished run 550000
+outFileName: test.out
+Finished run 551000
+outFileName: test.out
+Finished run 552000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 553000
+outFileName: test.out
+outFileName: test.out
+Finished run 554000
+Finished run 555000
+outFileName: test.out
+Finished run 556000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 557000
+outFileName: test.out
+outFileName: test.out
+Finished run 558000
+Finished run 559000
+outFileName: test.out
+Finished run 560000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 561000
+outFileName: test.out
+Finished run 562000
+outFileName: test.out
+Finished run 563000
+outFileName: test.out
+Finished run 564000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 565000
+outFileName: test.out
+Finished run 566000
+outFileName: test.out
+Finished run 567000
+outFileName: test.out
+Finished run 568000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 569000
+outFileName: test.out
+Finished run 570000
+outFileName: test.out
+Finished run 571000
+outFileName: test.out
+Finished run 572000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 573000
+outFileName: test.out
+Finished run 574000
+outFileName: test.out
+Finished run 575000
+outFileName: test.out
+Finished run 576000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 577000
+outFileName: test.out
+outFileName: test.out
+Finished run 578000
+Finished run 579000
+outFileName: test.out
+Finished run 580000
+    Elapsed time (h:m:s): 0:00:05
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 581000
+outFileName: test.out
+Finished run 582000
+outFileName: test.out
+Finished run 583000
+outFileName: test.out
+Finished run 584000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 585000
+outFileName: test.out
+Finished run 586000
+outFileName: test.out
+outFileName: test.out
+Finished run 587000
+Finished run 588000
+outFileName: test.out
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:04
+Finished run 589000
+outFileName: test.out
+outFileName: test.out
+Finished run 590000
+Finished run 591000
+outFileName: test.out
+Finished run 592000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 593000
+outFileName: test.out
+Finished run 594000
+outFileName: test.out
+outFileName: test.out
+Finished run 595000
+Finished run 596000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 597000
+outFileName: test.out
+Finished run 598000
+outFileName: test.out
+outFileName: test.out
+Finished run 600000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:04
+outFileName: test.out
+Finished run 601000
+outFileName: test.out
+Finished run 602000
+outFileName: test.out
+Finished run 603000
+outFileName: test.out
+Finished run 604000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:04
+outFileName: test.out
+outFileName: test.out
+Finished run 605000
+Finished run 606000
+outFileName: test.out
+Finished run 607000
+outFileName: test.out
+Finished run 608000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:04
+outFileName: test.out
+outFileName: test.out
+Finished run 609000
+Finished run 610000
+outFileName: test.out
+Finished run 611000
+outFileName: test.out
+Finished run 612000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 613000
+outFileName: test.out
+Finished run 614000
+outFileName: test.out
+Finished run 615000
+outFileName: test.out
+outFileName: test.out
+Finished run 616000
+Finished run 617000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 618000
+outFileName: test.out
+Finished run 619000
+outFileName: test.out
+outFileName: test.out
+Finished run 620000
+Finished run 621000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 622000
+outFileName: test.out
+Finished run 623000
+outFileName: test.out
+Finished run 624000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 625000
+outFileName: test.out
+Finished run 626000
+outFileName: test.out
+Finished run 627000
+outFileName: test.out
+Finished run 628000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 629000
+outFileName: test.out
+Finished run 630000
+outFileName: test.out
+Finished run 631000
+outFileName: test.out
+Finished run 632000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 633000
+outFileName: test.out
+outFileName: test.out
+Finished run 634000
+Finished run 635000
+outFileName: test.out
+outFileName: test.out
+Finished run 636000
+Finished run 637000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+outFileName: test.out
+Finished run 638000
+Finished run 639000
+outFileName: test.out
+outFileName: test.out
+Finished run 640000
+Finished run 641000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+outFileName: test.out
+Finished run 642000
+Finished run 643000
+outFileName: test.out
+outFileName: test.out
+Finished run 644000
+Finished run 645000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+outFileName: test.out
+Finished run 646000
+Finished run 647000
+outFileName: test.out
+outFileName: test.out
+Finished run 648000
+Finished run 649000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+outFileName: test.out
+Finished run 650000
+Finished run 651000
+outFileName: test.out
+outFileName: test.out
+Finished run 652000
+Finished run 653000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+outFileName: test.out
+Finished run 654000
+Finished run 655000
+outFileName: test.out
+Finished run 656000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 657000
+outFileName: test.out
+Finished run 658000
+outFileName: test.out
+Finished run 659000
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 660000
+Finished run 661000
+Finished run 662000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 663000
+outFileName: test.out
+outFileName: test.out
+Finished run 664000
+Finished run 665000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+outFileName: test.out
+Finished run 666000
+Finished run 667000
+outFileName: test.out
+Finished run 668000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 669000
+outFileName: test.out
+Finished run 670000
+outFileName: test.out
+Finished run 671000
+outFileName: test.out
+Finished run 672000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 673000
+outFileName: test.out
+Finished run 674000
+outFileName: test.out
+Finished run 675000
+outFileName: test.out
+Finished run 676000
+    Elapsed time (h:m:s): 0:00:06
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 677000
+outFileName: test.out
+outFileName: test.out
+Finished run 678000
+Finished run 679000
+outFileName: test.out
+Finished run 680000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 681000
+outFileName: test.out
+Finished run 682000
+outFileName: test.out
+Finished run 683000
+outFileName: test.out
+Finished run 684000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 685000
+outFileName: test.out
+Finished run 686000
+outFileName: test.out
+Finished run 687000
+outFileName: test.out
+outFileName: test.out
+Finished run 688000
+Finished run 689000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:03
+outFileName: test.out
+outFileName: test.out
+Finished run 690000
+Finished run 691000
+outFileName: test.out
+outFileName: test.out
+Finished run 692000
+Finished run 693000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 694000
+outFileName: test.out
+Finished run 695000
+outFileName: test.out
+Finished run 696000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 697000
+outFileName: test.out
+Finished run 698000
+outFileName: test.out
+Finished run 699000
+outFileName: test.out
+Finished run 700000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 701000
+outFileName: test.out
+Finished run 702000
+outFileName: test.out
+Finished run 703000
+outFileName: test.out
+Finished run 704000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:03
+outFileName: test.out
+Finished run 705000
+outFileName: test.out
+Finished run 706000
+outFileName: test.out
+Finished run 707000
+outFileName: test.out
+Finished run 708000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 709000
+outFileName: test.out
+Finished run 710000
+outFileName: test.out
+Finished run 711000
+outFileName: test.out
+Finished run 712000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+outFileName: test.out
+Finished run 713000
+Finished run 714000
+outFileName: test.out
+Finished run 715000
+outFileName: test.out
+Finished run 716000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+outFileName: test.out
+Finished run 717000
+Finished run 718000
+outFileName: test.out
+Finished run 719000
+outFileName: test.out
+Finished run 720000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+outFileName: test.out
+Finished run 721000
+Finished run 722000
+outFileName: test.out
+Finished run 723000
+outFileName: test.out
+outFileName: test.out
+Finished run 724000
+Finished run 725000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 726000
+outFileName: test.out
+Finished run 727000
+outFileName: test.out
+outFileName: test.out
+Finished run 728000
+Finished run 729000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 730000
+outFileName: test.out
+Finished run 731000
+outFileName: test.out
+outFileName: test.out
+Finished run 732000
+Finished run 733000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 734000
+outFileName: test.out
+Finished run 735000
+outFileName: test.out
+Finished run 736000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 737000
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 738000
+Finished run 739000
+Finished run 740000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 741000
+outFileName: test.out
+outFileName: test.out
+Finished run 742000
+Finished run 743000
+outFileName: test.out
+Finished run 744000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 745000
+outFileName: test.out
+Finished run 746000
+outFileName: test.out
+Finished run 747000
+outFileName: test.out
+Finished run 748000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 749000
+outFileName: test.out
+Finished run 750000
+outFileName: test.out
+Finished run 751000
+outFileName: test.out
+Finished run 752000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 753000
+outFileName: test.out
+Finished run 754000
+outFileName: test.out
+Finished run 755000
+outFileName: test.out
+Finished run 756000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 757000
+outFileName: test.out
+Finished run 758000
+outFileName: test.out
+outFileName: test.out
+Finished run 759000
+Finished run 760000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 761000
+outFileName: test.out
+Finished run 762000
+outFileName: test.out
+outFileName: test.out
+Finished run 763000
+Finished run 764000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 765000
+outFileName: test.out
+Finished run 766000
+outFileName: test.out
+Finished run 767000
+outFileName: test.out
+Finished run 768000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 769000
+outFileName: test.out
+Finished run 770000
+outFileName: test.out
+Finished run 771000
+outFileName: test.out
+Finished run 772000
+    Elapsed time (h:m:s): 0:00:07
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 773000
+outFileName: test.out
+outFileName: test.out
+Finished run 774000
+Finished run 775000
+outFileName: test.out
+Finished run 776000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 777000
+outFileName: test.out
+outFileName: test.out
+Finished run 778000
+Finished run 779000
+outFileName: test.out
+Finished run 780000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 781000
+outFileName: test.out
+outFileName: test.out
+Finished run 782000
+Finished run 783000
+outFileName: test.out
+outFileName: test.out
+Finished run 784000
+Finished run 785000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:02
+outFileName: test.out
+outFileName: test.out
+Finished run 786000
+Finished run 787000
+outFileName: test.out
+Finished run 788000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:02
+outFileName: test.out
+Finished run 789000
+outFileName: test.out
+Finished run 790000
+outFileName: test.out
+Finished run 791000
+outFileName: test.out
+Finished run 792000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:02
+outFileName: test.out
+outFileName: test.out
+Finished run 793000
+Finished run 794000
+outFileName: test.out
+Finished run 795000
+outFileName: test.out
+Finished run 796000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:02
+outFileName: test.out
+outFileName: test.out
+Finished run 797000
+Finished run 798000
+outFileName: test.out
+outFileName: test.out
+Finished run 799000
+Finished run 800000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:02
+outFileName: test.out
+outFileName: test.out
+Finished run 801000
+Finished run 802000
+outFileName: test.out
+outFileName: test.out
+Finished run 803000
+Finished run 804000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 805000
+outFileName: test.out
+Finished run 806000
+outFileName: test.out
+Finished run 807000
+outFileName: test.out
+outFileName: test.out
+Finished run 808000
+Finished run 809000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 810000
+outFileName: test.out
+Finished run 811000
+outFileName: test.out
+outFileName: test.out
+Finished run 812000
+Finished run 813000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 814000
+outFileName: test.out
+Finished run 815000
+outFileName: test.out
+outFileName: test.out
+Finished run 816000
+Finished run 817000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 818000
+outFileName: test.out
+Finished run 819000
+outFileName: test.out
+Finished run 820000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 821000
+outFileName: test.out
+Finished run 822000
+outFileName: test.out
+Finished run 823000
+outFileName: test.out
+outFileName: test.out
+Finished run 824000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+Finished run 825000
+outFileName: test.out
+Finished run 826000
+outFileName: test.out
+Finished run 827000
+outFileName: test.out
+Finished run 828000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 829000
+outFileName: test.out
+Finished run 830000
+outFileName: test.out
+Finished run 831000
+outFileName: test.out
+Finished run 832000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 833000
+outFileName: test.out
+outFileName: test.out
+Finished run 834000
+Finished run 835000
+outFileName: test.out
+Finished run 836000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 837000
+outFileName: test.out
+outFileName: test.out
+Finished run 838000
+Finished run 839000
+outFileName: test.out
+Finished run 840000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 841000
+outFileName: test.out
+Finished run 842000
+outFileName: test.out
+Finished run 843000
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 844000
+Finished run 845000
+Finished run 846000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+outFileName: test.out
+Finished run 847000
+Finished run 848000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 849000
+outFileName: test.out
+Finished run 850000
+outFileName: test.out
+Finished run 851000
+outFileName: test.out
+Finished run 852000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 853000
+outFileName: test.out
+Finished run 854000
+outFileName: test.out
+Finished run 855000
+outFileName: test.out
+Finished run 856000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 857000
+outFileName: test.out
+Finished run 858000
+outFileName: test.out
+Finished run 859000
+outFileName: test.out
+Finished run 860000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+outFileName: test.out
+Finished run 861000
+Finished run 862000
+outFileName: test.out
+Finished run 863000
+outFileName: test.out
+Finished run 864000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+outFileName: test.out
+Finished run 865000
+Finished run 866000
+outFileName: test.out
+Finished run 867000
+outFileName: test.out
+Finished run 868000
+    Elapsed time (h:m:s): 0:00:08
+    Estimated remaining : 0:00:01
+outFileName: test.out
+outFileName: test.out
+Finished run 869000
+Finished run 870000
+outFileName: test.out
+Finished run 871000
+outFileName: test.out
+Finished run 872000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:01
+outFileName: test.out
+outFileName: test.out
+Finished run 873000
+Finished run 874000
+outFileName: test.out
+Finished run 875000
+outFileName: test.out
+Finished run 876000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 877000
+outFileName: test.out
+Finished run 878000
+outFileName: test.out
+Finished run 879000
+outFileName: test.out
+Finished run 880000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 881000
+outFileName: test.out
+Finished run 882000
+outFileName: test.out
+Finished run 883000
+outFileName: test.out
+Finished run 884000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 885000
+outFileName: test.out
+Finished run 886000
+outFileName: test.out
+Finished run 887000
+outFileName: test.out
+Finished run 888000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:01
+outFileName: test.out
+outFileName: test.out
+Finished run 889000
+Finished run 890000
+outFileName: test.out
+Finished run 891000
+outFileName: test.out
+Finished run 892000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 893000
+outFileName: test.out
+Finished run 894000
+outFileName: test.out
+Finished run 895000
+outFileName: test.out
+Finished run 896000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:01
+outFileName: test.out
+Finished run 897000
+outFileName: test.out
+Finished run 898000
+outFileName: test.out
+Finished run 899000
+outFileName: test.out
+Finished run 900000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 901000
+outFileName: test.out
+outFileName: test.out
+Finished run 902000
+Finished run 903000
+outFileName: test.out
+Finished run 904000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 905000
+outFileName: test.out
+Finished run 906000
+outFileName: test.out
+Finished run 907000
+outFileName: test.out
+Finished run 908000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 909000
+outFileName: test.out
+Finished run 910000
+outFileName: test.out
+Finished run 911000
+outFileName: test.out
+Finished run 912000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 913000
+outFileName: test.out
+Finished run 914000
+outFileName: test.out
+Finished run 915000
+outFileName: test.out
+Finished run 916000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 917000
+outFileName: test.out
+Finished run 918000
+outFileName: test.out
+Finished run 919000
+outFileName: test.out
+Finished run 920000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 921000
+outFileName: test.out
+Finished run 922000
+outFileName: test.out
+Finished run 923000
+outFileName: test.out
+Finished run 924000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 925000
+outFileName: test.out
+Finished run 926000
+outFileName: test.out
+Finished run 927000
+outFileName: test.out
+Finished run 928000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 929000
+outFileName: test.out
+Finished run 930000
+outFileName: test.out
+Finished run 931000
+outFileName: test.out
+Finished run 932000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 933000
+outFileName: test.out
+Finished run 934000
+outFileName: test.out
+outFileName: test.out
+Finished run 935000
+Finished run 936000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 937000
+outFileName: test.out
+Finished run 938000
+outFileName: test.out
+outFileName: test.out
+Finished run 939000
+Finished run 940000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 941000
+outFileName: test.out
+Finished run 942000
+outFileName: test.out
+Finished run 943000
+outFileName: test.out
+Finished run 944000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 945000
+outFileName: test.out
+Finished run 946000
+outFileName: test.out
+Finished run 947000
+outFileName: test.out
+outFileName: test.out
+Finished run 948000
+Finished run 949000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 950000
+outFileName: test.out
+Finished run 951000
+outFileName: test.out
+Finished run 952000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 953000
+outFileName: test.out
+Finished run 954000
+outFileName: test.out
+outFileName: test.out
+Finished run 955000
+Finished run 956000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 957000
+outFileName: test.out
+Finished run 958000
+outFileName: test.out
+outFileName: test.out
+Finished run 959000
+Finished run 960000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 961000
+outFileName: test.out
+Finished run 962000
+outFileName: test.out
+outFileName: test.out
+Finished run 963000
+Finished run 964000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 965000
+outFileName: test.out
+Finished run 966000
+outFileName: test.out
+outFileName: test.out
+Finished run 967000
+Finished run 968000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 969000
+outFileName: test.out
+Finished run 970000
+outFileName: test.out
+Finished run 971000
+outFileName: test.out
+Finished run 972000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 973000
+outFileName: test.out
+outFileName: test.out
+Finished run 974000
+Finished run 975000
+outFileName: test.out
+Finished run 976000
+    Elapsed time (h:m:s): 0:00:09
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 977000
+outFileName: test.out
+Finished run 978000
+outFileName: test.out
+Finished run 979000
+outFileName: test.out
+Finished run 980000
+    Elapsed time (h:m:s): 0:00:10
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 981000
+outFileName: test.out
+Finished run 982000
+outFileName: test.out
+Finished run 983000
+outFileName: test.out
+Finished run 984000
+    Elapsed time (h:m:s): 0:00:10
+    Estimated remaining : 0:00:00
+outFileName: test.out
+outFileName: test.out
+Finished run 985000
+Finished run 986000
+outFileName: test.out
+Finished run 987000
+outFileName: test.out
+Finished run 988000
+    Elapsed time (h:m:s): 0:00:10
+    Estimated remaining : 0:00:00
+outFileName: test.out
+Finished run 989000
+outFileName: test.out
+Finished run 990000
+outFileName: test.out
+Finished run 991000
+outFileName: test.out
+Finished run 992000
+    Elapsed time (h:m:s): 0:00:10
+    Estimated remaining : 0:00:00
+outFileName: test.out
+outFileName: test.out
+Finished run 993000
+Finished run 994000
+outFileName: test.out
+Finished run 995000
+outFileName: test.out
+Finished run 996000
+    Elapsed time (h:m:s): 0:00:10
+    Estimated remaining : 0:00:00
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+outFileName: test.out
+Finished run 997000
+Finished run 998000
+Finished run 999000
+Finished run 1000000
+    Elapsed time (h:m:s): 0:00:10
+    Estimated remaining : 0:00:00
+===================================================================
+Statistics:
+Mean: 11.0013579405
+Mom2: 126.362189682
+Var : 5.33231314634
+Trys: 1000000
+
+The extreme bounds given for bins was [-1.0, 10.0]
+The extreme values obtained to bin is [7.000009373046229, 14.999994026347855]
+Number of samples excluded from bins (hi/low): 625233 0
+===================================================================
+Executioner complete, 10.3002240658 seconds

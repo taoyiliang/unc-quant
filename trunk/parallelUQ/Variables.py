@@ -6,7 +6,7 @@ from scipy.misc import factorial
 from math import ceil
 import sys
 
-def newVar(vartype,name='x',path='dudpath'):
+def VariableFactory(vartype,name='x',path='dudpath'):
   types=['uniform','normal','lognormal']
   if vartype not in types:
     print 'ERROR: variable type',vartype,'not recognized for variable',path
@@ -31,63 +31,6 @@ class Variable(object):
   def setQuadrature(self,maxOrder):
     self.quadOrd=maxOrder
 
-  def setExpansion(self,inputfile,expOrd=2,verbose=False):
-    if verbose:
-      print 'set quadrature for',self.name
-    #get acceptable range from input file
-    if inputfile != None:
-      okRange = inputfile('Variables/'+self.name+'/okRange','-inf inf')
-      low = okRange.split(' ')[0].strip()
-      hi = okRange.split(' ')[1].strip()
-      if low=='-inf':
-        low=-1e30
-      else:
-        try: low=float(low)
-        except ValueError:
-          msg = 'okRange value not recognized for var "'
-          msg+= self.name+'": "'+low+'"'
-          raise IOError(msg)
-      if hi=='inf':
-        hi=1e30
-      else:
-        try: hi=float(hi)
-        except ValueError:
-          msg = 'okRange value not recognized for var "'
-          msg+= self.name+'": "'+hi+'"'
-          raise IOError(msg)
-      self.okRange=(low,hi)
-    else: #no input file?
-      self.okRange=(-1e30,1e30)
-    #set expansion, quad orders
-    #TODO combine these two ifs someday
-    #FIXME this shouldn't be how quad order is decided.
-    if inputfile != None:
-      self.expOrd = inputfile('Variables/'+self.name+'/exporder',2)+1
-      #self.quadOrd = inputfile('Variables/'+self.name+'/quadorder',-6)
-      #if self.quadOrd==-6:
-      #  self.quadOrd=self.expOrd
-    else:
-      self.expOrd=expOrd
-      #self.quadOrd = int(ceil((self.expOrd+1)/2.0))
-    print '...for var',self.name,'setting exp order',self.expOrd-1
-
-  def checkPoints(self,pts,wts):
-    retpts=[]
-    retwts=[]
-    orders=[]
-    for p,pt in enumerate(pts):
-      if self.convertToActual(pt) < self.okRange[0] or pt > self.okRange[1]:
-        msg = 'WARNING: Sample point '+str(p)+' for variable "'
-        msg+= self.name+'" discarded for being outside target range ('
-        msg+= str(self.okRange[0])+','+str(self.okRange[1])+'): '
-        msg+= str(pt)
-        print msg
-        continue
-      retpts.append(pt)
-      retwts.append(wts[p])
-      orders.append(p)
-    return retpts,retwts,orders
-
   def sample(self,trunc=0):
     return self.dist.rvs()
 
@@ -111,18 +54,8 @@ class Uniform(Variable):
   def convertToStandard(self,y):
     return (y-self.mean)/self.range
 
-  def probWeight(self,x,scale='actual'):
-    if scale=='actual':
-      return 0.5/self.range
-    elif scale=='standard':
-      return 0.5
-    else:
-      msg = 'variable '+var.name+'.probWeight does not recognize '
-      msg+= str(scale)+' (type '+str(type(scale))+')!\n'
-      raise IOError(msg)
-
-  def probdens(self,x):
-    return 1.0
+  def probWeight(self,x):
+    return 0.5/self.range
 
   def setDist(self,args,verbose=1):
     if len(args)==1:
@@ -148,13 +81,7 @@ class Uniform(Variable):
 
   def setQuadrature(self,maxOrder,verbose=False):
     super(Uniform,self).setQuadrature(maxOrder)
-    #standard Legendre quadrature
     pts,wts = quads.p_roots(self.quadOrd)
-    self.pts,self.wts,self.quadOrds=super(Uniform,self).checkPoints(pts,wts)
-    self.quaddict = {}
-    for o,order in enumerate(self.quadOrds):
-      self.quaddict[order]=(self.pts[o],self.wts[o])
-
 
   def evalNormPoly(self,x,n):
     norm = 1.0/np.sqrt(2.0/(2.0*float(n)+1.0))

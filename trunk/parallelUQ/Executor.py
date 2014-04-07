@@ -18,18 +18,18 @@ import IndexSets
 import multiprocessing
 from multiprocessing.queues import SimpleQueue as sque
 
-def newExecutor(exec_type,inp_file,restart):
-  oktypes=['PCESC','MC','MLMC']
+def ExecutorFactory(exec_type,inp_file):
+  oktypes=['PCESC','SC','MC','MLMC']
   if exec_type not in oktypes:
     msg = 'Desired exec type <'+exec_type+'> not recognized.'
     msg+= '\n    Options include '+str(oktypes)
     raise IOError(msg)
-  todo = 'ex = '+exec_type+'Exec(inp_file,restart)'
+  todo = 'ex = '+exec_type+'Exec(inp_file)'
   exec todo
   return ex
 
 class Executor(object): #base class
-  def __init__(self,inp_file,restart):
+  def __init__(self,inp_file):
     '''Constructor'''
     print '\nInitializing Executor...'
     self.input_file = inp_file
@@ -42,14 +42,9 @@ class Executor(object): #base class
     self.loadSampler()
     self.loadBackends()
     self.clearInputs()
-    self.parallelRun()
-    self.runBackends()
-
-  def savestate(self,savedict):
-    print 'Executor has no implemented savestate function!'
-
-  def loadRestart(self):
-    print 'Executor has no implemented loadRestart function!'
+    self.runSamples()
+    self.collocate()
+    self.finish()
 
   def loadInput(self):
     self.templateFile=self.input_file('Problem/templateFile','')
@@ -75,12 +70,8 @@ class Executor(object): #base class
     self.inputDir = os.getcwd()
     os.chdir(self.uncDir)
 
+
   def loadVars(self):
-    '''
-    Fills dictionary with variables to have their U Q'd
-    Input: none
-    Output: none
-    '''
     print '\nLoading uncertain variables...'
     uVars = self.input_file('Variables/names','').split(' ')
     self.varDict={}
@@ -93,126 +84,87 @@ class Executor(object): #base class
       self.varDict[var]=Variables.newVar(dist,var,path)
       self.varDict[var].setDist(args)
 
+  def setCase(self):
+    pass #overwritten
+
+  def loadSampler(self):
+    pass
+
+  def loadBackend(self):
+    pass
+
   def clearInputs(self):
-    '''
-    Deletes old run input files from UQ runs
-    Input: none
-    Output: none
-    '''
     print '\nAttempting to clear old inputs...'
     os.chdir(self.inputDir)
     fail=os.system('rm '+self.templateFile+'.unc*')
     if not fail:
       print '...successfully cleared old input files.'
 
-  def cprToActual(self,x):
-    '''
-    Optional "actual" solution to compare to
-    Input: variable value
-    Output: function evaluated at value
-    '''
-    #return np.exp(-x*x)
-    #return x*x - 2.*x + 0.5
-    return 1.+2.*x
+  def runSamples(self):
+    pass #to be overwritten
 
-  def runBackends(self):
-    '''
-    Runs each post-processing step requested
-    Input: none
-    Output: none
-    '''
-    trunc = self.input_file('Backend/ROM/truncate',0)
-    for btype in self.backends.keys():
-      backend = self.backends[btype]
-      if btype in ['PDF']:
-        backend.MCcalc(self.histories)
-      elif btype in ['plot2D']:
-        backend.compareVars(self.histories)
-      elif btype in ['ROM','rom']:
-        backend.makeROM(self.histories)
-        samples=self.input_file('Backend/ROM/samples',100.)
-        samples=int(samples)
-        checkSoln=self.input_file('Backend/ROM/checkSolution',0)
-        makePDF=self.input_file('Backend/ROM/createPDF',0)
-        numbins=self.input_file('Backend/ROM/bins',100)
-        doStats=self.input_file('Backend/ROM/stats',0)
-        MCROMs=None
-        #sample ROM
-        if checkSoln:
-          print 'Sampling ROM...'
-          MCROMs,correct = backend.MCsampleDict(self.histories,\
-                                                trials=samples,\
-                                                cprFunc=self.cprToActual)
-          print 'Checking convergence to actual soln...'
-          numbad=0
-          for i,key in enumerate(MCROMs.keys()):
-            if not np.abs(MCROMs[key]-correct[key])<1e-9:
-              print 'Mismatch!',key,MCROMs[key],correct[key]
-              numbad+=1
-          if numbad==0: print '  ...Converged!'
-          else:
-            print  '  ...ERROR: not converged!',numbad,'errors found'
+  def collocate(self):
+    pass #overwritten
 
-        if doStats:
-          backend.setStats(self.histories)
-        #pdf rom
+  def finish(self):
+    print 'Executor complete.'
 
-        if makePDF:
-          print '\nConstructing discrete pdf...'
-          if MCROMs == None:
-            bins,ctrs=backend.makePDF(self.histories,
-                                      numbins,
-                                      samples,
-                                      trunc=trunc)
-          else:
-            bins,ctrs=backend.makePDF(self.histories,
-                                      numbins,
-                                      samples,
-                                      MCROMs.values())
-          plt.plot(ctrs,bins)
-          plt.title('PDF solution, 1e'+str(int(np.log10(samples)))+' samples')
-          plt.xlabel('Solutions')
-          plt.ylabel('Probability')
-          #plt.axis([0.9,1.2,0,0.05])
-          #print 'dumping to',os.getcwd(),'4.pk'
-          #pk.dump([ctrs,bins],open('4.pk','wb'))
+class SC(Executor):
+  '''Intermediary before choosing SC type'''
 
-        #write stats out to file
-        #if doStats and makePDF:
-        #  outFile=file(self.BEoutFile,'w')
-        #  for i,ctr in enumerate(ctrs):
-        #    msg=','.join([str(ctr),str(bins[i])])
-        #    outFile.writelines(','.join([str(ctr),str(bins[i]),])+'\n')
-        #  outFile.close()
+  def loadSampler(self):
+    self.loadIndexSet()
+    self.loadQuadSet()
 
-    print 'Executioner complete...'
+  def loadIndexSet(self):
+    self.expOrder = self.input_file('Sampler/SC/expOrd',-1)
+    if self.expOrder==-1:
+      print '...expansion order not set in Sampler/SC.  Using 2...'
+      self.expOrder=2
+    settype=self.input_file('Sampler/SC/indexSet','dud')
+    if settype=='dud':
+      print 'Index set not specified; using tensor product.'
+      settype='TP'
+    self.indexSet = IndexSets.IndexSetFactory(len(self.varDict.keys()),
+                                              self.expOrder,
+                                              settype)
+    print '...%i expansion moments used...' %len(self.indexSet)
+
+  def loadQuadSet(self):
+    def single(x):
+      return x
+    def double(x):
+      return 2**x
+    rule = self.input_file('Sampler/SC/quadrule','<None>')
+    okRules=['single','double']
+    if rule not in okRules:
+      print '...quadrule not recognized in Sampler/SC. Using single...'
+      rule='single'
+    todo = 'quadrule='+rule
+    exec todo
+    grid = SparseQuads.BasicSparse(len(self.varDict.keys()),
+                                   self.expOrder,
+                                   quadrule,
+                                   self.varDict)
+    run_samples = {}
+    run_samples['varNames']=self.varList.keys()
+    run_samples['varables']=self.varList.values()
+    run_samples['quadpts']=[]
+    run_samples['weights']={}
+    for entry in grid:
+      run_samples['quadpts'].append(tuple(entry[0]))
+      run_samples['weights'][tuple(entry[0])]=entry[1]
+    self.sampler = spr.StochasticPoly(self.input_file,
+                                      self.run_samples)
 
 
-
-
-
-
-
-class PCESCExec(Executor):
+class PCESCExec(SC):
   def setCase(self):
     case = ''
-    case+= self.templateFile.split('.')[0]+'_SC_'
+    case+= self.templateFile.split('.')[0]+'_PCESC_'
     case+= str(len(self.varDict.keys()))+'var'
     self.case=case
 
-  def loadSampler(self):
-    indexranges=[]
-    for var in self.varDict.values():
-      var.setExpansion(self.input_file)
-      indexranges.append(range(var.expOrd))
-    maxorder = np.max(np.max(indexranges))
-    iset=self.input_file('Sampler/SC/indexSet','dud')
-    if iset=='dud':
-      print 'Index set not specified; using tensor product.'
-      iset='TP'
-    self.indexSet = IndexSets.chooseSet(indexranges,iset,maxorder)
-    print '...%i expansion moments used...' %len(self.indexSet)
-    #get multiplication factor for quad order = m*exp order
     multfac = self.input_file('Sampler/SC/quadFactor',0)
     if multfac==0:
       print '...Quadrature multiplication factor not specified.'
@@ -237,9 +189,6 @@ class PCESCExec(Executor):
       maxOrd=max(listedOrds[v])+1
       var.setQuadrature(maxOrd)
     #now load the sampler
-    self.sampler = spr.StochasticPoly(self.varDict,\
-                                      self.input_file,\
-                                      self.quadSet)
 
   def loadBackends(self):
     '''
