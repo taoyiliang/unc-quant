@@ -4,13 +4,16 @@ from itertools import product as allcombos
 def BasicSparse(N,L,indexset,quadrule,varlist):
   c=makeCoeffs(N,indexset)
   survive=np.nonzero(c!=0)
+  c=np.array(c)
+  indexset=np.array(indexset)
   c=c[survive]
   indexset=indexset[survive]
-  SG=[] #holds tuple (multi-quad pt, wt)
+  SG=[] #holds list (multi-quad pt, wt)
   for j,cof in enumerate(c):
     idx = indexset[j]
-    m = quadrule(idx)
-    SG.append( tensorGrid(m,idx) )
+    m = quadrule(idx)+1
+    print 'idx,m:',idx,m
+    SG.append( list(tensorGrid(N,m,varlist,idx)) )
     SG[-1][1]*=c[j]
   return SG
 
@@ -27,11 +30,12 @@ def makeCoeffs(N,indexset):
       c[i]+=(-1)**sum(d*bln)
   return c
 
-def tensorGrid(m,varlist):
+def tensorGrid(N,m,varlist,idx):
   quadptlists=[]
   quadwtlists=[]
   for n in range(N):
     mn = m[n]
+    print 'mn:',mn
     var=varlist[varlist.keys()[n]]
     var.setQuadrature(mn)
     quadptlists.append(var.pts)

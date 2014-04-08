@@ -49,6 +49,7 @@ class Uniform(Variable):
     self.distName='uniform'
 
   def convertToActual(self,x):
+    print 'x,range,mean',x,self.range,self.mean
     return self.range*x+self.mean
 
   def convertToStandard(self,y):
@@ -82,6 +83,8 @@ class Uniform(Variable):
   def setQuadrature(self,maxOrder,verbose=False):
     super(Uniform,self).setQuadrature(maxOrder)
     pts,wts = quads.p_roots(self.quadOrd)
+    self.pts=pts
+    self.wts=wts
 
   def evalNormPoly(self,x,n):
     norm = 1.0/np.sqrt(2.0/(2.0*float(n)+1.0))
@@ -146,9 +149,11 @@ class Normal(Variable):
     #standard hermite quadrature
     pts,wts = quads.h_roots(self.quadOrd)
     self.pts,self.wts,self.quadOrds=super(Normal,self).checkPoints(pts,wts)
-    self.quaddict = {}
-    for o,order in enumerate(self.quadOrds):
-      self.quaddict[order]=(self.pts[o],self.wts[o])
+    self.pts=pts
+    self.wts=wts
+    #self.quaddict = {}
+    #for o,order in enumerate(self.quadOrds):
+    #  self.quaddict[order]=(self.pts[o],self.wts[o])
 
   def norm(self,n):
     return 1.0/(np.sqrt(np.sqrt(np.pi)*(2.0**n)*factorial(n)))

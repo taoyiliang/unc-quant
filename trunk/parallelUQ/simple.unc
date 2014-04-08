@@ -1,6 +1,6 @@
 [Problem]
-  # executor     = PCESC
-  executor     = MC
+  executor     = SC
+ # executor     = MC
   templateFile = 'simple.inp'
   storeFlux    = 0
   execDir      = '../simple/'

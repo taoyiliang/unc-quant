@@ -14,11 +14,11 @@ def IndexSetFactory(N,order,setType):
     orderlist.append(range(order))
 
   if setType=='HC':
-    return HyperbolicCross(orderList,order)
+    return HyperbolicCross(orderlist,order)
   if setType=='TD':
-    return TotalDegree(orderList,order)
+    return TotalDegree(orderlist,order)
   if setType=='TP':
-    return TensorProduct(orderList,order)
+    return TensorProduct(orderlist,order)
 
 
 def TensorProduct(orderlist,maxorder=0):

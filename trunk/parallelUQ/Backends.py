@@ -235,6 +235,7 @@ class ROM(Backend):
     #print '  ',histories['varVals']
     #TODO need to store vars for poly evals later
     cofFile = file(self.case+'.cof','w')
+    #TODO do each ordset in parallel!
     for i,ordset in enumerate(self.expOrds): #poly orders
       ords = tuple(ordset)
       c[ords]=0
