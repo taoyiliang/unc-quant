@@ -45,7 +45,7 @@
 [Execution]
   execution_type = NCA
 
-  keff_tol = 1e-5
+  keff_tol = 1e-8
   max_power_its = 10000
   max_nca_its = 1000
   max_nda_its = 10
