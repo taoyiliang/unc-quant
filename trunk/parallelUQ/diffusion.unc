@@ -1,12 +1,12 @@
 [Problem]
-  executor       = PCESC
+  executor       = SC
  # executor       = MC
   templateFile   = '2G_2D.inp'
   storeFlux      = 0
   execDir        = '../diffusion/'
   inputDir       = '../diffusion/'
   input_editor   = 'IE_Diffusion'
-  numprocs       = 3
+  numprocs       = 4
   mesh_factor    = 2
 []
 
@@ -20,8 +20,10 @@
     truncate = 3 #only applies to normals
   [../]
   [./SC]
-    indexSet = TD
+    indexSet = TP
     quadfactor = 2
+    expOrd = 4
+    quadrule = single
   [../]
 []
 

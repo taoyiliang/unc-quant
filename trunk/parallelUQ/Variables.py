@@ -49,7 +49,6 @@ class Uniform(Variable):
     self.distName='uniform'
 
   def convertToActual(self,x):
-    print 'x,range,mean',x,self.range,self.mean
     return self.range*x+self.mean
 
   def convertToStandard(self,y):

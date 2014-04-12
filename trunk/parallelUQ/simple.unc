@@ -12,8 +12,9 @@
 [Sampler]
   active = 'SC'
   [./SC]
-    indexSet = HC
-    quadFactor = 2
+    indexSet = TP
+    expOrd = 4
+    quadrule = single
   [../]
   [./MC]
     batch = 100
@@ -59,14 +60,12 @@
    # args = '5. 2.'
     dist = 'uniform'
     args = '3.5 2.5'
-    exporder = 4
   [../]
   [./y]
     path = 'Problem/y'
     dist = 'uniform'
     args = '3.5 2.5'
   #  args = '3.5 0.7142857'
-    exporder = 8
   [../]
 []
 

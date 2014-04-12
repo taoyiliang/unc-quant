@@ -12,18 +12,20 @@ def BasicSparse(N,L,indexset,quadrule,varlist):
   for j,cof in enumerate(c):
     idx = indexset[j]
     m = quadrule(idx)+1
-    print 'idx,m:',idx,m
-    SG.append( list(tensorGrid(N,m,varlist,idx)) )
-    SG[-1][1]*=c[j]
+    new = tensorGrid(N,m,varlist,idx)
+    for i in range(len(new[0])):
+      SG.append( [new[0][i],new[1][i]] )
+      SG[-1][1]*=c[j]
   return SG
 
 def makeCoeffs(N,indexset):
-  c=np.ones(N)
+  L=len(indexset)
+  c=np.ones(L)
   indexset=np.array(indexset)
   for entry in indexset:
     indexset=np.array(indexset)
-  for i in range(N):
-    for j in range(i+1,N):
+  for i in range(L):
+    for j in range(i+1,L):
       d = indexset[j]-indexset[i]
       bln = d<=1
       bln*= d>=0
@@ -35,7 +37,7 @@ def tensorGrid(N,m,varlist,idx):
   quadwtlists=[]
   for n in range(N):
     mn = m[n]
-    print 'mn:',mn
+    #print 'mn:',mn
     var=varlist[varlist.keys()[n]]
     var.setQuadrature(mn)
     quadptlists.append(var.pts)
@@ -44,4 +46,5 @@ def tensorGrid(N,m,varlist,idx):
   quadwts = list(allcombos(*quadwtlists))
   for k,wtset in enumerate(quadwts):
     quadwts[k]=np.product(wtset)
+  #print 'wts,pts',quadwts,quadpts
   return quadpts,quadwts

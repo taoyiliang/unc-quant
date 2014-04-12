@@ -1,7 +1,7 @@
 import os
 import time
 import multiprocessing
-from multiprocessing.queues import SimpleQueue as sque
+from multiprocessing.queues import Queue as que
 import cPickle as pk
 import datetime as dt
 from sys import *
@@ -35,6 +35,7 @@ class Executor(object): #base class
   def __init__(self,inp_file):
     '''Constructor'''
     print '\nInitializing Executor...'
+    self.outq = que()
     self.input_file = inp_file
     #run
     self.loadInput()
@@ -96,7 +97,7 @@ class Executor(object): #base class
   def loadSampler(self):
     pass
 
-  def loadBackend(self):
+  def loadBackends(self):
     pass
 
   def clearInputs(self):
@@ -107,10 +108,80 @@ class Executor(object): #base class
       print '...successfully cleared old input files.'
 
   def runParallel(self):
-    #set up processor pool
     wantprocs = self.input_file('Problem/numprocs',1)
     self.numprocs = min(wantprocs,multiprocessing.cpu_count())
-    pool = multiprocessing.Pool(processes=self.numprocs)
+    print '\n...using %i processers...' %self.numprocs
+    #
+    # set up processor pool TODO get pickling error - can't use instance method
+    #
+    #pool = multiprocessing.Pool(processes=self.numprocs)
+    #res = pool.imap(self.runSample,self.sampler,int(np.sqrt(self.numquadpts)))
+    #pool.close()
+    #pool.join()
+    #
+    # use the old queue method
+    #
+    self.total_runs = -1
+    procs=[]
+    self.done=False
+    self.histories={}
+    self.histories['varNames'] = self.varDict.keys()
+    self.histories['vars']=self.varDict.values()
+    self.histories['varVals']=[]
+    self.histories['nRun']=[]
+    self.histories['soln']=[]
+    self.histories['solwt']=[]
+    self.histories['varPaths']=[]
+    print '...uncertain variables:',self.histories['varNames'],'...'
+    for var in self.varDict.values():
+      self.histories['varPaths'].append(var.path)
+    #preset some file change stuff
+    mesh_size = self.input_file('Problem/mesh_factor',-1)
+    self.totalProcs=0
+    finished=0
+    while not self.done:
+      for p,proc in enumerate(procs):
+        if not proc.is_alive():
+          proc.join()
+          while not self.outq.empty():
+            n,wt,soln = self.outq.get()
+            self.histories['soln'][n]=soln
+            self.histories['solwt'][n]=wt
+            finished+=1
+          print 'Runs finished:',finished,
+          del procs[p]
+      if not self.done:
+        while len(procs)<self.numprocs and not self.sampler.converged:
+          try: runDict = self.sampler.next()
+          except StopIteration: break
+          self.totalProcs+=1
+          self.total_runs+=1
+          print '...runs started:',self.total_runs,'...\r',
+          #self.histories['nRun'].append(self.total_runs)
+          runDict['nRun'] = self.total_runs
+          self.histories['soln'].append(0)  #placeholders
+          self.histories['solwt'].append(0)
+          for key in runDict.keys():
+            try:self.histories[key].append(runDict[key])
+            except KeyError: self.histories[key]=[runDict[key]]
+          runDict['fileChange']={}
+          runDict['outFileName']='run.out'+str(self.total_runs)
+          runDict['fileChange']['Output/file']=runDict['outFileName']
+          if mesh_size > 0:
+            runDict['fileChange']['Mesh/nx_per_reg']=mesh_size
+            runDict['fileChange']['Mesh/ny_per_reg']=mesh_size
+          runDict['inp_file'] = self.ie.writeInput(self.templateFile,
+                                self.inputDir,
+                                self.histories['varPaths'],
+                                runDict['varVals'],
+                                runDict['fileChange'],
+                                self.total_runs)
+          procs.append(multiprocessing.Process(target=self.runSample,
+                           args=[runDict]))
+          procs[-1].start()
+        self.done = (len(procs)==0) and self.sampler.converged
+        if self.done: print ''
+
 
   def collocate(self):
     pass #overwritten
@@ -137,7 +208,7 @@ class SC(Executor):
     self.indexSet = IndexSets.IndexSetFactory(len(self.varDict.keys()),
                                               self.expOrder,
                                               settype)
-    print '...%i expansion moments used...' %len(self.indexSet)
+    print '...%i expansion indices used...' %len(self.indexSet)
 
   def loadQuadSet(self):
     def single(x):
@@ -162,14 +233,24 @@ class SC(Executor):
     run_samples['quadpts']=[]
     run_samples['weights']={}
     for entry in grid:
-      run_samples['quadpts'].append(tuple(entry[0]))
-      run_samples['weights'][tuple(entry[0])]=entry[1]
+      npt = entry[0]
+      nwt = entry[1]
+      if npt not in run_samples['quadpts']:
+        run_samples['quadpts'].append(npt)
+        run_samples['weights'][npt]=nwt
+      else:
+        print '...duplicate point',npt,'- combining weights.'
+        run_samples['weights'][npt]+=nwt
     self.sampler = spr.StochasticPoly(self.varDict,
                                       run_samples)
-    #DEBUG TODO
-    for i in self.sampler:
-      print i,samp
-    sys.exit()
+    self.numquadpts = len(run_samples['quadpts'])
+    print '...%i quadrature points used...' %self.numquadpts
+
+  def runSample(self,runDict):
+    self.ie.runSolve(runDict['inp_file'])
+    soln = self.ie.storeOutput(runDict['outFileName'])
+    self.outq.put([runDict['nRun'],runDict['quadWts'],soln])
+    #print 'Finished',str(runDict['nRun'])+':',soln
 
 class SCExec(SC):
   def setCase(self):
@@ -179,100 +260,10 @@ class SCExec(SC):
     self.case=case
     return
 
-#      print '\nRunning samples in parallel...'
-#      self.total_runs = -1
-#      ps=[]
-#      self.done=False
-#      self.histories={}
-#      self.histories['varNames']=self.varDict.keys()
-#      self.histories['vars']=self.varDict.values()
-#      self.histories['varPaths']=[]
-#      for var in self.varDict.values():
-#        #need to preset these so they can be filled with nRun?
-#        self.histories['varPaths'].append(var.path)
-#        self.histories['varVals']=[]
-#        self.histories['nRun']=[]
-#        self.histories['soln']=[]
-#      print '  ...uncertain variables:',self.histories['varNames']
-#      tempOutFile = file('solns.out','w')
-#    else: #start from restart
-#      print '\nStarting from restart...'
-#      print '  Starting after run',self.total_runs
-#      trialsAtRestart = self.total_runs
-#    print '  ...using',self.numprocs,'processors...'
-#    self.numPs=0
-#    finished=0
-#    while not self.done:
-#      #remove dead processses
-#      for p,proc in enumerate(ps):
-#        if not proc.is_alive():
-#          proc.join()
-#          while not self.outq.empty():
-#            n,sln = self.outq.get()
-#            self.histories['soln'][n]=sln
-#            finished+=1
-#          print 'Runs finished:',finished,
-#          del ps[p]
-#          #save state
-#      if not self.sampler.converged:
-#        while len(ps)<self.numprocs and not self.sampler.converged:
-#          self.numPs+=1
-#          self.total_runs+=1
-#          #TODO print single line, started/finished runs
-#          print 'Runs started:',self.total_runs,'\r',
-#          try:
-#            tot1 = self.backends['PDF'].tot1
-#            tot2 = self.backends['PDF'].tot2
-#            N = self.backends['PDF'].N
-#            runDict = self.sampler.giveSample([N,tot1,tot2])
-#          except KeyError:
-#            runDict = self.sampler.giveSample()
-#          self.histories['nRun'].append(self.total_runs)
-#          self.histories['soln'].append(0) #placeholder
-#          #print self.sampler.type
-#          for key in runDict.keys():
-#            try: self.histories[key].append(runDict[key])
-#            except KeyError:
-#              self.histories[key]=[runDict[key]]
-#          #  print '  ',key,self.histories[key][-1]
-#          #add flux output identifier to change dict
-#          #TODO this expects the same output block for everything!
-#          runDict['fileChange']={}
-#          outFileName='run.out'+str(self.total_runs)
-#          runDict['fileChange']['Output/file']=outFileName
-#          mesh_size = self.input_file('Problem/mesh_factor',1)
-#          runDict['fileChange']['Mesh/nx_per_reg']=mesh_size
-#          runDict['fileChange']['Mesh/ny_per_reg']=mesh_size
-#          inp_file = self.ie.writeInput(self.templateFile,
-#                               self.inputDir,
-#                               self.histories['varPaths'],
-#                               runDict['varVals'],
-#                               runDict['fileChange'],
-#                               self.total_runs)
-#          ps.append(multiprocessing.Process(\
-#                      target = self.runSample,\
-#                      args=(self.total_runs,inp_file,outFileName))\
-#                   )
-#          ps[-1].start()
-#      self.done = (len(ps)==0) and self.sampler.converged
-
-  def runSample(self,nRun,infile,outFile):
-    '''
-    Child process to run a single sample
-    Inputs:
-      - nRun: identifier for sorting run into histories later
-      - inp_file: the UQ-made version of the input file to run
-      - outFile: the provided name for the executable to put the soln in
-    Output: none
-    '''
-    self.ie.runSolve(infile)
-    soln = self.ie.storeOutput(outFile)
-    self.outq.put([nRun,soln])
-    #print 'Finished',str(nRun)+':',soln
-
 
 class PCESCExec(SC):
-  pass
+  def collocate(self):
+    pass
 
 
 

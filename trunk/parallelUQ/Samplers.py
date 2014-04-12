@@ -28,7 +28,12 @@ class Sampler:
 
   def next(self):
     self.counter+=1
-    return self.giveSample()
+    res = self.giveSample()
+    if res == 'END':
+      self.converged=True
+      raise StopIteration
+    else:
+      return self.giveSample()
 
   def giveSample(self):
     raise TypeError (str(self)+' is missing a giveSample method...')
@@ -50,7 +55,6 @@ class MonteCarlo(Sampler):
 
 
   def giveSample(self,moms=None):
-    self.counter+=1
     if self.counter >= min(self.totalSamples,1e14):
       self.converged = True
     vals=[]
@@ -66,19 +70,20 @@ class StochasticPoly(Sampler):
     self.run_set = run_set
 
   def giveSample(self):
-    quadpts = self.run_set['quadpts'][self.counter]
-    weights = self.run_set['weights'][quadpts]
+    try:
+      quadpts = self.run_set['quadpts'][self.counter]
+    except IndexError: return 'END'
+    weight = self.run_set['weights'][quadpts]
     runDict={}
     runDict['varVals']=[]
     runDict['quadWts']=[]
     #runDict['runOrds']=ords
     for v,var in enumerate(self.varlist):
       std_pt = quadpts[v]
-      wt = weights[v]
+      #wt = weights[v]
       act_pt = var.convertToActual(std_pt)
       runDict['varVals'].append(act_pt)
-      runDict['quadWts'].append(wt)
-    self.counter+=1
+    runDict['quadWts']=weight
     #if self.counter>=len(self.runords):
     #  self.converged = True
     return runDict
