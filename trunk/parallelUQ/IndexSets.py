@@ -11,7 +11,7 @@ def IndexSetFactory(N,order,setType):
 
   orderlist=[]
   for n in range(N):
-    orderlist.append(range(order))
+    orderlist.append(range(order+1))
 
   if setType=='HC':
     return HyperbolicCross(orderlist,order)
@@ -34,6 +34,7 @@ def TotalDegree(orderlist,maxorder):
   Given [[a,b],[c,d]], returns only possible cominations
     where for combination (p1,p2), p1+p2<=maxorder
   '''
+  print 'maxorder:',maxorder
   start = list(allcombos(*orderlist))
   end=[]
   tossed=0
@@ -42,6 +43,7 @@ def TotalDegree(orderlist,maxorder):
       end.append(entry)
     else:
       tossed+=1
+      print 'Discarded index',entry
   print 'Discarded',tossed,'indices from TP'
   return end
 

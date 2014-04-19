@@ -1,5 +1,5 @@
 [Problem]
-  executor     = PCESC
+  executor     = SC
   templateFile = 'simple.inp'
   storeFlux    = 0
   execDir      = '../simple/'
@@ -11,38 +11,20 @@
 [Sampler]
   active = 'SC'
   [./SC]
+    indexSet = TD
+    expOrd = 1
+    quadrule = single
   [../]
   [./MC]
-    batch = 100
-    totalSamples = 1e7
-    printfreq = 500
-   # solnRange = '1 35' #lognormal
-   # solnRange = '-15 35' #normal
-   # solnRange = '6 16' #uniform
-    truncate = 0 #number of standard devs either way
   [../]
 []
 
-[Backend]
-  active = 'ROM'
- # active = 'PDF'
-  outFile = mcu.out
-  [./ROM]
-    MCsample = 1
-    samples = 1e6
-    checkSolution = 0
-    createPDF = 0
-    stats = 1
-  [../]
-
+[Backends]
+  makePDF = 0
   [./PDF]
     bins = 100
-   # low = 1 #lognormal
-   # hi = 35
-   # low = -10 #normal
-   # hi = 35
-    low = 6 #uniform
-    hi = 49
+    min = 2
+    max = 12
   [../]
 []
 
@@ -50,18 +32,13 @@
   names = 'x y'
   [./x]
     path = 'Problem/x'
-   # dist = 'normal'
-   # dist = 'lognormal'
     dist = 'uniform'
-    args = '5. 2.'
-    exporder = 2
+    args = '3.5 2.5'
   [../]
   [./y]
     path = 'Problem/y'
     dist = 'uniform'
     args = '3.5 2.5'
-  #  args = '3.5 0.7142857'
-    exporder = 2
   [../]
 []
 

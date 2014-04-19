@@ -7,6 +7,7 @@ import datetime as dt
 from sys import *
 from math import ceil
 from itertools import product as allcombos
+from bisect import bisect_left
 
 import numpy as np
 import scipy.stats as stt
@@ -54,8 +55,6 @@ class Executor(object): #base class
     print '...old inputs cleared...'
     self.runParallel()
     print '...parallel run complete...'
-    self.collocate()
-    print '...collocation complete...'
     self.finish()
 
   def loadInput(self):
@@ -152,7 +151,9 @@ class Executor(object): #base class
           del procs[p]
       if not self.done:
         while len(procs)<self.numprocs and not self.sampler.converged:
-          try: runDict = self.sampler.next()
+          try:
+            runDict = self.sampler.next()
+            print 'added runvals:',runDict['varVals']
           except StopIteration: break
           self.totalProcs+=1
           self.total_runs+=1
@@ -183,10 +184,91 @@ class Executor(object): #base class
         if self.done: print ''
 
 
-  def collocate(self):
-    pass #overwritten
+  def makePDF(self,P,M,bounds):
+    for n,sln in enumerate(self.histories['soln']):
+      print self.histories['varVals'][n],'|',sln
+    print 'Creating PDF by MC sample of ROM...'
+    print '...using %i processors...' %P
+    print '...using %i bins from %1.3e to %1.3e...' \
+                             %(len(bounds)-1,bounds[0],bounds[-1])
+    total_runs_finished = 0
+    total_runs_started = 0
+    self.pdfque = que()
+    procs=[]
+    bad=[0,0] #discarded solns
+    rge=[1e14,-1e14]
+    bins=np.zeros(len(bounds)-1)
+    print 'Runs Started / Finished'
+    while total_runs_finished < M:
+      #collect finished solutions
+      for p,proc in enumerate(procs):
+        if not proc.is_alive():
+          proc.join()
+          del procs[p]
+          while not self.pdfque.empty():
+            newbins,newlow,newhi,newmin,newmax = list(self.pdfque.get())
+            total_runs_finished+=len(newbins)
+            bins+=newbins
+            bad[0]+=newlow
+            bad[1]+=newhi
+            rge[0]=min(rge[0],newmin)
+            rge[1]=max(rge[1],newmax)
+            print '%i / %i' %(total_runs_started,total_runs_finished),'\r',
+      #queue new runs
+      if total_runs_started < M:
+        runs_left = M - total_runs_started
+        while len(procs)<P and runs_left > 0:
+          if runs_left > 10: #TODO make this an input
+            new_runs = 10
+          else: new_runs = runs_left
+          runs_left -= new_runs
+          total_runs_started+=new_runs
+          procs.append(multiprocessing.Process(
+            target = self.runPDFSample, args=(new_runs,bounds)))
+          procs[-1].start()
+    print '\n'
+    #normalize results
+    Mgood = M - bad[0] - bad[1]
+    for b,bn in enumerate(bins):
+      bins[b] = bn/Mgood
+    #printout
+    print 'Range of solutions: %1.3e -> %1.3e' %(rge[0],rge[1])
+    #plot it
+    #centers = 0.5*(bounds[:-1]+bounds[1:])
+    #plt.figure()
+    #plt.plot(centers,bins)
+    #plt.title('ROM PDF by MC, %i bins' %len(bins))
+    #plt.xlabel('Solution Value')
+    #plt.ylabel('Frequency')
+
+  def runPDFSample(self,M,bounds):
+    np.random.seed()
+    bins = np.zeros(len(bounds)-1)
+    runs = 0
+    hi=-1e14
+    low=1e14
+    numhi=0
+    numlow=0
+    while runs < M:
+      uvars = self.varDict.values()
+      sampVals = np.zeros(len(uvars))
+      for i in range(len(sampVals)):
+        sampVals[i]=uvars[i].sample()
+      soln = self.ROM(sampVals)
+      low=min(low,soln)
+      hi=max(hi,soln)
+      if soln > bounds[-1]:
+        numhi+=1
+      elif soln < bounds[-1]:
+        numlow+=1
+      else:
+        indx = bisect_left(bounds,soln)
+        bins[i-1]+=1
+      runs+=1
+    self.pdfque.put([bins,numlow,numhi,low,hi])
 
   def finish(self):
+    os.chdir(self.uncDir)
     print 'Executor complete.'
 
 class SC(Executor):
@@ -222,6 +304,8 @@ class SC(Executor):
       rule='single'
     todo = 'quadrule='+rule
     exec todo
+    for i in self.indexSet:
+      print 'index point:',i
     grid = SparseQuads.BasicSparse(len(self.varDict.keys()),
                                    self.expOrder,
                                    self.indexSet,
@@ -235,11 +319,23 @@ class SC(Executor):
     for entry in grid:
       npt = entry[0]
       nwt = entry[1]
-      if npt not in run_samples['quadpts']:
+      alreadyThere = len(run_samples['quadpts'])>0
+      for pt in run_samples['quadpts']:
+        alreadyThere = True and len(run_samples['quadpts'])>0
+        #if abs(npt[0])<1e-12 or abs(npt[1])<1e-12:
+          #print 'checking',npt,pt
+        for i,dud in enumerate(pt):
+          #print npt[i]-pt[i]
+          alreadyThere*= abs(npt[i]-pt[i])<1e-13
+        if alreadyThere:
+          npt = pt
+          break
+      if not alreadyThere:
         run_samples['quadpts'].append(npt)
         run_samples['weights'][npt]=nwt
+        #print 'SG new entry:',npt,nwt
       else:
-        print '...duplicate point',npt,'- combining weights.'
+        #print '...duplicate point',npt,'- combining weights.'
         run_samples['weights'][npt]+=nwt
     self.sampler = spr.StochasticPoly(self.varDict,
                                       run_samples)
@@ -260,10 +356,39 @@ class SCExec(SC):
     self.case=case
     return
 
+  def ROM(self,xs):
+    #TODO this is a strange place for this, but idk where to do
+    #gather all the pts at which a variable has been evaluated
+    varvals = []
+    for i in self.histories['varVals'][0]:
+      varvals.append([])
+    for run in self.histories['varVals']:
+      for v,val in enumerate(run):
+        varvals[v].append(val)
+    tot=0
+    for j in range(self.numquadpts):
+      evalpts = self.histories['varVals'][j]
+      print 'paths:',self.histories['varPaths']
+      print 'evalpts:',evalpts
+      prod=1
+      for v,var in enumerate(self.histories['vars']):
+        print 'var:',v,var.name
+        polyeval = var.lagrange(evalpts[v],xs[v],varvals[v])
+        prod*=polyeval
+        print 'poly:',polyeval
+      print 'prod:',prod
+      sln = self.histories['soln'][j]
+      print 'sln:',sln
+      print 'sln*prod:',sln*prod
+      tot+=sln*prod
+      print ''
+    return tot
+
+
+
 
 class PCESCExec(SC):
-  def collocate(self):
-    pass
+  pass
 
 
 

@@ -5,6 +5,8 @@ import os
 import sys
 from GetPot import GetPot
 import Executor as Exec
+import multiprocessing
+import numpy as np
 
 class Driver(object):
   '''Since I want a different executor for MC, MLMC, PCESC,
@@ -18,6 +20,7 @@ class Driver(object):
 
   def loadInput(self,argv):
     cl = GetPot(argv)
+    print argv
     if cl.search('-i'):
       self.unc_inp_file=cl.next('')
       print 'Selected uncertainty input',self.unc_inp_file,'...'
@@ -37,9 +40,33 @@ class Driver(object):
   def finishUp(self):
     elapsed=time.time()-self.starttime
     print 'Driver run time:',elapsed,'sec'
+    print '\nStarting postprocessing...'
+    makePDF = self.input_file('Backends/makePDF',0)
+    if makePDF:
+      print '...sampling ROM...'
+      numSamples = self.input_file('Backends/PDFsamples',-1)
+      if numSamples==-1:
+        print '...Backends/PDFsamples not found; using 1e4...'
+        numSamples = int(1e4)
+      self.makePDF(numSamples)
+
+    #TODO DEBUG
+    samp = self.ex.ROM([1.,1.])
+    print 'ROM',samp
+
     show()
     print '\nDriver complete.\n'
 
+  def makePDF(self,M):
+    wantprocs = self.input_file('Problem/numprocs',1)
+    numprocs = min(wantprocs,multiprocessing.cpu_count())
+    nBins = self.input_file('Backends/PDF/bins',10)
+    binmin = self.input_file('Backends/PDF/min',-10)
+    binmax = self.input_file('Backends/PDF/max',10)
+    bins=np.linspace(binmin,binmax,nBins+1)
+    self.ex.makePDF(numprocs,M,bins)
+
 
 if __name__=='__main__':
+  print sys.argv,type(sys.argv)
   drv = Driver(sys.argv)

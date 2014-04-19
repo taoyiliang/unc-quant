@@ -40,6 +40,19 @@ class Variable(object):
   def prob(self,x):
     return self.dist.pdf(x)
 
+  def lagrange(self,jpt,x,pts):
+    #pts = np.array(self.pts)
+    #pts = self.convertToActual(pts)
+    print 'pts:',pts
+    prod=1
+    for m,pt in enumerate(pts):
+      if not abs(pt-jpt)<1e-12:
+        print 'newpt',x,pt,'/',jpt,pt
+        newprod= (x-pt)/(jpt-pt)
+        prod*=newprod
+      else: print 'skipping',jpt,pt
+    return prod
+
 
 
 

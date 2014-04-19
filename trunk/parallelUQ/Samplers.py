@@ -68,6 +68,7 @@ class StochasticPoly(Sampler):
     self.type = 'StochasticPoly sampler'
     self.varlist = varDict.values()
     self.run_set = run_set
+    print 'run set vals:',run_set['quadpts']
 
   def giveSample(self):
     try:
