@@ -23,8 +23,8 @@ x = input_file('Problem/x',1.0)
 y = input_file('Problem/y',1.0)
 outFileName = input_file('Output/file','test.out')
 
-result = g(x)
-#result = f(x,y)
+#result = g(x)
+result = f(x,y)
 
 writeFile = file(outFileName,'w')
 writeFile.writelines('res,'+str(result)+'\n')
