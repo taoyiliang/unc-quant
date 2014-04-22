@@ -52,7 +52,7 @@ class Driver(object):
 
     #TODO DEBUG
     samp = self.ex.ROM([1.,1.])
-    print 'ROM',samp
+    print 'sparseU(1,1) =',samp
 
     show()
     print '\nDriver complete.\n'

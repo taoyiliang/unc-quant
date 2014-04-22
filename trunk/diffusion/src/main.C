@@ -259,8 +259,8 @@ int main(int argc, char *argv[])
   Teuchos::ParameterList& lsParams = newtonParams.sublist("Linear Solver");
   lsParams.set("Aztec Solver",           "GMRES");
   lsParams.set("Preconditioner",          "User Defined");
-  lsParams.set("Max Iterations",          500);
-  lsParams.set("Size of Krylov Subspace", 500);
+  lsParams.set("Max Iterations",          1000);
+  lsParams.set("Size of Krylov Subspace", 10);
   lsParams.set("Tolerance",               1e-2); 
   lsParams.set("Max Age Of Prec",         1000); 
   lsParams.set("Output Frequency",        1 );

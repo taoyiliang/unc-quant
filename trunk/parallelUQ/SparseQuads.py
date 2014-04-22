@@ -3,7 +3,6 @@ from itertools import product as allcombos
 
 def BasicSparse(N,L,indexset,quadrule,varlist):
   c=np.array(makeCoeffs(N,indexset))
-  print
   indexset=np.array(indexset)
   survive=np.nonzero(c!=0)
   print 'pre-c',indexset
@@ -23,17 +22,25 @@ def BasicSparse(N,L,indexset,quadrule,varlist):
   return SG
 
 def makeCoeffs(N,indexset):
-  L=len(indexset)
-  c=np.ones(L)
+  NI=len(indexset)
+  c=np.ones(NI)
   indexset=np.array(indexset)
-  for entry in indexset:
-    indexset=np.array(indexset)
-  for i in range(L):
-    for j in range(i+1,L):
+  for e,entry in enumerate(indexset):
+    indexset[e]=np.array(entry)
+  print indexset
+  for i in range(NI):
+    print 'i:',i,indexset[i]
+    for j in range(i+1,NI):
+      print '    j:',indexset[j]
       d = indexset[j]-indexset[i]
-      bln = d<=1
-      bln*= d>=0
-      c[i]+=(-1)**sum(d*bln)
+      #print 'd:',d
+      if d.all()>=0 and d.all()<=1:
+        c[i]+=(-1)**sum(d)
+      #bln = d<=1
+      #bln*= d>=0
+      #print '    bln:',bln,d*bln
+      #c[i]+=(-1)**sum(d*bln)
+    print '  c[i]',c[i]
   return c
 
 def tensorGrid(N,m,varlist,idx):
@@ -50,8 +57,8 @@ def tensorGrid(N,m,varlist,idx):
   quadwts = list(allcombos(*quadwtlists))
   for k,wtset in enumerate(quadwts):
     quadwts[k]=np.product(wtset)
-  print 'quadwts:',quadwts
-  print 'quadpts:',quadpts
+  #print 'quadwts:',quadwts
+  print 'new quadpts:',quadpts
   #print 'wts,pts',quadwts,quadpts
   return quadpts,quadwts
 

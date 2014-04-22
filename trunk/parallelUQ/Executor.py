@@ -333,10 +333,11 @@ class SC(Executor):
       if not alreadyThere:
         run_samples['quadpts'].append(npt)
         run_samples['weights'][npt]=nwt
-        #print 'SG new entry:',npt,nwt
+        print 'SG new entry:',npt,nwt
       else:
         #print '...duplicate point',npt,'- combining weights.'
         run_samples['weights'][npt]+=nwt
+    #exit()
     self.sampler = spr.StochasticPoly(self.varDict,
                                       run_samples)
     self.numquadpts = len(run_samples['quadpts'])
@@ -364,22 +365,25 @@ class SCExec(SC):
       varvals.append([])
     for run in self.histories['varVals']:
       for v,val in enumerate(run):
-        varvals[v].append(val)
+        if val not in varvals[v]:
+          varvals[v].append(val)
+    for e,entry in enumerate(varvals):
+      print 'Y_%i quad pts:' %e,entry
+
     tot=0
     for j in range(self.numquadpts):
       evalpts = self.histories['varVals'][j]
-      print 'paths:',self.histories['varPaths']
-      print 'evalpts:',evalpts
+      print 'k: %i, Y^(k):' %j,evalpts
       prod=1
       for v,var in enumerate(self.histories['vars']):
-        print 'var:',v,var.name
+        print 'n: %1i, varname:' %(v+1),var.name
         polyeval = var.lagrange(evalpts[v],xs[v],varvals[v])
         prod*=polyeval
-        print 'poly:',polyeval
-      print 'prod:',prod
+        print '  L_k%1i:' %v,polyeval
+      print 'barL:',prod
       sln = self.histories['soln'][j]
-      print 'sln:',sln
-      print 'sln*prod:',sln*prod
+      print 'u:',sln
+      print 'u*barL:',sln*prod
       tot+=sln*prod
       print ''
     return tot

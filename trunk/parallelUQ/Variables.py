@@ -43,14 +43,14 @@ class Variable(object):
   def lagrange(self,jpt,x,pts):
     #pts = np.array(self.pts)
     #pts = self.convertToActual(pts)
-    print 'pts:',pts
     prod=1
     for m,pt in enumerate(pts):
       if not abs(pt-jpt)<1e-12:
-        print 'newpt',x,pt,'/',jpt,pt
+        print '  lagrange_entry',x,'-',pt,'/',jpt,'-',pt
         newprod= (x-pt)/(jpt-pt)
+        #print '  prod:',newprod
         prod*=newprod
-      else: print 'skipping',jpt,pt
+      #else: print '  skipping',jpt,pt
     return prod
 
 
