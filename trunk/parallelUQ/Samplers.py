@@ -68,7 +68,7 @@ class StochasticPoly(Sampler):
     self.type = 'StochasticPoly sampler'
     self.varlist = varDict.values()
     self.run_set = run_set
-    print 'run set vals:',run_set['quadpts']
+    #print 'run set vals:',run_set['quadpts']
 
   def giveSample(self):
     try:
@@ -80,10 +80,10 @@ class StochasticPoly(Sampler):
     runDict['quadWts']=[]
     #runDict['runOrds']=ords
     for v,var in enumerate(self.varlist):
-      std_pt = quadpts[v]
+      #std_pt = quadpts[v]
       #wt = weights[v]
-      act_pt = var.convertToActual(std_pt)
-      runDict['varVals'].append(act_pt)
+      # TODO Integrated now act_pt = var.convertToActual(std_pt)
+      runDict['varVals'].append(quadpts[v])
     runDict['quadWts']=weight
     #if self.counter>=len(self.runords):
     #  self.converged = True

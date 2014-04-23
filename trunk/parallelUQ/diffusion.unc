@@ -7,7 +7,7 @@
   inputDir       = '../diffusion/'
   input_editor   = 'IE_Diffusion'
   numprocs       = 4
-  mesh_factor    = 2
+  mesh_factor    = 3
 []
 
 [Sampler]
@@ -20,26 +20,14 @@
     truncate = 3 #only applies to normals
   [../]
   [./SC]
-    indexSet = TP
-    quadfactor = 2
-    expOrd = 4
+    indexSet = HC
+    expOrd = 1
     quadrule = single
   [../]
 []
 
 [Backend]
-  [./ROM]
-    samples = 1e4 
-    checkSolution = 0
-    createPDF = 0
-    bins = 100
-    stats = 1
-  [../]
-  [./PDF]
-    bins = 100
-    low = 0.92
-    hi = 1.05
-  [../]
+  makePDF = 0
 []
 
 [Variables]

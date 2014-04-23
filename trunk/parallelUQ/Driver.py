@@ -51,8 +51,10 @@ class Driver(object):
       self.makePDF(numSamples)
 
     #TODO DEBUG
-    samp = self.ex.ROM([1.,1.])
-    print 'sparseU(1,1) =',samp
+    #samp = self.ex.ROM([1.,1.])
+    #print 'sparseU(1,1) =',samp
+    self.ex.ROMmoment(1)
+    self.ex.ROMmoment(2)
 
     show()
     print '\nDriver complete.\n'

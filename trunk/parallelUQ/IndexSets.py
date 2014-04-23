@@ -34,7 +34,7 @@ def TotalDegree(orderlist,maxorder):
   Given [[a,b],[c,d]], returns only possible cominations
     where for combination (p1,p2), p1+p2<=maxorder
   '''
-  print 'maxorder:',maxorder
+  print '  ...level:',maxorder
   start = list(allcombos(*orderlist))
   end=[]
   tossed=0
@@ -43,8 +43,8 @@ def TotalDegree(orderlist,maxorder):
       end.append(entry)
     else:
       tossed+=1
-      print 'Discarded index',entry
-  print 'Discarded',tossed,'indices from TP'
+  #    print 'Discarded index',entry
+  print '  ...discarded',tossed,'indices from TP'
   return end
 
 
@@ -64,7 +64,7 @@ def HyperbolicCross(orderlist,maxorder):
       end.append(entry)
     else:
       tossed+=1
-  print 'Discarded',tossed,'indices from TP'
+  print '  ...discarded',tossed,'indices from TP'
   return end
 
 def chooseSet(orderlist,name,maxorder=0):

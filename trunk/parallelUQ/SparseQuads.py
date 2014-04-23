@@ -5,15 +5,16 @@ def BasicSparse(N,L,indexset,quadrule,varlist):
   c=np.array(makeCoeffs(N,indexset))
   indexset=np.array(indexset)
   survive=np.nonzero(c!=0)
-  print 'pre-c',indexset
+  #print 'pre-c',indexset
   c=c[survive]
   indexset=indexset[survive]
-  print 'survive',indexset
+  print '  ...coefficient set established...'
+  #print 'survive',indexset
   SG=[] #holds list (multi-quad pt, wt)
   for j,cof in enumerate(c):
     idx = indexset[j]
     m = quadrule(idx)+1
-    print 'm',m
+    #print 'm',m
     new = tensorGrid(N,m,varlist,idx)
     for i in range(len(new[0])):
       SG.append( [new[0][i],new[1][i]] )
@@ -27,11 +28,11 @@ def makeCoeffs(N,indexset):
   indexset=np.array(indexset)
   for e,entry in enumerate(indexset):
     indexset[e]=np.array(entry)
-  print indexset
+  #print indexset
   for i in range(NI):
-    print 'i:',i,indexset[i]
+    #print 'i:',i,indexset[i]
     for j in range(i+1,NI):
-      print '    j:',indexset[j]
+      #print '    j:',indexset[j]
       d = indexset[j]-indexset[i]
       #print 'd:',d
       if d.all()>=0 and d.all()<=1:
@@ -40,7 +41,7 @@ def makeCoeffs(N,indexset):
       #bln*= d>=0
       #print '    bln:',bln,d*bln
       #c[i]+=(-1)**sum(d*bln)
-    print '  c[i]',c[i]
+    #print '  c[i]',c[i]
   return c
 
 def tensorGrid(N,m,varlist,idx):
@@ -58,16 +59,6 @@ def tensorGrid(N,m,varlist,idx):
   for k,wtset in enumerate(quadwts):
     quadwts[k]=np.product(wtset)
   #print 'quadwts:',quadwts
-  print 'new quadpts:',quadpts
+  #print 'new quadpts:',quadpts
   #print 'wts,pts',quadwts,quadpts
   return quadpts,quadwts
-
-
-def Lagrange(j,x,pts):
-  #TODO outdated.  In Variables.py now.
-  prod=1
-  for m,pt in enumerate(pts):
-    if j!=m:
-      newprod= (x-pts[m])/(pts[j]-pts[m])
-      prod*=newprod
-  return prod

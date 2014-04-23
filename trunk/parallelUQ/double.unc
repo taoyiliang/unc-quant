@@ -11,8 +11,8 @@
 [Sampler]
   active = 'SC'
   [./SC]
-    indexSet = TD
-    expOrd = 1
+    indexSet = HC
+    expOrd = 20
     quadrule = single
   [../]
   [./MC]

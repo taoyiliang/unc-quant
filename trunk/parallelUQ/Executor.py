@@ -153,7 +153,7 @@ class Executor(object): #base class
         while len(procs)<self.numprocs and not self.sampler.converged:
           try:
             runDict = self.sampler.next()
-            print 'added runvals:',runDict['varVals']
+            #print 'added runvals:',runDict['varVals']
           except StopIteration: break
           self.totalProcs+=1
           self.total_runs+=1
@@ -304,8 +304,9 @@ class SC(Executor):
       rule='single'
     todo = 'quadrule='+rule
     exec todo
-    for i in self.indexSet:
-      print 'index point:',i
+    #for i in self.indexSet:
+    #  print 'index point:',i
+    print '...constructing sparse grid...'
     grid = SparseQuads.BasicSparse(len(self.varDict.keys()),
                                    self.expOrder,
                                    self.indexSet,
@@ -316,28 +317,28 @@ class SC(Executor):
     run_samples['variables']=self.varDict.values()
     run_samples['quadpts']=[]
     run_samples['weights']={}
+    print '  ...removing duplicate quadrature points...'
     for entry in grid:
       npt = entry[0]
       nwt = entry[1]
       alreadyThere = len(run_samples['quadpts'])>0
+      #TODO this is really slow for large level!
       for pt in run_samples['quadpts']:
-        alreadyThere = True and len(run_samples['quadpts'])>0
+        alreadyThere = True # and len(run_samples['quadpts'])>0
         #if abs(npt[0])<1e-12 or abs(npt[1])<1e-12:
           #print 'checking',npt,pt
+        #alreadyThere = abs(np.array(npt)-np.array(pt)).all()<1e-13
         for i,dud in enumerate(pt):
-          #print npt[i]-pt[i]
           alreadyThere*= abs(npt[i]-pt[i])<1e-13
         if alreadyThere:
-          npt = pt
+          run_samples['weights'][pt]+=nwt
           break
       if not alreadyThere:
         run_samples['quadpts'].append(npt)
         run_samples['weights'][npt]=nwt
-        print 'SG new entry:',npt,nwt
-      else:
-        #print '...duplicate point',npt,'- combining weights.'
-        run_samples['weights'][npt]+=nwt
+        #print 'SG new entry:',npt,nwt
     #exit()
+    print '...constructing sampler...'
     self.sampler = spr.StochasticPoly(self.varDict,
                                       run_samples)
     self.numquadpts = len(run_samples['quadpts'])
@@ -357,9 +358,17 @@ class SCExec(SC):
     self.case=case
     return
 
+  def ROMmoment(self,r):
+    tot=0
+    for s,soln in enumerate(self.histories['soln']):
+      tot+=self.histories['solwt'][s]*soln**r
+    tot*=1.0/sum(self.histories['solwt'])
+    print 'moment %i:' %r,tot
+
   def ROM(self,xs):
     #TODO this is a strange place for this, but idk where to do
     #gather all the pts at which a variable has been evaluated
+    #TODO this is also wrong; need to use "equ. 2" to get sparse
     varvals = []
     for i in self.histories['varVals'][0]:
       varvals.append([])

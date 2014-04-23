@@ -1,13 +1,13 @@
 [Problem]
-  # executor       = PCESC
-  executor       = MC
+  executor       = SC
+  # executor       = MC
   templateFile   = 'diffusion.inp'
   storeFlux      = 0
   execDir        = '../oneDdiffusion/'
   inputDir       = '../oneDdiffusion/'
   input_editor   = 'IE_Diffusion'
-  numprocs       = 3
-  mesh_factor    = 2
+  numprocs       = 6
+  mesh_factor    = 5
 []
 
 [Sampler]
@@ -16,27 +16,14 @@
     totalSamples = 1e4
   [../]
   [./SC]
-    indexSet = TD
-    quadFactor = 2
+    indexSet = HC
+    expOrd = 70
+    quadrule = single
   [../]
 []
 
 [Backend]
- # active = 'ROM'
-  active = 'PDF'
-  outFile = test.out
-  [./ROM]
-    samples = 1e6 
-    checkSolution = 0
-    createPDF = 1
-    bins = 100
-    stats = 1
-  [../]
-  [./PDF]
-    bins = 100
-    low = 0.75
-    hi = 1.7
-  [../]
+  makePDF = 0
 []
 
 [Variables]
@@ -62,12 +49,10 @@
   [../]
   [./1xc2]
     path = 'Material/1/g2/sigc'
-    dist = normal
-   # args = '0.04438 0.01' #critical
+    dist = uniform
+    args = '0.04438 0.01' #critical
    # args = '0.055969 0.01' #subcrit 0.9
-    args = '0.035181 0.01' #supercrit 1.1
-    exporder = 2
-   # quadorder = 6
+   # args = '0.035181 0.01' #supercrit 1.1
   [../]
   [./1xf1]
     path = 'Material/1/g1/nsigf'
