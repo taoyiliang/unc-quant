@@ -318,25 +318,46 @@ class SC(Executor):
     run_samples['quadpts']=[]
     run_samples['weights']={}
     print '  ...removing duplicate quadrature points...'
-    for entry in grid:
-      npt = entry[0]
-      nwt = entry[1]
-      alreadyThere = len(run_samples['quadpts'])>0
-      #TODO this is really slow for large level!
-      for pt in run_samples['quadpts']:
-        alreadyThere = True # and len(run_samples['quadpts'])>0
-        #if abs(npt[0])<1e-12 or abs(npt[1])<1e-12:
-          #print 'checking',npt,pt
-        #alreadyThere = abs(np.array(npt)-np.array(pt)).all()<1e-13
-        for i,dud in enumerate(pt):
-          alreadyThere*= abs(npt[i]-pt[i])<1e-13
-        if alreadyThere:
-          run_samples['weights'][pt]+=nwt
-          break
-      if not alreadyThere:
+    print '    ...number of pts including duplicates: %i' %len(grid)
+#  ORIGINAL PAINFULLY SLOW METHOD
+#    for e,entry in enumerate(grid):
+#      npt = entry[0]
+#      nwt = entry[1]
+#      alreadyThere = len(run_samples['quadpts'])>0
+#      #TODO this is really slow for large level!
+#      for pt in run_samples['quadpts']:
+#        alreadyThere = True # and len(run_samples['quadpts'])>0
+#        #if abs(npt[0])<1e-12 or abs(npt[1])<1e-12:
+#          #print 'checking',npt,pt
+#        #alreadyThere = abs(np.array(npt)-np.array(pt)).all()<1e-13
+#        for i,dud in enumerate(pt):
+#          alreadyThere*= abs(npt[i]-pt[i])<1e-13
+#          if not alreadyThere:break #only go until mismatch
+#        if alreadyThere:
+#          run_samples['weights'][pt]+=nwt
+#          break
+#      if not alreadyThere:
+#        run_samples['quadpts'].append(npt)
+#        run_samples['weights'][npt]=nwt
+#        #print 'SG new entry:',npt,nwt
+#        numsamp = len(run_samples['quadpts'])
+#        print '    ...new number of quad pts collected:',
+#        print numsamp,
+#        print '(checked %i)' %e,
+#        print '(%i duplicates)' %(e-numsamp),'\r',
+  # NEW ROUNDED POINT METHOD
+    for e,entry in enumerate(grid):
+      npt = tuple(np.around(entry[0],decimals=12))
+      if npt in run_samples['quadpts']:
+        run_samples['weights'][npt]+=entry[1]
+      else:
         run_samples['quadpts'].append(npt)
-        run_samples['weights'][npt]=nwt
-        #print 'SG new entry:',npt,nwt
+        run_samples['weights'][npt]=entry[1]
+        numsamp = len(run_samples['quadpts'])
+        print '    ...new number of quad pts collected:',
+        print numsamp,
+        print '(%i pct complete)' %(int(100.*(e+1)/len(grid))),
+        print '(%i duplicates)' %(e+1-numsamp),'\r',
     #exit()
     print '...constructing sampler...'
     self.sampler = spr.StochasticPoly(self.varDict,
