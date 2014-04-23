@@ -512,6 +512,7 @@ void TwoDProblem::createMatrix(const Epetra_Vector *x, Epetra_CrsMatrix *_M)
       double currentX = computeCurrentX(icell,g,&ones);
       double currentY = computeCurrentX(icell,g,&ones);
 
+      //TODO this is the laziest of Jacobian preconds.  Make it better.
       double diag = currentX + currentY + abs;
       bool fail_flag = _M->SumIntoGlobalValues(gid_ctr[g],1,&diag,&gid_ctr[g]);
       if(fail_flag)
