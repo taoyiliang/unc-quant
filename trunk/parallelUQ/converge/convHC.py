@@ -15,40 +15,42 @@ leta[70]=9149
 leta[90]=16207
 
 
-def doError(h,ref=None):
+def doError(h):
   err1=[]
   err2=[]
-  if ref==None:
-    ref = h[-1]
+  ref = h[-1]
   for entry in h[:-1]:
     err1.append(abs(ref[1]-entry[1])/ref[1])
     err2.append(abs(ref[2]-entry[2])/ref[2])
   return err1,err2
 
 def doPlot(etas,errs,h):
-  size=200/(h*2.0)
+  size=1./(h*2.0)
   xs=[]
   for e in etas:
     xs.append(leta[e])
   x=np.log(xs)
   y=np.log(errs)
-  for i,mx in enumerate(x):
-    print np.exp(mx),np.exp(y[i])
-  plt.plot(x,y,'-o',label='h=%1.3e' %size)
+  #for i,mx in enumerate(x):
+  #  print np.exp(mx),np.exp(y[i])
+  plt.plot(x,y,'-o',label='h=%1.2e' %size)
 
-def doStuff(h,num,ref=None):
+def doStuff(h,num,j):
   h=np.array(h)
-  e1,e2=doError(h,ref=ref)
-  doPlot(h[:-1,0],e1,float(num))
+  e1,e2=doError(h)
+  if j==0:
+    doPlot(h[:-1,0],e1,float(num))
+  else:
+    doPlot(h[:-1,0],e2,float(num))
 
-def plotMC():
+def plotMC(fac=100):
   xs=np.array(leta.values())
   hs=[]
   for x in xs:
-    hs.append(x**(-0.5)/100)
+    hs.append(x**(-0.5)/fac)
   hs=np.log(np.array(hs))
   xs=np.log(xs)
-  plt.plot(xs,hs,'k:',label='MC')
+  plt.plot(xs,hs,'k:',label=r'$\eta^{-1/2}$')
 
 
 
@@ -85,7 +87,11 @@ h30=[
   [10,0.997803195654,1.00138146096],
   [15,0.997427253767,1.00162443839],
   [20,0.99748390956,1.00149472675],
-  [30,0.997427253767,1.00224043101]]
+  [30,0.997427253767,1.00224043101],
+  [50,0.997332703973,1.00176725823],
+  [70,0.997342373822,1.00207585493],
+  [90,0.997296191579,1.00212301999]
+  ]
 
 h50=[
   [1 ,0.995257367762,0.997868591872],
@@ -93,17 +99,31 @@ h50=[
   [10,0.997802771563,1.00138060948],
   [15,0.99744831182,1.0016235868],
   [20,0.997483485653,1.00149387525],
-  [30,0.997426829963,1.00223957894]]
-doStuff(h2,2)#,ref=h50[-1])
-doStuff(h5,5)#,ref=h50[-1])
-#doStuff(h30,30,ref=h50[-1])
-#doStuff(h50,50,ref=h50[-1])
-plotMC()
+  [30,0.997426829963,1.00223957894],
+  [50,0.997334311772,1.00177083454]]
 
-#plt.rc('text',usetex=True)
+doStuff(h2,2,0)
+doStuff(h5,5,0)
+doStuff(h30,30,0)
+doStuff(h50,50,0)
+plotMC()
+plt.title('First Moment Error')
 plt.legend(loc=3)
 plt.xlabel(r'log $\eta$')
 plt.ylabel('log error')
+
+plt.figure()
+doStuff(h2,2,1)
+doStuff(h5,5,1)
+doStuff(h30,30,1)
+doStuff(h50,50,1)
+plotMC(30)
+plt.title('Second Moment Error')
+plt.legend(loc=3)
+plt.xlabel(r'log $\eta$')
+plt.ylabel('log error')
+
+
 plt.show()
 sys.exit()
 #h50=[
