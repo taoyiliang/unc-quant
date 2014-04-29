@@ -39,28 +39,26 @@ class Sampler:
     raise TypeError (str(self)+' is missing a giveSample method...')
 
 class MonteCarlo(Sampler):
-  def __init__(self,varDict,input_file):
+  def __init__(self,varDict):#,input_file):
     Sampler.__init__(self,varDict)
     self.type = 'MonteCarlo sampler'
     self.varDict=varDict
     self.varlist = varDict.values()
-    self.totalSamples = input_file('Sampler/MC/totalSamples','')
-    self.totalSamples = float(self.totalSamples)
-    self.print_freq = input_file('Sampler/MC/printfreq',1)
-    self.truncDevs = input_file('Sampler/MC/truncate',0)
-    self.oldAvg = 0
-    self.oldVar = 0
-    self.sincePrint = 0
-    self.tempFile = file('temp.out','w')
+    #either tell me how many samples or target error
+    #self.totalSamples = input_file('Sampler/MC/totalSamples',0)
+    #self.targetError = input_file('Sampler/MC/targetError',1.0)
+    #if self.totalSamples==0 and self.targetError==1.0:
+    #  raise IOError('Neither totalSamples nor targetError were '+\
+    #      'set in Sampler/MC.  Please set one.')
 
-
-  def giveSample(self,moms=None):
-    if self.counter >= min(self.totalSamples,1e14):
-      self.converged = True
-    vals=[]
+  def giveSample(self):
+    if self.converged:
+      return 'END'
+    runDict={}
+    runDict['varVals']=[]
     for v,var in enumerate(self.varlist):
-      vals.append(var.sample())
-    return vals
+      runDict['varVals'].append(var.sample())
+    return runDict
 
 class StochasticPoly(Sampler):
   def __init__(self,varDict,run_set):
@@ -73,7 +71,8 @@ class StochasticPoly(Sampler):
   def giveSample(self):
     try:
       quadpts = self.run_set['quadpts'][self.counter]
-    except IndexError: return 'END'
+    except IndexError:
+      return 'END'
     weight = self.run_set['weights'][quadpts]
     runDict={}
     runDict['varVals']=[]

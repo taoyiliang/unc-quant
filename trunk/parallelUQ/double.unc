@@ -12,7 +12,7 @@
   active = 'SC'
   [./SC]
     indexSet = HC
-    expOrd = 20
+    expOrd = 2
     quadrule = single
   [../]
   [./MC]

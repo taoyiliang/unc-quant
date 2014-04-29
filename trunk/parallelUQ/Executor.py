@@ -110,16 +110,6 @@ class Executor(object): #base class
     wantprocs = self.input_file('Problem/numprocs',1)
     self.numprocs = min(wantprocs,multiprocessing.cpu_count())
     print '\n...using %i processers...' %self.numprocs
-    #
-    # set up processor pool TODO get pickling error - can't use instance method
-    #
-    #pool = multiprocessing.Pool(processes=self.numprocs)
-    #res = pool.imap(self.runSample,self.sampler,int(np.sqrt(self.numquadpts)))
-    #pool.close()
-    #pool.join()
-    #
-    # use the old queue method
-    #
     self.total_runs = -1
     procs=[]
     self.done=False
@@ -143,14 +133,18 @@ class Executor(object): #base class
         if not proc.is_alive():
           proc.join()
           while not self.outq.empty():
-            n,wt,soln = self.outq.get()
-            self.histories['soln'][n]=soln
-            self.histories['solwt'][n]=wt
+            #TODO taking values needs to be specific to executor type
+            self.readSolutions(self.outq.get())
+            #n,wt,soln = self.outq.get()
+            #self.histories['soln'][n]=soln
+            #self.histories['solwt'][n]=wt
             finished+=1
           print 'Runs finished:',finished,
           del procs[p]
-      if not self.done:
+          self.checkConverge()
+      if not self.sampler.converged:
         while len(procs)<self.numprocs and not self.sampler.converged:
+        #while len(procs)<self.numprocs:
           try:
             runDict = self.sampler.next()
             #print 'added runvals:',runDict['varVals']
@@ -160,11 +154,13 @@ class Executor(object): #base class
           print '...runs started:',self.total_runs,'...\r',
           #self.histories['nRun'].append(self.total_runs)
           runDict['nRun'] = self.total_runs
-          self.histories['soln'].append(0)  #placeholders
-          self.histories['solwt'].append(0)
-          for key in runDict.keys():
-            try:self.histories[key].append(runDict[key])
-            except KeyError: self.histories[key]=[runDict[key]]
+          #TODO this is SC-specific!
+          #self.histories['soln'].append(0)  #placeholders
+          #self.histories['solwt'].append(0)
+          #for key in runDict.keys():
+          #  try:self.histories[key].append(runDict[key])
+          #  except KeyError: self.histories[key]=[runDict[key]]
+          #TODO end SC-specific block
           runDict['fileChange']={}
           runDict['outFileName']='run.out'+str(self.total_runs)
           runDict['fileChange']['Output/file']=runDict['outFileName']
@@ -180,9 +176,16 @@ class Executor(object): #base class
           procs.append(multiprocessing.Process(target=self.runSample,
                            args=[runDict]))
           procs[-1].start()
-        self.done = (len(procs)==0) and self.sampler.converged
-        if self.done: print ''
+    if self.done:
+      print '\n'
+      print 'N, mean, 2nd moment:'
+      print self.N,self.mean,self.var+self.mean*self.mean
+      print '\n'
 
+  def runSample(self,runDict):
+    self.ie.runSolve(runDict['inp_file'])
+    soln = self.ie.storeOutput(runDict['outFileName'])
+    return soln
 
   def makePDF(self,P,M,bounds):
     for n,sln in enumerate(self.histories['soln']):
@@ -319,35 +322,9 @@ class SC(Executor):
     run_samples['weights']={}
     print '  ...removing duplicate quadrature points...'
     print '    ...number of pts including duplicates: %i' %len(grid)
-#  ORIGINAL PAINFULLY SLOW METHOD
-#    for e,entry in enumerate(grid):
-#      npt = entry[0]
-#      nwt = entry[1]
-#      alreadyThere = len(run_samples['quadpts'])>0
-#      #TODO this is really slow for large level!
-#      for pt in run_samples['quadpts']:
-#        alreadyThere = True # and len(run_samples['quadpts'])>0
-#        #if abs(npt[0])<1e-12 or abs(npt[1])<1e-12:
-#          #print 'checking',npt,pt
-#        #alreadyThere = abs(np.array(npt)-np.array(pt)).all()<1e-13
-#        for i,dud in enumerate(pt):
-#          alreadyThere*= abs(npt[i]-pt[i])<1e-13
-#          if not alreadyThere:break #only go until mismatch
-#        if alreadyThere:
-#          run_samples['weights'][pt]+=nwt
-#          break
-#      if not alreadyThere:
-#        run_samples['quadpts'].append(npt)
-#        run_samples['weights'][npt]=nwt
-#        #print 'SG new entry:',npt,nwt
-#        numsamp = len(run_samples['quadpts'])
-#        print '    ...new number of quad pts collected:',
-#        print numsamp,
-#        print '(checked %i)' %e,
-#        print '(%i duplicates)' %(e-numsamp),'\r',
   # NEW ROUNDED POINT METHOD
     for e,entry in enumerate(grid):
-      npt = tuple(np.around(entry[0],decimals=12))
+      npt = tuple(np.around(entry[0],decimals=15))
       if npt in run_samples['quadpts']:
         run_samples['weights'][npt]+=entry[1]
       else:
@@ -357,7 +334,7 @@ class SC(Executor):
         print '    ...new number of quad pts collected:',
         print numsamp,
         print '(%i pct complete)' %(int(100.*(e+1)/len(grid))),
-        print '(%i duplicates)' %(e+1-numsamp),'\r',
+        print '(%i duplicates)' %(e+1-numsamp),#'\r',
     #exit()
     print '...constructing sampler...'
     self.sampler = spr.StochasticPoly(self.varDict,
@@ -366,10 +343,17 @@ class SC(Executor):
     print '...%i quadrature points used...' %self.numquadpts
 
   def runSample(self,runDict):
-    self.ie.runSolve(runDict['inp_file'])
-    soln = self.ie.storeOutput(runDict['outFileName'])
+    soln = super(SC,self).runSample(runDict)
     self.outq.put([runDict['nRun'],runDict['quadWts'],soln])
-    #print 'Finished',str(runDict['nRun'])+':',soln
+
+  def readSolutions(self,out):
+    n,wt,soln = out
+    self.histories['soln'][n]=soln
+    self.histories['solwt'][n]=wt
+
+  def checkConverge(self):
+    print '\r',
+
 
 class SCExec(SC):
   def setCase(self):
@@ -426,196 +410,92 @@ class PCESCExec(SC):
 
 
 
+class MC(Executor):
+  def loadSampler(self):
+    self.maxM = self.input_file('Sampler/MC/maxSamples','0')
+    self.maxM = int(float(self.maxM))
+    self.targetTol = self.input_file('Sampler/MC/convergence',0.0)
+    if self.targetTol==0.0:
+      if self.maxM==0: #neither tol nor M is set
+        raise IOError('In Sampler/MC/ neither maxSamples nor convergence '+\
+            'criteria are set.  Please set one.')
+      else: #M is set, but tol is not -> use M criteria only
+        self.targetTol = 1e-40
+    else:
+      if self.maxM==0: #tol is set, but not M -> use tol criteria only
+        self.maxM = int(1e20)
+    print '...max samples to run: %1.0e...' %self.maxM
+    print '...mean tol to converge: %1.1e...' %self.targetTol
+    self.timesConverged = 0
+    self.sampler = spr.MonteCarlo(self.varDict)
+    self.N = 0
+    self.mean = 1e14
+    self.var = 1e14
+
+  def runSample(self,runDict):
+    #TODO make this run a batch of samples
+    soln = super(MC,self).runSample(runDict)
+    self.outq.put([runDict['nRun'],soln])
+
+  def readSolutions(self,out):
+    n,soln = out
+    try: self.histories['entries']+=1
+    except KeyError: self.histories['entries']=1
+
+    try: self.histories['first']+=soln
+    except KeyError: self.histories['first']=soln
+
+    try: self.histories['second']+=soln*soln
+    except KeyError: self.histories['second']=soln*soln
+    #print self.histories,soln*soln
 
 
-class MCExec(Executor):
+class MCExec(MC):
   def setCase(self):
     case = ''
-    case+= self.templateFile.split('.')[0]+'_MC_'
+    case+= self.templateFile.split('.')[0]+'_AMC_'
     case+= str(len(self.varDict.keys()))+'var'
     self.case=case
 
-  def savestate(self,savedict):
-    curcwd = os.getcwd()
-    os.chdir(self.uncDir)
-    outfile=file('MC.backup.pk','w')
-    pk.dump(savedict,outfile,2)
-    outfile.close()
-    os.chdir(curcwd)
+  def moments(self):
+    N = self.histories['entries']
+    mean = self.histories['first']/float(N)
+    second = self.histories['second']/float(N)
+    var = second - mean*mean
+    #print '%i %1.4e %1.4e' %(N,mean,var),
+    return N,mean,var
+    #print '\n\nStatistics:'
+    #print 'N Runs:',N
+    #print 'Mean  :',mean
+    #print 'Var   :',var
 
-  def loadRestart(self):
-    print '\nLoading MC restart from',os.getcwd()+'/MC.backup.pk'
-    outfile=file('MC.backup.pk','r')
-    toret = pk.load(outfile)
-    outfile.close()
-    return toret
+  def checkConverge(self):
+    oN = self.N
+    oMean = self.mean
+    oVar = self.var
+    self.N,self.mean,self.var = self.moments()
+    if self.N<5 or self.sampler.converged:
+      return
+    #if self.N<5:
+    #  return
+    #print 'N,mean,var',self.N,self.mean,self.var
+    convMean = abs(self.mean - oMean)/self.mean
+    convVar = abs(self.var - oVar)/self.var
+    print '| %1.4e %1.4e' %(convMean,convVar),'\r',
+    #TODO what about variance convergence?
+    if convMean <= self.targetTol:# and convMean!=0.0:
+      self.timesConverged+=1
+      #print '\nconverged:',self.timesConverged,convMean
+      #print ''
+    else: self.timesConverged = 0
+    if self.N>=self.maxM or self.timesConverged >= 10:# and self.done:
+      self.sampler.converged = True
 
-  def loadSampler(self):
-    self.solnRange=self.input_file('Sampler/MC/solnRange','-1e30 1e30').split()
-    for i,r in enumerate(self.solnRange):
-      self.solnRange[i]=float(r)
-    self.sampler = spr.MonteCarlo(self.varDict,self.input_file)
+class MLMCExec(MC):
+  def setCase(self):
+    case = ''
+    case+= self.templateFile.split('.')[0]+'_MLMC_'
+    case+= str(len(self.varDict.keys()))+'var'
+    self.case=case
 
-  def loadBackends(self):
-    '''
-    Sets up post-processing, including building ROM for SC
-    Input: none
-    Output: none
-    '''
-    backendTypes = ['PDF']#self.input_file('Backend/active','').split(' ')
-    self.BEoutFile = self.case+'.MC.stats'
-    #self.input_file('Backend/outFile','BE.out')
-    self.backends={}
-    for beType in backendTypes:
-      if beType == 'PDF':
-        bins = self.input_file('Backend/PDF/bins',100)
-        low  = self.input_file('Backend/PDF/low',0.0)
-        hi   = self.input_file('Backend/PDF/hi',10.0)
-        backend = be.Stats(low,hi,self.BEoutFile,bins)
-        self.backends['PDF']=backend
-
-  def parallelRun(self):
-    '''
-    Runs Sampler in parallel and collects solns
-    Input: none
-    Output: none
-    '''
-    self.outq=sque() #to dump (nRun,soln) in
-    ps=[]
-    wantprocs = self.input_file('Problem/numprocs',1)
-    self.numprocs = min(wantprocs,multiprocessing.cpu_count())
-    trackThousand = 0
-    trials = int(self.sampler.totalSamples)
-    print '\nRunning %1.0e samples in parallel...' %trials
-    ps=[]
-    self.numPs=0
-    self.done=False
-    self.histories={}
-    self.histories['varNames']=self.varDict.keys()
-    self.histories['vars']=self.varDict.values()
-    self.histories['varPaths']=[]
-    for var in self.varDict.values():
-      #need to preset these so they can be filled with nRun?
-      self.histories['varPaths'].append(var.path)
-      self.histories['varVals']=[]
-    print '  ...uncertain variables:',self.histories['varNames'],'...'
-    if not self.restart:
-      self.total_runs = -1
-      trialsLeft = trials
-      trialsAtRestart = 0
-      #tempOutFile = file('solns.out','w')
-    else: #start from restart
-      print '\nStarting from restart...'
-      print '  Starting after run',self.total_runs
-      trialsAtRestart = self.total_runs
-      trialsLeft = trials - self.total_runs
-    print '  ...using',self.numprocs,'processors...'
-
-    printFreq = self.input_file('Sampler/MC/printfreq',1000)
-    print '  ...print frequency is',printFreq,'...'
-
-    trialsPerProc = int(trials/float(self.numprocs))
-    trialsPerProc = min(trialsPerProc,int(ceil(printFreq/4)))
-    if trialsPerProc > 1000:
-      trialsPerProc = 1000
-    mesh_size = self.input_file('Problem/mesh_factor',1)
-
-    self.done=False
-    runDict={}
-    starttime=time.time()
-    rcvProc=0
-    lastPrint=0
-    doAPrint = False
-    thrown=0
-    print '\nFinished Run | Time Elapsed | Est. Remaining',
-    print '| Number Discarded Solutions'
-    while not self.done:
-      #remove dead processses
-      for p,proc in enumerate(ps):
-        if not proc.is_alive():
-          proc.join()
-          del ps[p]
-          rcvProc+=1
-          while not self.outq.empty():
-            slns,newthrown = list(self.outq.get())
-            thrown+=newthrown
-            lastPrint+=len(slns)
-            if lastPrint >= printFreq:
-              self.backends['PDF'].addToBins(slns,True)
-              doAPrint=True
-              lastPrint=0
-            else:
-              self.backends['PDF'].addToBins(slns)
-          self.savestate(self.backends['PDF'].savedict())
-          if rcvProc==self.numprocs:
-            rcvProc=0
-            if doAPrint:
-              doAPrint = False
-              lastPrint=0
-              #print progress
-              #FIXME fix for restart case
-              finished = trials-trialsLeft
-              totDone = finished + trialsAtRestart
-              if self.restart:
-                finished -= trialsAtRestart
-              elapTime = time.time()-starttime
-              dpdt = float(finished)/float(elapTime)
-              toGo = dt.timedelta(seconds=(int(trialsLeft/dpdt)))
-              elapTime = dt.timedelta(seconds=int(elapTime))
-              print '%12i | %12s | %12s | %9i' %(totDone,elapTime,toGo,thrown),
-              print '                      \r',
-      if trialsLeft > 0:
-        while len(ps)<self.numprocs and not self.done:
-          if trialsLeft > trialsPerProc: newtrials = trialsPerProc
-          else: newtrials = trialsLeft
-          trialsLeft -= newtrials
-          self.numPs+=1
-          runDict['fileChange']={}
-          runDict['fileChange']['Mesh/nx_per_reg']=mesh_size
-          runDict['fileChange']['Mesh/ny_per_reg']=mesh_size
-          ps.append(multiprocessing.Process(\
-                      target = self.runSample,\
-                      args=(trackThousand,newtrials,runDict)\
-                   ))
-          ps[-1].start()
-          trackThousand+=1
-      self.done = self.outq.empty() and len(ps)==0
-    print '\n'
-
-  def runSample(self,prefix,batch,runDict):
-    np.random.seed()
-    solns=[]
-    nThrown = 0
-    for i in range(batch):
-      ident = '_'+str(prefix)+'_'+str(i)
-      outFileName='run.out'+ident
-      runDict['fileChange']['Output/file']=outFileName
-      runDict['varVals']=self.sampler.giveSample()
-      inp_file = self.ie.writeInput(self.templateFile,
-                               self.inputDir,
-                               self.histories['varPaths'],
-                               runDict['varVals'],
-                               runDict['fileChange'],
-                               ident)
-      self.ie.runSolve(inp_file)
-      soln = self.ie.storeOutput(outFileName)
-      if self.solnRange[0] < soln < self.solnRange[1]:
-        solns.append(soln)
-      else:
-        nThrown+=1
-        #print 'WARNING! Solution outside of range.  Tossed',soln,'\n'
-    self.outq.put([solns,nThrown])
-
-
-#if __name__=='__main__':
-  #run syntax: python parExecutor -i <UQ input file>
-#  if '-r' in argv:
-#    restart = True
-#    print 'setting up restart...'
-#  else: restart = False
-#  if 'mc' in argv:
-#    ex = MCExec(argv,restart=restart)
-#  elif 'sc' in argv:
-#    ex = PCESCExec(argv,restart)
-#  else:
-#    print 'Need "mc" or "sc" in argument list!'
+  #TODO overwrite the runParallel process

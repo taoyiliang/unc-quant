@@ -53,8 +53,9 @@ class Driver(object):
     #TODO DEBUG
     #samp = self.ex.ROM([1.,1.])
     #print 'sparseU(1,1) =',samp
-    self.ex.ROMmoment(1)
-    self.ex.ROMmoment(2)
+    if 'SC' in self.ex.case:
+      self.ex.ROMmoment(1)
+      self.ex.ROMmoment(2)
 
     show()
     print '\nDriver complete.\n'

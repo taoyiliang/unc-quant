@@ -1,23 +1,24 @@
 [Problem]
-  executor       = SC
-  # executor       = MC
+  #executor       = SC
+  executor       = MC
   templateFile   = 'diffusion.inp'
   storeFlux      = 0
   execDir        = '../oneDdiffusion/'
   inputDir       = '../oneDdiffusion/'
   input_editor   = 'IE_Diffusion'
   numprocs       = 6
-  mesh_factor    = 5
+  mesh_factor    = 10
 []
 
 [Sampler]
   active = 'MC'
   [./MC]
-    totalSamples = 1e4
+    #maxSamples = 1e4
+    convergence = 1e-12
   [../]
   [./SC]
     indexSet = HC
-    expOrd = 70
+    expOrd = 1
     quadrule = single
   [../]
 []
@@ -29,7 +30,8 @@
 [Variables]
   # format: material-property-group
   # Only the sections listed in "names" will be sampled.
-  names = '1xc2 1xf2'
+  names = '1xc2'
+  # names = '1xc2 1xf2'
 
   #MATERIAL 1
   [./1D1]
