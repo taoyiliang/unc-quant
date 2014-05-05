@@ -53,7 +53,11 @@ class Executor(object): #base class
     print '...backends loaded...'
     self.clearInputs()
     print '...old inputs cleared...'
-    self.runParallel()
+    #TODO for MC only...
+    try:
+      self.runParallel()
+    except KeyboardInterrupt:
+      self.checkConverge(True)
     print '...parallel run complete...'
     self.finish()
 
@@ -126,6 +130,7 @@ class Executor(object): #base class
       self.histories['varPaths'].append(var.path)
     #preset some file change stuff
     mesh_size = self.input_file('Problem/mesh_factor',-1)
+    self.meshFactor = mesh_size
     self.totalProcs=0
     finished=0
     while not self.done:
@@ -154,13 +159,7 @@ class Executor(object): #base class
           print '...runs started:',self.total_runs,'...\r',
           #self.histories['nRun'].append(self.total_runs)
           runDict['nRun'] = self.total_runs
-          #TODO this is SC-specific!
-          #self.histories['soln'].append(0)  #placeholders
-          #self.histories['solwt'].append(0)
-          #for key in runDict.keys():
-          #  try:self.histories[key].append(runDict[key])
-          #  except KeyError: self.histories[key]=[runDict[key]]
-          #TODO end SC-specific block
+          self.setupHistories(runDict)
           runDict['fileChange']={}
           runDict['outFileName']='run.out'+str(self.total_runs)
           runDict['fileChange']['Output/file']=runDict['outFileName']
@@ -176,11 +175,7 @@ class Executor(object): #base class
           procs.append(multiprocessing.Process(target=self.runSample,
                            args=[runDict]))
           procs[-1].start()
-    if self.done:
-      print '\n'
-      print 'N, mean, 2nd moment:'
-      print self.N,self.mean,self.var+self.mean*self.mean
-      print '\n'
+      self.done = len(procs)==0 and self.sampler.converged
 
   def runSample(self,runDict):
     self.ie.runSolve(runDict['inp_file'])
@@ -290,6 +285,7 @@ class SC(Executor):
     if settype=='dud':
       print 'Index set not specified; using tensor product.'
       settype='TP'
+    self.settype = settype
     self.indexSet = IndexSets.IndexSetFactory(len(self.varDict.keys()),
                                               self.expOrder,
                                               settype)
@@ -334,13 +330,20 @@ class SC(Executor):
         print '    ...new number of quad pts collected:',
         print numsamp,
         print '(%i pct complete)' %(int(100.*(e+1)/len(grid))),
-        print '(%i duplicates)' %(e+1-numsamp),#'\r',
+        print '(%i duplicates)' %(e+1-numsamp),'\r',
     #exit()
     print '...constructing sampler...'
     self.sampler = spr.StochasticPoly(self.varDict,
                                       run_samples)
     self.numquadpts = len(run_samples['quadpts'])
     print '...%i quadrature points used...' %self.numquadpts
+
+  def setupHistories(self,runDict):
+    self.histories['soln'].append(0)  #placeholders
+    self.histories['solwt'].append(0)
+    for key in runDict.keys():
+      try:self.histories[key].append(runDict[key])
+      except KeyError: self.histories[key]=[runDict[key]]
 
   def runSample(self,runDict):
     soln = super(SC,self).runSample(runDict)
@@ -351,8 +354,25 @@ class SC(Executor):
     self.histories['soln'][n]=soln
     self.histories['solwt'][n]=wt
 
-  def checkConverge(self):
+  def checkConverge(self,force=False):
     print '\r',
+
+  def writeOut(self):
+    mean = self.ROMmoment(1)
+    r2 = self.ROMmoment(2)
+    var = r2 - mean*mean
+    inp = self.input_file('Backend/outLabel','')
+    name = self.settype+'_h'+str(self.meshFactor)+'_'+inp+'.moments'
+    outFile = file(name,'a')
+    outFile.writelines('\nMoments\nN,mean,var\n')
+    outFile.writelines(','.join([str(self.numquadpts),
+      str(mean),str(var)])+'\n')
+    outFile.close()
+    if self.done:
+      print '\n'
+      print 'N, mean, var:'
+      print self.numquadpts,mean,var
+      print '\n'
 
 
 class SCExec(SC):
@@ -369,6 +389,7 @@ class SCExec(SC):
       tot+=self.histories['solwt'][s]*soln**r
     tot*=1.0/sum(self.histories['solwt'])
     print 'moment %i:' %r,tot
+    return tot
 
   def ROM(self,xs):
     #TODO this is a strange place for this, but idk where to do
@@ -432,6 +453,9 @@ class MC(Executor):
     self.mean = 1e14
     self.var = 1e14
 
+  def setupHistories(self,runDict):
+    pass #nothing needed
+
   def runSample(self,runDict):
     #TODO make this run a batch of samples
     soln = super(MC,self).runSample(runDict)
@@ -448,6 +472,20 @@ class MC(Executor):
     try: self.histories['second']+=soln*soln
     except KeyError: self.histories['second']=soln*soln
     #print self.histories,soln*soln
+
+  def writeOut(self):
+    inp = self.input_file('Backends/outLabel','')
+    name = 'MC.moments'
+    outFile = file(name,'a')
+    outFile.writelines('\nMoments\nN,mean,var\n')
+    outFile.writelines(','.join(
+      [str(self.N),str(self.mean),str(self.var)])+'\n')
+    outFile.close()
+    if self.done:
+      print '\n'
+      print 'N, mean, 2nd moment:'
+      print self.N,self.mean,self.var+self.mean*self.mean
+      print '\n'
 
 
 class MCExec(MC):
@@ -469,7 +507,13 @@ class MCExec(MC):
     #print 'Mean  :',mean
     #print 'Var   :',var
 
-  def checkConverge(self):
+  def checkConverge(self,force=False):
+    if force:
+      print '\n\nEXECUTOR TERMINATED\n'
+      print 'N,mean,var | convergence mean, var'
+      print self.N,self.mean,self.var
+      print ''
+      raise KeyboardInterrupt
     oN = self.N
     oMean = self.mean
     oVar = self.var

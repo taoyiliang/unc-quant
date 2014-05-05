@@ -1,20 +1,20 @@
 [Problem]
-  #executor       = SC
-  executor       = MC
+  executor       = SC
+  #executor       = MC
   templateFile   = 'diffusion.inp'
   storeFlux      = 0
   execDir        = '../oneDdiffusion/'
   inputDir       = '../oneDdiffusion/'
   input_editor   = 'IE_Diffusion'
   numprocs       = 6
-  mesh_factor    = 10
+  mesh_factor    = 5
 []
 
 [Sampler]
   active = 'MC'
   [./MC]
-    #maxSamples = 1e4
-    convergence = 1e-12
+    maxSamples = 5e2
+    #convergence = 1e-10
   [../]
   [./SC]
     indexSet = HC

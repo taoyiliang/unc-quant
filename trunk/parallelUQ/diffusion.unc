@@ -1,33 +1,29 @@
 [Problem]
-  executor       = SC
- # executor       = MC
+ # executor       = SC
+  executor       = MC
   templateFile   = '2G_2D.inp'
   storeFlux      = 0
   execDir        = '../diffusion/'
   inputDir       = '../diffusion/'
   input_editor   = 'IE_Diffusion'
   numprocs       = 4
-  mesh_factor    = 3
+  mesh_factor    = 5
 []
 
 [Sampler]
   [./MC]
-    totalSamples = 2e1
-    printfreq = 10
-   # solnRange = '0.9 1.5' #normal
-   # solnRange = '0.7 1.2' #normal
-   # solnRange = '0.93 1.05' #uniform
-    truncate = 3 #only applies to normals
+    maxSamples = 31121
   [../]
   [./SC]
     indexSet = HC
-    expOrd = 1
+    expOrd = 120
     quadrule = single
   [../]
 []
 
 [Backend]
   makePDF = 0
+  outLabel = 'iso'
 []
 
 [Variables]
@@ -45,13 +41,11 @@
     path = 'Material/1/g2/sigc'
     dist = uniform
     args = '0.05540 0.0055' #median, range def 10%
-    exporder = 5
   [../]
   [./1xf2]
     path = 'Material/1/g2/nsigf'
     dist = uniform
     args = '0.1091 0.011' #median, range def 10%
-    exporder = 5
   [../]
 
   [./4xc2]

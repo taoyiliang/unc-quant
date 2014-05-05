@@ -56,6 +56,7 @@ class Driver(object):
     if 'SC' in self.ex.case:
       self.ex.ROMmoment(1)
       self.ex.ROMmoment(2)
+    self.ex.writeOut()
 
     show()
     print '\nDriver complete.\n'
@@ -71,5 +72,5 @@ class Driver(object):
 
 
 if __name__=='__main__':
-  print sys.argv,type(sys.argv)
+  #print sys.argv,type(sys.argv)
   drv = Driver(sys.argv)

@@ -1,0 +1,44 @@
+import SparseQuads as sq
+import Variables as v
+import IndexSets as isets
+import matplotlib.pyplot as plt
+import numpy as np
+from itertools import product as allcombos
+
+def quadrule(x):
+  return x
+
+iset = isets.IndexSetFactory(2,4,'HC')
+
+varlist={}
+varlist[1]=v.VariableFactory('uniform')
+varlist[1].setDist([0,1])
+varlist[2]=v.VariableFactory('uniform')
+varlist[2].setDist([0,1])
+
+fx=[]
+fy=[]
+for i in range(5):
+  pts,wts = sq.tensorGrid(2,[i+1,i+1],varlist,[i,i])
+  for pt in pts:
+    fx.append(pt[0])
+    fy.append(pt[1])
+plt.plot(fx,fy,'kx',markersize=8)
+
+SG = sq.BasicSparse(2,4,iset,quadrule,varlist)
+SG=np.array(SG)
+pts=SG[:,0]
+for p,pt in enumerate(pts):
+  pts[p]=np.array(list(pt))
+pts=np.array(pts)
+xs=[]
+ys=[]
+for pt in pts:
+  xs.append(pt[0])
+  ys.append(pt[1])
+
+plt.plot(xs,ys,'ko',mfc='None',markersize=8)
+plt.axis([-1,1,-1,1])
+plt.show()
+
+
