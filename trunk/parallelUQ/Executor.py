@@ -45,8 +45,6 @@ class Executor(object): #base class
     print '...directories set...'
     self.loadVars()
     print '...variables loaded...'
-    self.setCase()
-    print '...case set <'+self.case+'>...'
     self.loadSampler()
     print '...sampler loaded...'
     self.loadBackends()
@@ -68,6 +66,11 @@ class Executor(object): #base class
     self.input_editor = self.input_file('Problem/input_editor','')
     torun = 'self.ie = InputEditor.'+self.input_editor+'(\''+self.execDir+'\')'
     exec torun
+    mesh_size = self.input_file('Problem/mesh_factor',-1)
+    self.meshFactor = mesh_size
+    self.setCase()
+    print '...case set <'+self.case+'>...'
+
 
   def setDirs(self):
     #set directories
@@ -114,10 +117,12 @@ class Executor(object): #base class
     wantprocs = self.input_file('Problem/numprocs',1)
     self.numprocs = min(wantprocs,multiprocessing.cpu_count())
     print '\n...using %i processers...' %self.numprocs
-    self.total_runs = -1
+    try: self.total_runs
+    except AttributeError: self.total_runs=-1
     procs=[]
     self.done=False
-    self.histories={}
+    try: self.histories
+    except AttributeError: self.histories={}
     self.histories['varNames'] = self.varDict.keys()
     self.histories['vars']=self.varDict.values()
     self.histories['varVals']=[]
@@ -129,10 +134,9 @@ class Executor(object): #base class
     for var in self.varDict.values():
       self.histories['varPaths'].append(var.path)
     #preset some file change stuff
-    mesh_size = self.input_file('Problem/mesh_factor',-1)
-    self.meshFactor = mesh_size
     self.totalProcs=0
-    finished=0
+    try: finished=self.histories['entries']
+    except KeyError: finished = 0
     while not self.done:
       for p,proc in enumerate(procs):
         if not proc.is_alive():
@@ -163,9 +167,9 @@ class Executor(object): #base class
           runDict['fileChange']={}
           runDict['outFileName']='run.out'+str(self.total_runs)
           runDict['fileChange']['Output/file']=runDict['outFileName']
-          if mesh_size > 0:
-            runDict['fileChange']['Mesh/nx_per_reg']=mesh_size
-            runDict['fileChange']['Mesh/ny_per_reg']=mesh_size
+          if self.meshFactor > 0:
+            runDict['fileChange']['Mesh/nx_per_reg']=self.meshFactor
+            runDict['fileChange']['Mesh/ny_per_reg']=self.meshFactor
           runDict['inp_file'] = self.ie.writeInput(self.templateFile,
                                 self.inputDir,
                                 self.histories['varPaths'],
@@ -272,6 +276,10 @@ class Executor(object): #base class
 class SC(Executor):
   '''Intermediary before choosing SC type'''
 
+  def setCase(self):
+    inp = self.input_file('Backend/outLabel','')
+    self.case = self.settype+'_h'+str(self.meshFactor)+'_'+inp
+
   def loadSampler(self):
     self.loadIndexSet()
     self.loadQuadSet()
@@ -361,8 +369,7 @@ class SC(Executor):
     mean = self.ROMmoment(1)
     r2 = self.ROMmoment(2)
     var = r2 - mean*mean
-    inp = self.input_file('Backend/outLabel','')
-    name = self.settype+'_h'+str(self.meshFactor)+'_'+inp+'.moments'
+    name = self.case+'.moments'
     outFile = file(name,'a')
     outFile.writelines('\nMoments\nN,mean,var\n')
     outFile.writelines(','.join([str(self.numquadpts),
@@ -377,11 +384,8 @@ class SC(Executor):
 
 class SCExec(SC):
   def setCase(self):
-    case =''
-    case+= self.templateFile.split('.')[0]+'_SC_'
-    case+= str(len(self.varDict.keys()))+'var'
-    self.case=case
-    return
+    inp = self.input_file('Backend/outLabel','')
+    self.case = self.settype+'_h'+str(self.meshFactor)+'_'+inp
 
   def ROMmoment(self,r):
     tot=0
@@ -425,14 +429,38 @@ class SCExec(SC):
 
 
 
-
-class PCESCExec(SC):
-  pass
-
+#####################################################
+#####################################################
+#####################################################
 
 
 class MC(Executor):
+  def setCase(self):
+    inp = self.input_file('Backend/outLabel','')
+    self.case = 'MC_h'+str(self.meshFactor)+'_'+inp
+
   def loadSampler(self):
+    self.storeSolns=bool(self.input_file('Sampler/MC/writeSamples',0))
+    loadSolns=bool(self.input_file('Sampler/MC/loadSamples',0))
+
+    if loadSolns:
+      try:
+        inFile = file(self.uncDir+'/'+self.case+'.samples','r')
+        for line in inFile:
+          pass
+        n,one,two=line.strip().split(',')
+        n=int(n)
+        one=float(one)
+        two=float(two)
+        self.histories={}
+        self.histories['entries']=n
+        self.histories['first']=one
+        self.histories['second']=two
+        self.total_runs=n
+        print '...loaded %i previous samples...' %n
+      except IOError: pass
+
+
     self.maxM = self.input_file('Sampler/MC/maxSamples','0')
     self.maxM = int(float(self.maxM))
     self.targetTol = self.input_file('Sampler/MC/convergence',0.0)
@@ -471,11 +499,27 @@ class MC(Executor):
 
     try: self.histories['second']+=soln*soln
     except KeyError: self.histories['second']=soln*soln
-    #print self.histories,soln*soln
+
+    if self.storeSolns:
+      name = self.case+'.samples'
+      #if os.path.isfile(name) and self.histories['entries']==1:
+      try: self.slnFile
+      except AttributeError: self.slnFile = file(self.uncDir+'/'+name,'a')
+      if self.histories['entries']==1:
+        #msg='  WARNING: sample file exists!  Append solutions?'
+        #ctu = raw_input(msg)
+        #if ctu.strip().lower()[-1] in ['y','t']:
+        #else:
+        #  self.slnFile = file(name,'w')
+        self.slnFile.writelines('N,sum,sum^2\n')
+      self.slnFile.writelines('%i,%1.16e,%1.16e' %(
+                              self.histories['entries'],
+                              self.histories['first'],
+                              self.histories['second'])+'\n')
+      self.slnFile.flush()
 
   def writeOut(self):
-    inp = self.input_file('Backends/outLabel','')
-    name = 'MC.moments'
+    name = self.case+'.moments'
     outFile = file(name,'a')
     outFile.writelines('\nMoments\nN,mean,var\n')
     outFile.writelines(','.join(
@@ -489,11 +533,11 @@ class MC(Executor):
 
 
 class MCExec(MC):
-  def setCase(self):
-    case = ''
-    case+= self.templateFile.split('.')[0]+'_AMC_'
-    case+= str(len(self.varDict.keys()))+'var'
-    self.case=case
+  #def setCase(self):
+  #  case = ''
+  #  case+= self.templateFile.split('.')[0]+'_AMC_'
+  #  case+= str(len(self.varDict.keys()))+'var'
+  #  self.case=case
 
   def moments(self):
     N = self.histories['entries']

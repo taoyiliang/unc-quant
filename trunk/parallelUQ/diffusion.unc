@@ -7,12 +7,14 @@
   inputDir       = '../diffusion/'
   input_editor   = 'IE_Diffusion'
   numprocs       = 4
-  mesh_factor    = 5
+  mesh_factor    = 3
 []
 
 [Sampler]
   [./MC]
-    maxSamples = 31121
+    maxSamples = 50000
+    writeSamples = 1
+    loadSamples = 1
   [../]
   [./SC]
     indexSet = HC
@@ -32,8 +34,8 @@
   # names='1D1 1D2 1xa1 1xa2 1xf1 1xf2 1xt1
   #       2D1 2D2 2xa1 2xa2 2xf1 2xf2 2xt1
   #       3D1 3D2 3xa1 3xa2 2xt1'
-  #names = '1xc2 1xf2 4xc2 4xf2 5D2'
-  names = '1xc2 1xf2'
+  names = '1xc2 1xf2 4xc2 4xf2 5D2'
+  #names = '1xc2 1xf2'
   #names = '1xc2'
 
   #MATERIAL 1
@@ -52,22 +54,16 @@
     path = 'Material/4/g2/sigc'
     dist = uniform
     args = '0.04142 0.0041' #median, range def 10%
-    exporder = 2
-    quadorder = 4
   [../]
   [./4xf2]
     path = 'Material/4/g2/nsigf'
     dist = uniform
     args = '0.1021 0.010' #median, range def 10%
-    exporder = 2
-    quadorder = 4
   [../]
 
   [./5D2]
     path = 'Material/5/g2/D'
     dist = uniform
     args = '0.1592 0.016' #median, range def 10%
-    exporder = 1
-    quadorder = 2
   [../]
 []
