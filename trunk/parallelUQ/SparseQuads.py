@@ -45,6 +45,7 @@ def makeCoeffs(N,indexset):
   return c
 
 def tensorGrid(N,m,varlist,idx):
+  #print '\n',idx
   quadptlists=[]
   quadwtlists=[]
   for n in range(N):
@@ -58,7 +59,18 @@ def tensorGrid(N,m,varlist,idx):
   quadwts = list(allcombos(*quadwtlists))
   for k,wtset in enumerate(quadwts):
     quadwts[k]=np.product(wtset)
-  #print 'quadwts:',quadwts
-  #print 'new quadpts:',quadpts
+  #for i in range(len(quadpts)):
+  #  print quadpts[i],quadwts[i]
   #print 'wts,pts',quadwts,quadpts
   return quadpts,quadwts
+
+def removeDuplicates(grid,tol=15):
+  ptwt={}
+  for e,entry in enumerate(grid):
+    npt = tuple(np.around(entry[0],decimals=tol))
+    if npt in ptwt.keys():
+      ptwt[npt]+=entry[1]
+    else:
+      ptwt[npt]=entry[1]
+  return ptwt
+

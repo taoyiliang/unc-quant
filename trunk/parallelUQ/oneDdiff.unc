@@ -1,6 +1,6 @@
 [Problem]
-  executor       = SC
-  #executor       = MC
+  #executor       = SC
+  executor       = MC
   templateFile   = 'diffusion.inp'
   storeFlux      = 0
   execDir        = '../oneDdiffusion/'
@@ -13,8 +13,8 @@
 [Sampler]
   active = 'MC'
   [./MC]
-    maxSamples = 5e2
-    #convergence = 1e-10
+    maxSamples = 20000
+    writeSamples = 1
   [../]
   [./SC]
     indexSet = HC
@@ -30,8 +30,8 @@
 [Variables]
   # format: material-property-group
   # Only the sections listed in "names" will be sampled.
-  names = '1xc2'
-  # names = '1xc2 1xf2'
+  #names = '1xc2'
+  names = '1xc2 1xf2'
 
   #MATERIAL 1
   [./1D1]

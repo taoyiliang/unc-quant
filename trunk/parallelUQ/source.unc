@@ -1,66 +1,58 @@
 [Problem]
-  executor     = PCESC
-  # executor     = MC
-  templateFile = 'source.inp'
-  storeFlux    = 0
-  execDir      = '../source/'
-  inputDir     = '../source/'
-  input_editor = 'IE_Source'
-  numprocs     = 4
+ # executor       = SC
+  executor       = MC
+  templateFile   = 'dud'
+  storeFlux      = 0
+  execDir        = '../FDsrc/'
+  inputDir       = '../FDsrc/'
+  input_editor   = 'IE_Source'
+  numprocs       = 4
+  mesh_factor    = 2049
 []
 
 [Sampler]
-  active = 'SC'
-  [./SC]
-    indexSet = HC
-    quadFactor = 2
-  [../]
   [./MC]
-    totalSamples = 1e6
-    solnRange = '0 4'
-    truncate = 3
+    maxSamples = 10
+    writeSamples = 0
+    loadSamples = 0
+  [../]
+  [./SC]
+    indexSet = TD
+    expOrd = 120
+    quadrule = single
   [../]
 []
 
 [Backend]
-  active = 'ROM'
- # active = 'PDF'
-  outFile = test.out
-  [./ROM]
-    samples = 1e6
-    bins = 100
-    checkSolution = 0
-    createPDF = 0
-    stats = 1
-    truncate = 3
-  [../]
-
-  [./PDF]
-    bins = 100
-    low = 0.8
-    hi = 1.9
-  [../]
+  makePDF = 0
+  outLabel = 'src'
 []
 
 [Variables]
- # names = 'xa D loc S'
-  names = 'xa loc'
-  [./xa]
-    path = 'Problem/xa'
-  #  dist = 'normal'
-  #  args = '0.75 .15'
-    dist = 'uniform'
-    args = '0.75 0.25'
-    exporder = 4
-    #okRange = '0 10'
+  # format: material-property-group
+  # Only the sections listed in "names" will be sampled.
+  # names='1D1 1D2 1xa1 1xa2 1xf1 1xf2 1xt1
+  #       2D1 2D2 2xa1 2xa2 2xf1 2xf2 2xt1
+  #       3D1 3D2 3xa1 3xa2 2xt1'
+  names = 'S'
+  #names = 'D S'
+  #names = 'D siga S'
+
+  #MATERIAL 1
+  [./D]
+    path = 'D'
+    dist = uniform
+    args = '1.0 0.5'
   [../]
-  [./loc]
-    path = 'Problem/loc'
-    dist = 'uniform'
-    args = '2.0 0.5'
-    exporder = 2
-    #okRange = '0 10'
+  [./siga]
+    path = 'siga'
+    dist = uniform
+    args = '0.0 0.0'
   [../]
+  [./S]
+    path = 'S'
+    dist = uniform
+    args = '1.00 0.05'
+  [../]
+
 []
-
-

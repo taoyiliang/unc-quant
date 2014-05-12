@@ -58,6 +58,7 @@ class MonteCarlo(Sampler):
     runDict['varVals']=[]
     for v,var in enumerate(self.varlist):
       runDict['varVals'].append(var.sample())
+    print runDict['varVals']
     return runDict
 
 class StochasticPoly(Sampler):

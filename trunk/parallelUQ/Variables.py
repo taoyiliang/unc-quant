@@ -96,6 +96,8 @@ class Uniform(Variable):
     super(Uniform,self).setQuadrature(maxOrder)
     pts,wts = quads.p_roots(self.quadOrd)
     self.pts=self.convertToActual(pts)
+    for w,wt in enumerate(wts):
+      wts[w]=wt/(2.*self.range)
     self.wts=wts
 
   def evalNormPoly(self,x,n):

@@ -68,9 +68,12 @@ class Executor(object): #base class
     exec torun
     mesh_size = self.input_file('Problem/mesh_factor',-1)
     self.meshFactor = mesh_size
+    self.setSetType()
     self.setCase()
     print '...case set <'+self.case+'>...'
 
+  def setSetType(self):
+    pass
 
   def setDirs(self):
     #set directories
@@ -280,6 +283,12 @@ class SC(Executor):
     inp = self.input_file('Backend/outLabel','')
     self.case = self.settype+'_h'+str(self.meshFactor)+'_'+inp
 
+  def setSetType(self):
+    self.settype=self.input_file('Sampler/SC/indexSet','dud')
+    if self.settype=='dud':
+      print 'Index set not specified; using tensor product.'
+      self.settype='TP'
+
   def loadSampler(self):
     self.loadIndexSet()
     self.loadQuadSet()
@@ -289,14 +298,9 @@ class SC(Executor):
     if self.expOrder==-1:
       print '...expansion order not set in Sampler/SC.  Using 2...'
       self.expOrder=2
-    settype=self.input_file('Sampler/SC/indexSet','dud')
-    if settype=='dud':
-      print 'Index set not specified; using tensor product.'
-      settype='TP'
-    self.settype = settype
     self.indexSet = IndexSets.IndexSetFactory(len(self.varDict.keys()),
                                               self.expOrder,
-                                              settype)
+                                              self.settype)
     print '...%i expansion indices used...' %len(self.indexSet)
 
   def loadQuadSet(self):

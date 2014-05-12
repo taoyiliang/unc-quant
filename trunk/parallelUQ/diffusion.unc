@@ -1,6 +1,6 @@
 [Problem]
- # executor       = SC
-  executor       = MC
+  executor       = SC
+ # executor       = MC
   templateFile   = '2G_2D.inp'
   storeFlux      = 0
   execDir        = '../diffusion/'
@@ -18,7 +18,7 @@
   [../]
   [./SC]
     indexSet = HC
-    expOrd = 120
+    expOrd = 1
     quadrule = single
   [../]
 []

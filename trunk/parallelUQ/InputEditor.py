@@ -1,5 +1,6 @@
 import os
 import sys
+import numpy as np
 
 class InputEditor:
   def __init__(self,runpath):
@@ -104,6 +105,39 @@ class IE_Double(InputEditor):
     self.out=f(self.y,self.x)
 
 class IE_Source(InputEditor):
+  def __init__(self,runpath=''):
+    self.type = 'InputOutput source'
+    self.varVals=[]
+    self.varList=[]
+    self.out=0
+
+  def writeInput(self,templateName,inputDir,varList,valList,otherChange,ident):
+    self.varList=varList[:]
+    self.varVals=valList[:]
+    try:
+      self.d=otherChange['Mesh/nx_per_reg']
+    except KeyError:
+      pass
+    return 'dud'
+
+  def storeOutput(self,outFile):
+    return self.out
+
+  def runSolve(self,input_file):
+    sys.path.insert(0,os.getcwd())
+    from solver import solve
+    expr='soln=solve('
+    for v,var in enumerate(self.varList):
+      vname=var.split('/')[-1]
+      expr+=vname+'='+str(self.varVals[v])+','
+    expr+='N='+str(self.d)+')'
+    exec expr
+    norm=np.sqrt(1./len(soln)*sum(soln**2))
+    print 'soln',norm
+    #self.out=norm #soln[64]
+    self.out=soln[64]
+
+class IE_OldSource(InputEditor):
   def __init__(self,runpath=''):
     self.type = 'InputOutput soure'
     self.varVals=[]
