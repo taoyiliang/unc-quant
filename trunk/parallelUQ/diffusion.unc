@@ -18,7 +18,7 @@
   [../]
   [./SC]
     indexSet = HC
-    expOrd = 1
+    expOrd = 30
     quadrule = single
   [../]
 []
@@ -26,6 +26,7 @@
 [Backend]
   makePDF = 0
   outLabel = 'iso'
+  writeOut = 1
 []
 
 [Variables]

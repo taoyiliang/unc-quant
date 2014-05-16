@@ -1,12 +1,12 @@
 [Problem]
-  #executor       = SC
-  executor       = MC
+  executor       = SC
+  #executor       = MC
   templateFile   = 'diffusion.inp'
   storeFlux      = 0
   execDir        = '../oneDdiffusion/'
   inputDir       = '../oneDdiffusion/'
   input_editor   = 'IE_Diffusion'
-  numprocs       = 6
+  numprocs       = 4
   mesh_factor    = 5
 []
 
@@ -18,13 +18,14 @@
   [../]
   [./SC]
     indexSet = HC
-    expOrd = 1
+    expOrd = 200
     quadrule = single
   [../]
 []
 
 [Backend]
   makePDF = 0
+  writeOut = 1
 []
 
 [Variables]

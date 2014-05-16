@@ -1,6 +1,6 @@
 [Problem]
- # executor       = SC
-  executor       = MC
+  executor       = SC
+ # executor       = MC
   templateFile   = 'dud'
   storeFlux      = 0
   execDir        = '../FDsrc/'
@@ -18,7 +18,7 @@
   [../]
   [./SC]
     indexSet = TD
-    expOrd = 120
+    expOrd = 8
     quadrule = single
   [../]
 []
@@ -26,17 +26,13 @@
 [Backend]
   makePDF = 0
   outLabel = 'src'
+  writeOut = 1
 []
 
 [Variables]
-  # format: material-property-group
-  # Only the sections listed in "names" will be sampled.
-  # names='1D1 1D2 1xa1 1xa2 1xf1 1xf2 1xt1
-  #       2D1 2D2 2xa1 2xa2 2xf1 2xf2 2xt1
-  #       3D1 3D2 3xa1 3xa2 2xt1'
-  names = 'S'
+  #names = 'D'
   #names = 'D S'
-  #names = 'D siga S'
+  names = 'D siga S'
 
   #MATERIAL 1
   [./D]
@@ -47,12 +43,12 @@
   [./siga]
     path = 'siga'
     dist = uniform
-    args = '0.0 0.0'
+    args = '0.01 0.002'
   [../]
   [./S]
     path = 'S'
     dist = uniform
-    args = '1.00 0.05'
+    args = '1 0.05'
   [../]
 
 []

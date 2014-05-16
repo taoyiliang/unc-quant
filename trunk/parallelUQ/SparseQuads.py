@@ -5,7 +5,7 @@ def BasicSparse(N,L,indexset,quadrule,varlist):
   c=np.array(makeCoeffs(N,indexset))
   indexset=np.array(indexset)
   survive=np.nonzero(c!=0)
-  #print 'pre-c',indexset
+  #print 'pre-c',c#indexset
   c=c[survive]
   indexset=indexset[survive]
   print '  ...coefficient set established...'
@@ -13,35 +13,61 @@ def BasicSparse(N,L,indexset,quadrule,varlist):
   SG=[] #holds list (multi-quad pt, wt)
   for j,cof in enumerate(c):
     idx = indexset[j]
+    #print '\nindex point:',idx
     m = quadrule(idx)+1
-    #print 'm',m
+    #print '  m',m
+    #print '  c',int(c[j])
     new = tensorGrid(N,m,varlist,idx)
+    #print '  points and weights:'
     for i in range(len(new[0])):
+      #print '    ',new[0][i],' | ',new[1][i]
       SG.append( [new[0][i],new[1][i]] )
       SG[-1][1]*=c[j]
   #TODO DEBUG check sum of weights
+  #print '\n\n'
   return SG
 
 def makeCoeffs(N,indexset):
   NI=len(indexset)
-  c=np.ones(NI)
-  indexset=np.array(indexset)
-  for e,entry in enumerate(indexset):
-    indexset[e]=np.array(entry)
-  #print indexset
-  for i in range(NI):
-    #print 'i:',i,indexset[i]
-    for j in range(i+1,NI):
-      #print '    j:',indexset[j]
-      d = indexset[j]-indexset[i]
-      #print 'd:',d
-      if d.all()>=0 and d.all()<=1:
-        c[i]+=(-1)**sum(d)
-      #bln = d<=1
-      #bln*= d>=0
-      #print '    bln:',bln,d*bln
-      #c[i]+=(-1)**sum(d*bln)
-    #print '  c[i]',c[i]
+  c=np.zeros(NI)
+  #set up index set as iset
+  iset=indexset[:]
+  #iset=np.array(indexset)
+  #for i,entry in enumerate(iset):
+  #  iset[i]=np.array(entry)
+  #print 'index set:',iset
+  #set up potential js as jset
+  zerone=[0,1]
+  sets=[]
+  for n in range(N):
+    sets.append(zerone)
+  jset=list(allcombos(*sets))
+  #jset=np.array(jset)
+  #for j,entry in enumerate(jset):
+  #  jset[j]=np.array(entry)
+  print '\n\nmaking coeffs...'
+  for i,ix in enumerate(iset):
+    #print '  i:',i,ix
+    ix=np.array(ix)
+    for j,jx in enumerate(jset):
+      jx=np.array(jx)
+      #print '    j:',j,jx
+      comb = tuple(jx+ix)
+      #print '  i,j,ix+jx',ix,jx,comb,comb in iset,
+      if comb in iset:
+        #print ' adding in',(-1)**sum(jx)
+        c[i]+=(-1)**sum(jx)
+      #else: print ' not adding.'
+    #print 'final c[%i]:' %i,c[i]
+    #for j in range(i+1,NI):
+    #  d = indexset[j]-indexset[i]
+    #  print '    d:',d
+    #  if d.all()>=0 and d.all()<=1:
+    #    c[i]+=(-1)**sum(d)
+    #print '  c:',c[i]
+  #print 'c:'
+  #for i,cof in enumerate(c):
+  #  print i,cof
   return c
 
 def tensorGrid(N,m,varlist,idx):
