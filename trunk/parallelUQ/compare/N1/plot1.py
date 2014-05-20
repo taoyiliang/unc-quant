@@ -6,13 +6,13 @@ def addPlot(title,lbl,ref=None):
 
   entries=[]
   for line in inFile:
-    if line=='\n' or line.startswith('N,'):
+    if line=='\n' or line.startswith('Moments') or line.startswith('N,'):
       continue
     entries.append([])
     vals=line.strip().split(',')
     entries[-1].append(int(vals[0]))
-    entries[-1].append(float(vals[1])/float(entries[-1][0]))
-    entries[-1].append(float(vals[2])/float(entries[-1][0])-entries[-1][1]**2)
+    entries[-1].append(float(vals[1]))
+    entries[-1].append(float(vals[2]))
 
   entries=np.array(entries)
   entries=entries[entries[:,0].argsort()]
@@ -31,8 +31,8 @@ def addPlot(title,lbl,ref=None):
   #  print e
   errs=errs[errs[:,0].argsort()]
 #  print '\n\n'
-#  for e in errs:
-#    print e
+  for e in errs:
+    print e
   errs=zip(*errs)
   plt.loglog(errs[0],errs[1],'-o',label=lbl)
 
@@ -40,7 +40,7 @@ def addPlot(title,lbl,ref=None):
 
 
 if __name__=='__main__':
-  title = 'MC_h3_iso.samples'
+  title = 'HC_h5_iso.moments'
   addPlot(title,'')
   plt.xlabel('Number of Solves')
   plt.ylabel('Error')
