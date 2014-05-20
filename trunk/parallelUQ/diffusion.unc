@@ -6,19 +6,19 @@
   execDir        = '../diffusion/'
   inputDir       = '../diffusion/'
   input_editor   = 'IE_Diffusion'
-  numprocs       = 4
-  mesh_factor    = 3
+  numprocs       = 2
+  mesh_factor    = 5
 []
 
 [Sampler]
   [./MC]
-    maxSamples = 50000
+    maxSamples = 10000
     writeSamples = 1
-    loadSamples = 1
+    loadSamples = 0
   [../]
   [./SC]
     indexSet = HC
-    expOrd = 30
+    expOrd = 3000
     quadrule = single
   [../]
 []
@@ -35,8 +35,9 @@
   # names='1D1 1D2 1xa1 1xa2 1xf1 1xf2 1xt1
   #       2D1 2D2 2xa1 2xa2 2xf1 2xf2 2xt1
   #       3D1 3D2 3xa1 3xa2 2xt1'
-  names = '1xc2 1xf2 4xc2 4xf2 5D2'
-  #names = '1xc2 1xf2'
+  #names = '1xc2 1xf2 4xc2 4xf2 5D2'
+  #names = '1xc2 1xf2 4xf2'
+  names = '1xf2'
   #names = '1xc2'
 
   #MATERIAL 1

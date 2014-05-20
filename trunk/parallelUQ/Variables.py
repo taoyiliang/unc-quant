@@ -112,66 +112,51 @@ class Uniform(Variable):
 class Beta(Variable):
   def __init__(self,name,path):
     super(Uniform,self).__init__(name,path)
-    self.distName='uniform'
+    self.distName='beta'
 
   def convertToActual(self,x):
+    #TODO
     return self.range*x+self.mean
 
   def convertToStandard(self,y):
+    #TODO
     return (y-self.mean)/self.range
 
   def probWeight(self,x):
+    #TODO
     return 0.5/self.range
 
   def setDist(self,args,verbose=1):
-    if len(args) not in [2,4]:
-      raise IOError('Tried to instantiate a Beta dist with bad arguments:'+str(args))
-    self.alpha=float(args[0])
-    self.beta=float(args[1])
-    if len(args)==4: #standard location,scale
-      self.low=args[2]
-      self.hi=[3]
-    else:
-      self.low=0
-      self.hi=1
-    self.loc=0.5*(self.low+self.hi)
-    self.scale=0.5*(self.hi-self.low)
-    self.mean=self.loc+self.scale*(self.alpha/(self.alpha+self.beta))
-
-    if len(args)==1:
-      self.mean=float(args[0])
-      frac=0.3
-      low=(1.0-frac)*self.mean
-      self.range = frac*self.mean
-    elif len(args)==2:
-      self.mean=float(args[0])
-      self.range=float(args[1])
-      low=self.mean-self.range
-    else:
-      print 'ERROR Unrecognized input arguments for',self.name,':',args
-      sys.exit()
-    if verbose:
-      print 'set var',self.path,'type,mean,range:',
-      print self.distName,self.mean,self.range
-    expr='self.dist=dists.uniform(loc='+str(low)+',scale='+str(2.0*self.range)+')'
+    if len(args) not in [3]:
+      raise IOError('Tried to instantiate a Beta dist with bad arguments:'+str(args)+'\nNeed center,range,variance')
+    self.center=float(args[0])
+    self.hrange=float(args[1])
+    self.var=float(args[2])
+    self.low=self.center-self.hrange
+    self.hi=self.center+self.hrange
+    #calculate alpha given low, full range, variance
+    alpha = (2.0*self.hrange)**2/(8.0*self.var)-0.5
+    expr='self.dist=dists.beta(%i, %i, loc=%f, scale=%f)'\
+        %(alpha,alpha,self.low,2*self.hrange)
     exec expr
     print 'Value range (.9999 confidence):',self.dist.interval(0.9999)
-    self.expval = self.dist.mean()
-    self.secondmom = 0.5*(low*low + (self.mean+self.range)**2)
 
   def setQuadrature(self,maxOrder,verbose=False):
-    super(Uniform,self).setQuadrature(maxOrder)
-    pts,wts = quads.p_roots(self.quadOrd)
+    super(Beta,self).setQuadrature(maxOrder)
+    pts,wts = quads.j_roots(self.quadOrd,self.alpha,self.alpha)
     self.pts=self.convertToActual(pts)
     for w,wt in enumerate(wts):
+      #TODO
       wts[w]=wt/(2.*self.range)
     self.wts=wts
 
   def evalNormPoly(self,x,n):
+    #TODO
     norm = 1.0/np.sqrt(2.0/(2.0*float(n)+1.0))
     return norm*polys.eval_legendre(n,x)
 
   def oneDPoly(self,n):
+    #TODO
     norm = 1.0/np.sqrt(2.0/(2.0*float(n)+1.0))
     return np.poly1d(norm*polys.legendre(n))
 

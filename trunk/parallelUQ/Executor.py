@@ -189,62 +189,62 @@ class Executor(object): #base class
     soln = self.ie.storeOutput(runDict['outFileName'])
     return soln
 
-  def makePDF(self,P,M,bounds):
-    for n,sln in enumerate(self.histories['soln']):
-      print self.histories['varVals'][n],'|',sln
-    print 'Creating PDF by MC sample of ROM...'
-    print '...using %i processors...' %P
-    print '...using %i bins from %1.3e to %1.3e...' \
-                             %(len(bounds)-1,bounds[0],bounds[-1])
-    total_runs_finished = 0
-    total_runs_started = 0
-    self.pdfque = que()
-    procs=[]
-    bad=[0,0] #discarded solns
-    rge=[1e14,-1e14]
-    bins=np.zeros(len(bounds)-1)
-    print 'Runs Started / Finished'
-    while total_runs_finished < M:
-      #collect finished solutions
-      for p,proc in enumerate(procs):
-        if not proc.is_alive():
-          proc.join()
-          del procs[p]
-          while not self.pdfque.empty():
-            newbins,newlow,newhi,newmin,newmax = list(self.pdfque.get())
-            total_runs_finished+=len(newbins)
-            bins+=newbins
-            bad[0]+=newlow
-            bad[1]+=newhi
-            rge[0]=min(rge[0],newmin)
-            rge[1]=max(rge[1],newmax)
-            print '%i / %i' %(total_runs_started,total_runs_finished),'\r',
-      #queue new runs
-      if total_runs_started < M:
-        runs_left = M - total_runs_started
-        while len(procs)<P and runs_left > 0:
-          if runs_left > 10: #TODO make this an input
-            new_runs = 10
-          else: new_runs = runs_left
-          runs_left -= new_runs
-          total_runs_started+=new_runs
-          procs.append(multiprocessing.Process(
-            target = self.runPDFSample, args=(new_runs,bounds)))
-          procs[-1].start()
-    print '\n'
-    #normalize results
-    Mgood = M - bad[0] - bad[1]
-    for b,bn in enumerate(bins):
-      bins[b] = bn/Mgood
-    #printout
-    print 'Range of solutions: %1.3e -> %1.3e' %(rge[0],rge[1])
-    #plot it
-    #centers = 0.5*(bounds[:-1]+bounds[1:])
-    #plt.figure()
-    #plt.plot(centers,bins)
-    #plt.title('ROM PDF by MC, %i bins' %len(bins))
-    #plt.xlabel('Solution Value')
-    #plt.ylabel('Frequency')
+#  def makePDF(self,P,M,bounds):
+#    for n,sln in enumerate(self.histories['soln']):
+#      print self.histories['varVals'][n],'|',sln
+#    print 'Creating PDF by MC sample of ROM...'
+#    print '...using %i processors...' %P
+#    print '...using %i bins from %1.3e to %1.3e...' \
+#                             %(len(bounds)-1,bounds[0],bounds[-1])
+#    total_runs_finished = 0
+#    total_runs_started = 0
+#    self.pdfque = que()
+#    procs=[]
+#    bad=[0,0] #discarded solns
+#    rge=[1e14,-1e14]
+#    bins=np.zeros(len(bounds)-1)
+#    print 'Runs Started / Finished'
+#    while total_runs_finished < M:
+#      #collect finished solutions
+#      for p,proc in enumerate(procs):
+#        if not proc.is_alive():
+#          proc.join()
+#          del procs[p]
+#          while not self.pdfque.empty():
+#            newbins,newlow,newhi,newmin,newmax = list(self.pdfque.get())
+#            total_runs_finished+=len(newbins)
+#            bins+=newbins
+#            bad[0]+=newlow
+#            bad[1]+=newhi
+#            rge[0]=min(rge[0],newmin)
+#            rge[1]=max(rge[1],newmax)
+#            print '%i / %i' %(total_runs_started,total_runs_finished),'\r',
+#      #queue new runs
+#      if total_runs_started < M:
+#        runs_left = M - total_runs_started
+#        while len(procs)<P and runs_left > 0:
+#          if runs_left > 10: #TODO make this an input
+#            new_runs = 10
+#          else: new_runs = runs_left
+#          runs_left -= new_runs
+#          total_runs_started+=new_runs
+#          procs.append(multiprocessing.Process(
+#            target = self.runPDFSample, args=(new_runs,bounds)))
+#          procs[-1].start()
+#    print '\n'
+#    #normalize results
+#    Mgood = M - bad[0] - bad[1]
+#    for b,bn in enumerate(bins):
+#      bins[b] = bn/Mgood
+#    #printout
+#    print 'Range of solutions: %1.3e -> %1.3e' %(rge[0],rge[1])
+#    #plot it
+#    #centers = 0.5*(bounds[:-1]+bounds[1:])
+#    #plt.figure()
+#    #plt.plot(centers,bins)
+#    #plt.title('ROM PDF by MC, %i bins' %len(bins))
+#    #plt.xlabel('Solution Value')
+#    #plt.ylabel('Frequency')
 
   def runPDFSample(self,M,bounds):
     np.random.seed()
@@ -344,6 +344,10 @@ class SC(Executor):
         print '(%i pct complete)' %(int(100.*(e+1)/len(grid))),
         print '(%i duplicates)' %(e+1-numsamp),'\r',
     #exit()
+    #TODO DEBUG
+    #for pt in run_samples['quadpts']:
+      #print 'quad pts,wts: (%1.4e), %1.4e' %(pt[0],run_samples['weights'][pt])
+    #print 'sum wts:',sum(run_samples['weights'].values())
     print '...constructing sampler...'
     self.sampler = spr.StochasticPoly(self.varDict,
                                       run_samples)
@@ -376,8 +380,10 @@ class SC(Executor):
     name = self.case+'.moments'
     outFile = file(name,'a')
     outFile.writelines('\nMoments\nN,mean,var\n')
+    expv='%1.16e' %mean
+    svar='%1.16e' %var
     outFile.writelines(','.join([str(self.numquadpts),
-      str(mean),str(var)])+'\n')
+      expv,svar])+'\n')
     outFile.close()
     if self.done:
       print '\n'

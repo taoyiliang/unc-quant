@@ -41,7 +41,7 @@ class Driver(object):
     elapsed=time.time()-self.starttime
     print 'Driver run time:',elapsed,'sec'
     print '\nStarting postprocessing...'
-    makePDF = self.input_file('Backends/makePDF',0)
+    makePDF = self.input_file('Backend/makePDF',0)
     if makePDF:
       print '...sampling ROM...'
       numSamples = self.input_file('Backends/PDFsamples',-1)
@@ -56,7 +56,9 @@ class Driver(object):
     if 'SC' in self.ex.case:
       self.ex.ROMmoment(1)
       self.ex.ROMmoment(2)
-    self.ex.writeOut()
+    writeStuff=bool(self.input_file('Backend/writeOut',0))
+    if writeStuff:
+      self.ex.writeOut()
 
     show()
     print '\nDriver complete.\n'

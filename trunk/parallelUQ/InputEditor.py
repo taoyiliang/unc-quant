@@ -132,10 +132,10 @@ class IE_Source(InputEditor):
       expr+=vname+'='+str(self.varVals[v])+','
     expr+='N='+str(self.d)+')'
     exec expr
-    norm=np.sqrt(1./len(soln)*sum(soln**2))
-    print 'soln',norm
-    #self.out=norm #soln[64]
-    self.out=soln[64]
+    #norm=np.sqrt(1./len(soln)*sum(soln**2))
+    #print 'soln',norm
+    i = (len(soln)-1)/4
+    self.out=soln[i]
 
 class IE_OldSource(InputEditor):
   def __init__(self,runpath=''):

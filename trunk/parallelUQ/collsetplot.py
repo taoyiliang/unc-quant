@@ -23,7 +23,12 @@ for i in range(5):
   for pt in pts:
     fx.append(pt[0])
     fy.append(pt[1])
+plt.subplot(1,2,1)
+plt.axis([-1,1,-1,1])
 plt.plot(fx,fy,'kx',markersize=8)
+plt.title('Tensor Product (%i points)' %53)
+
+plt.subplot(1,2,2)
 
 SG = sq.BasicSparse(2,4,iset,quadrule,varlist)
 SG=np.array(SG)
@@ -37,8 +42,11 @@ for pt in pts:
   xs.append(pt[0])
   ys.append(pt[1])
 
-plt.plot(xs,ys,'ko',mfc='None',markersize=8)
+plt.plot(xs,ys,'kx',mfc='None',markersize=8)
+plt.title('Isotropic Sparse Grid (%i points)' %17)
+
 plt.axis([-1,1,-1,1])
+
 plt.show()
 
 
