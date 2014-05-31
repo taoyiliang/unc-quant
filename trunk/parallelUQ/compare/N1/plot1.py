@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def addPlot(title,lbl,ref=None):
+def addPlot(title,lbl,ref=None,r=1):
   inFile = file(title,'r')
 
   entries=[]
@@ -34,16 +34,17 @@ def addPlot(title,lbl,ref=None):
   for e in errs:
     print e
   errs=zip(*errs)
-  plt.loglog(errs[0],errs[1],'-o',label=lbl)
+  plt.loglog(errs[0],errs[r],'-o',label=lbl)
 
 
 
 
 if __name__=='__main__':
-  title = 'HC_h5_iso.moments'
-  addPlot(title,'')
+  title = 'HC_h3_iso.moments'
+  r=2
+  addPlot(title,'',r=r)
   plt.xlabel('Number of Solves')
   plt.ylabel('Error')
-  plt.title('h1, Mean')
+  plt.title('h1, Moment %i' %r)
   plt.show()
 

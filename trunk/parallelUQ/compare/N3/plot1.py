@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def addPlot(title,lbl,ref=None):
+def addPlot(title,lbl,ref=None,r=1):
   inFile = file(title,'r')
 
   entries=[]
   for line in inFile:
-    if line=='\n' or line.startswith('Moments') or line.startswith('N,'):
+    if line=='\n' or line.startswith('Moments') or line.startswith('N,') or line.startswith('#'):
       continue
     entries.append([])
     vals=line.strip().split(',')
@@ -31,19 +31,20 @@ def addPlot(title,lbl,ref=None):
   #  print e
   errs=errs[errs[:,0].argsort()]
 #  print '\n\n'
-  for e in errs:
-    print e
+#  for e in errs:
+#    print e
   errs=zip(*errs)
-  plt.loglog(errs[0],errs[1],'-o',label=lbl)
+  plt.loglog(errs[0],errs[r],'-x',label=lbl+', r=%i' %r)
 
 
 
 
 if __name__=='__main__':
-  title = 'HC_h3_iso.moments'
+  title = 'HC_h5_iso.moments'
   addPlot(title,'')
   plt.xlabel('Number of Solves')
   plt.ylabel('Error')
   plt.title('h1, Mean')
+  plt.legend()
   plt.show()
 

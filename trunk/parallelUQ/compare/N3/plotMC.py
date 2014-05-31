@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def addPlot(title,lbl,ref=None):
+def addPlot(title,lbl,ref=None,r=1):
   inFile = file(title,'r')
 
   entries=[]
@@ -34,7 +34,7 @@ def addPlot(title,lbl,ref=None):
 #  for e in errs:
 #    print e
   errs=zip(*errs)
-  plt.loglog(errs[0],errs[1],'-',label=lbl)
+  plt.loglog(errs[0],errs[r],'-',label=lbl+',r=%i' %r)
 
 
 
