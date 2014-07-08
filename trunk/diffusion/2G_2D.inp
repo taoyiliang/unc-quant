@@ -12,8 +12,8 @@
             5 5 5 5 5 5 5 5 5 5 5' 
   nXregs = 11
   nYregs = 11
-  nx_per_reg = 3
-  ny_per_reg = 3
+  nx_per_reg = 5
+  ny_per_reg = 5
   sq_per_side = 11
 #  len_side = 15 #cm, 165 cm total
   len_Xside = 15 #cm, 165 cm total
@@ -136,7 +136,7 @@
 [Execution]
   execution_type = NCA
 
-  keff_tol = 1e-6
+  keff_tol = 1e-10
   max_power_its = 10000
   max_nca_its = 1000
   max_nda_its = 10
