@@ -5,27 +5,27 @@
   execDir      = '../simple/'
   inputDir     = '../simple/'
   input_editor = 'IE_Double'
-  numprocs     = 4
+  numprocs     = 2
+  mesh_factor  = 1
 []
 
 [Sampler]
-  active = 'SC'
   [./SC]
     indexSet = HC
-    expOrd = 2
+    expOrd = 1
     quadrule = single
   [../]
   [./MC]
+    maxSamples = 10000
+    writeSamples = 1
+    loadSamples = 0
   [../]
 []
 
-[Backends]
+[Backend]
   makePDF = 0
-  [./PDF]
-    bins = 100
-    min = 2
-    max = 12
-  [../]
+  outLabel = 'simple'
+  writeOut = 1
 []
 
 [Variables]

@@ -53,9 +53,10 @@ class Driver(object):
     #TODO DEBUG
     #samp = self.ex.ROM([1.,1.])
     #print 'sparseU(1,1) =',samp
-    if 'SC' in self.ex.case:
-      self.ex.ROMmoment(1)
-      self.ex.ROMmoment(2)
+    #if 'SC' in self.ex.case:
+    #  self.ex.ROMmoment(1)
+    #  self.ex.ROMmoment(2)
+    #self.ex.ROMpdf(M=1e5)
     writeStuff=bool(self.input_file('Backend/writeOut',0))
     if writeStuff:
       self.ex.writeOut()

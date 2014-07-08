@@ -6,23 +6,24 @@ from scipy.misc import factorial
 from math import ceil
 import sys
 
-def VariableFactory(vartype,name='x',path='dudpath'):
+def VariableFactory(vartype,name='x',path='dudpath',impwt=1.0):
   types=['uniform','normal','lognormal']
   if vartype not in types:
     print 'ERROR: variable type',vartype,'not recognized for variable',path
     sys.exit()
   if vartype == 'uniform':
-    newvar = Uniform(name,path)
+    newvar = Uniform(name,path,impwt)
   elif vartype == 'normal':
-    newvar = Normal(name,path)
+    newvar = Normal(name,path,impwt)
   elif vartype == 'lognormal':
-    newvar = Lognormal(name,path)
+    newvar = Lognormal(name,path,impwt)
   return newvar
 
 class Variable(object):
-  def __init__(self,name,path):
+  def __init__(self,name,path,impwt):
     self.name=name
     self.path=path
+    self.impwt=impwt
 
   def setDist(self,args):
     print 'ERROR no setDist method for',self.distName,'var',self.path
@@ -45,8 +46,8 @@ class Variable(object):
     #pts = self.convertToActual(pts)
     prod=1
     for m,pt in enumerate(pts):
-      if not abs(pt-jpt)<1e-12:
-        print '  lagrange_entry',x,'-',pt,'/',jpt,'-',pt
+      if not abs(pt-jpt)<1e-13:
+        #print '  lagrange_entry',x,'-',pt,'/',jpt,'-',pt
         newprod= (x-pt)/(jpt-pt)
         #print '  prod:',newprod
         prod*=newprod
@@ -57,8 +58,8 @@ class Variable(object):
 
 
 class Uniform(Variable):
-  def __init__(self,name,path):
-    super(Uniform,self).__init__(name,path)
+  def __init__(self,name,path,impwt):
+    super(Uniform,self).__init__(name,path,impwt)
     self.distName='uniform'
 
   def convertToActual(self,x):
@@ -84,7 +85,7 @@ class Uniform(Variable):
       print 'ERROR Unrecognized input arguments for',self.name,':',args
       sys.exit()
     if verbose:
-      print 'set var',self.path,'type,mean,range:',
+      print '  set var',self.path,'type,mean,range:',
       print self.distName,self.mean,self.range
     expr='self.dist=dists.uniform(loc='+str(low)+',scale='+str(2.0*self.range)+')'
     exec expr
@@ -110,8 +111,8 @@ class Uniform(Variable):
 
 
 class Beta(Variable):
-  def __init__(self,name,path):
-    super(Uniform,self).__init__(name,path)
+  def __init__(self,name,path,impwt):
+    super(Uniform,self).__init__(name,path,impwt)
     self.distName='beta'
 
   def convertToActual(self,x):
@@ -167,8 +168,8 @@ class Beta(Variable):
 
 
 class Normal(Variable):
-  def __init__(self,name,path):
-    super(Normal,self).__init__(name,path)
+  def __init__(self,name,path,impwt):
+    super(Normal,self).__init__(name,path,impwt)
     self.distName='normal'
 
   def convertToActual(self,x):
@@ -205,7 +206,7 @@ class Normal(Variable):
     self.variance = self.stdev*self.stdev
     expr='self.dist=dists.norm('+str(self.mean)+','+str(self.stdev)+')'
     exec expr
-    print 'set var',self.path,
+    print '  set var',self.path,
     print 'type,mean,stdev:',self.distName,self.mean,self.stdev
     self.expval = self.dist.mean()
     self.secondmom = self.mean**2+self.stdev**2
@@ -244,8 +245,8 @@ class Normal(Variable):
 
 
 class Lognormal(Normal):
-  def __init__(self,name,path):
-    super(Lognormal,self).__init__(name,path)
+  def __init__(self,name,path,impwt):
+    super(Lognormal,self).__init__(name,path,impwt)
     self.distName='lognormal'
 
   def convertToActual(self,x):

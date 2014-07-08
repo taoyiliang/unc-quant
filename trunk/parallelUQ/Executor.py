@@ -20,6 +20,7 @@ import Samplers as spr
 import Backends as be
 import IndexSets
 import SparseQuads
+from tools import makePDF
 
 
 def ExecutorFactory(exec_type,inp_file):
@@ -51,7 +52,6 @@ class Executor(object): #base class
     print '...backends loaded...'
     self.clearInputs()
     print '...old inputs cleared...'
-    #TODO for MC only...
     try:
       self.runParallel()
     except KeyboardInterrupt:
@@ -97,7 +97,8 @@ class Executor(object): #base class
       args=self.input_file('Variables/'+var+'/args',' ').split(' ')
       for a,arg in enumerate(args):
         args[a]=float(arg)
-      self.varDict[var]=Variables.VariableFactory(dist,var,path)
+      impwt=self.input_file('Variables/'+var+'/weight',1.0)
+      self.varDict[var]=Variables.VariableFactory(dist,var,path,impwt)
       self.varDict[var].setDist(args)
 
   def setCase(self):
@@ -298,9 +299,13 @@ class SC(Executor):
     if self.expOrder==-1:
       print '...expansion order not set in Sampler/SC.  Using 2...'
       self.expOrder=2
+    impwts=[]
+    for var in self.varDict.values():
+      impwts.append(var.impwt)
     self.indexSet = IndexSets.IndexSetFactory(len(self.varDict.keys()),
                                               self.expOrder,
-                                              self.settype)
+                                              self.settype,
+                                              impwts)
     print '...%i expansion indices used...' %len(self.indexSet)
 
   def loadQuadSet(self):
@@ -315,6 +320,7 @@ class SC(Executor):
       rule='single'
     todo = 'quadrule='+rule
     exec todo
+    self.quadrule = quadrule
     #for i in self.indexSet:
     #  print 'index point:',i
     print '...constructing sparse grid...'
@@ -378,6 +384,7 @@ class SC(Executor):
     r2 = self.ROMmoment(2)
     var = r2 - mean*mean
     name = self.case+'.moments'
+    print '...writing to',name,'...'
     outFile = file(name,'a')
     outFile.writelines('\nMoments\nN,mean,var\n')
     expv='%1.16e' %mean
@@ -397,6 +404,13 @@ class SCExec(SC):
     inp = self.input_file('Backend/outLabel','')
     self.case = self.settype+'_h'+str(self.meshFactor)+'_'+inp
 
+  def finish(self):
+    #for i in range(1,7):
+    #  for j in range(1,7):
+    #    print i,j,self.ROMsample([i,j],verbose=True)
+    #self.ROMsample([1,1])
+    super(SC,self).finish()
+
   def ROMmoment(self,r):
     tot=0
     for s,soln in enumerate(self.histories['soln']):
@@ -405,39 +419,106 @@ class SCExec(SC):
     print 'moment %i:' %r,tot
     return tot
 
-  def ROM(self,xs):
-    #TODO this is a strange place for this, but idk where to do
-    #gather all the pts at which a variable has been evaluated
-    #TODO this is also wrong; need to use "equ. 2" to get sparse
-    varvals = []
-    for i in self.histories['varVals'][0]:
-      varvals.append([])
-    for run in self.histories['varVals']:
-      for v,val in enumerate(run):
-        if val not in varvals[v]:
-          varvals[v].append(val)
-    for e,entry in enumerate(varvals):
-      print 'Y_%i quad pts:' %e,entry
+  def ROMpdf(self,M=1000,bins=50):
+    procs=[]
+    self.done=False
+    starthist=0
+    endhist = 0
+    samples=[]
+    batch = min(1000,int(float(M)/self.numprocs))
+    self.romq=que()
+    while not self.done:
+      for p,proc in enumerate(procs):
+        if not proc.is_alive():
+          proc.join()
+          while not self.romq.empty():
+            new = self.romq.get()
+            samples += new
+            endhist+=len(new)
+            print '...ROMpdf',100*endhist/M,'% finished...           \r',
+          del procs[p]
+      if endhist >= M:
+        self.done = True
+      else:
+        while len(procs)<self.numprocs and starthist<M:
+          if starthist+batch<=M: m = batch
+          else: m = M-starthist
+          procs.append(multiprocessing.Process(target=self.ROMbatch,args=[m]))
+          procs[-1].start()
+          starthist+=m
+    bins,ctrs = makePDF(samples,bins=bins)
+    name = self.case+'.ROMpdf'
+    print '...writing to',name,'...'
+    outFile = file(name,'a')
+    outFile.writelines('\nN,ctrs,bins\n')
+    outFile.writelines('N:'+str(len(self.histories['soln']))+'\n')
+    outFile.writelines('ctrs:'+str(ctrs)+'\n')
+    outFile.writelines('bins:'+str(bins)+'\n')
+    outFile.close()
+    #plt.plot(ctrs,bins)
+    #plt.title('ROM pdf')
+    #plt.show()
+
+  def ROMbatch(self,M):
+    np.random.seed()
+    varlist = self.varDict
+    samples=np.zeros(M)
+    for m in range(int(M)):
+      vals=np.zeros(len(varlist))
+      for v,var in enumerate(varlist.values()):
+        vals[v]=var.sample()
+      samples[m]=self.ROMsample(vals)
+    self.romq.put(list(samples))
+
+
+  def ROMsample(self,xs,verbose=False):
+    varlist = self.varDict
 
     tot=0
-    for j in range(self.numquadpts):
-      evalpts = self.histories['varVals'][j]
-      print 'k: %i, Y^(k):' %j,evalpts
-      prod=1
-      for v,var in enumerate(self.histories['vars']):
-        print 'n: %1i, varname:' %(v+1),var.name
-        polyeval = var.lagrange(evalpts[v],xs[v],varvals[v])
-        prod*=polyeval
-        print '  L_k%1i:' %v,polyeval
-      print 'barL:',prod
-      sln = self.histories['soln'][j]
-      print 'u:',sln
-      print 'u*barL:',sln*prod
-      tot+=sln*prod
-      print ''
+    N=len(varlist)
+    #get coefficients, index points
+    cofs = np.array(SparseQuads.makeCoeffs(N,self.indexSet,False))
+    idxs = np.array(self.indexSet)
+    survive = np.nonzero(cofs!=0)
+    cofs=cofs[survive]
+    idxs=idxs[survive]
+    #for each idx point j, get little tensor product
+    for j,cof in enumerate(cofs):
+      idx = idxs[j]
+      m = self.quadrule(idx)+1 #TODO quadrule
+      new = SparseQuads.tensorGrid(N,m,varlist,idx)
+      pts = np.array(new[0])
+      #evaulate Lagrange product for each ordinate
+      if verbose:
+        print 'idx:',idx
+        print 'cof:',cof
+        print 'pts:',pts
+      tptot = 0
+      for pt in pts:
+        pt = tuple(np.around(pt,decimals=15))
+        #print self.histories['varVals']
+        slnidx = self.histories['varVals'].index(list(pt))
+        soln = self.histories['soln'][slnidx]
+        if verbose:
+          print '  pt:',pt
+          print '  soln:',soln
+        prod = 1
+        for v,var in enumerate(varlist.values()):
+          varpts = pts[:,v]
+          polyeval = var.lagrange(pt[v],xs[v],varpts)
+          prod*=polyeval
+          if verbose:
+            print '    var',varlist.keys()[v],' poly:',polyeval
+        if verbose:
+          print '  prod:',prod
+          print '  prod*soln:',prod*soln
+        tptot+=prod*soln
+      if verbose:
+        print 'tptot*cof:',tptot*cof,'\n'
+      tot+=tptot*cof
+    if verbose:
+      print 'romsample',xs,'total:',tot
     return tot
-
-
 
 #####################################################
 #####################################################
@@ -530,6 +611,7 @@ class MC(Executor):
 
   def writeOut(self):
     name = self.case+'.moments'
+    print '...writing to',name,'...'
     outFile = file(name,'a')
     outFile.writelines('\nMoments\nN,mean,var\n')
     outFile.writelines(','.join(

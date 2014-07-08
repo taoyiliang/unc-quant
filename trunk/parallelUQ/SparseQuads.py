@@ -5,6 +5,8 @@ def BasicSparse(N,L,indexset,quadrule,varlist):
   c=np.array(makeCoeffs(N,indexset))
   indexset=np.array(indexset)
   survive=np.nonzero(c!=0)
+  #for i in range(len(indexset)):
+  #  print indexset[i],c[i]
   #print 'pre-c',c#indexset
   c=c[survive]
   indexset=indexset[survive]
@@ -27,7 +29,7 @@ def BasicSparse(N,L,indexset,quadrule,varlist):
   #print '\n\n'
   return SG
 
-def makeCoeffs(N,indexset):
+def makeCoeffs(N,indexset,verbose=True):
   NI=len(indexset)
   c=np.zeros(NI)
   #set up index set as iset
@@ -43,14 +45,16 @@ def makeCoeffs(N,indexset):
     sets.append(zerone)
   jset=list(allcombos(*sets))
   #jset=np.array(jset)
-  #for j,entry in enumerate(jset):
-  #  jset[j]=np.array(entry)
-  print '\n\nmaking coeffs...'
+  for j,entry in enumerate(jset):
+    jset[j]=np.array(entry)
+  if verbose:
+    print '\n\nmaking coeffs...'
+  #TODO this is really slow.
   for i,ix in enumerate(iset):
     #print '  i:',i,ix
     ix=np.array(ix)
     for j,jx in enumerate(jset):
-      jx=np.array(jx)
+      #jx=np.array(jx)
       #print '    j:',j,jx
       comb = tuple(jx+ix)
       #print '  i,j,ix+jx',ix,jx,comb,comb in iset,

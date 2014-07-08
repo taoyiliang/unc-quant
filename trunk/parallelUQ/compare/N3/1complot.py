@@ -19,8 +19,8 @@ for h in HCs:
   addPlot(h,'HC_iso',ref=ref)#+h.split('.')[0].split('_')[1],ref=ref)
 for h in TDs:
   addPlot(h,'TD_iso',ref=ref)#+h.split('.')[0].split('_')[1],ref=ref)
-for h in ans:
-  addPlot(h,h.split('_')[0]+'_aniso',ref=ref)#+h.split('.')[0].split('_')[1],ref=ref)
+#for h in ans:
+#  addPlot(h,h.split('_')[0]+'_aniso',ref=ref)#+h.split('.')[0].split('_')[1],ref=ref)
 pltMC(MC,'MC',ref=ref)
 
 xs=np.linspace(2,32000,3)
@@ -34,5 +34,5 @@ plt.title(r'Error in $k$; $N$=3, $h\sim$0.018')
 plt.xlabel(r'PDE Solves $\eta$')
 plt.ylabel('Rel. Error')
 plt.legend(loc=3)
-plt.axis([10,1e4,1e-9,1e-2])
+plt.axis([10,1e4,1e-8,1e-2])
 plt.show()

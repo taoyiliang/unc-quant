@@ -41,9 +41,9 @@ def addPlot(title,lbl,ref=None):
 
 
 if __name__=='__main__':
-  title = 'HC_h5_iso.moments'
+  title = 'HC_h5_aniso.moments'
   fitx=np.linspace(1,10000,10)
-  scale=1e-4
+  scale=1e-3
   fit2=scale*fitx**(-2.)
   fit3=scale*fitx**(-3.)
   fit4=scale*fitx**(-4.)
@@ -57,5 +57,6 @@ if __name__=='__main__':
   plt.xlabel('Number of Solves')
   plt.ylabel('Error')
   plt.title('h1, Mean')
+  plt.axis([0,10000,1e-9,1e-4])
   plt.show()
 

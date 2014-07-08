@@ -8,7 +8,6 @@ from itertools import product as allcombos
 def quadrule(x):
   return x
 
-iset = isets.IndexSetFactory(2,4,'HC')
 
 varlist={}
 varlist[1]=v.VariableFactory('uniform')
@@ -23,13 +22,15 @@ for i in range(5):
   for pt in pts:
     fx.append(pt[0])
     fy.append(pt[1])
-plt.subplot(1,2,1)
+
+plt.subplot(1,3,1)
 plt.axis([-1,1,-1,1])
 plt.plot(fx,fy,'kx',markersize=8)
 plt.title('Tensor Product (%i points)' %53)
 
-plt.subplot(1,2,2)
+plt.subplot(1,3,2)
 
+iset = isets.IndexSetFactory(2,4,'TD')
 SG = sq.BasicSparse(2,4,iset,quadrule,varlist)
 SG=np.array(SG)
 pts=SG[:,0]
@@ -43,8 +44,27 @@ for pt in pts:
   ys.append(pt[1])
 
 plt.plot(xs,ys,'kx',mfc='None',markersize=8)
-plt.title('Isotropic Sparse Grid (%i points)' %17)
+plt.title('Isotropic TD (%i points)' %51)
+plt.axis([-1,1,-1,1])
 
+
+plt.subplot(1,3,3)
+
+iset = isets.IndexSetFactory(2,4,'HC')
+SG = sq.BasicSparse(2,4,iset,quadrule,varlist)
+SG=np.array(SG)
+pts=SG[:,0]
+for p,pt in enumerate(pts):
+  pts[p]=np.array(list(pt))
+pts=np.array(pts)
+xs=[]
+ys=[]
+for pt in pts:
+  xs.append(pt[0])
+  ys.append(pt[1])
+
+plt.plot(xs,ys,'kx',mfc='None',markersize=8)
+plt.title('Isotropic HC (%i points)' %17)
 plt.axis([-1,1,-1,1])
 
 plt.show()

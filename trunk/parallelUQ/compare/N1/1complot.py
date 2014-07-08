@@ -3,7 +3,7 @@ from plotMC import addPlot as pltMC
 import matplotlib.pyplot as plt
 import numpy as np
 
-MC = 'MC_h5_iso.samples'
+MC = 'MC_h5_N1_iso.samples'
 HCs = ['HC_h5_iso.moments']
 #HCs = ['HC_h1_iso.moments',
 #       'HC_h3_iso.moments',
