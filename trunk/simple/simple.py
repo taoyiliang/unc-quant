@@ -12,6 +12,9 @@ def f(x,y):
   return x+y
   #return x*(1.+y)
 
+def h(v):
+  return np.exp(-np.sum(v))
+
 cl = GetPot(sys.argv)
 if cl.search('-i'):
   inpFileName = ''

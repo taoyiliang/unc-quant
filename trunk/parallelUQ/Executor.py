@@ -13,6 +13,7 @@ import numpy as np
 import scipy.stats as stt
 import matplotlib.pyplot as plt
 from GetPot import GetPot
+from memory_profiler import profile
 
 import InputEditor
 import Variables
@@ -95,7 +96,9 @@ class Executor(object): #base class
       path=self.input_file('Variables/'+var+'/path',' ')
       dist=self.input_file('Variables/'+var+'/dist',' ')
       args=self.input_file('Variables/'+var+'/args',' ').split(' ')
+      #print 'current:',var
       for a,arg in enumerate(args):
+        #print " ",a,arg
         args[a]=float(arg)
       impwt=self.input_file('Variables/'+var+'/weight',1.0)
       self.varDict[var]=Variables.VariableFactory(dist,var,path,impwt)
@@ -117,6 +120,7 @@ class Executor(object): #base class
     if not fail:
       print '...successfully cleared old input files.'
 
+  #@profile
   def runParallel(self):
     wantprocs = self.input_file('Problem/numprocs',1)
     self.numprocs = min(wantprocs,multiprocessing.cpu_count())
@@ -325,7 +329,10 @@ class SC(Executor):
     #for i in self.indexSet:
     #  print 'index point:',i
     print '...constructing sparse grid...'
-    grid = SparseQuads.BasicSparse(len(self.varDict.keys()),
+    wantprocs = self.input_file('Problem/numprocs',1)
+    self.numprocs = min(wantprocs,multiprocessing.cpu_count())
+    grid = SparseQuads.parBasicSparse(self.numprocs,
+                                   len(self.varDict.keys()),
                                    self.expOrder,
                                    self.indexSet,
                                    quadrule,

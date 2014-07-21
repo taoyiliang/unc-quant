@@ -112,7 +112,7 @@ class Uniform(Variable):
 
 class Beta(Variable):
   def __init__(self,name,path,impwt):
-    super(Uniform,self).__init__(name,path,impwt)
+    super(Beta,self).__init__(name,path,impwt)
     self.distName='beta'
 
   def convertToActual(self,x):
@@ -127,28 +127,43 @@ class Beta(Variable):
     #TODO
     return 0.5/self.range
 
-  def setDist(self,args,verbose=1):
-    if len(args) not in [3]:
-      raise IOError('Tried to instantiate a Beta dist with bad arguments:'+str(args)+'\nNeed center,range,variance')
-    self.center=float(args[0])
-    self.hrange=float(args[1])
-    self.var=float(args[2])
-    self.low=self.center-self.hrange
-    self.hi=self.center+self.hrange
+  def uniformlike(self,low,hi):
+    alpha=1
+    beta=alpha
+    low=low
+    hrange=0.5*(hi-low)
+    self.setDist(alpha,beta,low,hrange)
+
+  def gausslike(self,center,var,hrange):
+    low=center-hrange
     #calculate alpha given low, full range, variance
-    alpha = (2.0*self.hrange)**2/(8.0*self.var)-0.5
+    alpha = (2.0*hrange)**2/(8.0*var)-0.5
+    beta=alpha
+    self.setDist(alpha,beta,low,hrange)
+
+  def setDist(self,alpha,beta,low,hrange,verbose=1):
+    self.alpha=alpha
+    self.beta=beta
+    self.low=low
+    self.hrange=hrange
+
+    self.center=low+hrange
+    self.hi=self.center+hrange
+    #calculate alpha given low, full range, variance
     expr='self.dist=dists.beta(%i, %i, loc=%f, scale=%f)'\
-        %(alpha,alpha,self.low,2*self.hrange)
+        %(alpha,beta,low,2*hrange)
     exec expr
+    print '  set var',self.path,'type,alpha,beta,low,range:',
+    print self.distName,self.alpha,self.beta,self.low,2*self.hrange
     print 'Value range (.9999 confidence):',self.dist.interval(0.9999)
 
   def setQuadrature(self,maxOrder,verbose=False):
     super(Beta,self).setQuadrature(maxOrder)
-    pts,wts = quads.j_roots(self.quadOrd,self.alpha,self.alpha)
+    pts,wts = quads.j_roots(self.quadOrd,self.alpha,self.beta)
     self.pts=self.convertToActual(pts)
     for w,wt in enumerate(wts):
       #TODO
-      wts[w]=wt/(2.*self.range)
+      wts[w]=wt/(2.*self.hrange)
     self.wts=wts
 
   def evalNormPoly(self,x,n):

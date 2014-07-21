@@ -1,13 +1,16 @@
 import os
 import sys
 
-runs=[0   ,2   ,4   ,8  ,
-      10  ,20  ,40  ,80 ,
-      100 ,200 ,400 ,800,
-      1000,2000,4000,8000,
-      10000]
+runs=[0,1,2,3,4,5,6,7,8]#,9,10,
+      #11,12,13,14,15]
 
-templateName = 'diffusion.unc'
+#runs=[0   ,2   ,4   ,8  ,
+#      10  ,20  ,40  ,80 ,
+#      100 ,200 ,400 ,800,
+#      1000,2000,4000,8000,
+#      10000]
+
+templateName = 'thirty.unc'
 for run in runs:
   #make new input
   procfile = file('processors.txt','r')

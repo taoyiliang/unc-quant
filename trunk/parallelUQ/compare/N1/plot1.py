@@ -31,10 +31,10 @@ def addPlot(title,lbl,ref=None,r=1):
   #  print e
   errs=errs[errs[:,0].argsort()]
 #  print '\n\n'
-  for e in errs:
-    print e
+  #for e in errs:
+  #  print e
   errs=zip(*errs)
-  plt.loglog(errs[0],errs[r],'-o',label=lbl)
+  plt.loglog(errs[0],errs[r],'-x',label=lbl)
 
 
 

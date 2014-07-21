@@ -104,6 +104,24 @@ class IE_Double(InputEditor):
     from simple import f
     self.out=f(self.y,self.x)
 
+class IE_Thirty(InputEditor):
+  def __init__(self,runpath=''):
+    self.type = 'InputOutput simple'
+    self.a=[]
+    self.out=0
+
+  def writeInput(self,templateName,inputDir,varList,valList,otherChange,ident):
+    self.a = valList
+    return 'dud'
+
+  def storeOutput(self,outFile):
+    return self.out
+
+  def runSolve(self,input_file):
+    sys.path.insert(0,os.getcwd())
+    from simple import h
+    self.out=h(self.a)
+
 class IE_Source(InputEditor):
   def __init__(self,runpath=''):
     self.type = 'InputOutput source'
