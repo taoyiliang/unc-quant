@@ -34,7 +34,8 @@ def addPlot(title,lbl,ref=None,r=1):
 #  for e in errs:
 #    print e
   errs=zip(*errs)
-  plt.loglog(errs[0],errs[r],'.',label=lbl)
+  plt.loglog(errs[0],errs[r],'k.',markersize=0.1,label=lbl)
+  return errs[0],errs[r]
 
 
 
