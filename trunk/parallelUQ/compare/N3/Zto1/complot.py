@@ -15,18 +15,18 @@ def plot(case,ref,r):
   x,y=pltMC(MC,'MC',ref=ref,r=r)
   xs.append(x)
   ys.append(y)
-  lbl.append('MC')
+  lbl.append('MC_'+case)
 
   for h in HCs:
     x,y=addPlot(h,'HC_iso',ref=ref,r=r)#+h.split('.')[0].split('_')[1],ref=ref)
     xs.append(x)
     ys.append(y)
-    lbl.append('HC_iso')
+    lbl.append('HC_iso_'+case)
   for h in TDs:
     x,y=addPlot(h,'TD_iso',ref=ref,r=r)#+h.split('.')[0].split('_')[1],ref=ref)
     xs.append(x)
     ys.append(y)
-    lbl.append('TD_iso')
+    lbl.append('TD_iso_'+case)
 
   pk.dump([xs,ys,lbl],file(case+'.pk','w'))
 
