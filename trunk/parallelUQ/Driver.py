@@ -51,8 +51,8 @@ class Driver(object):
       self.makePDF(numSamples)
 
     #TODO DEBUG
-    #samp = self.ex.ROM([1.,1.])
-    #print 'sparseU(1,1) =',samp
+    samp = self.ex.ROMsample([1.,1.],True)
+    print 'sparseU(1,1) =',samp
     #if 'SC' in self.ex.case:
     #  self.ex.ROMmoment(1)
     #  self.ex.ROMmoment(2)
