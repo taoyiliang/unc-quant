@@ -1,6 +1,6 @@
 [Problem]
- # executor       = SC
-  executor       = MC
+  executor       = SC
+ # executor       = MC
   templateFile   = '2G_2D.inp'
   storeFlux      = 0
   execDir        = '../diffusion/'
@@ -18,19 +18,20 @@
   [../]
   [./SC]
     indexSet = HC
-    expOrd = 6
+    expOrd = 0
     quadrule = single
   [../]
 []
 
 [Backend]
   makePDF = 0
-  outLabel = '1234244554'
+  outLabel = '1-1-2-2-4'
   writeOut = 1
 []
 
 [Variables]
-  names = '1xc2 1xf2 2xc2 2xf2 3xc2 3xf2 4xc2 4xf2 5D2 5xc2'
+  #names = '1xc2 1xf2 2xc2 2xf2 3xc2 3xf2 4xc2 4xf2 5D2 5xc2'
+  names = '1xc2 1xf2 4xc2 4xf2 5D2'
   #names = '1xc2 1xf2 4xf2'
   #names = '5D2'
   #names = '1xc2 1xf2'
@@ -46,7 +47,7 @@
     path = 'Material/1/g2/nsigf'
     dist = uniform
     args = '0.1091 0.011' #median, range def 10%
-    weight = 2
+    weight = 1
   [../]
 
   #MATERIAL 2
@@ -81,20 +82,20 @@
     path = 'Material/4/g2/nsigf'
     dist = uniform
     args = '0.1021 0.010' #median, range def 10%
-    weight = 4
+    weight = 2
   [../]
   [./4xc2]
     path = 'Material/4/g2/sigc'
     dist = uniform
     args = '0.04142 0.0041' #median, range def 10%
-    weight = 5
+    weight = 2
   [../]
 
   [./5D2]
     path = 'Material/5/g2/D'
     dist = uniform
     args = '0.1592 0.016' #median, range def 10%
-    weight = 5
+    weight = 4
   [../]
   [./5xc2]
     path = 'Material/5/g2/sigc'
