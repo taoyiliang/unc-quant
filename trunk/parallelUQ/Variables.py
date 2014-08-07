@@ -46,10 +46,12 @@ class Variable(object):
     #pts = self.convertToActual(pts)
     prod=1
     for m,pt in enumerate(pts):
+      #print '      pt,jpt',pt,jpt
       if not abs(pt-jpt)<1e-13:
-        #print '  lagrange_entry',x,'-',pt,'/',jpt,'-',pt
+        #print '      lagrange_entry',x,'-',pt,'/',jpt,'-',pt
+        #print '      lagrange_entry %1.2f-%1.2f / %1.2f-%1.2f' %(x,pt,jpt,pt)
         newprod= (x-pt)/(jpt-pt)
-        #print '  prod:',newprod
+        #print '        prod:',newprod
         prod*=newprod
       #else: print '  skipping',jpt,pt
     return prod

@@ -44,15 +44,15 @@ class Driver(object):
     makePDF = self.input_file('Backend/makePDF',0)
     if makePDF:
       print '...sampling ROM...'
-      numSamples = self.input_file('Backends/PDFsamples',-1)
+      numSamples = self.input_file('Backend/PDFsamples',-1)
       if numSamples==-1:
         print '...Backends/PDFsamples not found; using 1e4...'
         numSamples = int(1e4)
       self.makePDF(numSamples)
 
     #TODO DEBUG
-    samp = self.ex.ROMsample([1.,1.],True)
-    print 'sparseU(1,1) =',samp
+    #samp = self.ex.ROMsample([1.,1.],True)
+    #print 'sparseU(1,1) =',samp
     #if 'SC' in self.ex.case:
     #  self.ex.ROMmoment(1)
     #  self.ex.ROMmoment(2)
@@ -67,11 +67,11 @@ class Driver(object):
   def makePDF(self,M):
     wantprocs = self.input_file('Problem/numprocs',1)
     numprocs = min(wantprocs,multiprocessing.cpu_count())
-    nBins = self.input_file('Backends/PDF/bins',10)
-    binmin = self.input_file('Backends/PDF/min',-10)
-    binmax = self.input_file('Backends/PDF/max',10)
-    bins=np.linspace(binmin,binmax,nBins+1)
-    self.ex.makePDF(numprocs,M,bins)
+    nBins = self.input_file('Backend/PDF/bins',10)
+    binmin = self.input_file('Backend/PDF/min',-10)
+    binmax = self.input_file('Backend/PDF/max',10)
+    #bins=np.linspace(binmin,binmax,nBins+1)
+    self.ex.ROMpdf(M,nBins)
 
 
 if __name__=='__main__':

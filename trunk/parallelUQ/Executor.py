@@ -427,7 +427,7 @@ class SCExec(SC):
     print 'moment %i:' %r,tot
     return tot
 
-  def ROMpdf(self,M=1000,bins=50):
+  def ROMpdf(self,M=1000,nbins=50):
     procs=[]
     self.done=False
     starthist=0
@@ -454,15 +454,23 @@ class SCExec(SC):
           procs.append(multiprocessing.Process(target=self.ROMbatch,args=[m]))
           procs[-1].start()
           starthist+=m
-    bins,ctrs = makePDF(samples,bins=bins)
+    bins,ctrs = makePDF(samples,nbins)
     name = self.case+'.ROMpdf'
     print '...writing to',name,'...'
-    outFile = file(name,'a')
-    outFile.writelines('\nN,ctrs,bins\n')
-    outFile.writelines('N:'+str(len(self.histories['soln']))+'\n')
-    outFile.writelines('ctrs:'+str(ctrs)+'\n')
-    outFile.writelines('bins:'+str(bins)+'\n')
-    outFile.close()
+    #load existing data
+    try:
+      data=pk.load(file(name,'r'))
+    except IOError:
+      data=[]
+    #TODO dump output into pk file with [N,ctrs,bins]
+    data.append([len(self.histories['soln']),ctrs,bins])
+    pk.dump(data,file(name,'w'))
+    #outFile = file(name,'a')
+    #outFile.writelines('\nN,ctrs,bins\n')
+    #outFile.writelines('N:'+str(len(self.histories['soln']))+'\n')
+    #outFile.writelines('ctrs:'+str(ctrs)+'\n')
+    #outFile.writelines('bins:'+str(bins)+'\n')
+    #outFile.close()
     #plt.plot(ctrs,bins)
     #plt.title('ROM pdf')
     #plt.show()
@@ -501,6 +509,13 @@ class SCExec(SC):
         print 'idx:',idx
         print 'cof:',cof
         print 'pts:',pts
+      #get distinct points for each variable
+      pts_by_var = list([] for x in range(len(varlist.values())))
+      for pt in pts:
+        for v,var in enumerate(varlist.values()):
+          if pt[v] not in pts_by_var[v]:
+            pts_by_var[v].append(pt[v])
+      #do evaluations
       tptot = 0
       for pt in pts:
         pt = tuple(np.around(pt,decimals=15))
@@ -512,8 +527,9 @@ class SCExec(SC):
           print '  soln:',soln
         prod = 1
         for v,var in enumerate(varlist.values()):
-          varpts = pts[:,v]
-          polyeval = var.lagrange(pt[v],xs[v],varpts)
+          #varpts = pts[:,v]
+          #polyeval = var.lagrange(pt[v],xs[v],varpts)
+          polyeval = var.lagrange(pt[v],xs[v],pts_by_var[v])
           prod*=polyeval
           if verbose:
             print '    var',varlist.keys()[v],' poly:',polyeval

@@ -5,6 +5,7 @@ def makePDF(vals,bins=100):
     #print vals
     low = min(vals)
     hi = max(vals)
+    #print bins
     bounds = np.linspace(low,hi,bins+1)
     bins=np.zeros(int(bins))
     #make bin centers
@@ -18,6 +19,6 @@ def makePDF(vals,bins=100):
       i=bisect_left(bounds,v)
       bins[i-1]+=1
     #normalize
-    #for b in range(len(bins)):
-    #  bins[b]=float(bins[b])/float(len(vals))/widths[b]
+    for b in range(len(bins)):
+      bins[b]=float(bins[b])/float(len(vals))/widths[b]
     return bins,ctrs
