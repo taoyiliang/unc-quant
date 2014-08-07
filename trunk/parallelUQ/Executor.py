@@ -13,7 +13,7 @@ import numpy as np
 import scipy.stats as stt
 import matplotlib.pyplot as plt
 from GetPot import GetPot
-from memory_profiler import profile
+#from memory_profiler import profile
 
 import InputEditor
 import Variables
