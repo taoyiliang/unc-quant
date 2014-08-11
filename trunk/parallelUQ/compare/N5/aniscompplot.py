@@ -8,8 +8,8 @@ iso = 'HC_h5_N5_iso.moments'
 plots= [
         #'HC_h5_1-1-2-1-1.moments',
         'HC_h5_1-1-4-4-8.moments',
-        'HC_h5_1-1-2-2-4.moments']
-        #'HC_h5_8-8-4-4-1.moments']
+        'HC_h5_1-1-2-2-4.moments',
+        'HC_h5_4-4-2-2-1.moments']
 
 ref=[0,1.0013454858344246,1.8647257169268627e-04]
 
