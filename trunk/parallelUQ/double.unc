@@ -11,7 +11,7 @@
 
 [Sampler]
   [./SC]
-    indexSet = TD
+    indexSet = HC
     expOrd = 2
     quadrule = single
   [../]
@@ -23,9 +23,13 @@
 []
 
 [Backend]
-  makePDF = 0
+  makePDF = 1
+  PDFsamples=1e4
   outLabel = 'simple'
   writeOut = 1
+  [./PDF]
+    bins=50
+  [../]
 []
 
 [Variables]
