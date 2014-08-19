@@ -3,7 +3,7 @@ from itertools import product as allcombos
 from multiprocessing.queues import Queue as que
 import multiprocessing
 import scipy.weave as weave
-from memory_profiler import profile
+#from memory_profiler import profile
 
 def BasicSparse(N,L,indexset,quadrule,varlist):
   c=np.array(makeCoeffs(N,indexset))

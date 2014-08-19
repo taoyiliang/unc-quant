@@ -9,6 +9,10 @@
   mesh_factor  = 1
 []
 
+[HDMR]
+  level = 2
+[]
+
 [Sampler]
   [./SC]
     indexSet = HC

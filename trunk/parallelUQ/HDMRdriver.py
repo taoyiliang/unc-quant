@@ -1,12 +1,16 @@
-from matplotlib.pyplot import show
-import time
-import datetime as dt
 import os
 import sys
-from GetPot import GetPot
-import Executor as Exec
+import time
+import datetime as dt
 import multiprocessing
+from itertools import combinations as combos
+
 import numpy as np
+from GetPot import GetPot
+from matplotlib.pyplot import show
+
+import Executor as Exec
+import Variables
 
 class Driver(object):
   def __init__(self,argv):
@@ -14,11 +18,11 @@ class Driver(object):
     print '\nStarting HDMR UQ at',dt.datetime.fromtimestamp(self.starttime)
     self.loadInput(argv)
     self.loadVars()
-    self.finishUp()
+    self.setRuns()
+    #self.finishUp()
 
   def loadInput(self,argv):
     cl = GetPot(argv)
-    print argv
     if cl.search('-i'):
       self.unc_inp_file=cl.next('')
       print 'Selected uncertainty input',self.unc_inp_file,'...'
@@ -29,13 +33,49 @@ class Driver(object):
     else:
       raise IOError('Requires and input file using -i.')
     self.input_file = GetPot(Filename=self.unc_inp_file)
+    self.hdmr_level = self.input_file('HDMR/level',0)
+    if self.hdmr_level==0:
+      print 'HDMR level not specified.  Using 2...'
+      self.hdmr_level=2
 
   def loadVars(self):
-    #make a fake executor, just to make the variables
-    #  PROBLEM: this shouldn't actually run the executor!
-    self.ex_type = self.input_file('Problem/executor','not found')
-    print 'Loading executor',self.ex_type
-    self.ex=Exec.ExecutorFactory(self.ex_type,self.input_file)
+    print '\nLoading uncertain variables...'
+    uVars = self.input_file('Variables/names','').split(' ')
+    self.varDict={}
+    for var in uVars:
+      path = self.input_file('Variables/'+var+'/path',' ')
+      dist = self.input_file('Variables/'+var+'/dist',' ')
+      args = self.input_file('Variables/'+var+'/args',' ').split(' ')
+      for a,arg in enumerate(args):
+        args[a]=float(arg)
+      impwt = self.input_file('Variables/'+var+'/weight',1.0)
+      self.varDict[var]=Variables.VariableFactory(dist,var,path,impwt)
+      self.varDict[var].setDist(args)
+
+  def setRuns(self):
+    #set up the runs that we want to do
+    #singles
+    self.todo = {}
+    varnames = self.varDict.keys()
+    for i in range(1,self.hdmr_level+1):
+      new = self.addHDMRLevel(varnames,i)
+      for key,value in new.iteritems():
+        self.todo[key]=value
+    for key in self.todo.keys():
+      print key,self.todo[key]
+
+  def addHDMRLevel(self,varnames,lvl):
+    todo={}
+    nameset = combos(varnames,lvl)
+    for entry in nameset:
+      todo[entry]=[]
+      for e,ent in enumerate(entry):
+        todo[entry].append(self.varDict[ent])
+    return todo
+
+  def createROMs(self):
+   self.ROMs={}
+   #do reference problem TODO this assumes they left it mean in the first place
 
   def finishUp(self):
     elapsed=time.time()-self.starttime

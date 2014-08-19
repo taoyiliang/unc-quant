@@ -13,7 +13,7 @@ import numpy as np
 import scipy.stats as stt
 import matplotlib.pyplot as plt
 from GetPot import GetPot
-from memory_profiler import profile
+#from memory_profiler import profile
 
 import InputEditor
 import Variables
@@ -35,18 +35,17 @@ def ExecutorFactory(exec_type,inp_file):
   return ex
 
 class Executor(object): #base class
-  def __init__(self,inp_file):
+  def __init__(self,varDict,inp_file):
     '''Constructor'''
     print '\nInitializing Executor...'
     self.outq = que()
     self.input_file = inp_file
+    self.varDict = varDict
     #run
     self.loadInput()
     print '...input loaded...'
     self.setDirs()
     print '...directories set...'
-    self.loadVars()
-    print '...variables loaded...'
     self.loadSampler()
     print '...sampler loaded...'
     self.loadBackends()
@@ -86,23 +85,6 @@ class Executor(object): #base class
     os.chdir(self.inputDir)
     self.inputDir = os.getcwd()
     os.chdir(self.uncDir)
-
-
-  def loadVars(self):
-    print '\nLoading uncertain variables...'
-    uVars = self.input_file('Variables/names','').split(' ')
-    self.varDict={}
-    for var in uVars:
-      path=self.input_file('Variables/'+var+'/path',' ')
-      dist=self.input_file('Variables/'+var+'/dist',' ')
-      args=self.input_file('Variables/'+var+'/args',' ').split(' ')
-      #print 'current:',var
-      for a,arg in enumerate(args):
-        #print " ",a,arg
-        args[a]=float(arg)
-      impwt=self.input_file('Variables/'+var+'/weight',1.0)
-      self.varDict[var]=Variables.VariableFactory(dist,var,path,impwt)
-      self.varDict[var].setDist(args)
 
   def setCase(self):
     pass #overwritten

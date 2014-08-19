@@ -6,7 +6,7 @@
   execDir        = '../diffusion/'
   inputDir       = '../diffusion/'
   input_editor   = 'IE_Diffusion'
-  numprocs       = 2
+  numprocs       = 6
   mesh_factor    = 5
 []
 
@@ -18,22 +18,22 @@
   [../]
   [./SC]
     indexSet = TD
-    expOrd = 12
+    expOrd = 6000
     quadrule = single
   [../]
 []
 
 [Backend]
   makePDF = 0
-  outLabel = 'N3_iso'
+  outLabel = 'N1_iso'
   writeOut = 1
 []
 
 [Variables]
   #names = '1xc2 1xf2 2xc2 2xf2 3xc2 3xf2 4xc2 4xf2 5D2 5xc2'
   #names = '1xc2 1xf2 4xc2 4xf2 5D2'
-  names = '1xc2 1xf2 4xf2'
-  #names = '1xf2'
+  #names = '1xc2 1xf2 4xf2'
+  names = '1xf2'
   #names = '1xc2 1xf2'
 
   #MATERIAL 1
