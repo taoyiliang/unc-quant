@@ -14,8 +14,8 @@ def plotCompare(fnames):
   plt.legend(loc=3)
 
 if __name__=='__main__':
-  files=['h1_simple3.pk',
-         'h1_simple5.pk',
-         'h1_simple10.pk']
+  files=['h1_zsimple3.pk',
+         'h1_zsimple5.pk',
+         'h1_zsimple10.pk']
   plotCompare(files)
   plt.show()
