@@ -61,8 +61,16 @@ class Driver(object):
       new = self.addHDMRLevel(varnames,i)
       for key,value in new.iteritems():
         self.todo[key]=value
-    for key in self.todo.keys():
-      print key,self.todo[key]
+    for i in range(1,5):
+      print '\nSet',i
+      print list(x for x in self.getRunSet(i).keys())
+
+  def getRunSet(self,num):
+    ret={}
+    for key,value in self.todo.iteritems():
+      if len(key)==num:
+        ret[key]=value
+    return ret
 
   def addHDMRLevel(self,varnames,lvl):
     todo={}
@@ -74,8 +82,26 @@ class Driver(object):
     return todo
 
   def createROMs(self):
-   self.ROMs={}
-   #do reference problem TODO this assumes they left it mean in the first place
+    self.ROMs={}
+    ie = InputEditor.HDMR_IO()
+    #do reference problem TODO this assumes they left it mean in the first place
+    chlist,ident = self.makeCase({})
+    runfile = ie.writeInput(self.unc_inp_file,chlist,ident)
+    ex = Executor.ExecutorFactory('SC',{},runfile)
+    ex.run()
+    self.ROMs[ident]=ex.ROM
+    #END reference case
+
+  def createROMLevel(self,lvl,ie):
+    ROMs={}
+
+
+  def makeCase(chvars):
+    changelist={}
+    changelist['Variables/names']=' '.join(chvars.keys())
+    ident = 'hdmr'+'_'.join(chvars.keys())
+    changelist['Backend/outLabel']=ident
+    return changelist,ident
 
   def finishUp(self):
     elapsed=time.time()-self.starttime

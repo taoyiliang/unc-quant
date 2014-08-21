@@ -21,16 +21,17 @@ import Samplers as spr
 import Backends as be
 import IndexSets
 import SparseQuads
+import ROM
 from tools import makePDF
 
 
-def ExecutorFactory(exec_type,inp_file):
+def ExecutorFactory(exec_type,varlist,inp_file):
   oktypes=['PCESC','SC','MC','MLMC']
   if exec_type not in oktypes:
     msg = 'Desired exec type <'+exec_type+'> not recognized.'
     msg+= '\n    Options include '+str(oktypes)
     raise IOError(msg)
-  todo = 'ex = '+exec_type+'Exec(inp_file)'
+  todo = 'ex = '+exec_type+'Exec(varlist,inp_file)'
   exec todo
   return ex
 
@@ -41,7 +42,8 @@ class Executor(object): #base class
     self.outq = que()
     self.input_file = inp_file
     self.varDict = varDict
-    #run
+
+  def run(self):
     self.loadInput()
     print '...input loaded...'
     self.setDirs()
@@ -57,7 +59,7 @@ class Executor(object): #base class
     except KeyboardInterrupt:
       self.checkConverge(True)
     print '...parallel run complete...'
-    self.finish()
+    return self.finish()
 
   def loadInput(self):
     self.templateFile=self.input_file('Problem/templateFile','')
@@ -176,63 +178,6 @@ class Executor(object): #base class
     self.ie.runSolve(runDict['inp_file'])
     soln = self.ie.storeOutput(runDict['outFileName'])
     return soln
-
-#  def makePDF(self,P,M,bounds):
-#    for n,sln in enumerate(self.histories['soln']):
-#      print self.histories['varVals'][n],'|',sln
-#    print 'Creating PDF by MC sample of ROM...'
-#    print '...using %i processors...' %P
-#    print '...using %i bins from %1.3e to %1.3e...' \
-#                             %(len(bounds)-1,bounds[0],bounds[-1])
-#    total_runs_finished = 0
-#    total_runs_started = 0
-#    self.pdfque = que()
-#    procs=[]
-#    bad=[0,0] #discarded solns
-#    rge=[1e14,-1e14]
-#    bins=np.zeros(len(bounds)-1)
-#    print 'Runs Started / Finished'
-#    while total_runs_finished < M:
-#      #collect finished solutions
-#      for p,proc in enumerate(procs):
-#        if not proc.is_alive():
-#          proc.join()
-#          del procs[p]
-#          while not self.pdfque.empty():
-#            newbins,newlow,newhi,newmin,newmax = list(self.pdfque.get())
-#            total_runs_finished+=len(newbins)
-#            bins+=newbins
-#            bad[0]+=newlow
-#            bad[1]+=newhi
-#            rge[0]=min(rge[0],newmin)
-#            rge[1]=max(rge[1],newmax)
-#            print '%i / %i' %(total_runs_started,total_runs_finished),'\r',
-#      #queue new runs
-#      if total_runs_started < M:
-#        runs_left = M - total_runs_started
-#        while len(procs)<P and runs_left > 0:
-#          if runs_left > 10: #TODO make this an input
-#            new_runs = 10
-#          else: new_runs = runs_left
-#          runs_left -= new_runs
-#          total_runs_started+=new_runs
-#          procs.append(multiprocessing.Process(
-#            target = self.runPDFSample, args=(new_runs,bounds)))
-#          procs[-1].start()
-#    print '\n'
-#    #normalize results
-#    Mgood = M - bad[0] - bad[1]
-#    for b,bn in enumerate(bins):
-#      bins[b] = bn/Mgood
-#    #printout
-#    print 'Range of solutions: %1.3e -> %1.3e' %(rge[0],rge[1])
-#    #plot it
-#    #centers = 0.5*(bounds[:-1]+bounds[1:])
-#    #plt.figure()
-#    #plt.plot(centers,bins)
-#    #plt.title('ROM PDF by MC, %i bins' %len(bins))
-#    #plt.xlabel('Solution Value')
-#    #plt.ylabel('Frequency')
 
   def runPDFSample(self,M,bounds):
     np.random.seed()
@@ -395,10 +340,13 @@ class SCExec(SC):
     self.case = self.settype+'_h'+str(self.meshFactor)+'_'+inp
 
   def finish(self):
-    #for i in range(1,7):
-    #  for j in range(1,7):
-    #    print i,j,self.ROMsample([i,j],verbose=True)
-    #self.ROMsample([1,1])
+    self.ROM = ROM.LagrangeROM(self.histories['soln'],
+                               self.histories['solwt'],
+                               self.varDict,
+                               self.histories['varVals'],
+                               self.indexSet,
+                               self.quadrule,
+                               self.numprocs)
     super(SC,self).finish()
 
   def ROMmoment(self,r):

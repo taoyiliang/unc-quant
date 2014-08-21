@@ -203,3 +203,39 @@ class IE_Diffusion(InputEditor):
       print 'Run attempt failed with error code',osstat
       sys.exit()
     os.system('rm '+input_file)
+
+class HDMR_IO(InputEditor):
+  def __init__(self,path=''):
+    self.type = 'HDMR_IO_editor'
+
+  def writeInput(self,templateName,changelist,ident):
+    curPath=''
+    newSectionFlag=True
+
+    readFile = file(templateName,'r')
+    writeFileName = templateName+'.hdmr'+str(ident)
+    writeFile = file(writeFileName,'w')
+
+    for line in readFile:
+      if newSectionFlag and line[0]=='[': # new section
+        curPath = line.strip()[1:-1]
+        newLine=line[:]
+      elif line.strip()[:5]=='[../]': # go up a level
+        curPath='/'.join(curPath.split('/')[:-1])
+        newLine=line[:]
+      elif line.strip()[:3]=='[./': # add a level
+        curPath = curPath + '/' + line.strip()[3:-1]
+        newLine=line[:]
+      elif line.strip()!='': # value entry
+        keyword = curPath+'/'+line.split('=')[0].strip()
+        if keyword in changelist.keys():
+          newLine = line.split('=')[0] + '= ' + str(changelist[keyword])+'\n'
+        else:
+          newLine=line[:]
+      else:
+        newLine=line[:]
+      writeFile.writelines(newLine)
+    writeFile.close()
+    readFile.close()
+    return writeFileName
+
