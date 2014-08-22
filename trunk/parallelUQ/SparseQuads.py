@@ -5,7 +5,7 @@ import multiprocessing
 import scipy.weave as weave
 #from memory_profiler import profile
 
-def BasicSparse(N,L,indexset,quadrule,varlist):
+def BasicSparse(N,L,indexset,quadrule,varlist,verbose=False):
   c=np.array(makeCoeffs(N,indexset))
   indexset=np.array(indexset)
   survive=np.nonzero(c!=0)
@@ -14,7 +14,7 @@ def BasicSparse(N,L,indexset,quadrule,varlist):
   #print 'pre-c',c#indexset
   c=c[survive]
   indexset=indexset[survive]
-  print '  ...coefficient set established...'
+  if verbose:print '  ...coefficient set established...'
   #print 'survive',indexset
   SG=[] #holds list (multi-quad pt, wt)
   for j,cof in enumerate(c):
@@ -33,14 +33,14 @@ def BasicSparse(N,L,indexset,quadrule,varlist):
   #print '\n\n'
   return SG
 
-def parBasicSparse(nump,N,L,indexset,quadrule,varlist):
+def parBasicSparse(nump,N,L,indexset,quadrule,varlist,verbose=False):
   coeffMaker = CoeffMaker();
   c=np.array(coeffMaker.parMakeCoeffs(nump,N,indexset))
   indexset=np.array(indexset)
   survive=np.nonzero(c!=0)
   c=c[survive]
   indexset=indexset[survive]
-  print '  ...coefficient set established...'
+  if verbose:print '  ...coefficient set established...'
   SG=[]
   for j,cof in enumerate(c):
     idx = indexset[j]
@@ -96,7 +96,7 @@ def oldmakeCoeffs(N,indexset,verbose=True):
   #  print i,cof
   return c
 
-def makeCoeffs(N,indexset,verbose=True):
+def makeCoeffs(N,indexset,verbose=False):
   NI=len(indexset)
   c=np.zeros(NI)
   iset=indexset[:]
@@ -126,7 +126,7 @@ class CoeffMaker:
   def __init__(self):
     self.coefq = que() #TODO
 
-  def parMakeCoeffs(self,nump,N,indexset,verbose=True):
+  def parMakeCoeffs(self,nump,N,indexset,verbose=False):
     procs=[]
     done=False
     allStarted=False

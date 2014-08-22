@@ -12,29 +12,10 @@ class ROM():
   def __init__(self):
     pass
 
-
-class LagrangeROM(ROM):
-  def __init__(self,solns,weights,varlist,varVals,indexSet,quadrule,numprocs=0):
-    self.solns = solns
-    self.weights = weights
-    self.varlist = varlist
-    self.varVals = varVals
-    self.indexSet = indexSet
-    self.quadrule = quadrule
-    self.numprocs=numprocs
-    self.ptsets=[]
-
-  def moment(self,r):
-    tot=0
-    for s,soln in enumerate(self.solns):
-      tot+=self.weights[s]*soln**r
-    tot+=1.0/sum(self.weights)
-    return tot
-
   def pdf(self,M=1000,bins=50):
     if self.numprocs==0:
-      print 'Not found: number of processors to use.  \n'+
-            '    Syntax: LagrangeROM(<...>,numprocs=8)\n'+
+      print 'Not found: number of processors to use.  \n'+\
+            '    Syntax: LagrangeROM(<...>,numprocs=8)\n'+\
             '    Using 1 processor...'
       self.numprocs = 1
     procs=[]
@@ -78,7 +59,70 @@ class LagrangeROM(ROM):
       samples[m]=self.sample(vals)
     self.romq.put(list(samples))
 
+
+class HDMR_ROM(ROM):
+  def __init__(ROMs,varlist,varvals,numprocs=0):
+    self.ROMs=ROMs
+    self.varlist=varlist
+    self.varvals=varvals
+    self.numprocs=max(1,numprocs)
+
+  def sample(self,xs,lvl,verbose=False):
+    samples={}
+    for i in range(lvl+1):
+      for romk,romv in self.ROMs.itertools():
+        if len(romk)!=i:continue
+        samples[romk]=romv.sample(xs)
+        for j in range(i):
+          for sampk,sampv in self.ROMs.itertools():
+            if len(sampk)!=j:continue
+            if all(s in romk for s in sampk):
+              print '    subtracting',sampk
+              samples[romk]-=sampv
+
+
+
+class LagrangeROM(ROM):
+  def __init__(self,solns,weights,varDict,varVals,indexSet,quadrule,numprocs=0):
+    self.solns = solns
+    self.weights = weights
+    self.varDict = varDict
+    self.varVals = varVals
+    self.indexSet = indexSet
+    self.quadrule = quadrule
+    self.numprocs=numprocs
+    self.ptsets=[]
+
+  def numRunsToCreate(self):
+    return len(self.solns)
+
+  def moment(self,r):
+    tot=0
+    for s,soln in enumerate(self.solns):
+      tot+=self.weights[s]*soln**r
+    tot+=1.0/sum(self.weights)
+    return tot
+
   def sample(self,xs,verbose=False):
+    tot=0
+    if len(self.ptsets)<1:
+      self.makeSparseGrid()
+    for c,pts in enumerate(self.ptsets):
+      tptot = 0
+      for pt in pts:
+        pt = tuple(np.around(pt,decimals=15))
+        slnidx = self.varVals.index(list(pt))
+        soln = self.solns[slnidx]
+        prod = 1
+        for v,(key,var) in enumerate(self.varDict.iteritems()):
+          varpts = pts[:,v]
+          polyeval = var.lagrange(pt[v],xs[key],varpts)
+          prod*=polyeval
+        tptot += prod*soln
+      tot+=tptot*self.cofs[c]
+    return tot
+
+  def oldsample(self,xs,verbose=False):
     tot=0
     if len(self.ptsets)<1:
       self.makeSparseGrid()
@@ -99,15 +143,15 @@ class LagrangeROM(ROM):
 
   def makeSparseGrid(self):
     self.ptsets = []
-    N = len(self.varlist)
+    N = len(self.varDict)
     self.cofs = np.array(SparseQuads.makeCoeffs(N,self.indexSet,False))
     idxs = np.array(self.indexSet)
-    survive = np.nonzero(cofs!=0)
+    survive = np.nonzero(self.cofs!=0)
     self.cofs = self.cofs[survive]
     idxs = idxs[survive]
-    for j,cof in enumerate(cors):
+    for j,cof in enumerate(self.cofs):
       idx = idxs[j]
       m = self.quadrule(idx)+1
-      new = SparseQuads.tensorGrid(N,m,varlist,idx)
+      new = SparseQuads.tensorGrid(N,m,self.varDict,idx)
       pts = np.array(new[0])
       self.ptsets.append(pts)

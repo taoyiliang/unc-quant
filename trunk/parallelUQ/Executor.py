@@ -38,30 +38,30 @@ def ExecutorFactory(exec_type,varlist,inp_file):
 class Executor(object): #base class
   def __init__(self,varDict,inp_file):
     '''Constructor'''
-    print '\nInitializing Executor...'
+    #print '\nInitializing Executor...'
     self.outq = que()
     self.input_file = inp_file
     self.varDict = varDict
 
-  def run(self):
-    self.loadInput()
-    print '...input loaded...'
+  def run(self,verbose=False):
+    self.loadInput(verbose)
+    if verbose: print '...input loaded...'
     self.setDirs()
-    print '...directories set...'
+    if verbose: print '...directories set...'
     self.loadSampler()
-    print '...sampler loaded...'
+    if verbose: print '...sampler loaded...'
     self.loadBackends()
-    print '...backends loaded...'
-    self.clearInputs()
-    print '...old inputs cleared...'
+    if verbose: print '...backends loaded...'
+    self.clearInputs(verbose)
+    if verbose: print '...old inputs cleared...'
     try:
-      self.runParallel()
+      self.runParallel(verbose)
     except KeyboardInterrupt:
-      self.checkConverge(True)
-    print '...parallel run complete...'
+      self.checkConverge(True,verbose)
+    if verbose: print '...parallel run complete...'
     return self.finish()
 
-  def loadInput(self):
+  def loadInput(self,verbose=False):
     self.templateFile=self.input_file('Problem/templateFile','')
     self.execDir    = self.input_file('Problem/execDir'  ,'')
     self.inputDir   = self.input_file('Problem/inputDir' ,'')
@@ -97,18 +97,18 @@ class Executor(object): #base class
   def loadBackends(self):
     pass
 
-  def clearInputs(self):
-    print '\nAttempting to clear old inputs...'
+  def clearInputs(self,verbose=False):
+    if verbose: print '\nAttempting to clear old inputs...'
     os.chdir(self.inputDir)
     fail=os.system('rm '+self.templateFile+'.unc*')
-    if not fail:
+    if (not fail) and verbose:
       print '...successfully cleared old input files.'
 
   #@profile
-  def runParallel(self):
+  def runParallel(self,verbose=False):
     wantprocs = self.input_file('Problem/numprocs',1)
     self.numprocs = min(wantprocs,multiprocessing.cpu_count())
-    print '\n...using %i processers...' %self.numprocs
+    if verbose: print '\n...using %i processers...' %self.numprocs
     try: self.total_runs
     except AttributeError: self.total_runs=-1
     procs=[]
@@ -122,7 +122,7 @@ class Executor(object): #base class
     self.histories['soln']=[]
     self.histories['solwt']=[]
     self.histories['varPaths']=[]
-    print '...uncertain variables:',self.histories['varNames'],'...'
+    if verbose: print '...uncertain variables:',self.histories['varNames'],'...'
     for var in self.varDict.values():
       self.histories['varPaths'].append(var.path)
     #preset some file change stuff
@@ -142,7 +142,7 @@ class Executor(object): #base class
             finished+=1
           print 'Runs finished:',finished,
           del procs[p]
-          self.checkConverge()
+          self.checkConverge(verbose)
       if not self.sampler.converged:
         while len(procs)<self.numprocs and not self.sampler.converged:
         #while len(procs)<self.numprocs:
@@ -240,7 +240,7 @@ class SC(Executor):
                                               impwts)
     print '...%i expansion indices used...' %len(self.indexSet)
 
-  def loadQuadSet(self):
+  def loadQuadSet(self,verbose=False):
     def single(x):
       return x
     def double(x):
@@ -255,7 +255,7 @@ class SC(Executor):
     self.quadrule = quadrule
     #for i in self.indexSet:
     #  print 'index point:',i
-    print '...constructing sparse grid...'
+    if verbose: print '...constructing sparse grid...'
     wantprocs = self.input_file('Problem/numprocs',1)
     self.numprocs = min(wantprocs,multiprocessing.cpu_count())
     grid = SparseQuads.parBasicSparse(self.numprocs,
@@ -263,14 +263,16 @@ class SC(Executor):
                                    self.expOrder,
                                    self.indexSet,
                                    quadrule,
-                                   self.varDict)
+                                   self.varDict,
+                                   verbose)
     run_samples = {}
     run_samples['varNames']=self.varDict.keys()
     run_samples['variables']=self.varDict.values()
     run_samples['quadpts']=[]
     run_samples['weights']={}
-    print '  ...removing duplicate quadrature points...'
-    print '    ...number of pts including duplicates: %i' %len(grid)
+    if verbose:
+      print '  ...removing duplicate quadrature points...'
+      print '    ...number of pts including duplicates: %i' %len(grid)
   # NEW ROUNDED POINT METHOD
     for e,entry in enumerate(grid):
       npt = tuple(np.around(entry[0],decimals=15))
@@ -280,20 +282,21 @@ class SC(Executor):
         run_samples['quadpts'].append(npt)
         run_samples['weights'][npt]=entry[1]
         numsamp = len(run_samples['quadpts'])
-        print '    ...new number of quad pts collected:',
-        print numsamp,
-        print '(%i pct complete)' %(int(100.*(e+1)/len(grid))),
-        print '(%i duplicates)' %(e+1-numsamp),'\r',
+        if verbose:
+          print '    ...new number of quad pts collected:',
+          print numsamp,
+          print '(%i pct complete)' %(int(100.*(e+1)/len(grid))),
+          print '(%i duplicates)' %(e+1-numsamp),'\r',
     #exit()
     #TODO DEBUG
     #for pt in run_samples['quadpts']:
       #print 'quad pts,wts: (%1.4e), %1.4e' %(pt[0],run_samples['weights'][pt])
     #print 'sum wts:',sum(run_samples['weights'].values())
-    print '...constructing sampler...'
+    if verbose:print '...constructing sampler...'
     self.sampler = spr.StochasticPoly(self.varDict,
                                       run_samples)
     self.numquadpts = len(run_samples['quadpts'])
-    print '...%i quadrature points used...' %self.numquadpts
+    if verbose:print '...%i quadrature points used...' %self.numquadpts
 
   def setupHistories(self,runDict):
     self.histories['soln'].append(0)  #placeholders
@@ -311,8 +314,8 @@ class SC(Executor):
     self.histories['soln'][n]=soln
     self.histories['solwt'][n]=wt
 
-  def checkConverge(self,force=False):
-    print '\r',
+  def checkConverge(self,force=False,verbose=False):
+    print '                        \r',
 
   def writeOut(self):
     mean = self.ROMmoment(1)
@@ -349,114 +352,7 @@ class SCExec(SC):
                                self.numprocs)
     super(SC,self).finish()
 
-  def ROMmoment(self,r):
-    tot=0
-    for s,soln in enumerate(self.histories['soln']):
-      tot+=self.histories['solwt'][s]*soln**r
-    tot*=1.0/sum(self.histories['solwt'])
-    print 'moment %i:' %r,tot
-    return tot
 
-  def ROMpdf(self,M=1000,bins=50):
-    procs=[]
-    self.done=False
-    starthist=0
-    endhist = 0
-    samples=[]
-    batch = min(1000,int(float(M)/self.numprocs))
-    self.romq=que()
-    while not self.done:
-      for p,proc in enumerate(procs):
-        if not proc.is_alive():
-          proc.join()
-          while not self.romq.empty():
-            new = self.romq.get()
-            samples += new
-            endhist+=len(new)
-            print '...ROMpdf',100*endhist/M,'% finished...           \r',
-          del procs[p]
-      if endhist >= M:
-        self.done = True
-      else:
-        while len(procs)<self.numprocs and starthist<M:
-          if starthist+batch<=M: m = batch
-          else: m = M-starthist
-          procs.append(multiprocessing.Process(target=self.ROMbatch,args=[m]))
-          procs[-1].start()
-          starthist+=m
-    bins,ctrs = makePDF(samples,bins=bins)
-    name = self.case+'.ROMpdf'
-    print '...writing to',name,'...'
-    outFile = file(name,'a')
-    outFile.writelines('\nN,ctrs,bins\n')
-    outFile.writelines('N:'+str(len(self.histories['soln']))+'\n')
-    outFile.writelines('ctrs:'+str(ctrs)+'\n')
-    outFile.writelines('bins:'+str(bins)+'\n')
-    outFile.close()
-    #plt.plot(ctrs,bins)
-    #plt.title('ROM pdf')
-    #plt.show()
-
-  def ROMbatch(self,M):
-    np.random.seed()
-    varlist = self.varDict
-    samples=np.zeros(M)
-    for m in range(int(M)):
-      vals=np.zeros(len(varlist))
-      for v,var in enumerate(varlist.values()):
-        vals[v]=var.sample()
-      samples[m]=self.ROMsample(vals)
-    self.romq.put(list(samples))
-
-
-  def ROMsample(self,xs,verbose=False):
-    varlist = self.varDict
-
-    tot=0
-    N=len(varlist)
-    #get coefficients, index points
-    cofs = np.array(SparseQuads.makeCoeffs(N,self.indexSet,False))
-    idxs = np.array(self.indexSet)
-    survive = np.nonzero(cofs!=0)
-    cofs=cofs[survive]
-    idxs=idxs[survive]
-    #for each idx point j, get little tensor product
-    for j,cof in enumerate(cofs):
-      idx = idxs[j]
-      m = self.quadrule(idx)+1 #TODO quadrule
-      new = SparseQuads.tensorGrid(N,m,varlist,idx)
-      pts = np.array(new[0])
-      #evaulate Lagrange product for each ordinate
-      if verbose:
-        print 'idx:',idx
-        print 'cof:',cof
-        print 'pts:',pts
-      tptot = 0
-      for pt in pts:
-        pt = tuple(np.around(pt,decimals=15))
-        #print self.histories['varVals']
-        slnidx = self.histories['varVals'].index(list(pt))
-        soln = self.histories['soln'][slnidx]
-        if verbose:
-          print '  pt:',pt
-          print '  soln:',soln
-        prod = 1
-        for v,var in enumerate(varlist.values()):
-          varpts = pts[:,v]
-          polyeval = var.lagrange(pt[v],xs[v],varpts)
-          prod*=polyeval
-          if verbose:
-            print '    var',varlist.keys()[v],' poly:',polyeval
-        if verbose:
-          print '  prod:',prod
-          print '  prod*soln:',prod*soln
-        tptot+=prod*soln
-      if verbose:
-        print 'tptot*cof:',tptot*cof,'\n'
-      tot+=tptot*cof
-    if verbose:
-      print 'romsample',xs,'total:',tot
-    return tot
 
 #####################################################
 #####################################################

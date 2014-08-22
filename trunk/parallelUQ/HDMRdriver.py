@@ -9,8 +9,9 @@ import numpy as np
 from GetPot import GetPot
 from matplotlib.pyplot import show
 
-import Executor as Exec
+import Executor
 import Variables
+import InputEditor
 
 class Driver(object):
   def __init__(self,argv):
@@ -19,6 +20,7 @@ class Driver(object):
     self.loadInput(argv)
     self.loadVars()
     self.setRuns()
+    self.createROMs()
     #self.finishUp()
 
   def loadInput(self,argv):
@@ -61,9 +63,9 @@ class Driver(object):
       new = self.addHDMRLevel(varnames,i)
       for key,value in new.iteritems():
         self.todo[key]=value
-    for i in range(1,5):
-      print '\nSet',i
-      print list(x for x in self.getRunSet(i).keys())
+    #for i in range(1,5):
+    #  print '\nSet',i
+    #  print list(x for x in self.getRunSet(i).keys())
 
   def getRunSet(self,num):
     ret={}
@@ -87,19 +89,52 @@ class Driver(object):
     #do reference problem TODO this assumes they left it mean in the first place
     chlist,ident = self.makeCase({})
     runfile = ie.writeInput(self.unc_inp_file,chlist,ident)
-    ex = Executor.ExecutorFactory('SC',{},runfile)
+    inp_file = GetPot(Filename=runfile)
+    ex = Executor.ExecutorFactory('SC',{},inp_file)
     ex.run()
-    self.ROMs[ident]=ex.ROM
     #END reference case
+    self.ROMs[ident]=ex.ROM
+    numruns={}
+    for i in range(1,self.hdmr_level+1):
+      nr=0
+      print '\n=================================='
+      print '      STARTING ORDER %i RUNS' %i +'      '
+      print '==================================\n'
+      new=self.createROMLevel(i,ie)
+      for key,value in new.iteritems():
+        nr+=1
+        self.ROMs[key]=value
+      print '\nnumber of order %i runs: %i' %(i,nr)
+      numruns[i]=nr
+    xs={}
+    for key,value in self.varDict.iteritems():
+      xs[key]=1
+    for key,value in self.ROMs.iteritems():
+      print 'sampled',key,':',self.ROMs[key].sample(xs)
+    print '\nROMs per level:'
+    for key,value in numruns.iteritems():
+      print ' ',key,value
 
   def createROMLevel(self,lvl,ie):
     ROMs={}
+    runs = self.getRunSet(lvl)
+    for run,vrs in runs.iteritems():
+      print '\nStarting run:',run
+      chlist,ident = self.makeCase(run)
+      runfile = ie.writeInput(self.unc_inp_file,chlist,ident)
+      inp_file = GetPot(Filename=runfile)
+      exdict={}
+      for i in range(len(run)):
+        exdict[run[i]]=vrs[i]
+      ex = Executor.ExecutorFactory('SC',exdict,inp_file)
+      ex.run()
+      ROMs[ident]=ex.ROM
+    return ROMs
 
-
-  def makeCase(chvars):
+  def makeCase(self,chvars):
     changelist={}
-    changelist['Variables/names']=' '.join(chvars.keys())
-    ident = 'hdmr'+'_'.join(chvars.keys())
+    changelist['Variables/names']=' '.join(chvars)
+    ident = 'hdmr_'+'_'.join(chvars)
     changelist['Backend/outLabel']=ident
     return changelist,ident
 
@@ -115,17 +150,6 @@ class Driver(object):
         print '...Backends/PDFsamples not found; using 1e4...'
         numSamples = int(1e4)
       self.makePDF(numSamples)
-
-    #TODO DEBUG
-    #samp = self.ex.ROM([1.,1.])
-    #print 'sparseU(1,1) =',samp
-    #if 'SC' in self.ex.case:
-    #  self.ex.ROMmoment(1)
-    #  self.ex.ROMmoment(2)
-    #self.ex.ROMpdf(M=1e5)
-    writeStuff=bool(self.input_file('Backend/writeOut',0))
-    if writeStuff:
-      self.ex.writeOut()
 
     show()
     print '\nDriver complete.\n'

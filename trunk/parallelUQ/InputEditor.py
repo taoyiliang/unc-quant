@@ -119,8 +119,8 @@ class IE_Thirty(InputEditor):
 
   def runSolve(self,input_file):
     sys.path.insert(0,os.getcwd())
-    from simple import h
-    self.out=h(self.a)
+    from simple import h5
+    self.out=h5(self.a)
 
 class IE_Source(InputEditor):
   def __init__(self,runpath=''):
@@ -213,7 +213,7 @@ class HDMR_IO(InputEditor):
     newSectionFlag=True
 
     readFile = file(templateName,'r')
-    writeFileName = templateName+'.hdmr'+str(ident)
+    writeFileName = templateName+'.'+str(ident)
     writeFile = file(writeFileName,'w')
 
     for line in readFile:

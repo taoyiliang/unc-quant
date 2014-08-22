@@ -5,14 +5,18 @@
   execDir      = '../simple/'
   inputDir     = '../simple/'
   input_editor = 'IE_Thirty'
-  numprocs     = 2
+  numprocs     = 6
   mesh_factor  = 1
+[]
+
+[HDMR]
+  level=3
 []
 
 [Sampler]
   [./SC]
     indexSet = TD
-    expOrd = 1
+    expOrd = 5
     quadrule = single
   [../]
   [./MC]
