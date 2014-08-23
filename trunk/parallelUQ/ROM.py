@@ -61,24 +61,52 @@ class ROM():
 
 
 class HDMR_ROM(ROM):
-  def __init__(ROMs,varlist,varvals,numprocs=0):
+  def __init__(self,ROMs,varDict):
     self.ROMs=ROMs
-    self.varlist=varlist
-    self.varvals=varvals
-    self.numprocs=max(1,numprocs)
+    self.varDict=varDict
+
+  def numRunsToCreate(self):
+    return sum(r.numRunsToCreate() for r in self.ROMs.values())
+
+  def serializable(self):
+    store=[]
+    storeROMs=[]
+    for rom in self.ROMs.values():
+      storeROMs.append(rom.serializable())
+    store.append(storeROMs)
+    keys=self.varDict.keys()[:]
+    store.append(keys)
+    vals=self.varDict.values()[:]
+    storevals=[]
+    for v in vals:
+      storevals.append(v.serializable())
+    store.append(storevals)
+    return store
+
+  @classmethod
+  def unserialize(self,store):
+    #roms
+    roms=[]
+    storeROMs=store[0]
+    for entry in storeROMs:
+#TODO FIXME
+      newrom
+    #vardict
 
   def sample(self,xs,lvl,verbose=False):
     samples={}
     for i in range(lvl+1):
-      for romk,romv in self.ROMs.itertools():
-        if len(romk)!=i:continue
+      for romk,romv in self.ROMs.iteritems():
+        if len(romv.varDict)!=i:continue
         samples[romk]=romv.sample(xs)
         for j in range(i):
-          for sampk,sampv in self.ROMs.itertools():
-            if len(sampk)!=j:continue
-            if all(s in romk for s in sampk):
-              print '    subtracting',sampk
+          for sampk,sampv in samples.iteritems():
+            if len(sampk.split('_'))-1!=j:continue
+            if all(s in romk.split('_') for s in sampk.split('_'))\
+                   or len(sampk.split('_'))==1:
               samples[romk]-=sampv
+    tot=sum(samples.values())
+    return samples,tot
 
 
 
@@ -92,6 +120,12 @@ class LagrangeROM(ROM):
     self.quadrule = quadrule
     self.numprocs=numprocs
     self.ptsets=[]
+
+  def case(self):
+    case=''
+    for v in self.varDict.keys():
+      case+=v+'_'
+    return case[:-1]
 
   def numRunsToCreate(self):
     return len(self.solns)
@@ -122,25 +156,6 @@ class LagrangeROM(ROM):
       tot+=tptot*self.cofs[c]
     return tot
 
-  def oldsample(self,xs,verbose=False):
-    tot=0
-    if len(self.ptsets)<1:
-      self.makeSparseGrid()
-    for c,pts in enumerate(self.ptsets):
-      tptot = 0
-      for pt in pts:
-        pt = tuple(np.around(pt,decimals=15))
-        slnidx = self.varVals.index(list(pt))
-        soln = self.solns[slnidx]
-        prod = 1
-        for v,var in enumerate(self.varlist):
-          varpts = pts[:,v]
-          polyeval = var.lagrange(pt[v],xs[v],varpts)
-          prod*=polyeval
-        tptot += prod*soln
-      tot+=tptot*self.cofs[c]
-    return tot
-
   def makeSparseGrid(self):
     self.ptsets = []
     N = len(self.varDict)
@@ -155,3 +170,33 @@ class LagrangeROM(ROM):
       new = SparseQuads.tensorGrid(N,m,self.varDict,idx)
       pts = np.array(new[0])
       self.ptsets.append(pts)
+
+  def serializable(self):
+    store=[]
+    store.append(self.ptsets)
+    store.append(self.cofs)
+    store.append(self.solns)
+    store.append(self.weights)
+    keys=self.varDict.keys()[:]
+    store.append(keys)
+    vals=self.varDict.values()[:]
+    storevals=[]
+    for v in vals:
+      storevals.append(v.serializable())
+    store.append(storevals)
+    store.append(self.indexSet)
+    #store.append(self.quadrule)
+    store.append(self.numprocs)
+    return store
+
+  @classmethod
+  def unserialize(cls,store):
+    varDict={}
+    for v in range(len(store[5])):
+      varDict[store[5][v]]=store[6][v]
+    ret = cls(store[3],store[4],varDict,store[7],store[8],store[9],store[10])
+    ret.ptsets=store[0]
+    ret.cofs=store[1]
+    ret.quadrule=store[2]
+    return ret
+

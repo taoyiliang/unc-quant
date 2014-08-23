@@ -1,26 +1,32 @@
-from matplotlib.pyplot import show
-import time
-import datetime as dt
 import os
 import sys
-from GetPot import GetPot
-import Executor as Exec
+import time
+import datetime as dt
 import multiprocessing
+import cPickle as pk
+from itertools import combinations as combos
+
 import numpy as np
+from GetPot import GetPot
+from matplotlib.pyplot import show
+
+import Executor
+import Variables
+import InputEditor
+import ROM
 
 class Driver(object):
-  '''Since I want a different executor for MC, MLMC, PCESC,
-  adding a driver to manage executors makes sense to me.'''
   def __init__(self,argv):
     self.starttime=time.time()
-    print '\nStarting UQ at',dt.datetime.fromtimestamp(self.starttime)
+    print '\nStarting HDMR UQ at',dt.datetime.fromtimestamp(self.starttime)
     self.loadInput(argv)
-    self.loadExec()
+    self.loadVars()
+    self.setRuns()
+    self.createROMs()
     self.finishUp()
 
   def loadInput(self,argv):
     cl = GetPot(argv)
-    print argv
     if cl.search('-i'):
       self.unc_inp_file=cl.next('')
       print 'Selected uncertainty input',self.unc_inp_file,'...'
@@ -32,34 +38,50 @@ class Driver(object):
       raise IOError('Requires and input file using -i.')
     self.input_file = GetPot(Filename=self.unc_inp_file)
 
-  def loadExec(self):
-    self.ex_type = self.input_file('Problem/executor','not found')
-    print 'Loading executor',self.ex_type
-    self.ex=Exec.ExecutorFactory(self.ex_type,self.input_file)
+  def loadVars(self):
+    print '\nLoading uncertain variables...'
+    uVars = self.input_file('Variables/names','').split(' ')
+    self.varDict={}
+    for var in uVars:
+      path = self.input_file('Variables/'+var+'/path',' ')
+      dist = self.input_file('Variables/'+var+'/dist',' ')
+      args = self.input_file('Variables/'+var+'/args',' ').split(' ')
+      for a,arg in enumerate(args):
+        args[a]=float(arg)
+      impwt = self.input_file('Variables/'+var+'/weight',1.0)
+      self.varDict[var]=Variables.VariableFactory(dist,var,path,impwt)
+      self.varDict[var].setDist(args)
+
+  def setRuns(self):
+    self.todo={}
+    self.todo[tuple(self.varDict.keys())]=self.varDict.values()
+
+  def createROMs(self):
+    self.ROMs={}
+    ident = self.todo.keys()[0]
+    print '\nStarting run:',ident
+    inp_file = GetPot(Filename=self.unc_inp_file)
+    ex = Executor.ExecutorFactory('SC',self.varDict,inp_file)
+    ex.run(verbose=True)
+    self.ROMs[ident]=ex.ROM
+    xs={}
+    for key,value in self.varDict.iteritems():
+      xs[key]=1
+    print 'sampled:',ex.ROM.sample(xs)
+
 
   def finishUp(self):
     elapsed=time.time()-self.starttime
     print 'Driver run time:',elapsed,'sec'
     print '\nStarting postprocessing...'
-    makePDF = self.input_file('Backend/makePDF',0)
-    if makePDF:
-      print '...sampling ROM...'
-      numSamples = self.input_file('Backends/PDFsamples',-1)
-      if numSamples==-1:
-        print '...Backends/PDFsamples not found; using 1e4...'
-        numSamples = int(1e4)
-      self.makePDF(numSamples)
-
-    #TODO DEBUG
-    #samp = self.ex.ROM([1.,1.])
-    #print 'sparseU(1,1) =',samp
-    #if 'SC' in self.ex.case:
-    #  self.ex.ROMmoment(1)
-    #  self.ex.ROMmoment(2)
-    #self.ex.ROMpdf(M=1e5)
-    writeStuff=bool(self.input_file('Backend/writeOut',0))
-    if writeStuff:
-      self.ex.writeOut()
+    #makePDF = self.input_file('Backend/makePDF',0)
+    #if makePDF:
+    #  print '...sampling ROM...'
+    #  numSamples = self.input_file('Backends/PDFsamples',-1)
+    #  if numSamples==-1:
+    #    print '...Backends/PDFsamples not found; using 1e4...'
+    #    numSamples = int(1e4)
+    #  self.makePDF(numSamples)
 
     show()
     print '\nDriver complete.\n'
@@ -74,6 +96,115 @@ class Driver(object):
     self.ex.makePDF(numprocs,M,bins)
 
 
+
+
+class HDMR_Driver(Driver):
+  def loadInput(self,argv):
+    super(HDMR_Driver,self).loadInput(argv)
+    self.hdmr_level = self.input_file('HDMR/level',0)
+    if self.hdmr_level==0:
+      print 'HDMR level not specified.  Using 2...'
+      self.hdmr_level=2
+
+  def setRuns(self):
+    self.todo = {}
+    varnames = self.varDict.keys()
+    for i in range(1,self.hdmr_level+1):
+      new = self.addHDMRLevel(varnames,i)
+      for key,value in new.iteritems():
+        self.todo[key]=value
+
+  def addHDMRLevel(self,varnames,lvl):
+    todo={}
+    nameset = combos(varnames,lvl)
+    for entry in nameset:
+      todo[entry]=[]
+      for e,ent in enumerate(entry):
+        todo[entry].append(self.varDict[ent])
+    return todo
+
+  def getRunSet(self,num):
+    ret={}
+    for key,value in self.todo.iteritems():
+      if len(key)==num:
+        ret[key]=value
+    return ret
+
+  def createROMs(self):
+    self.ROMs={}
+    ie = InputEditor.HDMR_IO()
+    #reference run
+    chlist,ident = self.makeCase({})
+    runfile = ie.writeInput(self.unc_inp_file,chlist,ident)
+    inp_file = GetPot(Filename=runfile)
+    ex = Executor.ExecutorFactory('SC',{},inp_file)
+    ex.run()
+    os.system('rm '+runfile)
+    self.ROMs[ident]=ex.ROM
+    # rest of runs
+    numruns={}
+    for i in range(1,self.hdmr_level+1):
+      nr=0
+      print '\n=================================='
+      print '      STARTING ORDER %i RUNS' %i +'      '
+      print '==================================\n'
+      new=self.createROMLevel(i,ie)
+      for key,value in new.iteritems():
+        nr+=1
+        self.ROMs[key]=value
+      print '\nnumber of order %i runs: %i' %(i,nr)
+      numruns[i]=nr
+    xs={}
+    for key,value in self.varDict.iteritems():
+      xs[key]=1
+    for key,value in self.ROMs.iteritems():
+      print 'sampled',key,':',self.ROMs[key].sample(xs)
+    print '\nROMs per level:'
+    for key,value in numruns.iteritems():
+      print ' ',key,value
+    for rom in self.ROMs.values():
+      pk.dump(rom.serializable(),file('hdmr_'+rom.case()+'.pk','w'))
+    self.HDMR_ROM=ROM.HDMR_ROM(self.ROMs,self.varDict)
+    print 'Total Det. Runs:',self.HDMR_ROM.numRunsToCreate()
+    print 'HDMR sampled',self.HDMR_ROM.sample(xs,self.hdmr_level)[1]
+    #store output
+    case = 'hdmr'
+    case+= '_'+self.input_file('Sampler/SC/indexSet','')
+    case+= '_N'+str(len(self.varDict))
+    #case+= '_H'+str(self.hdmr_level)
+    case+= '_L'+self.input_file('Sampler/SC/expOrd','')
+#    outFile = file(case+'.out','a')
+#TODO FIXME how to calculate moments?
+
+
+  def createROMLevel(self,lvl,ie):
+    ROMs={}
+    runs = self.getRunSet(lvl)
+    for run,vrs in runs.iteritems():
+      print '\nStarting run:',run
+      chlist,ident = self.makeCase(run)
+      runfile = ie.writeInput(self.unc_inp_file,chlist,ident)
+      inp_file = GetPot(Filename=runfile)
+      exdict={}
+      for i in range(len(run)):
+        exdict[run[i]]=vrs[i]
+      ex = Executor.ExecutorFactory('SC',exdict,inp_file)
+      ex.run()
+      os.system('rm '+runfile)
+      ROMs[ident]=ex.ROM
+    return ROMs
+
+  def makeCase(self,chvars):
+    changelist={}
+    changelist['Variables/names']=' '.join(chvars)
+    ident = 'hdmr_'+'_'.join(chvars)
+    changelist['Backend/outLabel']=ident
+    return changelist,ident
+
+
 if __name__=='__main__':
   #print sys.argv,type(sys.argv)
-  drv = Driver(sys.argv)
+  if '-hdmr' in sys.argv:
+    drv = HDMR_Driver(sys.argv)
+  else:
+    drv = Driver(sys.argv)

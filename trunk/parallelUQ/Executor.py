@@ -48,7 +48,7 @@ class Executor(object): #base class
     if verbose: print '...input loaded...'
     self.setDirs()
     if verbose: print '...directories set...'
-    self.loadSampler()
+    self.loadSampler(verbose)
     if verbose: print '...sampler loaded...'
     self.loadBackends()
     if verbose: print '...backends loaded...'
@@ -91,7 +91,7 @@ class Executor(object): #base class
   def setCase(self):
     pass #overwritten
 
-  def loadSampler(self):
+  def loadSampler(self,verbose=False):
     pass
 
   def loadBackends(self):
@@ -222,11 +222,11 @@ class SC(Executor):
       print 'Index set not specified; using tensor product.'
       self.settype='TP'
 
-  def loadSampler(self):
-    self.loadIndexSet()
-    self.loadQuadSet()
+  def loadSampler(self,verbose=False):
+    self.loadIndexSet(verbose)
+    self.loadQuadSet(verbose)
 
-  def loadIndexSet(self):
+  def loadIndexSet(self,verbose=False):
     self.expOrder = self.input_file('Sampler/SC/expOrd',-1)
     if self.expOrder==-1:
       print '...expansion order not set in Sampler/SC.  Using 2...'
@@ -238,7 +238,7 @@ class SC(Executor):
                                               self.expOrder,
                                               self.settype,
                                               impwts)
-    print '...%i expansion indices used...' %len(self.indexSet)
+    if verbose:print '...%i expansion indices used...' %len(self.indexSet)
 
   def loadQuadSet(self,verbose=False):
     def single(x):

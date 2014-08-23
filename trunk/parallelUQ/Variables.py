@@ -19,6 +19,12 @@ def VariableFactory(vartype,name='x',path='dudpath',impwt=1.0):
     newvar = Lognormal(name,path,impwt)
   return newvar
 
+def unserializeVariableFactory(store):
+  print store
+  newvar = VariableFactory(*store[:4])
+  newvar.setDist(*store[4:])
+  return newvar
+
 class Variable(object):
   def __init__(self,name,path,impwt):
     self.name=name
@@ -56,11 +62,18 @@ class Variable(object):
 
 
 
-
 class Uniform(Variable):
   def __init__(self,name,path,impwt):
     super(Uniform,self).__init__(name,path,impwt)
     self.distName='uniform'
+
+  def serializable(self):
+    store=['uniform']
+    store.append(self.name)
+    store.append(self.path)
+    store.append(self.impwt)
+    store.append([self.mean,self.range])
+    return store
 
   def convertToActual(self,x):
     return self.range*x+self.mean

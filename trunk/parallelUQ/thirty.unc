@@ -10,13 +10,13 @@
 []
 
 [HDMR]
-  level=3
+  level=5
 []
 
 [Sampler]
   [./SC]
     indexSet = TD
-    expOrd = 5
+    expOrd = 3
     quadrule = single
   [../]
   [./MC]
