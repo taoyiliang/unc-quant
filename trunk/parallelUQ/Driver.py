@@ -26,6 +26,7 @@ class Driver(object):
     self.finishUp()
 
   def loadInput(self,argv):
+    print argv,type(argv)
     cl = GetPot(argv)
     if cl.search('-i'):
       self.unc_inp_file=cl.next('')
@@ -64,10 +65,12 @@ class Driver(object):
     ex = Executor.ExecutorFactory('SC',self.varDict,inp_file)
     ex.run(verbose=True)
     self.ROMs[ident]=ex.ROM
+    self.ex = ex
     xs={}
     for key,value in self.varDict.iteritems():
       xs[key]=1
-    print 'sampled:',ex.ROM.sample(xs)
+    print 'sampled:',ex.ROM.sample(xs,verbose=False)
+    return ex
 
 
   def finishUp(self):
@@ -158,12 +161,12 @@ class HDMR_Driver(Driver):
     for key,value in self.varDict.iteritems():
       xs[key]=1
     for key,value in self.ROMs.iteritems():
-      print 'sampled',key,':',self.ROMs[key].sample(xs)
+      print 'mean',key,':',value.moment(1)
     print '\nROMs per level:'
     for key,value in numruns.iteritems():
       print ' ',key,value
-    for rom in self.ROMs.values():
-      pk.dump(rom.serializable(),file('hdmr_'+rom.case()+'.pk','w'))
+    #for rom in self.ROMs.values():
+    #  pk.dump(rom.serializable(),file('hdmr_'+rom.case()+'.pk','w'))
     self.HDMR_ROM=ROM.HDMR_ROM(self.ROMs,self.varDict)
     print 'Total Det. Runs:',self.HDMR_ROM.numRunsToCreate()
     print 'HDMR sampled',self.HDMR_ROM.sample(xs,self.hdmr_level)[1]
@@ -171,9 +174,15 @@ class HDMR_Driver(Driver):
     case = 'hdmr'
     case+= '_'+self.input_file('Sampler/SC/indexSet','')
     case+= '_N'+str(len(self.varDict))
-    #case+= '_H'+str(self.hdmr_level)
-    case+= '_L'+self.input_file('Sampler/SC/expOrd','')
-#    outFile = file(case+'.out','a')
+    case+= '_H'+str(self.hdmr_level)
+    #case+= '_L'+self.input_file('Sampler/SC/expOrd','')
+    mean = self.HDMR_ROM.mean(self.hdmr_level,verbose=True)
+    outFile = file(case+'.out','a')
+    outFile.writelines('\nRuns,SC Level,Mean\n')
+    outFile.writelines(str(self.HDMR_ROM.numRunsToCreate())+',')
+    outFile.writelines(self.input_file('Sampler/SC/expOrd','')+',')
+    outFile.writelines('%1.15e \n' %mean)
+    outFile.close()
 #TODO FIXME how to calculate moments?
 
 

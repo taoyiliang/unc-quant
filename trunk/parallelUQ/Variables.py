@@ -47,15 +47,15 @@ class Variable(object):
   def prob(self,x):
     return self.dist.pdf(x)
 
-  def lagrange(self,jpt,x,pts):
+  def lagrange(self,jpt,x,pts,verbose=False):
     #pts = np.array(self.pts)
     #pts = self.convertToActual(pts)
     prod=1
     for m,pt in enumerate(pts):
       if not abs(pt-jpt)<1e-13:
-        #print '  lagrange_entry',x,'-',pt,'/',jpt,'-',pt
+        if verbose: print '  lagrange_entry',x,'-',pt,'/',jpt,'-',pt
         newprod= (x-pt)/(jpt-pt)
-        #print '  prod:',newprod
+        if verbose: print '  prod:',newprod
         prod*=newprod
       #else: print '  skipping',jpt,pt
     return prod
