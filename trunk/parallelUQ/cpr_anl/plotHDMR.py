@@ -20,7 +20,7 @@ def addPlot(title,lbl,ref=None,r=1):
 
   entries=np.array(entries)
   entries=entries[entries[:,0].argsort()]
-  errs=np.zeros([len(entries)-1,2])
+  errs=np.zeros([len(entries),3])
   if ref==None:
     errs[:,0] = entries[:-1,0]
     #errs[:,1] = abs(entries[:-1,1]-entries[-1,1])/entries[-1,1]
@@ -28,7 +28,7 @@ def addPlot(title,lbl,ref=None,r=1):
   else:
     errs[:,0] = entries[:,0]
     #errs[:,1] = abs(entries[:,1]-ref[1])/ref[1]
-    errs[:,1] = abs(entries[:,2]-ref[2])/ref[2]
+    errs[:,1] = abs(entries[:,2]-ref[1])/ref[1]
 
   #for e in errs:
   #  print e

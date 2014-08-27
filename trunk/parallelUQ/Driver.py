@@ -214,6 +214,10 @@ class HDMR_Driver(Driver):
     changelist['Backend/outLabel']=ident
     return changelist,ident
 
+  def finishUp(self):
+    elapsed=time.time()-self.starttime
+    print 'Driver run time:',elapsed,'sec'
+    print '\nDriver complete.\n'
 
 if __name__=='__main__':
   #print sys.argv,type(sys.argv)

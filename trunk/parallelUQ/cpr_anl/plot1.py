@@ -21,12 +21,12 @@ def addPlot(title,lbl,ref=None,r=1):
     errs=np.zeros([len(entries)-1,3])
     errs[:,0] = entries[:-1,0]
     errs[:,1] = abs(entries[:-1,1]-entries[-1,1])/entries[-1,1]
-    errs[:,2] = abs(entries[:-1,2]-entries[-1,2])/entries[-1,2]
+    #errs[:,2] = abs(entries[:-1,2]-entries[-1,2])/entries[-1,2]
   else:
     errs=np.zeros([len(entries),3])
     errs[:,0] = entries[:,0]
     errs[:,1] = abs(entries[:,1]-ref[1])/ref[1]
-    errs[:,2] = abs(entries[:,2]-ref[2])/ref[2]
+    #errs[:,2] = abs(entries[:,2]-ref[2])/ref[2]
 
   #for e in errs:
   #  print e

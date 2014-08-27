@@ -171,7 +171,6 @@ class LagrangeROM(ROM):
     tot=0
     for s,soln in enumerate(self.solns):
       tot+=self.weights[s] * soln**r #* self.probs[s]
-    print 'sumwts:',sum(self.weights)
     tot*=1.0/sum(self.weights)
     return tot
 

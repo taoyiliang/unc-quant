@@ -10,7 +10,7 @@ runs=[0,1,2,3,4,5,6,7,8]#,9,10,
 #      1000,2000,4000,8000,
 #      10000]
 
-templateName = 'thirty.unc'
+templateName = 'simple10.unc'
 for run in runs:
   #make new input
   procfile = file('processors.txt','r')
