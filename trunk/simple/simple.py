@@ -27,6 +27,12 @@ def h10(v):
     v[i]=val*0.1
   return np.exp(-np.sum(v))
 
+def h15(v):
+  while len(v)<15:
+    v.append(3.5)
+  for i,val in enumerate(v):
+    v[i]=val*(1./float(len(v)))
+  return np.exp(-np.sum(v))
 #cl = GetPot(sys.argv)
 #if cl.search('-i'):
 #  inpFileName = ''
