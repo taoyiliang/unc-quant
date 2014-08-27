@@ -16,7 +16,7 @@
 [Sampler]
   [./SC]
     indexSet = TD
-    expOrd = 1
+    expOrd = 5
     quadrule = single
   [../]
   [./MC]
@@ -28,7 +28,7 @@
 
 [Backend]
   makePDF = 0
-  outLabel = 'simple10'
+  outLabel = 'thirty5'
   writeOut = 1
 []
 

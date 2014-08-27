@@ -147,9 +147,10 @@ class HDMR_ROM(ROM):
 
 
 class LagrangeROM(ROM):
-  def __init__(self,solns,weights,varDict,varVals,indexSet,quadrule,numprocs=0):
+  def __init__(self,solns,weights,probs,varDict,varVals,indexSet,quadrule,numprocs=0):
     self.solns = solns
     self.weights = weights
+    self.probs = probs
     self.varDict = varDict
     self.varVals = varVals
     self.indexSet = indexSet
@@ -169,8 +170,9 @@ class LagrangeROM(ROM):
   def moment(self,r):
     tot=0
     for s,soln in enumerate(self.solns):
-      tot+=self.weights[s]*soln**r
-    tot+=1.0/sum(self.weights)
+      tot+=self.weights[s] * soln**r #* self.probs[s]
+    print 'sumwts:',sum(self.weights)
+    tot*=1.0/sum(self.weights)
     return tot
 
   def sample(self,xs,verbose=False):

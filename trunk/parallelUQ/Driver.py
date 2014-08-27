@@ -63,15 +63,15 @@ class Driver(object):
     print '\nStarting run:',ident
     inp_file = GetPot(Filename=self.unc_inp_file)
     ex = Executor.ExecutorFactory('SC',self.varDict,inp_file)
-    ex.run(verbose=True)
+    ex.run(verbose=False)
     self.ROMs[ident]=ex.ROM
     self.ex = ex
-    xs={}
-    for key,value in self.varDict.iteritems():
-      xs[key]=1
-    print 'sampled:',ex.ROM.sample(xs,verbose=False)
+    #xs={}
+    #for key,value in self.varDict.iteritems():
+    #  xs[key]=1
+    #print 'sampled:',ex.ROM.sample(xs,verbose=False)
+    print 'sampled mean:',ex.ROM.moment(1)
     return ex
-
 
   def finishUp(self):
     elapsed=time.time()-self.starttime
@@ -85,6 +85,10 @@ class Driver(object):
     #    print '...Backends/PDFsamples not found; using 1e4...'
     #    numSamples = int(1e4)
     #  self.makePDF(numSamples)
+
+    needWrite = bool(self.input_file('Backend/writeOut',0))
+    if needWrite:
+      self.ex.writeOut()
 
     show()
     print '\nDriver complete.\n'
@@ -176,7 +180,7 @@ class HDMR_Driver(Driver):
     case+= '_N'+str(len(self.varDict))
     case+= '_H'+str(self.hdmr_level)
     #case+= '_L'+self.input_file('Sampler/SC/expOrd','')
-    mean = self.HDMR_ROM.mean(self.hdmr_level,verbose=True)
+    mean = self.HDMR_ROM.mean(self.hdmr_level,verbose=False)
     outFile = file(case+'.out','a')
     outFile.writelines('\nRuns,SC Level,Mean\n')
     outFile.writelines(str(self.HDMR_ROM.numRunsToCreate())+',')

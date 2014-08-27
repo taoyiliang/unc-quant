@@ -100,7 +100,7 @@ class Executor(object): #base class
   def clearInputs(self,verbose=False):
     if verbose: print '\nAttempting to clear old inputs...'
     os.chdir(self.inputDir)
-    fail=os.system('rm '+self.templateFile+'.unc*')
+    fail=os.system('rm '+self.templateFile+'.unc* > /dev/null 2>&1')
     if (not fail) and verbose:
       print '...successfully cleared old input files.'
 
@@ -121,6 +121,7 @@ class Executor(object): #base class
     self.histories['nRun']=[]
     self.histories['soln']=[]
     self.histories['solwt']=[]
+    self.histories['probs']=[]
     self.histories['varPaths']=[]
     if verbose: print '...uncertain variables:',self.histories['varNames'],'...'
     for var in self.varDict.values():
@@ -300,10 +301,15 @@ class SC(Executor):
 
   def setupHistories(self,runDict):
     self.histories['soln'].append(0)  #placeholders
+    self.histories['probs'].append(1)  #placeholders
     self.histories['solwt'].append(0)
     for key in runDict.keys():
       try:self.histories[key].append(runDict[key])
       except KeyError: self.histories[key]=[runDict[key]]
+    #fill probabilities
+    for v,var in enumerate(self.histories['vars']):
+      val = self.histories['varVals'][-1][v]
+      self.histories['probs'][-1]*=var.prob(val)
 
   def runSample(self,runDict):
     soln = super(SC,self).runSample(runDict)
@@ -318,8 +324,8 @@ class SC(Executor):
     print '                        \r',
 
   def writeOut(self):
-    mean = self.ROMmoment(1)
-    r2 = self.ROMmoment(2)
+    mean = self.ROM.moment(1)
+    r2 = self.ROM.moment(2)
     var = r2 - mean*mean
     name = self.case+'.moments'
     print '...writing to',name,'...'
@@ -345,6 +351,7 @@ class SCExec(SC):
   def finish(self):
     self.ROM = ROM.LagrangeROM(self.histories['soln'],
                                self.histories['solwt'],
+                               self.histories['probs'],
                                self.varDict,
                                self.histories['varVals'],
                                self.indexSet,
