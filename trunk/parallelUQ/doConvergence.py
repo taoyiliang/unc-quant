@@ -1,7 +1,7 @@
 import os
 import sys
 
-runs=[0,1,2,3,4,5,6,7,8]#,9,10,
+runs=[0,1,2,3,4,5]#,6,7,8]#,9,10,
       #11,12,13,14,15]
 
 #runs=[0   ,2   ,4   ,8  ,
@@ -10,7 +10,7 @@ runs=[0,1,2,3,4,5,6,7,8]#,9,10,
 #      1000,2000,4000,8000,
 #      10000]
 
-templateName = 'simple10.unc'
+templateName = 'simple30.unc'
 for run in runs:
   #make new input
   procfile = file('processors.txt','r')
@@ -24,6 +24,8 @@ for run in runs:
       infile.writelines(line.split('=')[0]+' = '+str(run)+'\n')
     elif line.startswith('  numprocs'):
       infile.writelines(line.split('=')[0]+'= '+str(procs)+'\n')
+    elif line.startswith('  writeOut'):
+      infile.writelines(line.split('=')[0]+'= 0')
     else:
       infile.writelines(line)
   infile.close()
