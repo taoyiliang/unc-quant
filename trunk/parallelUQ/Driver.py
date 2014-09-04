@@ -16,7 +16,8 @@ import InputEditor
 import ROM
 
 class Driver(object):
-  def __init__(self,argv):
+  def __init__(self,argv,verbose=False):
+    self.verbose=verbose
     self.starttime=time.time()
     print '\nStarting HDMR UQ at',dt.datetime.fromtimestamp(self.starttime)
     self.loadInput(argv)
@@ -62,15 +63,20 @@ class Driver(object):
     ident = self.todo.keys()[0]
     print '\nStarting run:',ident
     inp_file = GetPot(Filename=self.unc_inp_file)
-    ex = Executor.ExecutorFactory('SC',self.varDict,inp_file)
-    ex.run(verbose=False)
-    self.ROMs[ident]=ex.ROM
+    ex_type = inp_file('Problem/executor','')
+    print 'ex type:',ex_type
+    ex = Executor.ExecutorFactory(ex_type,self.varDict,inp_file)
+    ex.run(verbose=self.verbose)
+    try:
+      self.ROMs[ident]=ex.ROM
+      print 'sampled mean:',ex.ROM.moment(1)
+    except AttributeError:
+      pass #MC doesn't store a rom at this point
     self.ex = ex
     #xs={}
     #for key,value in self.varDict.iteritems():
     #  xs[key]=1
     #print 'sampled:',ex.ROM.sample(xs,verbose=False)
-    print 'sampled mean:',ex.ROM.moment(1)
     return ex
 
   def finishUp(self):
@@ -224,4 +230,4 @@ if __name__=='__main__':
   if '-hdmr' in sys.argv:
     drv = HDMR_Driver(sys.argv)
   else:
-    drv = Driver(sys.argv)
+    drv = Driver(sys.argv,verbose=True)

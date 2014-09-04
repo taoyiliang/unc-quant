@@ -119,6 +119,27 @@ class IE_Thirty(InputEditor):
 
   def runSolve(self,input_file):
     sys.path.insert(0,os.getcwd())
+    from simple import h5 as h
+    self.out=h(self.a)
+
+class IE_Thirty5(IE_Thirty):
+  def runSolve(self,input_file):
+    sys.path.insert(0,os.getcwd())
+    from simple import h5 as h
+    self.out=h(self.a)
+class IE_Thirty10(IE_Thirty):
+  def runSolve(self,input_file):
+    sys.path.insert(0,os.getcwd())
+    from simple import h10 as h
+    self.out=h(self.a)
+class IE_Thirty15(IE_Thirty):
+  def runSolve(self,input_file):
+    sys.path.insert(0,os.getcwd())
+    from simple import h15 as h
+    self.out=h(self.a)
+class IE_Thirty30(IE_Thirty):
+  def runSolve(self,input_file):
+    sys.path.insert(0,os.getcwd())
     from simple import h30 as h
     self.out=h(self.a)
 

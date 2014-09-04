@@ -1,16 +1,16 @@
 [Problem]
-  executor     = SC
+  executor     = MC
   templateFile = 'simple.inp'
   storeFlux    = 0
   execDir      = '../simple/'
   inputDir     = '../simple/'
-  input_editor = 'IE_Thirty'
-  numprocs     = 6
+  input_editor = 'IE_Thirty30'
+  numprocs     = 4
   mesh_factor  = 1
 []
 
 [HDMR]
-  level=2
+  level=3
 []
 
 [Sampler]
@@ -20,7 +20,7 @@
     quadrule = single
   [../]
   [./MC]
-    maxSamples = 10000
+    maxSamples = 100000
     writeSamples = 1
     loadSamples = 0
   [../]

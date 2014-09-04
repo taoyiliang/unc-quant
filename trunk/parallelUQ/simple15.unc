@@ -4,13 +4,13 @@
   storeFlux    = 0
   execDir      = '../simple/'
   inputDir     = '../simple/'
-  input_editor = 'IE_Thirty'
-  numprocs     = 6
+  input_editor = 'IE_Thirty15'
+  numprocs     = 2
   mesh_factor  = 1
 []
 
 [HDMR]
-  level=5
+  level=3
 []
 
 [Sampler]
@@ -20,7 +20,7 @@
     quadrule = single
   [../]
   [./MC]
-    maxSamples = 10000
+    maxSamples = 100000
     writeSamples = 1
     loadSamples = 0
   [../]

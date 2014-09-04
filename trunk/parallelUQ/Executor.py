@@ -143,7 +143,7 @@ class Executor(object): #base class
             finished+=1
           print 'Runs finished:',finished,
           del procs[p]
-          self.checkConverge(verbose)
+          self.checkConverge(verbose=verbose)
       if not self.sampler.converged:
         while len(procs)<self.numprocs and not self.sampler.converged:
         #while len(procs)<self.numprocs:
@@ -174,6 +174,7 @@ class Executor(object): #base class
           procs[-1].start()
       self.done = len(procs)==0 and self.sampler.converged
       time.sleep(0.1)
+    print 'DEBUG here'
 
   def runSample(self,runDict):
     self.ie.runSolve(runDict['inp_file'])
@@ -371,7 +372,7 @@ class MC(Executor):
     inp = self.input_file('Backend/outLabel','')
     self.case = 'MC_h'+str(self.meshFactor)+'_'+inp
 
-  def loadSampler(self):
+  def loadSampler(self,verbose=False):
     self.storeSolns=bool(self.input_file('Sampler/MC/writeSamples',0))
     loadSolns=bool(self.input_file('Sampler/MC/loadSamples',0))
 
@@ -389,7 +390,7 @@ class MC(Executor):
         self.histories['first']=one
         self.histories['second']=two
         self.total_runs=n
-        print '...loaded %i previous samples...' %n
+        if verbose: print '...loaded %i previous samples...' %n
       except IOError: pass
 
 
@@ -405,8 +406,9 @@ class MC(Executor):
     else:
       if self.maxM==0: #tol is set, but not M -> use tol criteria only
         self.maxM = int(1e20)
-    print '...max samples to run: %1.0e...' %self.maxM
-    print '...mean tol to converge: %1.1e...' %self.targetTol
+    if verbose:
+      print '...max samples to run: %1.0e...' %self.maxM
+      print '...mean tol to converge: %1.1e...' %self.targetTol
     self.timesConverged = 0
     self.sampler = spr.MonteCarlo(self.varDict)
     self.N = 0
@@ -484,7 +486,7 @@ class MCExec(MC):
     #print 'Mean  :',mean
     #print 'Var   :',var
 
-  def checkConverge(self,force=False):
+  def checkConverge(self,force=False,verbose=False):
     if force:
       print '\n\nEXECUTOR TERMINATED\n'
       print 'N,mean,var | convergence mean, var'

@@ -25,7 +25,7 @@ def addPlot(title,lbl,ref=None,r=1):
     errs=np.zeros([len(entries),3])
     errs[:,0] = entries[:,0]
     errs[:,1] = abs(entries[:,1]-ref[1])/ref[1]
-    errs[:,2] = abs(entries[:,2]-ref[2])/ref[2]
+#    errs[:,2] = abs(entries[:,2]-ref[2])/ref[2]
 
   #for e in errs:
   #  print e
@@ -34,7 +34,7 @@ def addPlot(title,lbl,ref=None,r=1):
 #  for e in errs:
 #    print e
   errs=zip(*errs)
-  plt.loglog(errs[0],errs[r],'-',label=lbl)
+  plt.loglog(errs[0],errs[r],'-',label=lbl,alpha=0.5)
 
 
 
