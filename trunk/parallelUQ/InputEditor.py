@@ -40,6 +40,7 @@ class InputEditor:
     writeFile=file(writeFileName,'w')
 
     for line in readFile:
+      if line.strip().startswith('#'):continue
       if newSectionFlag and line[0]=='[': #new section
         curPath=line.strip()[1:-1]
         newLine=line[:]
@@ -238,6 +239,7 @@ class HDMR_IO(InputEditor):
     writeFile = file(writeFileName,'w')
 
     for line in readFile:
+      if line.strip().startswith('#'):continue
       if newSectionFlag and line[0]=='[': # new section
         curPath = line.strip()[1:-1]
         newLine=line[:]

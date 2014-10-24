@@ -1,7 +1,7 @@
 import os
 import sys
 
-runs=range(6)
+runs=range(10)
 
 #runs=[0   ,2   ,4   ,8  ,
 #      10  ,20  ,40  ,80 ,
@@ -9,7 +9,7 @@ runs=range(6)
 #      1000,2000,4000,8000,
 #      10000]
 
-templateName = 'simple15.unc'
+templateName = 'diffusion.unc'
 for run in runs:
   #make new input
   procfile = file('processors.txt','r')
