@@ -1,0 +1,79 @@
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+\usepackage{fullpage}
+\usepackage{graphicx} % support the \includegraphics command and options
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\newcommand{\drv}[2]{\ensuremath{\frac{d #1}{d #2}}}
+\newcommand{\ddrv}[2]{\ensuremath{\frac{d^2 #1}{d^2 #2}}}
+\newcommand{\into}{\ensuremath{\int_{-1}^1}}
+\newcommand{\intz}{\ensuremath{\int_0^1}}
+\newcommand{\intf}{\ensuremath{\int_{-\infty}^\infty}}
+\newcommand{\inti}{\ensuremath{\int_{x_{i-1/2}}^{x_{i+1/2}}}}
+\newcommand{\intO}{\ensuremath{\int_{4\pi}}}
+\newcommand{\order}[1]{\ensuremath{\mathcal{O}(#1)}}
+\newcommand{\He}{\ensuremath{\mbox{He}}}
+\newcommand{\expv}[1]{\ensuremath{\langle #1 \rangle}}
+
+\title{Tests for UQ Framework}
+\author{Paul Talbot}
+%\date{}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+This work outlines the development of an uncertainty quantification (UQ) framework using generalized polynomial choas expansions and stochastic collocation (PCESC), verified using Monte Carlo (MC) sampling.  To verify the several stages of development this framework undergoes in development, we present here several test codes of increasing complexity that the UQ framework will act on.  The four test codes solve four problems: a polynomial expression; 1D semi-infinite medium with uniform source and single material; 1D $k$-eigenvalue neutron diffusion transport with two energy groups and a single material; and a 2D, two energy group $k$-eigenvalue neutron diffusion transport quarter-core benchmark.
+
+\subsection{Algorithm}
+Each problem-solving code is treated as a black box that reads in an input file and produces a result readable from an output file.  We briefly outline the PCESC process here.  The problem-solving code can be represented as a function $U$ of certain input parameters $p$ and uncertain parameters $\theta(\omega)$, where $\theta$ could be a single parameter or a vector of uncertain parameters and $\omega$ is a single realization in the uncertainty space of $\theta$.  We expand $U(p,\theta)$ in basis polynomials characteristic of the uncertain parameters:
+\begin{equation}
+U(p;\theta) \approx \sum_{i=0}^I c_i B_I(\theta),
+\end{equation}
+where $c$ are expansion coefficients, $B$ are the characteristic orthonormal basis polynomials, and the sum is truncated at some order $I$.  In the limit as $I$ approaches infinity (or if $U(\theta)$ can be expressed exactly as a polynomial of order $I$), there is no approximation.  Often the expansion converges after a reasonably small number of terms.
+
+We make use of the orthonormal nature of the polynomial basis to calculate the coefficients $c_i$,
+\begin{equation}
+c_i = \int_\Omega U(\theta)B_i(\theta)d\theta,
+\end{equation}
+where $\Omega$ is the entire domain of uncertainty space represented by $\theta$.  With the right choice of polynomials, we can apply quadrature to solve the integral,
+\begin{equation}
+c_i = \sum_{\ell=0}^{(i+1)/2} w_\ell U(\theta_\ell) B_i(\theta_\ell).
+\end{equation}
+In this case we are applying Gaussian quadrature, where an expansion of order $N$ can exactly integrate a polynomial of order $2N-1$.  Once the coefficients are calculated, they in combination with the basis polynomials create a reduced-order model that can be sampled like the original function, but ideally at much less computational expense.
+
+The measure of success for the PCESC algorithm is its ability to preserve the mean and variance of the original function, as well as produce a virtually identical probability density function (pdf) for the solution quantity of interest, $U(p;\theta)$.  The mean, variance, and pdf are confirmed using brute-force Monte Carlo sampling of the original code.
+
+\include{simple}
+\include{source}
+\include{oneD}
+
+
+
+
+
+\end{document}
+
+
+
+
+\begin{center}
+\begin{tabular}{c c|c c| c}
+\end{tabular}
+\end{center}
+
+\begin{figure}[h]
+\centering
+  \begin{subfigure}[b]{0.45 \textwidth}
+   \includegraphics[width=\textwidth]{}
+   \caption{}
+   \label{}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.45\textwidth}
+   \includegraphics[width=\textwidth]{}
+   \caption{}
+   \label{}
+  \end{subfigure}
+\caption{}
+\end{figure}

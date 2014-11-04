@@ -1,0 +1,445 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{graphicx}%
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{cite}
+
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{physics}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
+\newcommand{\xs}[2]{\ensuremath{\Sigma_{#1}^{(#2)}}}
+\newcommand{\intO}{\ensuremath{\int\limits_{4\pi}}}
+\newcommand{\intz}{\ensuremath{\int\limits_0^1}}
+\newcommand{\intf}{\ensuremath{\int\limits_{-\infty}^\infty}}
+\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+\newcommand{\LargerCdot}{\raisebox{-0.25ex}{\scalebox{1.2}{$\cdot$}}}
+
+\textwidth6.6in
+\textheight9in
+
+
+\setlength{\topmargin}{0.3in} \addtolength{\topmargin}{-\headheight}
+\addtolength{\topmargin}{-\headsep}
+
+\setlength{\oddsidemargin}{0in}
+
+\oddsidemargin  0.0in \evensidemargin 0.0in \parindent0em
+
+%\pagestyle{fancy}\lhead{MATH 579 (UQ for PDEs)} \rhead{02/24/2014}
+%\chead{Project Proposal} \lfoot{} \rfoot{\bf \thepage} \cfoot{}
+
+
+\begin{document}
+\graphicspath{../graphics}
+
+\title{High Density Model Reduction \\Uncertainty Quantification \\for Multigroup Diffusion Neutronics}
+
+\author[]{Paul Talbot\thanks{talbotp@unm.edu} and Anil K. Prinja}
+\affil[]{Department of Chemical and Nuclear Engineering\\University of New Mexico}
+%\date{}
+\renewcommand\Authands{ and }
+\maketitle
+\newpage
+
+
+\section{Introduction}
+There have been many recent advances in uncertainty quantification in numerical models for computational physics \cite{SCLagrange}.  In this document, we present ongoing work to demonstrate the efficiency of high-density model reduction (HDMR) techniques as well as sparse-grid stochastic collocation on sparse grids (SC) \cite{sparseSC} in comparison with traditional analog Monte Carlo (MC) and Latin Hypercubefor (LHC) uncertainty quantification methods.
+
+\section{Model}
+The uncertainty quantification methods we describe are agnostic of the deterministic problem whose uncertainty is quantified.  To demonstrate the effectiveness of these methods, we apply uncertainty quantification to a two-dimensional nonlinear dual-energy group neutron diffusion criticality benchmark problem \cite{benchmark}.  This problem simulates an orthogonal quarter-core reactor by imposing reflective conditions on the left and bottom boundaries, with vacuum no-traction conditions on the top and right.  the problem makes use of five materials in 121 regions.  Fig. \ref{geom} illustrates the core.  
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.4\linewidth]{core}
+  \caption{Core Geometry}
+  \label{geom}
+\end{figure}
+\subsection{Mathematical Model}
+The PDE describing steady-state neutron transport in the core is the two-group neutron diffusion criticality approximation,
+\begin{equation}
+-\grad\cdot\qty( D_1(\bar x)\grad\phi_1(\bar x))+\qty(\xs{a}{1}(\bar x)+\xs{s}{1\to2}(\bar x))\phi_1(\bar x) = \frac{1}{k(\phi)}\sum_{g'=1}^2\nu_{g'}\xs{f}{g'}(\bar x)\phi_{g'}(\bar x),
+\end{equation}
+\begin{equation}
+-\grad \cdot\qty(D_2(\bar x)\grad \phi_2(\bar x))+\xs{a}{2}(\bar x)\phi_2(\bar x) = \xs{s}{1\to 2}(\bar x)\phi_1(\bar x),
+\end{equation}
+where we use the following parametric coefficients: the absorption cross section $\Sigma_{g,a}=\Sigma_{g,c}+\Sigma_{g,f}$; the capture and fission cross sections $\Sigma_{g,c}$ and $\Sigma_{g,f}$; the diffusion coefficient $D_g$ which depends on the scattering cross section of the medium; and the fission multiplication factor $\nu_g$, the ratio of new neutrons per fission-producing neutron.  The solution to this PDE is the neutron scalar flux $\phi_g(\bar x)$.  We apply no-traction conditions on the vacuum boundaries and zero-derivative current on the reflecting boundaries for both energy groups:
+ \begin{equation}
+\frac{\phi_g}{4}-\frac{D_g}{2}\eval{\pdv{\phi_g}{x_1}}_{\partial \Omega_\text{top}}=0,\hspace{5pt} g=1,2,
+\end{equation}
+\begin{equation}
+\frac{\phi_g}{4}-\frac{D_g}{2}\eval{\pdv{\phi_g}{x_2}}_{\partial \Omega_\text{right}}=0,\hspace{5pt} g=1,2,
+\end{equation}
+\begin{equation}
+-D_g\eval{\pdv{\phi_g}{x_1}}_{\partial \Omega_\text{bottom}}=0,\hspace{5pt} g=1,2,
+\end{equation}
+\begin{equation}
+-D_g\eval{\pdv{\phi_g}{x_2}}_{\partial \Omega_\text{left}}=0,\hspace{5pt} g=1,2.
+\end{equation}
+\\
+
+The material properties are shown in Table \ref{tab:coremats}, and the domain $\Omega=[0,200\text{ cm}]^2$.  The reference flux solutions are plotted in Fig. \ref{benchflux}, and for the reference problem $k$=1.00007605445.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{c c | c c c c}
+Region & Group & $D_g$ & $\Sigma_{a,g}$ & $\nu\Sigma_{f,g}$ & $\Sigma_s^{1,2}$ \\ \hline
+1 & 1 & 1.255 & 8.252e-3 & 4.602e-3 & 2.533e-2 \\
+ & 2 & 2.11e-1 & 1.003e-1 & 1.091e-1 & \\ \hline
+2 & 1 & 1.268 & 7.181e-3 & 4.609e-3 & 2.767e-2 \\
+ & 2 & 1.902e-1 & 7.047e-2 & 8.675e-2 & \\ \hline
+3 & 1 & 1.259 & 8.002e-3 & 4.663e-3 & 2.617e-2 \\
+ & 2 & 2.091e-1 & 8.344e-2 & 1.021e-1 & \\ \hline
+4 & 1 & 1.259 & 8.002e-3 & 4.663e-3 & 2.617e-2 \\
+ & 2 & 2.091e-1 & 7.3324e-2 & 1.021e-1 & \\ \hline
+5 & 1 & 1.257 & 6.034e-4 & 0 & 4.754e-2 \\
+ & 2 & 1.592e-1 & 1.911e-2 & 0 & 
+\end{tabular}
+\caption{Reference Material Properties for Benchmark Core}
+\label{tab:coremats}
+\end{table}
+\begin{figure}[H]
+\centering
+  \begin{subfigure}[b]{0.45 \textwidth}
+   \includegraphics[width=\textwidth]{g1_50_flux}
+   \caption{$\phi$, Group 1}
+   \label{g1}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.45 \textwidth}
+   \includegraphics[width=\textwidth]{g2_50_flux}
+   \caption{$\phi$, Group 2}
+   \label{g2}
+  \end{subfigure}
+  \caption{Reference Flux Profiles}
+  \label{benchflux}
+\end{figure}
+
+\subsection{Deterministic Solver}
+The criticality eigenvalue and quantity of interest $k(\phi)$ is converged on iteratively by
+\begin{equation}
+k^{n+1}=k^n\sum_{g=1}^2\frac{\iint\limits_\Omega\nu\xs{f}{g}\phi_g^{n+1}(\bar x)~d\bar x}{\iint\limits_\Omega\nu\xs{f}{g}\phi_g^{n}(\bar x)~d\bar x}.
+\end{equation}
+until a convergence tolerance is achieved.  We solve $\phi_1,\phi_2,$ and $k$ nonlinearly and simultaneously using a globally- and locally-conservative finite volume approximation in space.  We solve implicitly with a Jacobian-Free Newton Krylov method, using a GMRES package from nonlinear solver package \texttt{trilinos} \cite{Trilinos-Overview}.\\
+
+To verify the deterministic solver, we compare flux profiles and $k$ to the original benchmark\cite{benchmark} as well as demonstrate the convergence of $k$ with increasing mesh grid refinement.  The deterministic solver is in agreement with the benchmark, and convergence for $k$ and both group fluxes are demonstrated in Fig. \ref{det-conv}.  Both fluxes as well as the $k$-eigenvalue converge between first and second order.  The finite volume method is second order, but the overall convergence order is reduced by first-order boundary condition treatments.  In all cases, reducing the size of $h=\Delta x=\Delta y$ decreases the error in the solution.  The reference solution is a level of refinement finer than the finest point shown.   The flux error is calculated by considering the maximum error among several pointwise flux values, while $k$ error is the global value for each refinement.
+\begin{figure}[H]
+\centering
+  \begin{subfigure}[b]{0.3 \textwidth}
+   \includegraphics[width=\textwidth]{g1}
+   \caption{$\phi$, Group 1}
+   \label{g1conv}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3 \textwidth}
+   \includegraphics[width=\textwidth]{g2}
+   \caption{$\phi$, Group 2}
+   \label{g2conv}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3 \textwidth}
+   \includegraphics[width=\textwidth]{k}
+   \caption{$k$}
+   \label{kconv}
+  \end{subfigure}
+  \caption{Deterministic Solver Convergence}
+  \label{det-conv}
+\end{figure}
+
+\section{Uncertainty Quantification}
+Throughout the remainder of this document, we will represent the solution to the $k$-eigenvalue problem generically as $u(Y)$, where $u$ corresponds to the value of $k$ and $Y$ is the vector of uncertain input parameters.\\
+
+There are 33 total input parameters in Table \ref{tab:coremats} that can be treated as uncertain.  For simplicity, any uncertainty introduced by these parameters is taken to be uniformly distributed within 10\% of the reference value.  We consider three cases for uncertainty quantification, distinguished chiefly by the number of input parameters with uncertainty ($N$): material 1 uncertainty, where all the material properties for material 1 are treated as uncertain ($N$=7); low-energy group uncertainy, where all material properties for group 2 are treated as uncertain ($N$=13); and full uncertainty, where all material properties are treated as uncertain ($N$=33).\\
+
+The test for a method's effectiveness will be considering the level of error reached as a function of the number of calls to the deterministic solver required.  While there is some difference in overhead cost between methods, this diminishes for sufficiently costly determinstic solutions.
+
+In general, moments of the quantity of interest $u(Y)$ are obtained by
+\begin{equation}
+\expv{u(Y)^r} = \int_\Gamma u(Y)^r P(Y) dY,
+\end{equation}
+where $r$ is the desired moment, $Y=[Y_1,Y_2,\ldots,Y_N]$ are the uncertain inputs, $P(Y)$ is the joint probability distribution of $Y$, and $\Gamma$ is the uncertainty space spanned by $Y$.
+
+\subsection{Monte Carlo and Latin Hypercube}
+By way of benchmark, we consider both analog Monte Carlo (MC) and Latin Hypercube (LHC) as uncertainty quantification techniques.
+\subsubsection{Monte Carlo}
+Analog Monte Carlo determines the moments of a function by randomly sampling from the uncertainy space repeatedly until an accurate idea of the result is obtained.  Monte Carlo benefits from a guaranteed consistent rate of convergence; however, this convergence rate is quite low; it typically converges as 1 over the square root of the number of deterministic solves.
+MC approximates moments of $u(Y)$ as
+\begin{equation}
+\expv{u(Y)^r}\approx \frac{1}{\eta}\sum_{m=1}^\eta u(Y^{(m)})^r,
+\end{equation}
+where $\eta$ is the total number of samples taken, $m$ is the index of a sample, and $Y^{(m)}$ is a point randomly sampled from $\Gamma$.
+
+\subsubsection{Latin Hypercube}
+TODO
+
+
+\subsection{Stochastic Collocation}
+In stochastic collocation, we approximate $u(Y)$ as the sum of $u$ evaluated at $\eta$ collocated points multiplied by multidimensional Lagrangian polynomials.  We make use of the quadrature index $k$, not to be confused with the criticality factor $k(Y)$ (represented by $u(Y)$).
+\begin{equation}\label{approx}
+u(Y)\approx u_{h,\eta,\Lambda(L)}(Y)=\sum_{k=0}^\eta u(Y^{(k)})\mathcal{L}_k(Y),
+\end{equation}
+\begin{equation}
+\mathcal{L}_k(Y)=\prod_{n=1}^N \mathcal{L}_{k_n}(Y_n),
+\end{equation}
+\begin{equation}
+\mathcal{L}_{k_n}(Y_n)=\prod_{j=1}^i \frac{Y_n-Y_n^{(i)}}{Y_n^{(k_n)}-Y_n^{(i)}},
+\end{equation}
+\begin{equation}
+\expv{u(Y)}\approx\expv{u_h(Y)}=\sum_{k=1}^\eta w_k ~u_h\qty(Y^{(k)}),
+\end{equation}
+where $u_h(Y)$ is the spatially-discretized PDE solution, and $Y^{(k)}=[Y^{(k_1)},\cdots,Y^{(k_N)}]$ are realizations of $Y$ similar to $Y_m$ in Monte Carlo but chosen at quadrature points $Y^{(k)}$ with corresponding weights $w_k$.  For this study, uniformly-distributed uncertain parameters suggest Gauss-Legendre quadrature to obtain collocation points and weights.  The necessary quadrature points are obtained based on polynomial expansion orders from an index set $\Lambda(L)$.
+
+\subsubsection{Index Set $\Lambda(L)$}
+The index set $\Lambda(L)$ provides the basis for most of the polynomial representation, including determining the quadrature set to evaluate the sum in Eq. \ref{approx}.  $L$ is the polynomial degree of the stochastic collocation expansion.  For example, for a single uncertain parameter ($N=1$) and a fourth-order polynomial approximation ($L=4$), $\Lambda$ includes all polynomial orders from 0 to 4, $\qty(\Lambda=[0,1,2,3,4])$.  Each index point $p\in\Lambda$ corresponds to a polynomial expansion moment of order $i$.\\
+
+In the multivariate case, there are several methods to determine what index set to use.
+In the most naive case, $\Lambda(L)$ is a tensor product of polynomial expansion orders,
+\begin{equation}
+\Lambda_\text{TP}(L)=\Big\{\bar p=[p_1,...,p_N]: \max_{1\leq n\leq N}p_n\leq L \Big\},\hspace{10pt}|\Lambda_\text{TP}(L)|=(L+1)^2.
+\end{equation}
+For example, for $N=2$ and $L=4$, the index set $\Lambda_\text{TP}(L)$ includes all combinations of the expansion orders $[0,1,2,3,4]\otimes[0,1,2,3,4]$ for a total of 25 polynomial expansion indices.  The collection of expansion points in this example index set is shown in Fig. \ref{TP}.  \\
+
+Other index sets with less cardinality can be employed to reduce the number of collocation points.  Two in particular are the ``total degree'' set (see Fig. \ref{TD}), which is ideal for quantities that are analytic in stochastic space,
+\begin{equation}
+\Lambda_\text{TD}(L)=\Big\{\bar p=[p_1,...,p_N]:\sum_{n=1}^N p_n \leq L \Big\},\hspace{10pt}|\Lambda_\text{TD}(L)|={L+N\choose N},
+\end{equation}
+and the ``hyberbolic cross'' index set (see Fig. \ref{HC}), for quantities that have limited smoothness in stochastic space,
+\begin{equation}
+\Lambda_\text{HC}(L)=\Big\{\bar p=[p_1,...,p_N]:\prod_{n=1}^N p_n+1 \leq L+1 \Big\},\hspace{10pt}|\Lambda_\text{HC}(L)|\leq (L+1)(1+\log(L+1))^{N-1}.
+\end{equation}
+Figure \ref{indexsets} shows each of these index sets for $N=2,L=4$.  The savings of total degree and hyperbolic cross help fight the curse of dimensionality present in tensor product. 
+\begin{figure}[H]
+\centering
+  \begin{subfigure}[b]{0.32 \textwidth}
+   \includegraphics[width=\textwidth]{TP}
+   \caption{Tensor Product}
+   \label{TP}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.32 \textwidth}
+   \includegraphics[width=\textwidth]{TD}
+   \caption{Total Degree}
+   \label{TD}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.32 \textwidth}
+   \includegraphics[width=\textwidth]{HC}
+   \caption{Hyperbolic Cross}
+   \label{HC}
+  \end{subfigure}
+  \caption{Index Set Examples: $N=2,L=4$}
+  \label{indexsets}
+\end{figure}
+
+\subsubsection{Sparse Grid Quadrature}
+The collocation points used in the Lagrange polynomial expansion are obtained based on the index set chosen.  To uniquely specify an isotropic Smolyak-like sparse grid, it is necessary to determine the number of uncertain variables $N$, the desired expansion order $L$, the index set $\Lambda(L)$, the quadrature rule $p(i)$, and the quadrature points-and-weights generating function for one-dimensional quadratures.
+This provides the isotropic sparse grid approximation
+\begin{equation}
+u(Y)\approx\mathcal{S}_{N,\Lambda(L)}[k](Y)=\sum_{\boldsymbol{i}\in\Lambda(L)}c(\boldsymbol{i})\bigotimes_{n=1}^N\mathcal{U}_{n,p(i_n)}[u](Y),
+\end{equation}
+\begin{equation}
+c(\boldsymbol{i})=\sum_{\substack{\boldsymbol{j}=\{0,1\}^N,\\ \boldsymbol{i}+\boldsymbol{j}\in\Lambda(L)}}(-1)^{|\boldsymbol{j}|_1},
+\end{equation}
+\begin{align}
+\bigotimes_{n=1}^N\mathcal{U}_{n,p(i_n)}[u](Y)&\equiv\sum_{k_1=0}^{p(i_1)}\cdots\sum_{k_N=0}^{p(i_N)}u_h\qty(Y^{(k_1)},\cdots,Y^{(k_N)})\prod_{n=1}^N \mathcal{L}_{k_n}(Y_n),\\
+  &=\sum_{k}^{p(\vec i)}u_h\qty(Y^{(k)})\mathcal{L}_k(Y),
+\end{align}
+where $p(i)$ is the ``quadrature rule'' used to obtain the number of quadrature points for a given expansion order.  While this can be chosen arbitrarily, it is common to select $p(i)=i$ for Gauss quadrature and $p(i)=2^i$ for Clenshaw-Curtis quadrature.
+The sparse grid quadrature is obtained through the tensor product of smaller quadratures, which has less cardinality than the full tensor quadrature.  The savings in collocation points are demonstrated in Figure \ref{collsets} for two identically distributed uniform variables, each on [-1,1].  The reduction in collocation points grows with the number of input parameters $N$ and the expansion order $L$.
+A visual example of sparse grids for two variables uniformly distributed between -1 and 1 using Gauss-Legendre quadrature is shown in Fig. \ref{collsets}.
+\begin{figure}[H]
+\centering
+  \includegraphics[width=\linewidth]{sparse_plot}
+  \caption{Sparse Grids, $N=2,L=4,p(i)=i$, Legendre points}
+  \label{collsets}
+\end{figure}
+For comparison, we show the number of index points for two input spaces of dimensionality $N$ and several expansion levels $L$ for all three index sets, as well as the number of collocation points for total degree and hyperbolic cross rules in Table \ref{compIS}.  We note that accuracy cannot be directly drawn from polynomial expansions; for this problem the same number of collocation points results in a similar magnitude error in both total degree and hyperbolic cross.  This implies, for this problem, that a much lower-order polynomial expansion constructed using the total degree rule is comparable in error to a larger-order polynomial expansion constructed using the hyperbolic cross rule.
+\begin{table}[H]
+\centering
+\begin{tabular}{c|c|c|c c|c c}
+$N$ & $L$ & TP & \multicolumn{2}{|c|}{TD} & \multicolumn{2}{|c}{HC} \\ 
+ &  & $\qty|\Lambda(L)|$ & $\qty|\Lambda(L)|$ & $\eta$ & $\qty|\Lambda(L)|$ & $\eta$\\ \hline
+3 & 4 & 125    & 35    & 165   & 16 & 31\\
+ & 8   & 729    & 165  & 2,097  & 44 & 153\\
+ & 16 & 4,913  & 969   & 41,857 & 113 & 513\\ \hline
+5 & 2 & 293 & 21 & 61 & 11 & 11\\
+ & 4 & 3,125 & 126 & 781 & 31 & 71\\
+ & 8 & 59,049 & 1,287 & 28,553 & 111 & 481 
+\end{tabular}
+\caption{Index Set and Collocation Size Comparison}
+\label{compIS}
+\end{table}
+While the hyberbolic cross collocation points are significantly more sparse than the total degree collocation points, we note that the increased number of polynomial expansion moments in total degree make it much more accurate for the same total polynomial expansion level $L$.  The results of this work demonstrate that for this problem, the same number of collocation points using either total degree or hyperbolic cross results in a similar magnitude of error.
+
+\subsubsection{Anisotropic Sparse Grid}
+One disadvantage of sparse grids as defined above is that it treats all dimensions of uncertainty space equally.  In many cases, however, the sensitivity of the stochastic solution to one dimension is less than another.  For example, we heuristically expect the sensitivity of the $k$-eigenvalue to the reflecting material (material 5) diffusion coefficient to be much less than the sensitivity to the fission cross section in the main fissile material (material 1).  \\
+
+We can leverage the varying sensitivity by introducing importance parameters $\vec\alpha=[\alpha_1,\cdots,\alpha_N]$ that parametrize the sensitivity of the stochastic solution to each dimension.  Using the one-norm
+\begin{equation}
+\qty|\vec\alpha|_1\equiv\frac{1}{N}\sum_{n=1}^N \alpha_n,
+\end{equation}
+these weight parameters adjust the index set rules $\Lambda(L)$ for total degree and hyperbolic cross as
+\begin{equation}
+\tilde\Lambda_\text{TD}(L)=\Big\{\bar p=[p_1,...,p_N]:\sum_{n=1}^N \alpha_n p_n \leq \qty|\vec\alpha|_1 L \Big\},
+\end{equation}
+\begin{equation}
+\tilde\Lambda_\text{HC}(L)=\Big\{\bar p=[p_1,...,p_N]:\prod_{n=1}^N \qty(p_n+1)^{\alpha_n} \leq \qty(L+1)^{\qty|\vec\alpha|_1} \Big\}.
+\end{equation}
+In this formulation, greater values of $\alpha_n$ result in less quadrature points for uncertain input $Y_n$.  Smaller values of $\alpha_n$ are assigned to more sensitive dimensions to prioritize collocation points.
+
+\subsubsection{SC Results}
+In order to compare magnitude of error, we use a ``benchmark'' solution generated with a high number of collocation points using isotropic sparse grid stochastic collocation as a reference solution.  Monte Carlo and stochastic collocation solutions for varying numbers of PDE solves are computed, and relative error is plotted as a function of number of solves.  The error is in the moments $r$ of the quantity of interest $k(Y)=u(Y)$, and is given by
+\begin{equation}
+\epsilon_h^{(r)}=\frac{|\expv{u^{(r)}}-\expv{u_\text{ref}^{(r)}}|}{\expv{u_\text{ref}^{(r)}}},
+\end{equation}
+\begin{equation}
+\expv{u^{(r)}}\approx\expv{S_{N,\Lambda_\text{TD}(L)}[u](Y)^{(r)}}=\sum_{k=1}^\eta w_k ~u^{(r)}\qty(Y^{(k)}),
+\end{equation}
+where the weights $w_k$ and points $Y^{(k)}$ come from the multivariate quadrature used in stochastic collocation.\\
+%
+%Figs. \ref{n1}-\ref{n5} show the comparison of Monte Carlo convergence to stochastic collocation for $N=1,3,5$ where $N$ is the number of uncertain parameters.  Both total degree (TD) and hyperbolic cross (HC) index sets have been included for $N>1$ (they are indistinguishable for $N=1$).  Additionally, we include two low-anisotropy anisotropic grids.\\
+%
+%Because of the regularity of $k(Y)=u(Y)$, the total degree index set is as cost effective as the hyperbolic cross index set.  For a less regular stochastic solution, we expect hyperbolic cross would be more efficient.  We also expect the convergence rate to diminish with increasing $N$, and that trend can be seen in the figures for the mean and variance of $k(Y)$. Both the magnitude of the error as well as the convergence rate of stochastic collocation outperforms Monte Carlo for any number of runs.  In addition, heuristic selection of importance weighting improved the accuracy of sparse grid methods by approximately half an order of magnitude.\\
+%\begin{figure}[H]
+%\centering
+%  \begin{subfigure}[b]{0.49 \textwidth}
+%   \includegraphics[width=\textwidth]{N1_h5_MCHC}
+%   \caption{Mean}
+%   \label{n1mean}
+%  \end{subfigure}
+%  \begin{subfigure}[b]{0.49 \textwidth}
+%   \includegraphics[width=\textwidth]{N1_h5_MCHC_2}
+%   \caption{Variance}
+%   \label{n1var}
+%  \end{subfigure}
+%  \caption{$N=1$}
+%  \label{n1}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\centering
+%  \begin{subfigure}[b]{0.49 \textwidth}
+%   \includegraphics[width=\textwidth]{N3_h5_MCHC}
+%   \caption{Mean}
+%   \label{n3mean}
+%  \end{subfigure}
+%  \begin{subfigure}[b]{0.49 \textwidth}
+%   \includegraphics[width=\textwidth]{N3_h5_MCHC_2}
+%   \caption{Variance}
+%   \label{n3var}
+%  \end{subfigure}
+%  \caption{$N=3$}
+%  \label{n3}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\centering
+%  \begin{subfigure}[b]{0.49 \textwidth}
+%   \includegraphics[width=\textwidth]{N5_h5_MCHC}
+%   \caption{Mean}
+%   \label{n5mean}
+%  \end{subfigure}
+%  \begin{subfigure}[b]{0.49 \textwidth}
+%   \includegraphics[width=\textwidth]{N5_h5_MCHC_2}
+%   \caption{Variance}
+%   \label{n5var}
+%  \end{subfigure}
+%  \caption{$N=5$}
+%  \label{n5}
+%\end{figure}
+
+
+
+\subsection{HDMR}
+Despite the gains in efficiency from using anisotropic sparse grids, stochastic collocation still suffers from the curse of dimensionality, becoming computationally unwieldy for more than a dozen uncertain inputs.  We can further improve the efficiency of deterministic uncertainty quantification by making use of high-density model reduction (HDMR) techniques \cite{hdmr}.  These methods have been applied recently to neutronics problems for significant gain in efficiency \cite{hdmr_neutron}.\\
+
+Cut-HDMR makes use of representative ``slices'' or cuts of the uncertainty space.  In particular, it approximates a function as a sum of increasing interactions,
+\begin{equation}
+u(Y)= H[u](Y)=u_0 + \sum_i^N u_i + \sum_i^N\sum_j^i u_{i,j}+...,
+\end{equation}
+\begin{equation}
+u_0=u(\bar Y),
+\end{equation}
+\begin{equation}
+u_i\equiv u(Y_i,\bar Y) - u_0,
+\end{equation}
+\begin{equation}
+u_{i,j}\equiv u(Y_i,Y_j,\bar Y) - u_i - u_j - u_0,
+\end{equation}
+and so on.  Here $N$ is the total number of uncertain inputs, and $\bar Y$ indicates holding any variables not explicitly listed at a reference value (in this case, the mean value).  That is,
+\begin{equation}
+u(Y_i,\bar Y) \equiv u(\bar Y_1,\ldots,Y_i,\ldots,\bar Y_N).
+\end{equation}
+This Cut-HDMR representation allows us to approximate by truncating at a particular interaction level $H$.  For instance, an $H2$ approximation would only include the terms
+\begin{equation}
+u(Y)\approx H_2[u](Y) = u_0 + \sum_i^N u_i + \sum_i^N\sum_j^{i-1} u_{i,j}.
+\end{equation}
+A variety of methods can be used to represent $u(Y)$.  In our case, we make use of stochastic collocation on sparse grids, which is most efficient for a moderate number of uncertain inputs.  For example,
+\begin{equation}
+u(Y)\approx H_2[u](Y)\approx S_0 + \sum_i^N S_i + \sum_i^N\sum_j^{i-1} S_{i,j},
+\end{equation}
+\begin{equation}
+S_0\equiv S[u](\bar Y),
+\end{equation}
+\begin{equation}
+S_i\equiv S[u](Y_i,\bar Y) - S_0,
+\end{equation}
+\begin{equation}
+S_{i,j}\equiv S[u](Y_i,Y_j,\bar Y) - S_i - S_j - S_0.
+\end{equation}
+
+
+%
+%\subsection{Selecting Anisotropy}
+%Because of the heuristic nature of anisotropy importance weights, we present here several weight choices and the effect on absolute error and convergence.  We consider four cases along with Monte Carlo and isotropic sparse grids.  Each case is labeled by its importance weights in order of the input parameters listed in Table \ref{params}. The choice of weights is informed by considering the convergence rate of each individual parameter alone with increasing quadrature order, as shown in Fig. \ref{indconv}.  We surmise from this figure that the material 1 cross sections converge the slowest, while the material 5 diffusion coefficient converges most quickly.  We choose the sample cases 1-1-2-2-4 and 1-1-4-4-8 to put increasing weight on the material 1 cross sections and remove weight from the material 5 diffusion coefficient.  In addition, we choose the case 1-1-2-1-1 as an example of a somewhat arbitrary choice of coefficient to remove weight from.  Lastly, we intentionally choose a poor weighting scheme with 8-8-4-4-1 to show worst-case effects of including poor importance weights.  The results are compared in Figs. \ref{aniso1} and \ref{aniso2} for the mean and variance. 
+%\begin{figure}[H]
+%\centering
+%   \includegraphics[width=0.5\textwidth]{coefficient_decay2}
+%   \caption{Independent Stochastic Convergence}
+%   \label{indconv}
+%\end{figure}
+%\begin{figure}[H]
+%\centering
+%  \begin{subfigure}[b]{0.49 \textwidth}
+%   \includegraphics[width=\textwidth]{N5_h5_aniso1}
+%   \caption{Mean}
+%   \label{aniso1}
+%  \end{subfigure}
+%  \begin{subfigure}[b]{0.49 \textwidth}
+%   \includegraphics[width=\textwidth]{N5_h5_aniso2}
+%   \caption{Variance}
+%   \label{aniso2}
+%  \end{subfigure}
+%  \caption{$N=5$, Anisotropics}
+%  \label{aniso}
+%\end{figure}
+%
+%
+%\section{Discussion}
+%There are a few important considerations when analyzing Figs. \ref{n1}-\ref{aniso}.\\
+%
+%First, there is a noticeable plateau in error convergence in many of the stochastic collocation plots.  Thus far this seems to be an artifact of the algorithm, originating in single-point versus double-point precision round off.  Ongoing efforts include finding any conversion of scalars from standard double precision to single precision within the algorithm.\\
+%
+%Additionally, the number of PDE solves for stochastic collocation is determined based on the maximum expansion level $L$.  For higher $N$, increasing $L$ by only one value increases the number of PDE solves much more than increasing $L$ by one for small $N$.  As a result, there are few data points to power fit for $N=5$, and the plateau just mentioned around $\epsilon=10^{-8}$ is more difficult to distinguish from standard convergence.  Resolving the issues leading to the plateau should also resolve this difficulty in fitting points.  Based on trends with the variance and mean from the other plots, we expect a convergence rate of order -3 for the mean when $N=5$.\\
+%
+%We can see the possible benefit and harm of applying importance weighting to an anisotropic grid in Figs. \ref{aniso}.  Any application of anisotropic sparse grids in line with our heuristic assessment significantly improves the magnitude of error for a given number of PDE solves.  Even the arbitrarily-chosen 1-1-2-1-1 shows improvements over standard isotropic HC.  We note, however, that the convergence of 1-1-2-2-4 is quite similar to 1-1-4-4-8.  This suggests that with 1-1-2-2-4 we have achieved an optimum efficiency that isn't improved with further anisotropy.  However, the anisotropy intentionally chosen poorly shows much worse convergence than the isotropic case, and for the variance is on par with Monte Carlo.\\
+%
+%Given these limitations, it is clear that for the uncertain spaces presented, stochastic collocation shows much better convergence and magnitude of error for the same cost when compared with Monte Carlo.  In addition, using judgement to apply an importance weight to variables yields additional rewards in efficiency.
+%
+%\section{Ongoing Work}
+%The work presented here considers a maximum number of uncertain variables $N=5$.  While demonstrative of expected savings for larger input spaces, showing the convergence rates of isotropic and anisotropic sparse grids for large $N$ is desirable.  We expect to see diminishing returns in using stochastic collocation as the input space grows in dimensionality.\\
+%
+%One effective method for very large numbers of uncertain inputs is HDMR, which uses sets of low-order stochastic interactions between a few variables at a time to approximate the full stochastic problem.  In the event the number of uncertain parameters becomes very large, HDMR could prove less costly than stochastic collocation for many problems. \\
+%
+%Lastly, our work so far has been demonstrated exclusively with uniformly-distributed random variables as input parameters.  To more accurately approximate the shape of an arbitrary probability distribution, we intend to implement Beta-distributed random variables using Jacobi quadrature, with two shaping parameters $\alpha,\beta$.  The Beta distribution is also distributed finitely between two points, but $\alpha,\beta$ can be adjusted to accommodate a wide range of uncertain distributions including uniform and truncated Gaussian normal distributions.  While Beta distributions cannot exactly replicate all other distributions, we expect it can replicate them without introducing a greater error than introduced by the Monte Carlo and stochastic collocation methods presented.
+%
+\section{Acknowledgments}
+TODO This research was supported by research grants from Idaho National Laboratory.
+
+\newpage
+\bibliography{../bibliography/uq}
+\bibliographystyle{plain}
+\end{document}
