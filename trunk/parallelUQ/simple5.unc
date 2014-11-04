@@ -1,5 +1,5 @@
 [Problem]
-  executor     = MC
+  executor     = SC
   templateFile = 'simple.inp'
   storeFlux    = 0
   execDir      = '../simple/'
@@ -15,7 +15,7 @@
 
 [Sampler]
   [./SC]
-    indexSet = TD
+    indexSet = HC
     expOrd = 1
     quadrule = single
   [../]
