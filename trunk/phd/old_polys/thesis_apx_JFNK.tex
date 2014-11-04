@@ -1,0 +1,40 @@
+\section{Nonlinear Methodology: JFNK}
+The diffusion code in Section \ref{section diffusion} makes use of the Jabobian-free Newton-Krylov (JFNK) solver method for nonlinear problems.  Specifically, the problem is solved using the \texttt{GMRES} algortihm found in the Sandia solver package \texttt{Trilinos} TODO cite.  The three coupled equations to solve, in weak form, are
+\begin{equation}
+F_k(\phi_1,\phi_2,k)=k-\int_V \sum_g \nu\Sigma_{f,g}\phi_g dV=0,
+\end{equation} \nobreak
+\begin{equation}
+F_{\phi_g}(\phi_1,\phi_2,k)=-\nabla D_g\nabla\phi_g+\Sigma_{a,g}\phi_g - \sum_{g'}\Sigma_s^{g'g}\phi_{g'}-\frac{\chi_g}{k(\phi)}\sum_{g'}\nu\Sigma_{f,g'}\phi_{g'}=0, \hspace{15pt}g\in(1,2).
+\end{equation}
+Because JFNK has a relatively small radius of convergence, we employ standard power iteration for several iterations before using the \texttt{GMRES} package.  Since power iteration has a much larger radius of convergence, this assures the flux profiles are near enough to the actual solution that the JFNK method can converge on the base $k$-eigenvalue.  In addition, we employ a very simple preconditioning matrix, which uses only the diagonal of the Jacobian matrix.  Allowing $u=(\phi_1,\phi_2,k)$, each Newton step in the solution process is
+\begin{equation}
+u^{m+1}=u^m+\delta u^m,
+\end{equation}
+\begin{equation}
+(\mathcal{J}^mM^{-1})(M\delta u^m)=-F(u^m),
+\end{equation}
+or, rewritten with $M\delta u^m\equiv\delta x$,
+\begin{equation}
+\delta x=(\mathcal{J}^mM^{-1})^{-1}F(u^m),
+\end{equation}
+and we approximate the Jacobian-preconditioner-vector product as
+\begin{equation}
+\mathcal{J}^mM^{-1}v=\frac{F(u^m+M^{-1}\epsilon v)-F(u^m)}{\epsilon},
+\end{equation}
+which can be derived by truncating the Taylor expansion of $F(u^m+M^{-1}\epsilon v)$ about $u^m$.  Since the preconditioning matrix $M$ is only the diagonal of the Jacobian,
+\begin{equation}
+M=\left(\begin{array}{c c c}
+M_{\phi_1\phi_1} & 0 & 0\\
+0 & M_{\phi_2\phi_2} & 0 \\
+0 & 0 & M_{kk}
+\end{array}\right),
+\end{equation}
+\begin{equation}
+M_{xy}\equiv \drv{F_x(x,y)}{y}.
+\end{equation}
+In this particular case,
+\begin{align}
+M_{\phi_1\phi_1}&=-\nabla\cdot D_1\nabla + \Sigma_{a_1} - \Sigma_s^{1\to2} - \nu\Sigma_{f,1},\\
+M_{\phi_2\phi_2}&=-\nabla\cdot D_2\nabla + \Sigma_{a,2} - \nu\Sigma_{f,2},\\
+M_{kk} &= 1.
+\end{align}

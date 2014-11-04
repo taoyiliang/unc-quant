@@ -1,0 +1,43 @@
+\begin{thebibliography}{1}
+
+\bibitem{SCLagrange}
+Ivo Babuska, Fabio Nobile, and Raul Tempone.
+\newblock {A Stochastic Collocation Method for Elliptic Partial Differential
+  Equations with Random Input Data}.
+\newblock {\em SIAM Journal on Numerical Analysis}, 45, 2007.
+
+\bibitem{sparse1}
+Voker Barthelmann, Erich Novak, and Klaus Ritter.
+\newblock {High dimensional polynomial interpolation on sparse grids}.
+\newblock {\em Advances in Computational Mathematics}, 12, 2000.
+
+\bibitem{sparse2}
+Hans-Joachim Bungartz and Michael Griebel.
+\newblock {Sparse Grids}.
+\newblock {\em Acta Numerica}, 13, 2004.
+
+\bibitem{erin01}
+E.~D. Fichtl and A.~K. Prinja.
+\newblock {The Stochastic Collocation Method for Radiation Transport in Random
+  Media}.
+\newblock {\em J. Quantitative Spectroscopy \& Radiative Transfer}, 12, 2011.
+
+\bibitem{textbook}
+O.~P. Le~Ma\^{i}tre and O.~M. Knio.
+\newblock {\em Spectral Methods for Uncertainty Quantification With
+  Applications to Computational Fluid Dynamics}.
+\newblock Springer, 1st edition, 2010.
+
+\bibitem{sparseSC}
+Nobile, Tempone, and Webster.
+\newblock {A Sparse Grid Stochastic Collocation Method for Partial Differential
+  Equations with Random Input Data}.
+\newblock {\em SIAM Journal on Numerical Analysis}, 46, 2008.
+
+\bibitem{mike01}
+M.E. Rising, A.K. Prinja, and P.~Talou.
+\newblock {Prompt Fission Neutron Spectrum Uncertainty Propagation Using
+  Polynomial Chaos Expansion}.
+\newblock {\em Nucl. Sci. Eng.}, 175, 2013.
+
+\end{thebibliography}

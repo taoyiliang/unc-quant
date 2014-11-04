@@ -1,0 +1,172 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{graphicx}%
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{cite}
+
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{physics}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
+\newcommand{\xs}[2]{\ensuremath{\Sigma_{#1}^{(#2)}}}
+\newcommand{\intO}{\ensuremath{\int\limits_{4\pi}}}
+\newcommand{\intz}{\ensuremath{\int\limits_0^1}}
+\newcommand{\intf}{\ensuremath{\int\limits_{-\infty}^\infty}}
+\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+\newcommand{\LargerCdot}{\raisebox{-0.25ex}{\scalebox{1.2}{$\cdot$}}}
+
+\textwidth6.6in
+\textheight9in
+
+
+\setlength{\topmargin}{0.3in} \addtolength{\topmargin}{-\headheight}
+\addtolength{\topmargin}{-\headsep}
+
+\setlength{\oddsidemargin}{0in}
+
+\oddsidemargin  0.0in \evensidemargin 0.0in \parindent0em
+
+%\pagestyle{fancy}\lhead{MATH 579 (UQ for PDEs)} \rhead{02/24/2014}
+%\chead{Project Proposal} \lfoot{} \rfoot{\bf \thepage} \cfoot{}
+
+
+\begin{document}
+
+\title{``Simple'' Sum Stochastic Collocation \\Explicit Analytic Demonstration}
+
+\author[]{Paul Talbot\thanks{talbotp@unm.edu}}
+%\date{}
+\renewcommand\Authands{ and }
+\maketitle
+\newpage
+\section{Introduction}
+We're using the sparse grid approximation described elsewhere,
+\begin{equation}
+u(Y)\approx S[u](Y)\equiv \sum_{\vec i\in\Lambda(L)} S^i[u](Y),
+\end{equation}
+\begin{equation}
+ S^i[u](Y) = c(\vec i)\bigotimes_{n=1}^N U[u](Y),
+\end{equation}
+\begin{equation}
+c(\vec i)\equiv \sum_{\vec j\in\{0,1\}^N,\hspace{5pt}\vec j+\vec i \in \Lambda} (-1)^{|\vec j|_1},
+\end{equation}
+\begin{equation}
+\bigotimes_{n=1}^N U[u](Y)\equiv \sum_{\vec k}^{\vec i} u_h(Y^{(\vec k)}) L_{\vec k}(Y).
+\end{equation}
+We choose TD index set with expansion level 2, giving us the index set
+\begin{equation}
+\Lambda=\{(0,0),(0,1),(0,2),(1,0),(1,1),(2,0)\}.
+\end{equation}
+We will attempt to show $S[u](1,1)=u(1,1)$ for $u(Y_1,Y_2)=Y_1+Y_2$, with all $Y_n$ uniformly distributed between 1 and 6.  Quadrature points are taken using Gauss-Legendre quadrature with order $m=i+1$.
+
+\section{Coefficients}
+We determine the coefficients $c(\vec i)$ as
+\begin{table}[H]
+\centering
+\begin{tabular}{c|c c c|c}
+$\vec i$ & $\vec j$ & $|\vec j|_1$ & $\sum(-1)^{|\vec j|_1}$ & $c(\vec{i})$ \\ \hline
+(0,0) & (0,0),(0,1),(1,0),(1,1) & 0,1,2,1 & 1-1+1-1 & 0 \\
+(0,1) & (0,0),(0,1),(1,0) & 0,1,1 & 1-1-1 & -1 \\
+(0,2) & (0,0) & 0 & 1 & 1 \\
+(1,0) & (0,0),(0,1),(1,0) & 0,1,1 & 1-1-1 & -1 \\
+(1,1) & (0,0) & 0 & 1 & 1 \\
+(2,0) & (0,0) & 0 & 1 & 1
+\end{tabular}
+\end{table}
+
+
+
+\section{By Index}
+We calculate the individual terms by index $\vec i\in\Lambda$.  Final results are shown here.  As can be seen, it evaluates to the expected value.
+\begin{table}[H]
+\centering
+\begin{tabular}{c c}
+$\vec i$ & $S^i$ \\ \hline
+(0,0) & 0 \\
+(0,1) & -4.5 \\
+(0,2) & 4.5 \\
+(1,0) & -4.5 \\
+(1,1) & 2 \\
+(2,0) & 4.5 \\ \hline
+TOTAL & 2
+\end{tabular}
+\end{table}
+
+\subsection{(0,0)}
+Because $c^{0,0}=0$, there's no need to calculate this term.  However,
+\begin{equation}
+m=i+{1}^N = (1,1) \hspace{10pt} \to \hspace{10pt} Y\in(3.5,3.5),
+\end{equation}
+\begin{align}
+S^{0,0}&=c^{0,0}\sum_{k_1=0}^{i_1=0}\sum_{k_2=0}^{i_2=0}u_h(Y^k)\prod_{n=1}^2 L_{k_n}(Y_n),\\
+  &= 0\cdot u_h(Y^0_1,Y^0_2)L_0(Y_1)L_0(Y_2),\\
+  &=0\cdot (3.5+3.5)=0.
+\end{align}
+
+\subsection{(0,1), equal to (1,0)}
+\begin{equation}
+m=i+{1}^N = (1,2) \hspace{10pt} \to \hspace{10pt} Y\in(3.5,2.06),(3.5,4.94),
+\end{equation}
+\begin{align}
+S^{0,1}&=c^{0,1}\sum_{k_1=0}^{i_1=0}\sum_{k_2=0}^{i_2=0}u_h(Y^k)\prod_{n=1}^2 L_{k_n}(Y_n),\\
+  &= -1\left[u_h(Y^0_1,Y^0_2)L_0(Y_1)L_0(Y_2)+u_h(Y^0_1,Y^1_2)L_0(Y_1)L_1(Y_2) \right].
+\end{align}
+\begin{equation}
+L_0(Y_2) = \prod_{i=0,i\neq0}^{i=1} \frac{Y_2-Y_2^i}{Y_2^0-Y_2^i}=\frac{Y_2-Y_2^1}{Y_2^0-Y_2^1}=\frac{1-4.94}{2.06-4.94}=1.368,
+\end{equation}
+\begin{equation}
+L_1(Y_2) = \prod_{i=0,i\neq1}^{i=1} \frac{Y_2-Y_2^i}{Y_2^0-Y_2^i}=\frac{Y_2-Y_2^0}{Y_2^1-Y_2^0}=\frac{1-2.06}{4.94-2.06}=-0.368,
+\end{equation}
+\begin{equation}
+S^{0,1}=-1\left[(3.5+2.06)(1.368)+(3.5+4.94)(-0.368)\right]=-4.5.
+\end{equation}
+
+\subsection{(0,2), equal to (0,2)}
+\begin{equation}
+m=(1,3) \hspace{10pt} \to \hspace{10pt} \vec Y\in (3.5,2.72),(3.5,3.5),(3.5,4.27),
+\end{equation}
+\begin{equation}
+S^{0,2}=1[u_h(Y^0_1,Y^0_2)L_0(Y_1)L_0(Y_2) + u_h(Y^0_1,Y^1_2)L_0(Y_1)L_1(Y_2) + u_h(Y^0_1,Y^2_2)L_0(Y_1)L_2(Y_2)],
+\end{equation}
+\begin{equation}
+L_0(Y_2)=\left(\frac{1-3.5}{2.72-3.5}\right)\left(\frac{1-4.27}{2.72-4.27}\right)=6.76,
+\end{equation}
+\begin{equation}
+L_1(Y_2)=\left(\frac{1-2.72}{3.5-2.72}\right)\left(\frac{1-4.27}{3.5-4.27}\right)=-9.36,
+\end{equation}
+\begin{equation}
+L_2(Y_2)=\left(\frac{1-2.72}{4.27-2.72}\right)\left(\frac{1-3.5}{4.27-3.5}\right)=3.6,
+\end{equation}
+\begin{equation}
+S^{0,2}=1\left[(3.5+2.72)6.76 - (3.5+3.5)9.36 + (3.5+4.27)3.6\right]=4.5.
+\end{equation}
+
+\subsection{(1,1)}
+\begin{equation}
+m=(2,2) \hspace{10pt} \to \hspace{10pt} \vec Y\in (2.06,2.06),(2.06,4.94),(4.94,2.06),(4.94,4.94),
+\end{equation}
+\begin{align}
+S^{1,1}=1\Big[&u_h(Y_1^0,Y_2^0)L_0(Y_1)L_0(Y_2) + u_h(Y_1^0,Y_2^1)L_0(Y_1)L_1(Y_2)\nonumber \\
+ &+ u_h(Y_1^1,Y_2^0)L_1(Y_1)L_0(Y_2) + u_h(Y_1^1,Y_2^1)L_1(Y_1)L_1(Y_2) \Big],
+\end{align}
+\begin{equation}
+L_0(Y_1)=L_0(Y_2)=\frac{1-4.94}{2.06-4.94}=1.368,
+\end{equation}
+\begin{equation}
+L_1(Y_1)=L_1(Y_2)=\frac{1-2.06}{4.94-2.06}=-0.368,
+\end{equation}
+\begin{equation}
+S^{1,1}=(2.06+2.06)1.368^2 - 2(2.06+4.94)(0.368\cdot1.368) + (4.94+4.94)0.368^2 = 2.
+\end{equation}
+
+
+\end{document}

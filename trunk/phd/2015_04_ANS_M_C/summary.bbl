@@ -1,0 +1,36 @@
+\begin{thebibliography}{1}
+
+\bibitem{SCLagrange}
+Ivo Babuska, Fabio Nobile, and Raul Tempone.
+\newblock {A Stochastic Collocation Method for Elliptic Partial Differential
+  Equations with Random Input Data}.
+\newblock {\em SIAM Journal on Numerical Analysis}, 45, 2007.
+
+\bibitem{Trilinos-Overview}
+Michael~Heroux et. al.
+\newblock {An Overview of Trilinos}.
+\newblock Technical Report SAND2003-2927, Sandia National Laboratories, 2003.
+
+\bibitem{hdmr_neutron}
+Zhengzheng Hu, Ralph~C. Smith, Jeffrey Willert, and C.~T. Kelley.
+\newblock {High Dimensional Model Representations for the Neutron Transport
+  Equation}.
+\newblock {\em NS\&E}, 177, 2014.
+
+\bibitem{benchmark}
+Argonne~National Laboratory.
+\newblock Argonne code center: Benchmark problem book.
+\newblock {\em ANL-7416 M\&C Division of ANS}, 1968.
+
+\bibitem{hdmr}
+G.~Li, C.~Rosenthal, and H.~Rabitz.
+\newblock {High Dimensional Model Representations}.
+\newblock {\em J. Phys. Chem. A}, 105, 2001.
+
+\bibitem{sparseSC}
+Nobile, Tempone, and Webster.
+\newblock {A Sparse Grid Stochastic Collocation Method for Partial Differential
+  Equations with Random Input Data}.
+\newblock {\em SIAM Journal on Numerical Analysis}, 46, 2008.
+
+\end{thebibliography}

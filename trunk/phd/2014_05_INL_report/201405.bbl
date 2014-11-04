@@ -1,0 +1,33 @@
+\begin{thebibliography}{1}
+
+\bibitem{SCLagrange}
+Ivo Babuska, Fabio Nobile, and Raul Tempone.
+\newblock {A Stochastic Collocation Method for Elliptic Partial Differential
+  Equations with Random Input Data}.
+\newblock {\em SIAM Journal on Numerical Analysis}, 45, 2007.
+
+\bibitem{sparse1}
+Voker Barthelmann, Erich Novak, and Klaus Ritter.
+\newblock {High dimensional polynomial interpolation on sparse grids}.
+\newblock {\em Advances in Computational Mathematics}, 12, 2000.
+
+\bibitem{sparse2}
+Hans-Joachim Bungartz and Michael Griebel.
+\newblock {Sparse Grids}.
+\newblock {\em Acta Numerica}, 13, 2004.
+
+\bibitem{Trilinos-Overview}
+Michael Heroux, Roscoe Bartlett, Vicki Howle~Robert Hoekstra, Jonathan Hu,
+  Tamara Kolda, Richard Lehoucq, Kevin Long, Roger Pawlowski, Eric Phipps,
+  Andrew Salinger, Heidi Thornquist, Ray Tuminaro, James Willenbring, and Alan
+  Williams.
+\newblock {An Overview of Trilinos}.
+\newblock Technical Report SAND2003-2927, Sandia National Laboratories, 2003.
+
+\bibitem{sparseSC}
+Nobile, Tempone, and Webster.
+\newblock {A Sparse Grid Stochastic Collocation Method for Partial Differential
+  Equations with Random Input Data}.
+\newblock {\em SIAM Journal on Numerical Analysis}, 46, 2008.
+
+\end{thebibliography}
