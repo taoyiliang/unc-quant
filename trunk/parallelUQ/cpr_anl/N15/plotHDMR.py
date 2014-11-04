@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def addPlot(title,lbl,ref=None,r=1):
+def addPlot(title,lbl,ref=None,r=1,slnfig=None):
   if r>1:
     print 'HDMR cannot do r>1, tried to do r =',r
     return
@@ -20,6 +20,17 @@ def addPlot(title,lbl,ref=None,r=1):
 
   entries=np.array(entries)
   entries=entries[entries[:,0].argsort()]
+
+  if slnfig:
+    errfig = plt.gcf()
+    entr=entries.copy()
+    #entr[:,1]=(1.-entr[:,1])/entr[:,1]
+    #entr[:,2]=(1.-entr[:,2])/entr[:,2]
+    entr=zip(*entr)
+    plt.figure(slnfig.number)
+    plt.plot(entr[0],entr[2],'-x',label=lbl)
+    plt.figure(errfig.number)
+
   errs=np.zeros([len(entries),3])
   if ref==None:
     errs[:,0] = entries[:-1,0]

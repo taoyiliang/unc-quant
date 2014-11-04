@@ -105,6 +105,38 @@ class IE_Double(InputEditor):
     from simple import f
     self.out=f(self.y,self.x)
 
+class IE_projectile(InputEditor):
+  def __init__(self,runpath=''):
+    self.type = 'InputOutput projectile'
+    self.a=[]
+    self.out=0
+
+  def writeInput(self,templateName,inputDir,varList,valList,otherChange,ident):
+    self.varList = varList
+    self.valList = valList
+    return 'dud'
+
+  def storeOutput(self,outFile):
+    return self.out
+
+  def runSolve(self,input_file):
+    sys.path.insert(0,os.getcwd())
+    from proj import R
+    #default values
+    m=0.145
+    r=0.0336
+    C=0.5
+    rho=1.2
+    v=50
+    ang=35
+    g=9.7988
+    sy=0
+    for p,path in enumerate(self.varList):
+      var = path.split('/')[-1]
+      expr = var+' = '+str(self.valList[p])
+      exec(expr)
+    self.out=R(m,r,C,rho,v,ang,g,sy=sy,retpts=False)
+
 class IE_Thirty(InputEditor):
   def __init__(self,runpath=''):
     self.type = 'InputOutput simple'

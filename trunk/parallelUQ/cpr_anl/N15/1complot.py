@@ -30,7 +30,7 @@ for h in hdmr:
 #pltMC(MC,'MC',ref=ref)
 
 #xs=np.linspace(2,32000,3)
-#ysMC = 1e-2/np.sqrt(xs)
+#ysMC = 5e-1/np.sqrt(xs)
 #ysHC1 = 1e-0*xs**(-3)
 #ysHC2 = 5e-5*xs**(-0.5)
 #plt.loglog(xs,ysMC,'k:',label=r'$c\ \eta^{-1/2}$')

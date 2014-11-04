@@ -1,6 +1,7 @@
 import numpy as np
 
-def R(m,r,C,rho,v,ang,g,sy=0,dt=0.001,tol=1e-12,verbose=False):
+def R(m,r,C,rho,v,ang,g,sy=0,dt=0.001,tol=1e-12,verbose=False,retpts=True):
+#def R(vrs,dt=0.001,tol=1e-12,verbose=False,retpts=True):
   D = rho*C*0.5*(np.pi*r*r)
   if C==0:D=0
   ang*=np.pi/180.
@@ -36,7 +37,9 @@ def R(m,r,C,rho,v,ang,g,sy=0,dt=0.001,tol=1e-12,verbose=False):
     print '  Max height:',np.max(pos[:,2])
     print '  Time of Flight:',pos[-1][0]
     print pos[-1]
-  return pos,new[1]
+  if retpts:
+    return pos,new[1]
+  return new[1]
 
 def takeAStep(t,dt,vx,vy,sx,sy,D,m,g,verbose=True):
   v = np.sqrt(vx*vx + vy*vy)

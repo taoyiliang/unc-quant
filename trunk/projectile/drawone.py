@@ -24,7 +24,7 @@ line,=ax.plot([],[],lw=2)
 #line=plt.plot(x,y)
 
 def update_plot(i,xx,yy):
-  p=i*10
+  p=i*20
   x=xx[:p]
   y=yy[:p]
   line.set_data(x,y)
@@ -36,11 +36,11 @@ def init():
 
 ani = animation.FuncAnimation(fig,update_plot,
                    init_func=init,
-                   frames=len(xx)/10,
+                   frames=len(xx)/20,
                    interval=1,
                    fargs=(xx,yy),blit=True,repeat=False)
 
-#ani.save('one_shot.mp4',fps=30)#,extra_args=['-vcodec','libx264'])
+ani.save('one_shot.mp4',fps=60)#,extra_args=['-vcodec','libx264'])
 
 plt.show()
 
