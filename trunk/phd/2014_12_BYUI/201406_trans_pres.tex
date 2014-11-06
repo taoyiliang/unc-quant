@@ -65,18 +65,25 @@
 
 }
 
+\addtobeamertemplate{navigation symbols}{}{
+  \usebeamerfont{footline}%
+  \usebeamercolor[fg]{footline}%
+  \hspace{1em}%
+  \insertframenumber/\inserttotalframenumber
+}
+
 \begin{document}
 
 \begin{frame}
   \titlepage
 \end{frame}
 
-\begin{frame}{Outline}{Discussion Points}
+\begin{frame}{Outline}{Discussion Points}\vspace{-20pt}
   \tableofcontents[pausesections]
   % You might wish to add the option [pausesections]
 \end{frame}
 
-\section{Uncertainty}
+\section{Sources of Uncertainty}
 \begin{frame}{Uncertainty}
 \begin{itemize}
 \item Aleatory (physical)
@@ -111,21 +118,22 @@ x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\righ
 x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)
 \end{equation}
 \begin{itemize}
-\item initial height $y_i = 2\pm0.1$ m
+\item initial height $y_i = 1\pm1$ m
 \item initial velocity $v = 50\pm5$ m/s
-\item initial trajectory $\theta = 35\pm5^o$
-\item accel. gravity $g = 9.81 \pm0.01$ m/s/s
+\item initial trajectory $\theta = 45\pm10^o$
+\item accel. gravity $g = 9.7988 \pm0.0349$ m/s/s
 \end{itemize}
 \end{frame}
 
+\section{Analytic Methods}
 \begin{frame}{Uncertainty Quantification}\vspace{-20pt}
-$x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)$\\
+\[x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)\]
 Min-Max
-\begin{itemize}
-\item $x_{f,\text{min}}=\frac{}{}\left(()()+\sqrt{()^2()^2+2()()}\right)=$ m
-\item $x_{f,\text{max}}=\frac{}{}\left(()()+\sqrt{()^2()^2+2()()}\right)=$ m
-\end{itemize} \vspace{15pt}
-Result: $y_f\approx7.16\pm1.12$m \vspace{15pt}\\ \pause
+\tiny
+\[x_{f,\text{min}}=\frac{(45)(0.5736)}{9.7369}\left((45)(0.8192)+\sqrt{(45)^2(0.8192)^2+2(9.7369)(0)}\right)= 195.45 \text{ m}\]
+\[x_{f,\text{max}}=\frac{(55)(0.8192)}{9.8337}\left((55)(0.5736)+\sqrt{(55)^2(0.5736)^2+2(9.8337)(2)}\right)= 291.92 \text{ m}\]
+\normalsize
+Result: $x_f\approx244\pm48$ m \vspace{15pt}\\ \pause
 Flawed Reasoning
 \begin{itemize}
 \item Nonlinear Flight Path
@@ -135,9 +143,9 @@ Flawed Reasoning
 
 \begin{frame}{Uncertainty Quantification}\vspace{-30pt}
 $x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)$\\\vspace{10pt}
-Analytic Uncertainty\\ \vspace{10pt}
-$\sigma_{x_f} = \sqrt{\left(\pdv{x_f}{y_i}\right)^2\sigma_{y_i}^2 + \left(\pdv{x_f}{v}\right)^2\sigma_{v}^2 + \left(\pdv{x_f}{g}\right)^2\sigma_{g}^2 + \left(\pdv{x_f}{\theta}\right)^2\sigma_{\theta}^2}$ \vspace{20pt}\\
-Result: $y_f=0\pm0$m \vspace{15pt} \\
+Analytic Uncertainty
+\[\sigma_{x_f} = \sqrt{\left(\pdv{x_f}{y_i}\right)^2\sigma_{y_i}^2 + \left(\pdv{x_f}{v}\right)^2\sigma_{v}^2 + \left(\pdv{x_f}{g}\right)^2\sigma_{g}^2 + \left(\pdv{x_f}{\theta}\right)^2\sigma_{\theta}^2}\]% \vspace{20pt}\\
+Result: $x_f=256\pm51$ m  \vspace{10pt}\\
 Works well for simple functions
 \begin{itemize}
 \item Simple derivatives
@@ -145,14 +153,14 @@ Works well for simple functions
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Uncertainty Quantification}
-No Air Resistance:
-\begin{equation}
-y_f=v\sin(\theta)t - \frac{1}{2}gt^2,
-\end{equation}
-\begin{equation}
-x_f=v\cos(\theta)t.
-\end{equation}
+\begin{frame}{A More Difficult Problem}
+%No Air Resistance:
+%\begin{equation}
+%y_f=v\sin(\theta)t - \frac{1}{2}gt^2,
+%\end{equation}
+%\begin{equation}
+%x_f=v\cos(\theta)t.
+%\end{equation}
 With Air Resistance:
 \begin{equation}
 y_f=\frac{v_t}{g}(v\sin\theta+v_t)\left(1-e^{-gt/v_t}\right)-v_tt,
@@ -160,9 +168,29 @@ y_f=\frac{v_t}{g}(v\sin\theta+v_t)\left(1-e^{-gt/v_t}\right)-v_tt,
 \begin{equation}
 x_f=\frac{vv_t\cos\theta}{g}\qty(1-e^{-gt/v_t}).
 \end{equation}
+\begin{equation}
+v_t=\frac{mg}{D},\hspace{20pt}D=\frac{\rho C A}{2},\hspace{20pt}A=\pi r^2
+\end{equation}
 \hspace{30pt}Solve numerically to get $x_f$ (Forward Euler).
 \end{frame}
 
+\begin{frame}{Additional Uncertainty}
+\begin{equation}
+y_f=\frac{v_t}{g}(v\sin\theta+v_t)\left(1-e^{-gt/v_t}\right)-v_tt,
+\end{equation}
+\begin{equation}
+x_f=\frac{vv_t\cos\theta}{g}\qty(1-e^{-gt/v_t}).
+\end{equation}
+\begin{equation}
+v_t=\frac{mg}{D},\hspace{20pt}D=\frac{\rho C A}{2},\hspace{20pt}A=\pi r^2
+\end{equation}
+\begin{align}
+m=0.145\pm0.0725\text{ kg},\hspace{30pt}&r=0.0336\pm0.00336\text{ m},\\
+C=0.5\pm0.5,\hspace{35pt}&\rho_\text{air}=1.2\pm0.1\text{ kg/m$^3$}.
+\end{align}
+\end{frame}
+
+\section{Numerical Methods}
 \begin{frame}{Uncertainty Quantification: Complicated Problems}\vspace{-20pt}
 How do we quantify uncertainty for problems without simple analytic solutions?\vspace{15pt}
 \begin{itemize}
@@ -180,7 +208,9 @@ How do we quantify uncertainty for problems without simple analytic solutions?\v
 \end{itemize}
 \[\expv{u^r}\approx\frac{1}{M}\sum_{m=1}^M u\left(Y^{(m)}\right)^r\]%TODO pictures
 \centerline{Mean: $\bar u\approx\frac{1}{M}\sum u\left(Y^{(m)}\right)$}
+(video)
 \end{frame}
+
 \end{document}
 
 
