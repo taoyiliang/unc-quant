@@ -1,6 +1,6 @@
 import numpy as np
 
-def R(m,r,C,rho,v,ang,g,sy=0,dt=0.001,tol=1e-12,verbose=False,retpts=True):
+def R(m,r,C,rho,v,ang,g,sy=0,dt=0.001,tol=1e-10,verbose=False,retpts=True):
 #def R(vrs,dt=0.001,tol=1e-12,verbose=False,retpts=True):
   D = rho*C*0.5*(np.pi*r*r)
   if C==0:D=0
@@ -10,14 +10,14 @@ def R(m,r,C,rho,v,ang,g,sy=0,dt=0.001,tol=1e-12,verbose=False,retpts=True):
   #sy taken as input parameter
   vx = v*np.cos(ang)
   vy = v*np.cos(ang)
-  nores = vx/g*(vy+np.sqrt(vx*vx+2*g*sy))
+  nores = vx/g*(vy+np.sqrt(vy*vy+2*g*sy))
   if verbose: print 'Expected no-resistance value:',nores
   converged = False
   pos=[]
   while not converged:
-    old,new = takeAStep(t,dt,vx,vy,sx,sy,D,m,g,verbose=False)
+    old,new = takeAStep(t,dt,vx,vy,sx,sy,D,m,g,verbose=verbose)
     if new[2]>0:
-      pos.append(old)
+      if retpts: pos.append(old)
       t=new[0]
       sx=new[1]
       sy=new[2]
@@ -25,18 +25,19 @@ def R(m,r,C,rho,v,ang,g,sy=0,dt=0.001,tol=1e-12,verbose=False,retpts=True):
       vy=new[4]
     else:
       if dt>=tol:
-        dt*=0.1
+        dt*=0.01
       else:
         converged=True
-        pos.append(old)
-        pos.append(np.array(new))
-  pos=np.array(pos)
-  if verbose:
-    print 'END STATS'
-    print '  Range:',pos[-1][1]
-    print '  Max height:',np.max(pos[:,2])
-    print '  Time of Flight:',pos[-1][0]
-    print pos[-1]
+        if retpts:
+          pos.append(old)
+          pos.append(np.array(new))
+  if retpts: pos=np.array(pos)
+  #if verbose:
+  #  print 'END STATS'
+  #  print '  Range:',pos[-1][1]
+  #  print '  Max height:',np.max(pos[:,2])
+  #  print '  Time of Flight:',pos[-1][0]
+  if verbose: print ''
   if retpts:
     return pos,new[1]
   return new[1]
@@ -51,7 +52,11 @@ def takeAStep(t,dt,vx,vy,sx,sy,D,m,g,verbose=True):
   sx += vx*dt + 0.5*ax*dt*dt
   sy += vy*dt + 0.5*ay*dt*dt
   if verbose:
-    print '  At %1.2e, %1.2e, t,dt=%1.2e, %1.2e' %(sx,sy,t,dt)
+    print '  At %1.2e, %1.2e, t,dt=%1.2e, %1.2e' %(sx,sy,t,dt),'\r',
   t += dt
   new = [t,sx,sy,vx,vy]
   return old,new
+
+if __name__=="__main__":
+  res = R(0.145,0.0336,0.5,1.2,50.,45.,9.81,sy=1,dt=1e-4,verbose=True,retpts=False)
+  print 'Range:',res

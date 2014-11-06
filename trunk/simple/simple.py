@@ -18,6 +18,8 @@ def h(v):
 def h5(v):
   while len(v)<5:
     v.append(3.5)
+  for i,val in enumerate(v):
+    v[i]=val*(1./float(len(v)))
   return np.exp(-np.sum(v))
 
 def h10(v):
