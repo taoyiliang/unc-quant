@@ -114,6 +114,7 @@ class IE_projectile(InputEditor):
   def writeInput(self,templateName,inputDir,varList,valList,otherChange,ident):
     self.varList = varList
     self.valList = valList
+    self.dt = otherChange['dt']
     return 'dud'
 
   def storeOutput(self,outFile):
@@ -135,7 +136,7 @@ class IE_projectile(InputEditor):
       var = path.split('/')[-1]
       expr = var+' = '+str(self.valList[p])
       exec(expr)
-    self.out=R(m,r,C,rho,v,ang,g,sy=sy,retpts=False)
+    self.out=R(m,r,C,rho,v,ang,g,sy=sy,dt=self.dt,retpts=False)
 
 class IE_Thirty(InputEditor):
   def __init__(self,runpath=''):

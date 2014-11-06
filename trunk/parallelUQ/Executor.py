@@ -69,7 +69,9 @@ class Executor(object): #base class
     torun = 'self.ie = InputEditor.'+self.input_editor+'(\''+self.execDir+'\')'
     exec torun
     mesh_size = self.input_file('Problem/mesh_factor',-1)
+    time_step = float(self.input_file('Problem/time_step','1e-2'))
     self.meshFactor = mesh_size
+    self.time_step = time_step
     self.setSetType()
     self.setCase()
     print '...case set <'+self.case+'>...'
@@ -163,6 +165,7 @@ class Executor(object): #base class
           if self.meshFactor > 0:
             runDict['fileChange']['Mesh/nx_per_reg']=self.meshFactor
             runDict['fileChange']['Mesh/ny_per_reg']=self.meshFactor
+          runDict['fileChange']['dt']=self.time_step
           runDict['inp_file'] = self.ie.writeInput(self.templateFile,
                                 self.inputDir,
                                 self.histories['varPaths'],

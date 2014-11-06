@@ -15,7 +15,7 @@
 
 [Sampler]
   [./SC]
-    indexSet = TD
+    indexSet = HC
     expOrd = 5
     quadrule = single
   [../]

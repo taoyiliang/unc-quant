@@ -20,12 +20,10 @@ for line in file('list.inp','r'):
   fname = line.strip()
   ary=fname.split('.')[0].split('_')
   if ary[0]=='MC':
-    pltMC(fname,'MC',ref=ref,slnfig=slnplot)
+    pltMC(fname,'MC',r=1,ref=ref,slnfig=slnplot)
   elif ary[0] in ['HC','TD']:
     ary.remove(ary[1])
-    addPlot(fname,'_'.join(ary),ref=ref,slnfig=slnplot)
-  elif ary[0]=='hdmr':
-    addHDMR(fname,fname.split('.')[0],ref=ref,slnfig=slnplot)
+    addPlot(fname,'_'.join(ary),r=1,ref=ref,slnfig=slnplot)
 
 #addPlot(MC,'MC',ref=ref)
 #for h in HCs:
@@ -56,7 +54,7 @@ plt.xlabel(r'PDE Solves $\eta$')
 plt.ylabel(r'$<k>$')
 plt.legend(loc=4)
 plt.gca().set_xscale('log')
-plt.axis([1,int(1e5),0.999,1.005])
+plt.axis([1,int(1e5),0.998,1.012])
 
 
 plt.show()

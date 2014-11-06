@@ -57,7 +57,7 @@ plt.xlabel(r'PDE Solves $\eta$')
 plt.ylabel(r'$\rho$')
 plt.legend(loc=4)
 plt.gca().set_xscale('log')
-plt.axis([1,int(1e5),0.998,1.012])
+#plt.axis([1,int(1e5),0.998,1.012])
 
 
 plt.show()
