@@ -52,7 +52,7 @@ plt.legend(loc=3)
 #plt.axis([1,1e4,1e-10,1e-2])
 
 plt.figure(slnplot.number)
-plt.plot([1,1e5],[ref[1],ref[1]],'k:')
+#plt.plot([1,1e5],[ref[1],ref[1]],'k:')
 plt.title(r'Solution for $<u>$; $N=$%i'%N)
 plt.xlabel(r'PDE Solves $\eta$')
 plt.ylabel(r'$<u>$')

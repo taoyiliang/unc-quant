@@ -5,8 +5,9 @@
   execDir      = '../projectile/'
   inputDir     = '../projectile/'
   input_editor = 'IE_projectile'
-  numprocs     = 6
+  numprocs     = 2
   mesh_factor  = 1
+  time_step    = 1e-4
 []
 
 [HDMR]
@@ -16,7 +17,7 @@
 [Sampler]
   [./SC]
     indexSet = HC
-    expOrd = 1
+    expOrd = 20
     quadrule = single
   [../]
   [./MC]

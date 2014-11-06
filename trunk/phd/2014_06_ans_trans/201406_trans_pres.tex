@@ -80,6 +80,25 @@
   % You might wish to add the option [pausesections]
 \end{frame}
 
+\section{Motivation}
+\begin{frame}{Motivation}\vspace{-30pt}
+Uncertainty Quantification for Modular Numerical Systems\vspace{5pt}
+\begin{itemize}
+  \item Intrusive/Non-Intrusive\vspace{5pt}
+  \item Monte Carlo
+  \begin{itemize}
+    \item Dimension Agnostic
+    \item Slow Convergence
+  \end{itemize}\vspace{5pt}
+  \item Stochastic Collocation
+  \begin{itemize}
+    \item Improved Convergence*
+    \item Curse of Dimensionality
+  \end{itemize}\vspace{5pt}
+  \item Stochastic Collocation on Sparse Grids
+\end{itemize}
+\end{frame}
+
 \section{Deterministic Problem}
 \begin{frame}{Low-Enrichment Nuclear Reactor}
 \begin{itemize}
@@ -278,7 +297,23 @@ $N$ & $L$ & $\qty|\Lambda(L)|$ & $\qty|\Lambda(L)|$ & $\eta$ & $\qty|\Lambda(L)|
 \end{frame}
 
 \section{Results}
-\begin{frame}{Results}{$<k>$ Solutions}
+\begin{frame}{Sample Results}{Attenuation,  $u(Y)=\prod_n^N \exp(-Y_n)$ ($N=5$)}
+  \begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/attenuate_N5_soln}
+      \caption{$<u>$ Values}
+      \label{err_5}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/attenuate_N5_conv}
+      \caption{Error in $<u>$}
+      \label{err_14}
+    \end{subfigure}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Results}{$<k>$ Values}
   \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.49 \textwidth}
@@ -294,7 +329,7 @@ $N$ & $L$ & $\qty|\Lambda(L)|$ & $\qty|\Lambda(L)|$ & $\eta$ & $\qty|\Lambda(L)|
   \end{figure}
 \end{frame}
 
-\begin{frame}{Results}{Convergence}
+\begin{frame}{Results}{$<k>$ Convergence}
   \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.49 \textwidth}
@@ -310,11 +345,43 @@ $N$ & $L$ & $\qty|\Lambda(L)|$ & $\qty|\Lambda(L)|$ & $\eta$ & $\qty|\Lambda(L)|
   \end{figure}
 \end{frame}
 
+\begin{frame}{Results}{var$(k)$ Values}
+  \begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/N5_iso_var_vals}
+      \caption{var$(k)$, N=5}
+      \label{vsoln_5}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/N14_iso_var_vals}
+      \caption{var$(k)$, N=14}
+      \label{vsoln_14}
+    \end{subfigure}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Results}{var$(k)$ Convergence}
+  \begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/N5_iso_var_errs}
+      \caption{Error in var$(k)$, N=5}
+      \label{verr_5}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/N14_iso_var_errs}
+      \caption{Error in var$(k)$, N=14}
+      \label{verr_14}
+    \end{subfigure}
+  \end{figure}
+\end{frame}
+
 \section{Ongoing Work}
-\begin{frame}{Continuing Efforts}
+\begin{frame}{Continuing Efforts}\vspace{-50pt}
 \begin{itemize}
 \item Increased Material Complexity
-\item Algorithmic Anisotropic Grids
+\item Adaptive  Anisotropic Grids
 \item HDMR
 \item Multiphysics (Neutronics, Thermal Hydraulics, Materials)
 \end{itemize}
@@ -325,37 +392,37 @@ $N$ & $L$ & $\qty|\Lambda(L)|$ & $\qty|\Lambda(L)|$ & $\eta$ & $\qty|\Lambda(L)|
 
 \end{frame}
 
-\begin{frame}{Additional Results}{Attenuation,  $u(Y)=\prod_n^N \exp(-Y_n)$}
+\begin{frame}{Sample Results}{Attenuation,  $u(Y)=\prod_n^N \exp(-Y_n)$ ($N=5$)}
   \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.49 \textwidth}
-      \includegraphics[width=\textwidth]{../graphics/err_5}
-      \caption{Error in $<u>$, N=5}
+      \includegraphics[width=\textwidth]{../graphics/attenuate_N5_soln}
+      \caption{$<u>$ Values}
       \label{err_5}
     \end{subfigure}
     \begin{subfigure}[b]{0.49 \textwidth}
-      \includegraphics[width=\textwidth]{../graphics/err_14}
-      \caption{Error in $<u>$, N=14}
+      \includegraphics[width=\textwidth]{../graphics/attenuate_N5_conv}
+      \caption{Error in $<u>$}
       \label{err_14}
     \end{subfigure}
   \end{figure}
 \end{frame}
-
-\begin{frame}{Additional Results}{Projectile with Drag}
-  \begin{figure}[h!]
-    \centering
-    \begin{subfigure}[b]{0.49 \textwidth}
-      \includegraphics[width=\textwidth]{../graphics/err_5}
-      \caption{Error in $<R>$, N=5}
-      \label{err_5}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.49 \textwidth}
-      \includegraphics[width=\textwidth]{../graphics/err_14}
-      \caption{Error in $<R>$, N=14}
-      \label{err_14}
-    \end{subfigure}
-  \end{figure}
-\end{frame}
+%
+%\begin{frame}{Additional Results}{Projectile with Drag ($N=8$)}
+%  \begin{figure}[h!]
+%    \centering
+%    \begin{subfigure}[b]{0.49 \textwidth}
+%      \includegraphics[width=\textwidth]{../graphics/projectile_solns}
+%      \caption{$<R>$ Values}
+%      \label{err_5}
+%    \end{subfigure}
+%    \begin{subfigure}[b]{0.49 \textwidth}
+%      \includegraphics[width=\textwidth]{../graphics/projectile_errs}
+%      \caption{Error in $<R>$}
+%      \label{err_14}
+%    \end{subfigure}
+%  \end{figure}
+%\end{frame}
 
 \end{document}
 
