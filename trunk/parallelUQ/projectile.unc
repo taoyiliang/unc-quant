@@ -1,0 +1,80 @@
+[Problem]
+  executor     = SC
+  templateFile = 'projectile.inp'
+  storeFlux    = 0
+  execDir      = '../projectile/'
+  inputDir     = '../projectile/'
+  input_editor = 'IE_projectile'
+  numprocs     = 1
+  mesh_factor  = 1
+  time_step    = 1e-4
+[]
+
+[HDMR]
+  level=1
+[]
+
+[Sampler]
+  [./SC]
+    indexSet = HC
+    expOrd = 22
+    quadrule = single
+  [../]
+  [./MC]
+    maxSamples = 100000
+    writeSamples = 1
+    loadSamples = 0
+  [../]
+[]
+
+[Backend]
+  makePDF = 0
+  outLabel = 'projectile'
+  writeOut = 1
+[]
+
+[Variables]
+  names = 'm r C rho v ang g sy'
+  [./m]
+    path = 'Problem/m'
+    dist = 'uniform'
+    args = '0.145 0.0725'
+  [../]
+  [./r]
+    path = 'Problem/r'
+    dist = 'uniform'
+    args = '0.0336 0.00336'
+  [../]
+  [./C]
+    path = 'Problem/C'
+    dist = 'uniform'
+    args = '0.5 0.5'
+  [../]
+  [./rho]
+    path = 'Problem/rho'
+    dist = 'uniform'
+    args = '1.2 0.1'
+  [../]
+  [./v]
+    path = 'Problem/v'
+    dist = 'uniform'
+    args = '50 5'
+  [../]
+  [./ang]
+    path = 'Problem/ang'
+    dist = 'uniform'
+    args = '45 10'
+  [../]
+  [./g]
+    path = 'Problem/g'
+    dist = 'uniform'
+    args = '9.7988 0.0349'
+  [../]
+  [./sy]
+    path = 'Problem/sy'
+    dist = 'uniform'
+    args = '1 1'
+  [../]
+[]
+
+

@@ -5,14 +5,18 @@
   execDir      = '../simple/'
   inputDir     = '../simple/'
   input_editor = 'IE_Thirty'
-  numprocs     = 2
+  numprocs     = 6
   mesh_factor  = 1
+[]
+
+[HDMR]
+  level=1
 []
 
 [Sampler]
   [./SC]
     indexSet = TD
-    expOrd = 1
+    expOrd = 5
     quadrule = single
   [../]
   [./MC]
@@ -24,7 +28,7 @@
 
 [Backend]
   makePDF = 0
-  outLabel = 'simple3'
+  outLabel = 'thirty5'
   writeOut = 1
 []
 
@@ -33,8 +37,8 @@
   #names = 'a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15 a16 a17 a18 a19 a20'
   #names = 'a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15'
   #names = 'a1 a2 a3 a4 a5 a6 a7 a8 a9 a10'
-  #names = 'a1 a2 a3 a4 a5'
-  names = 'a1 a2 a3'
+  names = 'a1 a2 a3 a4 a5'
+  #names = 'a1 a2 a3'
   [./a1]
     path = 'Problem/a1'
     dist = 'uniform'

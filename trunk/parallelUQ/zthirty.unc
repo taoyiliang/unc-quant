@@ -1,5 +1,5 @@
 [Problem]
-  executor     = SC
+  executor     = MC
   templateFile = 'simple.inp'
   storeFlux    = 0
   execDir      = '../simple/'
@@ -11,7 +11,7 @@
 
 [Sampler]
   [./SC]
-    indexSet = HC
+    indexSet = TD
     expOrd = 1
     quadrule = single
   [../]
@@ -24,7 +24,7 @@
 
 [Backend]
   makePDF = 0
-  outLabel = 'simple10'
+  outLabel = 'zsimple10'
   writeOut = 1
 []
 
@@ -33,6 +33,8 @@
   #names = 'a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15 a16 a17 a18 a19 a20'
   #names = 'a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15'
   names = 'a1 a2 a3 a4 a5 a6 a7 a8 a9 a10'
+  #names = 'a1 a2 a3 a4 a5'
+  #names = 'a1 a2 a3'
   [./a1]
     path = 'Problem/a1'
     dist = 'uniform'

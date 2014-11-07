@@ -40,6 +40,7 @@ class InputEditor:
     writeFile=file(writeFileName,'w')
 
     for line in readFile:
+      if line.strip().startswith('#'):continue
       if newSectionFlag and line[0]=='[': #new section
         curPath=line.strip()[1:-1]
         newLine=line[:]
@@ -104,6 +105,39 @@ class IE_Double(InputEditor):
     from simple import f
     self.out=f(self.y,self.x)
 
+class IE_projectile(InputEditor):
+  def __init__(self,runpath=''):
+    self.type = 'InputOutput projectile'
+    self.a=[]
+    self.out=0
+
+  def writeInput(self,templateName,inputDir,varList,valList,otherChange,ident):
+    self.varList = varList
+    self.valList = valList
+    self.dt = otherChange['dt']
+    return 'dud'
+
+  def storeOutput(self,outFile):
+    return self.out
+
+  def runSolve(self,input_file):
+    sys.path.insert(0,os.getcwd())
+    from proj import R
+    #default values
+    m=0.145
+    r=0.0336
+    C=0.5
+    rho=1.2
+    v=50
+    ang=35
+    g=9.7988
+    sy=0
+    for p,path in enumerate(self.varList):
+      var = path.split('/')[-1]
+      expr = var+' = '+str(self.valList[p])
+      exec(expr)
+    self.out=R(m,r,C,rho,v,ang,g,sy=sy,dt=self.dt,retpts=False)
+
 class IE_Thirty(InputEditor):
   def __init__(self,runpath=''):
     self.type = 'InputOutput simple'
@@ -119,7 +153,28 @@ class IE_Thirty(InputEditor):
 
   def runSolve(self,input_file):
     sys.path.insert(0,os.getcwd())
-    from simple import h
+    from simple import h5 as h
+    self.out=h(self.a)
+
+class IE_Thirty5(IE_Thirty):
+  def runSolve(self,input_file):
+    sys.path.insert(0,os.getcwd())
+    from simple import h5 as h
+    self.out=h(self.a)
+class IE_Thirty10(IE_Thirty):
+  def runSolve(self,input_file):
+    sys.path.insert(0,os.getcwd())
+    from simple import h10 as h
+    self.out=h(self.a)
+class IE_Thirty15(IE_Thirty):
+  def runSolve(self,input_file):
+    sys.path.insert(0,os.getcwd())
+    from simple import h15 as h
+    self.out=h(self.a)
+class IE_Thirty30(IE_Thirty):
+  def runSolve(self,input_file):
+    sys.path.insert(0,os.getcwd())
+    from simple import h30 as h
     self.out=h(self.a)
 
 class IE_Source(InputEditor):
@@ -203,3 +258,40 @@ class IE_Diffusion(InputEditor):
       print 'Run attempt failed with error code',osstat
       sys.exit()
     os.system('rm '+input_file)
+
+class HDMR_IO(InputEditor):
+  def __init__(self,path=''):
+    self.type = 'HDMR_IO_editor'
+
+  def writeInput(self,templateName,changelist,ident):
+    curPath=''
+    newSectionFlag=True
+
+    readFile = file(templateName,'r')
+    writeFileName = templateName+'.'+str(ident)
+    writeFile = file(writeFileName,'w')
+
+    for line in readFile:
+      if line.strip().startswith('#'):continue
+      if newSectionFlag and line[0]=='[': # new section
+        curPath = line.strip()[1:-1]
+        newLine=line[:]
+      elif line.strip()[:5]=='[../]': # go up a level
+        curPath='/'.join(curPath.split('/')[:-1])
+        newLine=line[:]
+      elif line.strip()[:3]=='[./': # add a level
+        curPath = curPath + '/' + line.strip()[3:-1]
+        newLine=line[:]
+      elif line.strip()!='': # value entry
+        keyword = curPath+'/'+line.split('=')[0].strip()
+        if keyword in changelist.keys():
+          newLine = line.split('=')[0] + '= ' + str(changelist[keyword])+'\n'
+        else:
+          newLine=line[:]
+      else:
+        newLine=line[:]
+      writeFile.writelines(newLine)
+    writeFile.close()
+    readFile.close()
+    return writeFileName
+

@@ -19,6 +19,12 @@ def VariableFactory(vartype,name='x',path='dudpath',impwt=1.0):
     newvar = Lognormal(name,path,impwt)
   return newvar
 
+def unserializeVariableFactory(store):
+  print store
+  newvar = VariableFactory(*store[:4])
+  newvar.setDist(*store[4:])
+  return newvar
+
 class Variable(object):
   def __init__(self,name,path,impwt):
     self.name=name
@@ -41,21 +47,18 @@ class Variable(object):
   def prob(self,x):
     return self.dist.pdf(x)
 
-  def lagrange(self,jpt,x,pts):
+  def lagrange(self,jpt,x,pts,verbose=False):
     #pts = np.array(self.pts)
     #pts = self.convertToActual(pts)
     prod=1
     for m,pt in enumerate(pts):
-      #print '      pt,jpt',pt,jpt
       if not abs(pt-jpt)<1e-13:
-        #print '      lagrange_entry',x,'-',pt,'/',jpt,'-',pt
-        #print '      lagrange_entry %1.2f-%1.2f / %1.2f-%1.2f' %(x,pt,jpt,pt)
+        if verbose: print '  lagrange_entry',x,'-',pt,'/',jpt,'-',pt
         newprod= (x-pt)/(jpt-pt)
-        #print '        prod:',newprod
+        if verbose: print '  prod:',newprod
         prod*=newprod
       #else: print '  skipping',jpt,pt
     return prod
-
 
 
 
@@ -63,6 +66,14 @@ class Uniform(Variable):
   def __init__(self,name,path,impwt):
     super(Uniform,self).__init__(name,path,impwt)
     self.distName='uniform'
+
+  def serializable(self):
+    store=['uniform']
+    store.append(self.name)
+    store.append(self.path)
+    store.append(self.impwt)
+    store.append([self.mean,self.range])
+    return store
 
   def convertToActual(self,x):
     return self.range*x+self.mean

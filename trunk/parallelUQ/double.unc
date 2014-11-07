@@ -9,9 +9,13 @@
   mesh_factor  = 1
 []
 
+[HDMR]
+  level = 2
+[]
+
 [Sampler]
   [./SC]
-    indexSet = HC
+    indexSet = TD
     expOrd = 2
     quadrule = single
   [../]
@@ -23,13 +27,9 @@
 []
 
 [Backend]
-  makePDF = 1
-  PDFsamples=1e4
+  makePDF = 0
   outLabel = 'simple'
   writeOut = 1
-  [./PDF]
-    bins=50
-  [../]
 []
 
 [Variables]

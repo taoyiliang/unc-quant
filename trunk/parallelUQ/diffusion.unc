@@ -1,6 +1,6 @@
 [Problem]
   executor       = SC
- # executor       = MC
+  #executor       = MC
   templateFile   = '2G_2D.inp'
   storeFlux      = 0
   execDir        = '../diffusion/'
@@ -8,6 +8,10 @@
   input_editor   = 'IE_Diffusion'
   numprocs       = 2
   mesh_factor    = 5
+[]
+
+[HDMR]
+  level=3
 []
 
 [Sampler]
@@ -18,25 +22,66 @@
   [../]
   [./SC]
     indexSet = TD
-    expOrd = 12
+    expOrd = 7
     quadrule = single
   [../]
 []
 
 [Backend]
   makePDF = 0
-  outLabel = 'N3_iso'
+  outLabel = 'N14'
   writeOut = 1
 []
 
 [Variables]
+  # N=33, all
+  # names = '1D1 1xf1 1xc1 1xt1 2D1 2xf1 2xc1 2xt1 3D1 3xf1 3xc1 3xt1 4D1 4xf1 4xc1 4xt1 5D1 5xc1 5xt1 1D2 1xf2 1xc2 2D2 2xf2 2xc2 3D2 3xf2 3xc2 4D2 4xf2 4xc2 5D2 5xc2'  
+
+  # N=19, group 1
+  # names = '1D1 1xf1 1xc1 1xt1 2D1 2xf1 2xc1 2xt1 3D1 3xf1 3xc1 3xt1 4D1 4xf1 4xc1 4xt1 5D1 5xc1 5xt1'
+
+  # N=14, group 2
+  names = '1D2 1xf2 1xc2 2D2 2xf2 2xc2 3D2 3xf2 3xc2 4D2 4xf2 4xc2 5D2 5xc2'  
+
+  # N=5
+  # names = '1xc2 1xf2 4xc2 4xf2 5D2'
+
   #names = '1xc2 1xf2 2xc2 2xf2 3xc2 3xf2 4xc2 4xf2 5D2 5xc2'
-  #names = '1xc2 1xf2 4xc2 4xf2 5D2'
-  names = '1xc2 1xf2 4xf2'
+  #names = '1xc2 1xf2 4xf2'
   #names = '1xf2'
   #names = '1xc2 1xf2'
 
   #MATERIAL 1
+  [./1D1]
+    path = 'Material/1/g1/D'
+    dist = uniform
+    args = '1.255 0.1255'
+    weight = 1
+  [../]
+  [./1xc1]
+    path = 'Material/1/g1/sigc'
+    dist = uniform
+    args = '0.006358 0.0006358'
+    weight = 1
+  [../]
+  [./1xf1]
+    path = 'Material/1/g1/nsigf'
+    dist = uniform
+    args = '0.004602 0.0004602'
+    weight = 1
+  [../]
+  [./1xt1]
+    path = 'Material/1/g1/sigtr'
+    dist = uniform
+    args = '0.02533 0.002533'
+    weight = 1
+  [../]
+  [./1D2]
+    path = 'Material/1/g2/D'
+    dist = uniform
+    args = '0.211 0.0211'
+    weight = 1
+  [../]
   [./1xc2]
     path = 'Material/1/g2/sigc'
     dist = uniform
@@ -51,59 +96,166 @@
   [../]
 
   #MATERIAL 2
+  [./2D1]
+    path = 'Material/2/g1/D'
+    dist = uniform
+    args = '1.268 0.1268'
+    weight = 1
+  [../]
+  [./2xc1]
+    path = 'Material/2/g1/sigc'
+    dist = uniform
+    args = '0.005284 0.0005284'
+    weight = 1
+  [../]
+  [./2xf1]
+    path = 'Material/2/g1/nsigf'
+    dist = uniform
+    args = '0.004609 0.0004609'
+    weight = 1
+  [../]
+  [./2xt1]
+    path = 'Material/2/g1/sigtr'
+    dist = uniform
+    args = '0.02767 0.002767'
+    weight = 1
+  [../]
+  [./2D2]
+    path = 'Material/2/g2/D'
+    dist = uniform
+    args = '0.1902 0.01902'
+    weight = 1
+  [../]
   [./2xc2]
     path = 'Material/2/g2/sigc'
     dist = uniform
-    args = '0.03477 0.00348' #median, range def 10%
+    args = '0.03477 0.003477'
     weight = 1
   [../]
   [./2xf2]
     path = 'Material/2/g2/nsigf'
     dist = uniform
-    args = '0.0356996 0.00357' #median, range def 10%
+    args = '0.08675 0.008675'
     weight = 1
   [../]
 
   #MATERIAL 3
+  [./3D1]
+    path = 'Material/3/g1/D'
+    dist = uniform
+    args = '1.259 0.1259'
+    weight = 1
+  [../]
+  [./3xc1]
+    path = 'Material/3/g1/sigc'
+    dist = uniform
+    args = '0.006083 0.0006083'
+    weight = 1
+  [../]
+  [./3xf1]
+    path = 'Material/3/g1/nsigf'
+    dist = uniform
+    args = '0.004663 0.0004663'
+    weight = 1
+  [../]
+  [./3xt1]
+    path = 'Material/3/g1/sigtr'
+    dist = uniform
+    args = '0.02617 0.002617'
+    weight = 1
+  [../]
+  [./3D2]
+    path = 'Material/3/g2/D'
+    dist = uniform
+    args = '0.2091 0.02091'
+    weight = 1
+  [../]
   [./3xc2]
     path = 'Material/3/g2/sigc'
     dist = uniform
-    args = '0.041423 0.00414' #median, range def 10%
+    args = '0.04142 0.004142'
     weight = 1
   [../]
   [./3xf2]
     path = 'Material/3/g2/nsigf'
     dist = uniform
-    args = '0.0420165 0.004202' #median, range def 10%
+    args = '0.1021 0.01021'
     weight = 1
   [../]
 
-  [./4xf2]
-    path = 'Material/4/g2/nsigf'
+  #MATERIAL 4
+  [./4D1]
+    path = 'Material/4/g1/D'
     dist = uniform
-    args = '0.1021 0.010' #median, range def 10%
+    args = '1.259 0.1259'
+    weight = 1
+  [../]
+  [./4xc1]
+    path = 'Material/4/g1/sigc'
+    dist = uniform
+    args = '0.006083 0.0006083'
+    weight = 1
+  [../]
+  [./4xf1]
+    path = 'Material/4/g1/nsigf'
+    dist = uniform
+    args = '0.004663 0.0004663'
+    weight = 1
+  [../]
+  [./4xt1]
+    path = 'Material/4/g1/sigtr'
+    dist = uniform
+    args = '0.02617 0.002617'
+    weight = 1
+  [../]
+  [./4D2]
+    path = 'Material/4/g2/D'
+    dist = uniform
+    args = '0.2091 0.02091'
     weight = 1
   [../]
   [./4xc2]
     path = 'Material/4/g2/sigc'
     dist = uniform
-    args = '0.04142 0.0041' #median, range def 10%
+    args = '0.03131 0.003131'
     weight = 1
   [../]
-
+  [./4xf2]
+    path = 'Material/4/g2/nsigf'
+    dist = uniform
+    args = '0.1021 0.01021'
+    weight = 1
+  [../]
+  
+  #MATERIAL 5
+  [./5D1]
+    path = 'Material/5/g1/D'
+    dist = uniform
+    args = '1.257 0.1257'
+    weight = 1
+  [../]
+  [./5xc1]
+    path = 'Material/5/g1/sigc'
+    dist = uniform
+    args = '0.0006034 0.00006034'
+    weight = 1
+  [../]
+  [./5xt1]
+    path = 'Material/5/g1/sigtr'
+    dist = uniform
+    args = '0.04754 0.004754'
+    weight = 1
+  [../]
   [./5D2]
     path = 'Material/5/g2/D'
     dist = uniform
-    args = '0.1592 0.016' #median, range def 10%
+    args = '0.1592 0.01592'
     weight = 1
   [../]
   [./5xc2]
     path = 'Material/5/g2/sigc'
     dist = uniform
-    args = '0.01911 0.00191' #median, range def 10%
+    args = '0.01911 0.001911'
     weight = 1
   [../]
 []
-
-# MATERIAL PROPERTIES for reference
-
