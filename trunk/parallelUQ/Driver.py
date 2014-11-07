@@ -16,10 +16,23 @@ import InputEditor
 import ROM
 
 class Driver(object):
-  def __init__(self,argv,verbose=False):
-    self.verbose=verbose
+  def __init__(self,argv,verbose={})
+    self.verbose={'Backends':False,
+                  'Driver':False,
+                  'warning':True,
+                  'Executor':False,
+                  'HDMR':False,
+                  'IndexSets':False,
+                  'InputEditor':False,
+                  'ROM':False,
+                  'run':True,
+                  'Samplers':False,
+                  'SparseQuads':False,
+                  'Variables':False}):
+    for key,val in verbose.iteritems():
+      self.verbose[key]=val
     self.starttime=time.time()
-    print '\nStarting HDMR UQ at',dt.datetime.fromtimestamp(self.starttime)
+    print '\nStarting UQ at',dt.datetime.fromtimestamp(self.starttime)
     self.loadInput(argv)
     self.loadVars()
     self.setRuns()
@@ -27,21 +40,21 @@ class Driver(object):
     self.finishUp()
 
   def loadInput(self,argv):
-    print argv,type(argv)
     cl = GetPot(argv)
     if cl.search('-i'):
       self.unc_inp_file=cl.next('')
-      print 'Selected uncertainty input',self.unc_inp_file,'...'
+      if verbose['Driver']:
+        print 'Selected uncertainty input',self.unc_inp_file,'...'
       #check desired file exists
       if not os.path.isfile(self.unc_inp_file):
         raise IOError('Uncertainty input not found: '+self.unc_inp_file)
-      print '  ...found uncertainty input file.'
+      if verbose['Driver']:print '  ...found uncertainty input file.'
     else:
       raise IOError('Requires and input file using -i.')
     self.input_file = GetPot(Filename=self.unc_inp_file)
 
   def loadVars(self):
-    print '\nLoading uncertain variables...'
+    if verbose['Driver']:print '\nLoading uncertain variables...'
     uVars = self.input_file('Variables/names','').split(' ')
     self.varDict={}
     for var in uVars:
@@ -61,15 +74,15 @@ class Driver(object):
   def createROMs(self):
     self.ROMs={}
     ident = self.todo.keys()[0]
-    print '\nStarting run:',ident
+    if self.verbose['run']:print '\nStarting run:',ident
     inp_file = GetPot(Filename=self.unc_inp_file)
     ex_type = inp_file('Problem/executor','')
-    print 'ex type:',ex_type
+    if self.verbose['Driver']:print 'ex type:',ex_type
     ex = Executor.ExecutorFactory(ex_type,self.varDict,inp_file)
     ex.run(verbose=self.verbose)
     try:
       self.ROMs[ident]=ex.ROM
-      print 'sampled mean:',ex.ROM.moment(1)
+      if verbose['Driver']:print 'sampled mean:',ex.ROM.moment(1)
     except AttributeError:
       pass #MC doesn't store a rom at this point
     self.ex = ex
@@ -81,8 +94,9 @@ class Driver(object):
 
   def finishUp(self):
     elapsed=time.time()-self.starttime
-    print 'Driver run time:',elapsed,'sec'
-    print '\nStarting postprocessing...'
+    if self.verbose['Driver']:
+      print 'Driver run time:',elapsed,'sec'
+      print '\nStarting postprocessing...'
     #makePDF = self.input_file('Backend/makePDF',0)
     #if makePDF:
     #  print '...sampling ROM...'
@@ -97,9 +111,10 @@ class Driver(object):
       self.ex.writeOut()
 
     show()
-    print '\nDriver complete.\n'
+    if self.verbose['Driver']:print '\nDriver complete.\n'
 
   def makePDF(self,M):
+    if self.verbose['Driver']:print '\n...constructing pdf...\n'
     wantprocs = self.input_file('Problem/numprocs',1)
     numprocs = min(wantprocs,multiprocessing.cpu_count())
     nBins = self.input_file('Backends/PDF/bins',10)
@@ -116,7 +131,7 @@ class HDMR_Driver(Driver):
     super(HDMR_Driver,self).loadInput(argv)
     self.hdmr_level = self.input_file('HDMR/level',0)
     if self.hdmr_level==0:
-      print 'HDMR level not specified.  Using 2...'
+      if verbose['warning']:print 'HDMR level not specified.  Using 2...'
       self.hdmr_level=2
 
   def setRuns(self):
@@ -158,28 +173,31 @@ class HDMR_Driver(Driver):
     numruns={}
     for i in range(1,self.hdmr_level+1):
       nr=0
-      print '\n=================================='
-      print '      STARTING ORDER %i RUNS' %i +'      '
-      print '==================================\n'
+      if self.verbose['HDMR']:
+        print '\n=================================='
+        print '      STARTING ORDER %i RUNS' %i +'      '
+        print '==================================\n'
       new=self.createROMLevel(i,ie)
       for key,value in new.iteritems():
         nr+=1
         self.ROMs[key]=value
-      print '\nnumber of order %i runs: %i' %(i,nr)
+      if self.verbose['HDMR']:print '\nnumber of order %i runs: %i' %(i,nr)
       numruns[i]=nr
     xs={}
     for key,value in self.varDict.iteritems():
       xs[key]=1
-    for key,value in self.ROMs.iteritems():
-      print 'mean',key,':',value.moment(1)
-    print '\nROMs per level:'
-    for key,value in numruns.iteritems():
-      print ' ',key,value
+    if self.verbose['HDMR']:
+      for key,value in self.ROMs.iteritems():
+        print 'mean',key,':',value.moment(1)
+      print '\nROMs per level:'
+      for key,value in numruns.iteritems():
+        print ' ',key,value
     #for rom in self.ROMs.values():
     #  pk.dump(rom.serializable(),file('hdmr_'+rom.case()+'.pk','w'))
     self.HDMR_ROM=ROM.HDMR_ROM(self.ROMs,self.varDict)
-    print 'Total Det. Runs:',self.HDMR_ROM.numRunsToCreate()
-    print 'HDMR sampled',self.HDMR_ROM.sample(xs,self.hdmr_level)[1]
+    if self.verbose['HDMR']:
+      print 'Total Det. Runs:',self.HDMR_ROM.numRunsToCreate()
+      print 'HDMR sampled',self.HDMR_ROM.sample(xs,self.hdmr_level)[1]
     #store output
     case = 'hdmr'
     case+= '_'+self.input_file('Sampler/SC/indexSet','')
@@ -222,12 +240,13 @@ class HDMR_Driver(Driver):
 
   def finishUp(self):
     elapsed=time.time()-self.starttime
-    print 'Driver run time:',elapsed,'sec'
-    print '\nDriver complete.\n'
+    if self.verbose['Driver']:
+      print 'Driver run time:',elapsed,'sec'
+      print '\nDriver complete.\n'
 
 if __name__=='__main__':
   #print sys.argv,type(sys.argv)
   if '-hdmr' in sys.argv:
     drv = HDMR_Driver(sys.argv)
   else:
-    drv = Driver(sys.argv,verbose=True)
+    drv = Driver(sys.argv,verbose={'Driver':True})

@@ -26,7 +26,7 @@ from tools import makePDF
 
 
 def ExecutorFactory(exec_type,varlist,inp_file):
-  oktypes=['PCESC','SC','MC','MLMC']
+  oktypes=['PCESC','LGSC','MC','MLMC']
   if exec_type not in oktypes:
     msg = 'Desired exec type <'+exec_type+'> not recognized.'
     msg+= '\n    Options include '+str(oktypes)
@@ -44,7 +44,20 @@ class Executor(object): #base class
     self.varDict = varDict
 
   def run(self,verbose=False):
-    self.loadInput(verbose)
+    self.verbose={'Backends':False,
+                  'warning':True,
+                  'Executor':False,
+                  'IndexSets':False,
+                  'InputEditor':False,
+                  'ROM':False,
+                  'run':True,
+                  'Samplers':False,
+                  'SparseQuads':False,
+                  'Variables':False}):
+    for key,val in verbose.iteritems():
+      self.verbose[key]=val
+    verbose = self.verbose['Executor']
+    self.loadInput()
     if verbose: print '...input loaded...'
     self.setDirs()
     if verbose: print '...directories set...'
@@ -61,7 +74,7 @@ class Executor(object): #base class
     if verbose: print '...parallel run complete...'
     return self.finish()
 
-  def loadInput(self,verbose=False):
+  def loadInput(self):
     self.templateFile=self.input_file('Problem/templateFile','')
     self.execDir    = self.input_file('Problem/execDir'  ,'')
     self.inputDir   = self.input_file('Problem/inputDir' ,'')
@@ -74,7 +87,7 @@ class Executor(object): #base class
     self.time_step = time_step
     self.setSetType()
     self.setCase()
-    print '...case set <'+self.case+'>...'
+    if self.verbose['Executor']:print '...case set <'+self.case+'>...'
 
   def setSetType(self):
     pass
@@ -143,7 +156,7 @@ class Executor(object): #base class
             #self.histories['soln'][n]=soln
             #self.histories['solwt'][n]=wt
             finished+=1
-          print 'Runs finished:',finished,
+          if self.verbose['run']:print 'Runs finished:',finished,
           del procs[p]
           self.checkConverge(verbose=verbose)
       if not self.sampler.converged:
@@ -214,6 +227,8 @@ class Executor(object): #base class
     os.chdir(self.uncDir)
     print 'Executor complete.'
 
+
+
 class SC(Executor):
   '''Intermediary before choosing SC type'''
 
@@ -234,7 +249,8 @@ class SC(Executor):
   def loadIndexSet(self,verbose=False):
     self.expOrder = self.input_file('Sampler/SC/expOrd',-1)
     if self.expOrder==-1:
-      print '...expansion order not set in Sampler/SC.  Using 2...'
+      if self.verbose['warnings']:
+        print '...expansion order not set in Sampler/SC.  Using 2...'
       self.expOrder=2
     impwts=[]
     for var in self.varDict.values():
@@ -253,7 +269,8 @@ class SC(Executor):
     rule = self.input_file('Sampler/SC/quadrule','<None>')
     okRules=['single','double']
     if rule not in okRules:
-      print '...quadrule not recognized in Sampler/SC. Using single...'
+      if self.verbose['warnings']:
+        print '...quadrule not recognized in Sampler/SC. Using single...'
       rule='single'
     todo = 'quadrule='+rule
     exec todo
@@ -263,6 +280,7 @@ class SC(Executor):
     if verbose: print '...constructing sparse grid...'
     wantprocs = self.input_file('Problem/numprocs',1)
     self.numprocs = min(wantprocs,multiprocessing.cpu_count())
+    grid = self.getSparseQuad()
     grid = SparseQuads.parBasicSparse(self.numprocs,
                                    len(self.varDict.keys()),
                                    self.expOrder,
@@ -278,7 +296,6 @@ class SC(Executor):
     if verbose:
       print '  ...removing duplicate quadrature points...'
       print '    ...number of pts including duplicates: %i' %len(grid)
-  # NEW ROUNDED POINT METHOD
     for e,entry in enumerate(grid):
       npt = tuple(np.around(entry[0],decimals=15))
       if npt in run_samples['quadpts']:
@@ -292,11 +309,6 @@ class SC(Executor):
           print numsamp,
           print '(%i pct complete)' %(int(100.*(e+1)/len(grid))),
           print '(%i duplicates)' %(e+1-numsamp),'\r',
-    #exit()
-    #TODO DEBUG
-    #for pt in run_samples['quadpts']:
-      #print 'quad pts,wts: (%1.4e), %1.4e' %(pt[0],run_samples['weights'][pt])
-    #print 'sum wts:',sum(run_samples['weights'].values())
     if verbose:print '...constructing sampler...'
     self.sampler = spr.StochasticPoly(self.varDict,
                                       run_samples)
@@ -347,10 +359,30 @@ class SC(Executor):
       print '\n'
 
 
-class SCExec(SC):
-  def setCase(self):
-    inp = self.input_file('Backend/outLabel','')
-    self.case = self.settype+'_h'+str(self.meshFactor)+'_'+inp
+class SCLGExec(SC):
+  def getSparseGrid(self):
+    def single(x):
+      return x
+    def double(x):
+      return 2**x
+    rule = self.input_file('Sampler/SC/quadrule','<None>')
+    okRules=['single','double']
+    if rule not in okRules:
+      if self.verbose['warnings']:
+        print '...quadrule not recognized in Sampler/SC. Using single...'
+      rule='single'
+    todo = 'quadrule='+rule
+    exec todo
+    self.quadrule = quadrule
+    #HOW TO distinguish lagrange, pce?
+    grid = SparseQuads.parBasicSparse(self.numprocs,
+                len(self.varDict.keys()),
+                self.expOrder,
+                self.indexSet,
+                quadrule,
+                self.varDict)
+    return grid
+
 
   def finish(self):
     self.ROM = ROM.LagrangeROM(self.histories['soln'],
@@ -364,6 +396,42 @@ class SCExec(SC):
     super(SC,self).finish()
 
 
+
+class SCPCExec(SC):
+  def getSparseGrid(self):
+    def single(x):
+      return x
+    def double(x):
+      return 2**x
+    rule = self.input_file('Sampler/SC/quadrule','<None>')
+    okRules=['single','double']
+    if rule not in okRules:
+      if self.verbose['warnings']:
+        print '...quadrule not recognized in Sampler/SC. Using single...'
+      rule='single'
+    todo = 'quadrule='+rule
+    exec todo
+    self.quadrule = quadrule
+    #HOW TO distinguish lagrange, pce?
+    grid = SparseQuads.parBasicSparse(self.numprocs,
+                len(self.varDict.keys()),
+                self.expOrder,
+                self.indexSet,
+                quadrule,
+                self.varDict)
+    return grid
+
+
+  def finish(self):
+    self.ROM = ROM.PolyChaosROM(self.histories['soln'],
+                               self.histories['solwt'],
+                               self.histories['probs'],
+                               self.varDict,
+                               self.histories['varVals'],
+                               self.indexSet,
+                               self.quadrule,
+                               self.numprocs)
+    super(SC,self).finish()
 
 #####################################################
 #####################################################
