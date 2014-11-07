@@ -1,5 +1,5 @@
 [Problem]
-  executor     = LGSC
+  executor     = SC
   templateFile = 'projectile.inp'
   storeFlux    = 0
   execDir      = '../projectile/'
@@ -16,7 +16,6 @@
 
 [Sampler]
   [./SC]
-    polyType = Lagrange
     indexSet = HC
     expOrd = 22
     quadrule = single
