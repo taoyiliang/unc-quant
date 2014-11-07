@@ -1,7 +1,7 @@
 import os
 import sys
 
-runs=range(30,40)
+runs=range(21,30)
       #11,12,13,14,15]
 
 #runs=[0   ,2   ,4   ,8  ,
@@ -10,7 +10,7 @@ runs=range(30,40)
 #      1000,2000,4000,8000,
 #      10000]
 
-templateName = 'simple5.unc'
+templateName = 'projectile.unc'
 for run in runs:
   #make new input
   procfile = file('processors.txt','r')

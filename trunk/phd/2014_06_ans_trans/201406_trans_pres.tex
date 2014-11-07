@@ -75,7 +75,7 @@
   \titlepage
 \end{frame}
 
-\begin{frame}{Outline}{Discussion Points}
+\begin{frame}{Outline}{Discussion Points}\vspace{-20pt}
   \tableofcontents%[pausesections]
   % You might wish to add the option [pausesections]
 \end{frame}
@@ -100,18 +100,18 @@ Uncertainty Quantification for Modular Numerical Systems\vspace{5pt}
 \end{frame}
 
 \section{Deterministic Problem}
-\begin{frame}{Low-Enrichment Nuclear Reactor}
+\begin{frame}{Deterministic Problem}{Low-Enrichment Nuclear Reactor}
 \begin{itemize}
 \item Homogenized Multiplying Medium
 \item Steady State Operation
 \end{itemize}
 \begin{figure}
-  \includegraphics[width=0.5\linewidth]{../graphics/core}
+  \includegraphics[width=0.4\linewidth]{../graphics/core}
 \end{figure}
 \end{frame}
 
-\begin{frame}{Neutronics}
-\begin{itemize}\vspace{-20pt}
+\begin{frame}{Deterministic Problem}{Neutronics}
+\begin{itemize}\vspace{-30pt}
 \item Diffusion Approximation
 \item Multigroup, $G=2$
 \item Neglect Upscatter
@@ -125,15 +125,15 @@ Uncertainties:
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Neutron Transport}{Two-Group, Two-Dimension, Diffusion Approximation}
+\begin{frame}{Deterministic Problem}{Two-Group, Two-Dimension, Diffusion Approximation}
 \vspace{-30pt}
 \begin{equation} \scriptsize
 -\grad\cdot\qty( D_1(\bar x)\grad\phi_1(\bar x))+\qty(\xs{a}{1}(\bar x)+\xs{s}{1\to2}(\bar x))\phi_1(\bar x) = \frac{1}{k(\phi)}\sum_{g'=1}^2\nu_{g'}\xs{f}{g'}(\bar x)\phi_{g'}(\bar x) \nonumber
 \end{equation}
 \begin{equation}
 -\grad \cdot\qty(D_2(\bar x)\grad \phi_2(\bar x))+\xs{a}{2}(\bar x)\phi_2(\bar x) = \xs{s}{1\to 2}(\bar x)\phi_1(\bar x)\nonumber
-\end{equation}
-\vspace{20pt}
+\end{equation}\\\vspace{10pt}
+Boundary Conditions%\vspace{20pt}
 \begin{equation}
 -D\eval{\pdv{\phi^{\text{in}}}{x_i}}_{\partial D}=0,\hspace{5pt}i=1,2,\hspace{5pt}
     x\in\partial_\text{top}D\cup\partial_\text{right}D\nonumber
@@ -156,7 +156,7 @@ Uncertainties:
 %\end{itemize}
 %\end{frame}
 
-\begin{frame}{Neutron Transport}{Benchmark}\vspace{-20pt}
+\begin{frame}{Deterministic Problem}{Benchmark}\vspace{-20pt}
 $k=1.00007605445$
 \scriptsize
 \begin{table}[h]
@@ -196,7 +196,7 @@ Compare moments, $P(Y)=\prod_{n=1}^N \rho(Y_n)$
 %TODO pdf of k?
 \end{frame}
 
-\begin{frame}{Uncertainty Quantification}{Stochastic Collocation}\vspace{-20pt}
+\begin{frame}{Uncertainty Quantification}{Stochastic Collocation using Lagrange Polynomials}\vspace{-20pt}
 \small
 \begin{equation*}\label{approx}
 u(Y)\approx u_{h,\eta,\Lambda(L)}(Y)=\sum_{k=0}^\eta u(Y^{(k)})\mathcal{L}_k(Y)
@@ -313,6 +313,22 @@ $N$ & $L$ & $\qty|\Lambda(L)|$ & $\qty|\Lambda(L)|$ & $\eta$ & $\qty|\Lambda(L)|
   \end{figure}
 \end{frame}
 
+\begin{frame}{Sample Results}{Projectile with Drag ($N=8$)}
+  \begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/projectile_solns}
+      \caption{$<R>$ Values}
+      \label{err_5}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/projectile_errs}
+      \caption{Error in $<R>$}
+      \label{err_14}
+    \end{subfigure}
+  \end{figure}
+\end{frame}
+
 \begin{frame}{Results}{$<k>$ Values}
   \begin{figure}[h!]
     \centering
@@ -392,21 +408,21 @@ $N$ & $L$ & $\qty|\Lambda(L)|$ & $\qty|\Lambda(L)|$ & $\eta$ & $\qty|\Lambda(L)|
 
 \end{frame}
 
-\begin{frame}{Sample Results}{Attenuation,  $u(Y)=\prod_n^N \exp(-Y_n)$ ($N=5$)}
-  \begin{figure}[h!]
-    \centering
-    \begin{subfigure}[b]{0.49 \textwidth}
-      \includegraphics[width=\textwidth]{../graphics/attenuate_N5_soln}
-      \caption{$<u>$ Values}
-      \label{err_5}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.49 \textwidth}
-      \includegraphics[width=\textwidth]{../graphics/attenuate_N5_conv}
-      \caption{Error in $<u>$}
-      \label{err_14}
-    \end{subfigure}
-  \end{figure}
-\end{frame}
+%\begin{frame}{Sample Results}{Attenuation,  $u(Y)=\prod_n^N \exp(-Y_n)$ ($N=5$)}
+%  \begin{figure}[h!]
+%    \centering
+%    \begin{subfigure}[b]{0.49 \textwidth}
+%      \includegraphics[width=\textwidth]{../graphics/attenuate_N5_soln}
+%      \caption{$<u>$ Values}
+%      \label{err_5}
+%    \end{subfigure}
+%    \begin{subfigure}[b]{0.49 \textwidth}
+%      \includegraphics[width=\textwidth]{../graphics/attenuate_N5_conv}
+%      \caption{Error in $<u>$}
+%      \label{err_14}
+%    \end{subfigure}
+%  \end{figure}
+%\end{frame}
 %
 %\begin{frame}{Additional Results}{Projectile with Drag ($N=8$)}
 %  \begin{figure}[h!]
