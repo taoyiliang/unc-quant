@@ -83,14 +83,15 @@ class Driver(object):
     elapsed=time.time()-self.starttime
     print 'Driver run time:',elapsed,'sec'
     print '\nStarting postprocessing...'
-    #makePDF = self.input_file('Backend/makePDF',0)
-    #if makePDF:
-    #  print '...sampling ROM...'
-    #  numSamples = self.input_file('Backends/PDFsamples',-1)
-    #  if numSamples==-1:
-    #    print '...Backends/PDFsamples not found; using 1e4...'
-    #    numSamples = int(1e4)
-    #  self.makePDF(numSamples)
+    makePDF = self.input_file('Backend/makePDF',0)
+    if makePDF:
+      print '...sampling ROM...'
+      numSamples = self.input_file('Backend/PDFsamples','-1')
+      numSamples = int(float(numSamples))
+      if numSamples==-1:
+        print '...Backends/PDFsamples not found; using 1e4...'
+        numSamples = int(1e4)
+      self.makePDF(numSamples)
 
     needWrite = bool(self.input_file('Backend/writeOut',0))
     if needWrite:
@@ -100,13 +101,16 @@ class Driver(object):
     print '\nDriver complete.\n'
 
   def makePDF(self,M):
-    wantprocs = self.input_file('Problem/numprocs',1)
-    numprocs = min(wantprocs,multiprocessing.cpu_count())
-    nBins = self.input_file('Backends/PDF/bins',10)
-    binmin = self.input_file('Backends/PDF/min',-10)
-    binmax = self.input_file('Backends/PDF/max',10)
-    bins=np.linspace(binmin,binmax,nBins+1)
-    self.ex.makePDF(numprocs,M,bins)
+    #wantprocs = self.input_file('Problem/numprocs',1)
+    #numprocs = min(wantprocs,multiprocessing.cpu_count())
+    #nBins = self.input_file('Backends/PDF/bins',10)
+    #binmin = self.input_file('Backends/PDF/min',-10)
+    #binmax = self.input_file('Backends/PDF/max',10)
+    #bins=np.linspace(binmin,binmax,nBins+1)
+    #self.ex.makePDF(numprocs,M,bins)
+    ctrs,bins=self.ex.ROM.pdf(M)
+    outFile=file(self.ex.case+'.ROMpdf.pk','w')
+    pk.dump([ctrs,bins],outFile)
 
 
 

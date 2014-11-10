@@ -6,7 +6,7 @@
   execDir        = '../diffusion/'
   inputDir       = '../diffusion/'
   input_editor   = 'IE_Diffusion'
-  numprocs       = 2
+  numprocs       = 6
   mesh_factor    = 5
 []
 
@@ -21,16 +21,17 @@
     loadSamples = 1
   [../]
   [./SC]
-    indexSet = TD
-    expOrd = 7
+    indexSet = HC
+    expOrd = 11
     quadrule = single
   [../]
 []
 
 [Backend]
-  makePDF = 0
-  outLabel = 'N14'
+  makePDF = 1
+  outLabel = 'N5'
   writeOut = 1
+  PDFsamples = 1e6
 []
 
 [Variables]
@@ -41,10 +42,10 @@
   # names = '1D1 1xf1 1xc1 1xt1 2D1 2xf1 2xc1 2xt1 3D1 3xf1 3xc1 3xt1 4D1 4xf1 4xc1 4xt1 5D1 5xc1 5xt1'
 
   # N=14, group 2
-  names = '1D2 1xf2 1xc2 2D2 2xf2 2xc2 3D2 3xf2 3xc2 4D2 4xf2 4xc2 5D2 5xc2'  
+  # names = '1D2 1xf2 1xc2 2D2 2xf2 2xc2 3D2 3xf2 3xc2 4D2 4xf2 4xc2 5D2 5xc2'  
 
   # N=5
-  # names = '1xc2 1xf2 4xc2 4xf2 5D2'
+  names = '1xc2 1xf2 4xc2 4xf2 5D2'
 
   #names = '1xc2 1xf2 2xc2 2xf2 3xc2 3xf2 4xc2 4xf2 5D2 5xc2'
   #names = '1xc2 1xf2 4xf2'

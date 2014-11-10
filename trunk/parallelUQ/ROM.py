@@ -25,7 +25,8 @@ class ROM():
     samples=[]
     batch = min(1000,int(float(M)/self.numprocs))
     self.romq=que()
-    while not self.done:
+    done=False
+    while not done:
       for p,proc in enumerate(procs):
         if not proc.is_alive():
           proc.join()
@@ -47,14 +48,15 @@ class ROM():
           procs[-1].start()
           starthist+=m
     bins,ctrs = makePDF(samples,bins=bins)
+    print "tot entries:",sum(bins)
     return ctrs,bins
 
   def batch(self,M):
     np.random.seed()
     samples = np.zeros(M)
     for m in range(int(M)):
-      vals=np.zeros(len(self.varlist))
-      for v,var in enumerate(self.varlist):
+      vals=np.zeros(len(self.varDict))
+      for v,var in enumerate(self.varDict.values()):
         vals[v]=var.sample()
       samples[m]=self.sample(vals)
     self.romq.put(list(samples))
@@ -193,7 +195,7 @@ class LagrangeROM(ROM):
         soln = self.solns[slnidx]
         prod = 1
         for v,(key,var) in enumerate(self.varDict.iteritems()):
-          polyeval = var.lagrange(pt[v],xs[key],pts_by_var[key],verbose)
+          polyeval = var.lagrange(pt[v],xs[v],pts_by_var[key],verbose)
           prod*=polyeval
         tptot += prod*soln
       tot+=tptot*self.cofs[c]
