@@ -84,6 +84,7 @@
 \begin{frame}{Motivation}\vspace{-30pt}
 Uncertainty Quantification for Modular Numerical Systems\vspace{5pt}
 \begin{itemize}
+  \item Uncertain inputs $\to$ Distribution of QoI
   \item Intrusive/Non-Intrusive\vspace{5pt}
   \item Monte Carlo
   \begin{itemize}
@@ -104,6 +105,7 @@ Uncertainty Quantification for Modular Numerical Systems\vspace{5pt}
 \begin{itemize}
 \item Homogenized Multiplying Medium
 \item Steady State Operation
+\item Quantity of Interest: $k$-eigenvalue
 \end{itemize}
 \begin{figure}
   \includegraphics[width=0.4\linewidth]{../graphics/core}
@@ -121,7 +123,7 @@ Uncertainty Quantification for Modular Numerical Systems\vspace{5pt}
 Uncertainties:
 \begin{itemize}
 \item Aleatoric in interaction probability
-\item Epistemic in measurements of $\sigma$
+\item Epistemic in measurements of $\Sigma$
 \end{itemize}
 \end{frame}
 
@@ -183,36 +185,42 @@ Introduce 10\% Uncertainty
 \begin{itemize}
 \item Analog Monte Carlo
 \item Stochastic Collocation on Sparse Grids
-\item Anisotropic Stochastic Collocation
+%\item Anisotropic Stochastic Collocation
 \end{itemize}
 Uncertainty space
-\[k(D_g,\Sigma_c^g,\nu\Sigma_f^g,\Sigma_s^{1\to2},\ldots) \to u(Y)\equiv u(Y_1,Y_2,\ldots,Y_N),Y\in\Gamma\]%\vspace{10pt}
+\[k(D_g^{(m)},\Sigma_{g,c}^{(m)},\nu\Sigma_{g,f}^{(m)},\Sigma_{g'\to g,s}^{(m)},\ldots) \to u(Y)\equiv u(Y_1,Y_2,\ldots,Y_N),\]%\vspace{10pt}
+\[Y\in\Omega,\hspace{15pt}\text{span}(Y)=\Omega.\]
 Compare moments, $P(Y)=\prod_{n=1}^N \rho(Y_n)$
 \[\expv{u^r}\equiv\int_\Omega u(Y)^rP(Y)d\Omega\]
 \end{frame}
 
-\begin{frame}{Uncertainty Quantification}{Monte Carlo}
+\begin{frame}{Uncertainty Quantification}{Monte Carlo}\vspace{-50pt}
+\begin{itemize}
+\item Randomly sample $Y^{(m)}\in\Omega$
+\item Compute statistics
+\end{itemize}
 \[\expv{u^r}\approx\frac{1}{M}\sum_{m=1}^M u\left(Y^{(m)}\right)^r\]
 %TODO pdf of k?
 \end{frame}
 
 \begin{frame}{Uncertainty Quantification}{Stochastic Collocation using Lagrange Polynomials}\vspace{-20pt}
+Interpolate $u$ using Lagrange polynomials at points $Y^{(k)}$
 \small
 \begin{equation*}\label{approx}
-u(Y)\approx u_{h,\eta,\Lambda(L)}(Y)=\sum_{k=0}^\eta u(Y^{(k)})\mathcal{L}_k(Y)
+u(Y)\approx u_{h,\eta,\Lambda(L)}(Y)=\sum_{k\in\Lambda(L)} u(Y^{(k)})\mathcal{L}_k(Y)
 \end{equation*}
 \begin{equation*}
-\mathcal{L}_k(Y)=\prod_{n=1}^N \mathcal{L}_{k_n}(Y_n)
+\mathcal{L}_k(Y)=\prod_{n=1}^N \mathcal{L}_{k_n}(Y_n),\hspace{15pt}\mathcal{L}_{k_n}(Y_n)=\prod_{j=1}^i \frac{Y_n-Y_n^{(i)}}{Y_n^{(k_n)}-Y_n^{(i)}}
 \end{equation*}
-\begin{equation*}
-\mathcal{L}_{k_n}(Y_n)=\prod_{j=1}^i \frac{Y_n-Y_n^{(i)}}{Y_n^{(k_n)}-Y_n^{(i)}}
-\end{equation*}
+%\begin{equation*}
+%\mathcal{L}_{k_n}(Y_n)=\prod_{j=1}^i \frac{Y_n-Y_n^{(i)}}{Y_n^{(k_n)}-Y_n^{(i)}}
+%\end{equation*}
 \begin{equation*}
 \expv{u(Y)}\approx\expv{u_h(Y)}=\sum_{k=1}^\eta w_k ~u_h\qty(Y^{(k)})
 \end{equation*}
 \end{frame}
 
-\begin{frame}{Uncertainty Quantification}{Stochastic Collocation: Index Set $\Lambda(L)$}\vspace{-20pt}
+\begin{frame}{Uncertainty Quantification}{Stochastic Collocation: Polynomial Degree Index Set $\Lambda(L)$}\vspace{-20pt}
 \begin{itemize}
 \item Tensor Product:\scriptsize\[\Lambda_\text{TP}(L)=\Big\{\bar p=[p_1,...,p_N]: \max_{1\leq n\leq N}p_n\leq L \Big\},\eta=(L+1)^N\]\normalsize
 \item Total Degree: \scriptsize\[\Lambda_\text{TD}(L)=\Big\{\bar p=[p_1,...,p_N]:\sum_{n=1}^N p_n \leq L \Big\},\eta={L+N\choose N}\]\normalsize
@@ -329,6 +337,24 @@ $N$ & $L$ & $\qty|\Lambda(L)|$ & $\qty|\Lambda(L)|$ & $\eta$ & $\qty|\Lambda(L)|
   \end{figure}
 \end{frame}
 
+\begin{frame}{Results}{Cases}
+$N=5$
+\begin{itemize}
+\item $Y=\left\{\Sigma^{(1)}_{2,f},\Sigma^{(1)}_{2,c},\Sigma^{(4)}_{2,f},\Sigma^{(4)}_{2,c},D^{(5)}_2\right\}$
+\end{itemize}
+$N=14$
+\begin{itemize}\tiny
+\item $Y=\left\{\Sigma^{(1)}_{2,f},\Sigma^{(1)}_{2,c},D_2^{(1)},
+\Sigma^{(2)}_{2,f},\Sigma^{(2)}_{2,c},D_2^{(2)},
+\Sigma^{(3)}_{2,f},\Sigma^{(3)}_{2,c},D_2^{(3)},
+\Sigma^{(4)}_{2,f},\Sigma^{(4)}_{2,c},D_2^{(4)},
+\Sigma^{(5)}_{2,c},D^{(5)}_2\right\}$
+\end{itemize}
+\begin{figure}
+  \includegraphics[width=0.4\linewidth]{../graphics/core}
+\end{figure}
+\end{frame}
+
 \begin{frame}{Results}{$<k>$ Values}
   \begin{figure}[h!]
     \centering
@@ -394,11 +420,12 @@ $N$ & $L$ & $\qty|\Lambda(L)|$ & $\qty|\Lambda(L)|$ & $\eta$ & $\qty|\Lambda(L)|
 \end{frame}
 
 \section{Ongoing Work}
-\begin{frame}{Continuing Efforts}\vspace{-50pt}
+\begin{frame}{Continuing Efforts}\vspace{-30pt}
 \begin{itemize}
-\item Increased Material Complexity
-\item Adaptive  Anisotropic Grids
-\item HDMR
+\item Increased Material Complexity\vspace{10pt}
+\item Polynomial Chaos Expansion\vspace{10pt}
+\item Adaptive  Anisotropic Grids\vspace{10pt}
+\item High-Density Model Reduction (HDMR)\vspace{10pt}
 \item Multiphysics (Neutronics, Thermal Hydraulics, Materials)
 \end{itemize}
 \end{frame}
