@@ -83,14 +83,14 @@ class Driver(object):
     elapsed=time.time()-self.starttime
     print 'Driver run time:',elapsed,'sec'
     print '\nStarting postprocessing...'
-    #makePDF = self.input_file('Backend/makePDF',0)
-    #if makePDF:
-    #  print '...sampling ROM...'
-    #  numSamples = self.input_file('Backends/PDFsamples',-1)
-    #  if numSamples==-1:
-    #    print '...Backends/PDFsamples not found; using 1e4...'
-    #    numSamples = int(1e4)
-    #  self.makePDF(numSamples)
+    makePDF = self.input_file('Backend/makePDF',0)
+    if makePDF:
+      print '...sampling ROM...'
+      numSamples = self.input_file('Backends/PDFsamples',-1)
+      if numSamples==-1:
+        print '...Backends/PDFsamples not found; using 1e4...'
+        numSamples = int(1e4)
+      self.ex.ROM.pdf(numSamples)
 
     needWrite = bool(self.input_file('Backend/writeOut',0))
     if needWrite:

@@ -19,7 +19,7 @@ class ROM():
             '    Using 1 processor...'
       self.numprocs = 1
     procs=[]
-    done=False
+    self.done=False
     starthist=0
     endhist=0
     samples=[]
@@ -36,7 +36,7 @@ class ROM():
             print 'ROM pdf:',100*endhist/M,'% finished...                \r',
           del procs[p]
       if endhist >= M:
-        done = True
+        self.done = True
       else:
         while len(procs)<self.numprocs and starthist<M:
           if starthist + batch <= M:
@@ -53,8 +53,8 @@ class ROM():
     np.random.seed()
     samples = np.zeros(M)
     for m in range(int(M)):
-      vals=np.zeros(len(self.varlist))
-      for v,var in enumerate(self.varlist):
+      vals=np.zeros(len(self.varDict))
+      for v,var in enumerate(self.varDict.values()):
         vals[v]=var.sample()
       samples[m]=self.sample(vals)
     self.romq.put(list(samples))
