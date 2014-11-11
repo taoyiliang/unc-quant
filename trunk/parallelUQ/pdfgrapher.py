@@ -26,7 +26,7 @@ TDy = normalize(TDy)
 
 plt.plot(MCx,MCy,label='MC')
 plt.plot(TDx,TDy,label=r'TD, $L=4$')
-plt.plot(HCx,HCy,label=r'HC, $L=10$')
+plt.plot(HCx,HCy,label=r'HC, $L=8$')
 
 plt.title(r'PDF of $k, N=5$')
 plt.xlabel(r'Value of $k$')
