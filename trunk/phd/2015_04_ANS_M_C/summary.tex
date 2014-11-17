@@ -44,8 +44,11 @@
 
 \title{High Density Model Reduction \\Uncertainty Quantification \\for Multigroup Diffusion Neutronics}
 
-\author[]{Paul Talbot\thanks{talbotp@unm.edu} and Anil K. Prinja}
-\affil[]{Department of Chemical and Nuclear Engineering\\University of New Mexico}
+\author[1]{Paul W. Talbot\thanks{talbotp@unm.edu}}
+\author[1]{Anil K. Prinja}
+\author[2]{Cristian Rabiti}
+\affil[1]{Department of Nuclear Engineering, University of New Mexico}
+\affil[2]{Idaho National Laboratory}
 %\date{}
 \renewcommand\Authands{ and }
 \maketitle
@@ -53,10 +56,68 @@
 
 
 \section{Introduction}
-There have been many recent advances in uncertainty quantification in numerical models for computational physics \cite{SCLagrange}.  In this document, we present ongoing work to demonstrate the efficiency of high-density model reduction (HDMR) techniques as well as sparse-grid stochastic collocation on sparse grids (SC) \cite{sparseSC} in comparison with traditional analog Monte Carlo (MC) and Latin Hypercubefor (LHC) uncertainty quantification methods.
+There have been many recent advances in uncertainty quantification in numerical models for computational physics \cite{SCLagrange}.  In this document, we present ongoing work to demonstrate the efficiency of high-density model reduction (HDMR) techniques as well as sparse-grid stochastic collocation on sparse grids (SC) \cite{sparseSC} in comparison with traditional analog Monte Carlo (MC) uncertainty quantification methods.
 
-\section{Model}
-The uncertainty quantification methods we describe are agnostic of the deterministic problem whose uncertainty is quantified.  To demonstrate the effectiveness of these methods, we apply uncertainty quantification to a two-dimensional nonlinear dual-energy group neutron diffusion criticality benchmark problem \cite{benchmark}.  This problem simulates an orthogonal quarter-core reactor by imposing reflective conditions on the left and bottom boundaries, with vacuum no-traction conditions on the top and right.  the problem makes use of five materials in 121 regions.  Fig. \ref{geom} illustrates the core.  
+\section{Motivation}
+The development of computational numerical models to simulate scientific processes often results in a solver. The solver takes inputs from the user, performs some computational algorithm, and returns some quantity of interest.  In our work we label this algorithm the \emph{deterministic solver}, since it should result in a nearly identical value for the quantity of interest as long as the inputs aren't changed.  This may be misleading, as the deterministic solver might use a stochastic algorithm like Monte Carlo to solve the system; however, when we speak of deterministic or stochastic solvers, we refer to the input space, not the algorithm itself.  \\
+
+While the deterministic solver is a powerful tool, it often fails to capture aleatory or epistemic uncertainty in the input parameters.  Either because of randomness of the physics or uncertainty in measuring the input parameters, an accurate solver should quantify the uncertainty space of the input parameters and the resulting solution space for the quantity of interest.  Solely making use of the deterministic solver potentially presents a naive picture of the solution space.\\
+
+There are two major classes of uncertainty quantification methods, separated by their impact on the deterministic solver itself.  Intrusive methods make use of parameter changes within the algorithm, necessitating the deterministic code have uncertainty quantification built-in or added.  Non-intrusive methods treat the deterministic solver as a black box to be sampled.  This allows the freedom to use the non-intrusive methods on any deterministic solver that requires inputs and delivers a quantity of interest, and will be the focus of our work.\\
+
+Among non-intrusive methods, we can further divide uncertainty quantification into stochastic and deterministic methods.  Stochastic methods are centered around randomly sampling the input parameter uncertainty space and deriving statistics from resulting quantities of interest, and include methods such as analog Monte Carlo, multilevel Monte Carlo, and Latin Hypercube.  Deterministic methods sample from the uncertainty space in predefined locations, using characteristic or interpolating polynomials to create a Reduced-Order Model (ROM) of the uncertainty space, and include methods like stochastic Galerkin, stochastic least squares, and stochastic collocation. \\
+
+Traditionally, Monte Carlo methods are effective at converging but slow to do so.  Additionally, Monte Carlo for uncertainty quantification is dimension-agnostic; that is, if we consider $N$ to be the number of uncertain input parameters, Monte Carlo shows the same convergence behavior regardless the size of $N$.  Stochastic collocation is based on using selected quadrature points within the uncertain input space to construct polynomials to represent the quantity of interest solution space, and for a small $N$ and reasonably smooth uncertain input space, converges much more quickly than Monte Carlo.  However, the $N$-dimensional quadrature set grows exponentially with increasing $N$, forcing collocation to suffer from the curse of dimensionality.  In this work, we explore methods to negate some of the difficulties of increased dimension in collocation methods and show improvement over analog Monte Carlo methods for larger numbers $N$ of uncertain input parameters.
+
+\section{Deterministic Model}
+The uncertainty quantification methods we describe are agnostic of the deterministic problem whose uncertainty is quantified.  However, to demonstrate the effectiveness of these methods, we apply uncertainty quantification to three different deterministic solvers: an attenuation problem solver, a projectile with drag range solver, and a nuclear reactor core $k$-eigenvalue solver.
+
+\subsection{Attenuation Problem Solver}
+Because of its simple but non-parabolic analytic solution, we make use of the attenuation problem to demonstrate convergence to a known benchmark value.  This problem simulates the attenuation of a beam of particles through a fixed-size block subdivided into several sections with varying absorption cross sections.  The quantity of interest is the exit beam strength, and the problem can be solved analytically as
+\begin{equation}
+u(Y) = \prod_{n=1}^N \exp(-\frac{Y_n}{N}),
+\end{equation}
+where $u$ is the fractional emitted beam strength, $N$ is the number of uncertain cross sections (and also the number of subdivided segments), and $Y={Y_1,\ldots,Y_N}\in\Omega$ are the product of uncertain cross sections and unit length, with $\Omega$ as the entirety of the combined uncertain input space.  If we assign uniform uncertainty to the inputs ranging from $a$ to $b$, the mean can likewise can be computed analytically as
+\begin{align}
+\expv{u(Y)}&=\int_\Omega u(Y)P(Y) d\Omega,\\
+    &=\prod_n^N (b-a)^{-1}\int_a^b \exp(-\frac{Y_n}{N}) dY_n,\\
+    &=\qty[\qty(\frac{N}{b-a})\qty(e^{-a/N}-e^{-b/N})]^N.
+\end{align}
+For this work, $N=5$, $a=1$, and $b=6$.
+
+\subsection{Projectile with Drag Problem Solver}
+This problem is included to demonstrate a problem without direct analytic solution and that uses a grid-based deterministic solver.  In this problem we consider the range $R$ of a spherical projectile with mass $m$, radius $r$, and drag coefficient $C$ launched from a height of $y_i$ at an angle of $\theta$ with respect to parallel with the ground at an initial velocity of $v$, and density of the air $\rho$ and gravitational acceleration constant $g$.  We allow each of these to vary uncertainly with value as in Table \ref{proj init}.
+\begin{table}[h]
+\centering
+\begin{tabular}{c | c c}
+Input & Mean & Range \\ \hline
+$m$ & 0.145 kg & 0.0725 kg\\
+$r$ & 0.0336 m & 0.00336 m \\
+$C$ & 0.5 & 0.5 \\
+$\rho$ & 1.2 kg/m$^3$ & 0.1 kg/m$^3$\\
+$v$ & 50 m/s & 5 m/s \\
+$\theta$ & 45$^o$ & 10$^o$ \\
+$g$ & 9.7988 m/s$^2$ & 0.0349 m/s$^2$\\
+$y_i$ & 1 m & 1 m
+\end{tabular}
+\caption{Projectile with Drag Inputs}
+\label{proj init}
+\end{table}
+
+The equations of motion are given in both the horizontal $x$ and vertical $y$ dimensions as
+\begin{equation}
+R=\frac{v_t}{g}(v\sin\theta+v_t)\qty(1-e^{-g\ t/v_t})-v_tt,
+\end{equation}
+\begin{equation}
+x_f = \frac{v\ v_t\cos\theta}{g}\qty(1-e^{-g\ t/v_t}),
+\end{equation}
+\begin{equation}
+v_t = \frac{mg}{D},\hspace{15pt}D=\frac{\rho C A}{2},\hspace{15pt}A=\pi r^2.
+\end{equation}
+The deterministic solver for the projectile problem uses a forward-Euler time-stepping scheme, and its accuracy depends strongly on the time step used.
+
+\subsection{Reactor Core $k$-eigenvalue Solver}
+To demonstrate the uncertainty quantification performance on a difficult, nonlinear problem we introduce a solver for a nuclear reactor core neutronics problem.  With this model we solve a two-dimensional nonlinear dual-energy group neutron diffusion criticality benchmark problem \cite{benchmark}.  This problem simulates an orthogonal quarter-core reactor by imposing reflective conditions on the left and bottom boundaries, with vacuum no-traction conditions on the top and right.  the problem makes use of five materials in 121 regions.  Fig. \ref{geom} illustrates the core.  
 \begin{figure}[H]
 \centering
   \includegraphics[width=0.4\linewidth]{core}
@@ -129,7 +190,7 @@ k^{n+1}=k^n\sum_{g=1}^2\frac{\iint\limits_\Omega\nu\xs{f}{g}\phi_g^{n+1}(\bar x)
 \end{equation}
 until a convergence tolerance is achieved.  We solve $\phi_1,\phi_2,$ and $k$ nonlinearly and simultaneously using a globally- and locally-conservative finite volume approximation in space.  We solve implicitly with a Jacobian-Free Newton Krylov method, using a GMRES package from nonlinear solver package \texttt{trilinos} \cite{Trilinos-Overview}.\\
 
-To verify the deterministic solver, we compare flux profiles and $k$ to the original benchmark\cite{benchmark} as well as demonstrate the convergence of $k$ with increasing mesh grid refinement.  The deterministic solver is in agreement with the benchmark, and convergence for $k$ and both group fluxes are demonstrated in Fig. \ref{det-conv}.  Both fluxes as well as the $k$-eigenvalue converge between first and second order.  The finite volume method is second order, but the overall convergence order is reduced by first-order boundary condition treatments.  In all cases, reducing the size of $h=\Delta x=\Delta y$ decreases the error in the solution.  The reference solution is a level of refinement finer than the finest point shown.   The flux error is calculated by considering the maximum error among several pointwise flux values, while $k$ error is the global value for each refinement.
+To verify the deterministic solver, we compare flux profiles and $k$ to the original benchmark\cite{benchmark} as well as demonstrate the convergence of $k$ with increasing mesh grid refinement.  The deterministic solver is in agreement with the benchmark, and convergence for $k$ and both group fluxes are demonstrated in Fig. \ref{det-conv}.  Both fluxes as well as the $k$-eigenvalue converge between first and second order.  The finite volume method is second order, but the overall convergence order is reduced by first-order boundary condition treatments.  In all cases, reducing the size of $h=\Delta x=\Delta y$ decreases the error in the solution.  The reference solution is a level of refinement finer than the finest point shown.   The flux error is calculated by considering the maximum error among several point-wise flux values, while $k$ error is the global value for each refinement.
 \begin{figure}[H]
 \centering
   \begin{subfigure}[b]{0.3 \textwidth}
@@ -151,12 +212,16 @@ To verify the deterministic solver, we compare flux profiles and $k$ to the orig
   \label{det-conv}
 \end{figure}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Uncertainty Quantification}
 Throughout the remainder of this document, we will represent the solution to the $k$-eigenvalue problem generically as $u(Y)$, where $u$ corresponds to the value of $k$ and $Y$ is the vector of uncertain input parameters.\\
 
-There are 33 total input parameters in Table \ref{tab:coremats} that can be treated as uncertain.  For simplicity, any uncertainty introduced by these parameters is taken to be uniformly distributed within 10\% of the reference value.  We consider three cases for uncertainty quantification, distinguished chiefly by the number of input parameters with uncertainty ($N$): material 1 uncertainty, where all the material properties for material 1 are treated as uncertain ($N$=7); low-energy group uncertainy, where all material properties for group 2 are treated as uncertain ($N$=13); and full uncertainty, where all material properties are treated as uncertain ($N$=33).\\
+There are 33 total input parameters in Table \ref{tab:coremats} that can be treated as uncertain.  For simplicity, any uncertainty introduced by these parameters is taken to be uniformly distributed within 10\% of the reference value.  We consider three cases for uncertainty quantification, distinguished chiefly by the number of input parameters with uncertainty ($N$): material 1 uncertainty, where all the material properties for material 1 are treated as uncertain ($N$=7); low-energy group uncertainty, where all material properties for group 2 are treated as uncertain ($N$=13); and full uncertainty, where all material properties are treated as uncertain ($N$=33).\\
 
-The test for a method's effectiveness will be considering the level of error reached as a function of the number of calls to the deterministic solver required.  While there is some difference in overhead cost between methods, this diminishes for sufficiently costly determinstic solutions.
+The test for a method's effectiveness will be considering the level of error reached as a function of the number of calls to the deterministic solver required.  While there is some difference in overhead cost between methods, this diminishes for sufficiently costly deterministic solutions.
 
 In general, moments of the quantity of interest $u(Y)$ are obtained by
 \begin{equation}
@@ -164,18 +229,14 @@ In general, moments of the quantity of interest $u(Y)$ are obtained by
 \end{equation}
 where $r$ is the desired moment, $Y=[Y_1,Y_2,\ldots,Y_N]$ are the uncertain inputs, $P(Y)$ is the joint probability distribution of $Y$, and $\Gamma$ is the uncertainty space spanned by $Y$.
 
-\subsection{Monte Carlo and Latin Hypercube}
-By way of benchmark, we consider both analog Monte Carlo (MC) and Latin Hypercube (LHC) as uncertainty quantification techniques.
-\subsubsection{Monte Carlo}
-Analog Monte Carlo determines the moments of a function by randomly sampling from the uncertainy space repeatedly until an accurate idea of the result is obtained.  Monte Carlo benefits from a guaranteed consistent rate of convergence; however, this convergence rate is quite low; it typically converges as 1 over the square root of the number of deterministic solves.
+\subsection{Monte Carlo}
+By way of benchmark, we consider analog Monte Carlo (MC) as a benchmark uncertainty quantification technique.
+Analog Monte Carlo determines the moments of a function by randomly sampling from the uncertainty space repeatedly until an accurate idea of the result is obtained.  Monte Carlo benefits from a guaranteed consistent rate of convergence; however, this convergence rate is quite low; it typically converges as 1 over the square root of the number of deterministic solves.
 MC approximates moments of $u(Y)$ as
 \begin{equation}
 \expv{u(Y)^r}\approx \frac{1}{\eta}\sum_{m=1}^\eta u(Y^{(m)})^r,
 \end{equation}
 where $\eta$ is the total number of samples taken, $m$ is the index of a sample, and $Y^{(m)}$ is a point randomly sampled from $\Gamma$.
-
-\subsubsection{Latin Hypercube}
-TODO
 
 
 \subsection{Stochastic Collocation}
@@ -208,7 +269,7 @@ Other index sets with less cardinality can be employed to reduce the number of c
 \begin{equation}
 \Lambda_\text{TD}(L)=\Big\{\bar p=[p_1,...,p_N]:\sum_{n=1}^N p_n \leq L \Big\},\hspace{10pt}|\Lambda_\text{TD}(L)|={L+N\choose N},
 \end{equation}
-and the ``hyberbolic cross'' index set (see Fig. \ref{HC}), for quantities that have limited smoothness in stochastic space,
+and the ``hyperbolic cross'' index set (see Fig. \ref{HC}), for quantities that have limited smoothness in stochastic space,
 \begin{equation}
 \Lambda_\text{HC}(L)=\Big\{\bar p=[p_1,...,p_N]:\prod_{n=1}^N p_n+1 \leq L+1 \Big\},\hspace{10pt}|\Lambda_\text{HC}(L)|\leq (L+1)(1+\log(L+1))^{N-1}.
 \end{equation}
@@ -274,7 +335,120 @@ $N$ & $L$ & TP & \multicolumn{2}{|c|}{TD} & \multicolumn{2}{|c}{HC} \\
 \end{table}
 While the hyberbolic cross collocation points are significantly more sparse than the total degree collocation points, we note that the increased number of polynomial expansion moments in total degree make it much more accurate for the same total polynomial expansion level $L$.  The results of this work demonstrate that for this problem, the same number of collocation points using either total degree or hyperbolic cross results in a similar magnitude of error.
 
-\subsubsection{Anisotropic Sparse Grid}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Attenuation Problem Results}
+Figures \ref{atn vals} and \ref{atn errs} show the improvement of the various UQ methods discussed as a function of the number of deterministic solves required.  Because each variable contributes identically, anisotropic methods did not show any improvement over collocation.  Given the unlimited smoothness of the uncertainty space, we are not surprised to see the total degree sparse grid for stochastic collocation outperform both Monte Carlo and hyperbolic cross sparse grid.
+\begin{figure}[H]
+    \centering
+    %\begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=0.5\textwidth]{../graphics/attenuate_N5_soln}
+      \caption{$<u>$ Values}
+      \label{atn vals}
+\end{figure}
+\begin{figure}[H]
+\centering
+      \includegraphics[width=0.5\textwidth]{../graphics/attenuate_N5_conv}
+      \caption{Error in $<u>$}
+      \label{atn errs}
+    %\end{subfigure}
+  %\caption{Attenuation UQ Results}
+  %\label{atn results}
+  \end{figure}
+
+\subsection{Projectile Problem Results}
+Figures \ref{prj vals} and \ref{prj errs} show the improvement of the various UQ methods discussed as a function of the number of deterministic solves required.  Because each variable contributes identically, anisotropic methods did not show any improvement over collocation.  The uncertainty space for this problem is significantly less smooth than for the analytic attenuation problem, so we see hyperbolic cross converging more efficiently than total degree.  \\
+
+There are two particular points of interest in Figure \ref{prj errs}.  First, there is a vertical drop in error at $\eta=11$ solves.  For hyperbolic cross, it is not uncommon for a higher-order polynomial set to require the same number of computational solves as the polynomial order just smaller in order, and yet increase accuracy.  This comes from spending less effort on resolving interactions between uncertainties and more effort on resolving contributions from single inputs.  Second, there is oscillation in the error convergence below an error of about $10^{-5}$.  This is an artifact that arises from the deterministic solver.  Because of the forward-Euler method of the solver, it converges only as well as the time step selected.  In this case, the relative error converged to in the deterministic solver time step was on the order of $10^{-5}$, so the stochastic solver cannot converge the uncertain space any further, and any apparent convergence is incidental.  Tightening the tolerance in the deterministic solver extends the convergence range of the stochastic solver.
+\begin{figure}[H]
+    \centering
+    %\begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=0.5\textwidth]{../graphics/projectile_solns}
+      \caption{$<R>$ Values}
+      \label{prj vals}
+\end{figure}
+\begin{figure}[H]
+\centering
+      \includegraphics[width=0.5\textwidth]{../graphics/projectile_errs}
+      \caption{Error in $<R>$}
+      \label{prj errs}
+    %\end{subfigure}
+  %\caption{Attenuation UQ Results}
+  %\label{atn results}
+  \end{figure}
+
+
+\subsection{Diffusion Solver Results}
+In order to compare magnitude of error, we use a ``benchmark'' solution generated with a high number of collocation points using isotropic sparse grid stochastic collocation as a reference solution.  Monte Carlo and stochastic collocation solutions for varying numbers of PDE solves are computed, and relative error is plotted as a function of number of solves.  The error is in the moments $r$ of the quantity of interest $k(Y)=u(Y)$, and is given by
+\begin{equation}
+\epsilon_h^{(r)}=\frac{|\expv{u^{(r)}}-\expv{u_\text{ref}^{(r)}}|}{\expv{u_\text{ref}^{(r)}}},
+\end{equation}
+\begin{equation}
+\expv{u^{(r)}}\approx\expv{S_{N,\Lambda_\text{TD}(L)}[u](Y)^{(r)}}=\sum_{k=1}^\eta w_k ~u^{(r)}\qty(Y^{(k)}),
+\end{equation}
+where the weights $w_k$ and points $Y^{(k)}$ come from the multivariate quadrature used in stochastic collocation.\\
+
+Figs. \ref{n1}-\ref{n5} show the comparison of Monte Carlo convergence to stochastic collocation for $N=1,3,5$ where $N$ is the number of uncertain parameters.  Both total degree (TD) and hyperbolic cross (HC) index sets have been included for $N>1$ (they are indistinguishable for $N=1$).  Additionally, we include two low-anisotropy anisotropic grids.\\
+
+Because of the regularity of $k(Y)=u(Y)$, the total degree index set is as cost effective as the hyperbolic cross index set.  For a less regular stochastic solution, we expect hyperbolic cross would be more efficient.  We also expect the convergence rate to diminish with increasing $N$, and that trend can be seen in the figures for the mean and variance of $k(Y)$. Both the magnitude of the error as well as the convergence rate of stochastic collocation outperforms Monte Carlo for any number of runs.  In addition, heuristic selection of importance weighting improved the accuracy of sparse grid methods by approximately half an order of magnitude.\\
+\begin{figure}[H]
+\centering
+  \begin{subfigure}[b]{0.49 \textwidth}
+   \includegraphics[width=\textwidth]{N1_h5_MCHC}
+   \caption{Mean}
+   \label{n1mean}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.49 \textwidth}
+   \includegraphics[width=\textwidth]{N1_h5_MCHC_2}
+   \caption{Variance}
+   \label{n1var}
+  \end{subfigure}
+  \caption{$N=1$}
+  \label{n1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+  \begin{subfigure}[b]{0.49 \textwidth}
+   \includegraphics[width=\textwidth]{N3_h5_MCHC}
+   \caption{Mean}
+   \label{n3mean}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.49 \textwidth}
+   \includegraphics[width=\textwidth]{N3_h5_MCHC_2}
+   \caption{Variance}
+   \label{n3var}
+  \end{subfigure}
+  \caption{$N=3$}
+  \label{n3}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+  \begin{subfigure}[b]{0.49 \textwidth}
+   \includegraphics[width=\textwidth]{N5_h5_MCHC}
+   \caption{Mean}
+   \label{n5mean}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.49 \textwidth}
+   \includegraphics[width=\textwidth]{N5_h5_MCHC_2}
+   \caption{Variance}
+   \label{n5var}
+  \end{subfigure}
+  \caption{$N=5$}
+  \label{n5}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Additional Improvements}
+Besides using sparse grid quadrature for stochastic collocation, there are a number of other approaches to stochastic collocation that can further reduce the sample space and improve convergence.
+
+\subsection{Anisotropic Sparse Grid}
 One disadvantage of sparse grids as defined above is that it treats all dimensions of uncertainty space equally.  In many cases, however, the sensitivity of the stochastic solution to one dimension is less than another.  For example, we heuristically expect the sensitivity of the $k$-eigenvalue to the reflecting material (material 5) diffusion coefficient to be much less than the sensitivity to the fission cross section in the main fissile material (material 1).  \\
 
 We can leverage the varying sensitivity by introducing importance parameters $\vec\alpha=[\alpha_1,\cdots,\alpha_N]$ that parametrize the sensitivity of the stochastic solution to each dimension.  Using the one-norm
@@ -289,68 +463,6 @@ these weight parameters adjust the index set rules $\Lambda(L)$ for total degree
 \tilde\Lambda_\text{HC}(L)=\Big\{\bar p=[p_1,...,p_N]:\prod_{n=1}^N \qty(p_n+1)^{\alpha_n} \leq \qty(L+1)^{\qty|\vec\alpha|_1} \Big\}.
 \end{equation}
 In this formulation, greater values of $\alpha_n$ result in less quadrature points for uncertain input $Y_n$.  Smaller values of $\alpha_n$ are assigned to more sensitive dimensions to prioritize collocation points.
-
-\subsubsection{SC Results}
-In order to compare magnitude of error, we use a ``benchmark'' solution generated with a high number of collocation points using isotropic sparse grid stochastic collocation as a reference solution.  Monte Carlo and stochastic collocation solutions for varying numbers of PDE solves are computed, and relative error is plotted as a function of number of solves.  The error is in the moments $r$ of the quantity of interest $k(Y)=u(Y)$, and is given by
-\begin{equation}
-\epsilon_h^{(r)}=\frac{|\expv{u^{(r)}}-\expv{u_\text{ref}^{(r)}}|}{\expv{u_\text{ref}^{(r)}}},
-\end{equation}
-\begin{equation}
-\expv{u^{(r)}}\approx\expv{S_{N,\Lambda_\text{TD}(L)}[u](Y)^{(r)}}=\sum_{k=1}^\eta w_k ~u^{(r)}\qty(Y^{(k)}),
-\end{equation}
-where the weights $w_k$ and points $Y^{(k)}$ come from the multivariate quadrature used in stochastic collocation.\\
-%
-%Figs. \ref{n1}-\ref{n5} show the comparison of Monte Carlo convergence to stochastic collocation for $N=1,3,5$ where $N$ is the number of uncertain parameters.  Both total degree (TD) and hyperbolic cross (HC) index sets have been included for $N>1$ (they are indistinguishable for $N=1$).  Additionally, we include two low-anisotropy anisotropic grids.\\
-%
-%Because of the regularity of $k(Y)=u(Y)$, the total degree index set is as cost effective as the hyperbolic cross index set.  For a less regular stochastic solution, we expect hyperbolic cross would be more efficient.  We also expect the convergence rate to diminish with increasing $N$, and that trend can be seen in the figures for the mean and variance of $k(Y)$. Both the magnitude of the error as well as the convergence rate of stochastic collocation outperforms Monte Carlo for any number of runs.  In addition, heuristic selection of importance weighting improved the accuracy of sparse grid methods by approximately half an order of magnitude.\\
-%\begin{figure}[H]
-%\centering
-%  \begin{subfigure}[b]{0.49 \textwidth}
-%   \includegraphics[width=\textwidth]{N1_h5_MCHC}
-%   \caption{Mean}
-%   \label{n1mean}
-%  \end{subfigure}
-%  \begin{subfigure}[b]{0.49 \textwidth}
-%   \includegraphics[width=\textwidth]{N1_h5_MCHC_2}
-%   \caption{Variance}
-%   \label{n1var}
-%  \end{subfigure}
-%  \caption{$N=1$}
-%  \label{n1}
-%\end{figure}
-%
-%\begin{figure}[H]
-%\centering
-%  \begin{subfigure}[b]{0.49 \textwidth}
-%   \includegraphics[width=\textwidth]{N3_h5_MCHC}
-%   \caption{Mean}
-%   \label{n3mean}
-%  \end{subfigure}
-%  \begin{subfigure}[b]{0.49 \textwidth}
-%   \includegraphics[width=\textwidth]{N3_h5_MCHC_2}
-%   \caption{Variance}
-%   \label{n3var}
-%  \end{subfigure}
-%  \caption{$N=3$}
-%  \label{n3}
-%\end{figure}
-%
-%\begin{figure}[H]
-%\centering
-%  \begin{subfigure}[b]{0.49 \textwidth}
-%   \includegraphics[width=\textwidth]{N5_h5_MCHC}
-%   \caption{Mean}
-%   \label{n5mean}
-%  \end{subfigure}
-%  \begin{subfigure}[b]{0.49 \textwidth}
-%   \includegraphics[width=\textwidth]{N5_h5_MCHC_2}
-%   \caption{Variance}
-%   \label{n5var}
-%  \end{subfigure}
-%  \caption{$N=5$}
-%  \label{n5}
-%\end{figure}
-
 
 
 \subsection{HDMR}
@@ -391,6 +503,24 @@ S_i\equiv S[u](Y_i,\bar Y) - S_0,
 S_{i,j}\equiv S[u](Y_i,Y_j,\bar Y) - S_i - S_j - S_0.
 \end{equation}
 
+\subsection{Attenuation Problem Results}
+Figures \ref{atn vals hdmr} and \ref{atn errs hdmr} compare the convergence of the additional methods described here as a function of the number of deterministic solves required.  Because each variable contributes identically, anisotropic methods did not show any improvement over collocation and are omitted for this problem.  We note that, for five input parameters, it appears HDMR at best can tie the uncertainty convergence obtained by full collocation.  This is sensible, as using sparse grid quadrature already removes most of the higher-order interactions between variables from consideration.  We expect that as the number of input parameters increases, the benefit of HDMR will as well.
+\begin{figure}[H]
+    \centering
+    %\begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=0.5\textwidth]{../graphics/attenuate_N5_soln_hdmr}
+      \caption{$<u>$ Values}
+      \label{atn vals hdmr}
+\end{figure}
+\begin{figure}[H]
+\centering
+      \includegraphics[width=0.5\textwidth]{../graphics/attenuate_N5_conv_hdmr}
+      \caption{Error in $<u>$}
+      \label{atn errs hdmr}
+    %\end{subfigure}
+  %\caption{Attenuation UQ Results}
+  %\label{atn results}
+  \end{figure}
 
 %
 %\subsection{Selecting Anisotropy}

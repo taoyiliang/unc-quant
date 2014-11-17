@@ -151,7 +151,7 @@ class HDMR_Driver(Driver):
     runfile = ie.writeInput(self.unc_inp_file,chlist,ident)
     inp_file = GetPot(Filename=runfile)
     ex = Executor.ExecutorFactory('SC',{},inp_file)
-    ex.run()
+    ex.run(verbose=False)
     os.system('rm '+runfile)
     self.ROMs[ident]=ex.ROM
     # rest of runs

@@ -9,7 +9,8 @@ runs=range(10)
 #      1000,2000,4000,8000,
 #      10000]
 
-templateName = 'diffusion.unc'
+templateName = 'projectile.unc'
+#templateName = 'attenuate.unc'
 for run in runs:
   #make new input
   procfile = file('processors.txt','r')
