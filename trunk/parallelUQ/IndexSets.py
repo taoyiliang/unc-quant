@@ -51,7 +51,7 @@ def HyperbolicCross(orderlist,maxorder,impwts):
     where for combination (p1,p2), p1*p2<=maxorder
   '''
   print '  ...level:',maxorder
-  target = (maxorder+1)**(sum(impwts))#/float(len(impwts))) FIXME
+  target = (maxorder+1)**(sum(impwts)/max(1,float(len(impwts))))# FIXME
   def rule(i):
     tot=1;
     for e,val in enumerate(i):

@@ -186,12 +186,13 @@ class HDMR_Driver(Driver):
     case+= '_N'+str(len(self.varDict))
     case+= '_H'+str(self.hdmr_level)
     #case+= '_L'+self.input_file('Sampler/SC/expOrd','')
-    mean = self.HDMR_ROM.mean(self.hdmr_level,verbose=False)
+    mean = self.HDMR_ROM.moment(self.hdmr_level,r=1,verbose=False)
+    secm = self.HDMR_ROM.moment(self.hdmr_level,r=2,verbose=False)
     outFile = file(case+'.out','a')
     outFile.writelines('\nRuns,SC Level,Mean\n')
     outFile.writelines(str(self.HDMR_ROM.numRunsToCreate())+',')
     outFile.writelines(self.input_file('Sampler/SC/expOrd','')+',')
-    outFile.writelines('%1.15e \n' %mean)
+    outFile.writelines('%1.15e,%1.15e \n' %(mean,secm-mean*mean))
     outFile.close()
 #TODO FIXME how to calculate moments?
 
