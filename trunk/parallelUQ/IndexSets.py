@@ -41,7 +41,7 @@ def TotalDegree(orderlist,maxorder,impwts):
   def rule(i):
     return np.sum(i)<=sum(impwts)/float(len(i))*maxorder
   end = multiidxGenerator(len(orderlist),rule,maxorder)
-  print 'int total degree, returning',end
+  #print 'int total degree, returning',end
   return end
 
 
