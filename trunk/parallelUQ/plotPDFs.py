@@ -4,6 +4,7 @@ import cPickle as pk
 from tools import makePDF
 
 def avg(v):
+  print 'v:',v
   if len(v)%2!=0:
     return [v[0]]+avg(v[1:])
   else:
@@ -33,6 +34,7 @@ def plotMC(inFile):
   abn,act = makePDF(av,bins=50)
   #vbn,vct = makePDF(var)
   plt.plot(avg(act),avg(abn),'k',label='MC')
+  #plt.plot(act,abn,'k',label='MC')
 
 
 def plotSC(inFile):
@@ -43,7 +45,8 @@ def plotSC(inFile):
 
 
 
-plotMC('MC_h5_N5_iso.samples')
-plotSC('TD_h5_N10_iso.ROMpdf')
+#plotMC('MC_h5_N5.samples')
+plotSC('TD_h5_N5.ROMpdf.pk')
+plotSC('HC_h5_N5.ROMpdf.pk')
 plt.legend()
 plt.show()

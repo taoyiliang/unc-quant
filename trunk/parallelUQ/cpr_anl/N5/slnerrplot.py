@@ -25,7 +25,9 @@ for line in file('list.inp','r'):
     ary=ary[0]#.remove(ary[1])
     addPlot(fname,ary,ref=ref,slnfig=slnplot)
   elif ary[0]=='hdmr':
-    addHDMR(fname,fname.split('.')[0],ref=ref,slnfig=slnplot)
+    namelist = fname.split('.')[0].split('_')
+    name = namelist[0]+'_'+namelist[-1]
+    addHDMR(fname,name,ref=ref,slnfig=slnplot)
 
 #addPlot(MC,'MC',ref=ref)
 #for h in HCs:

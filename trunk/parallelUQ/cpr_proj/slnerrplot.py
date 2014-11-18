@@ -22,10 +22,12 @@ for line in file('list.inp','r'):
   if ary[0]=='MC':
     pltMC(fname,'MC',ref=ref,slnfig=slnplot)
   elif ary[0] in ['HC','TD']:
-    ary.remove(ary[1])
-    addPlot(fname,'_'.join(ary),ref=ref,slnfig=slnplot)
+    ary=ary[0]#.remove(ary[1])
+    addPlot(fname,ary,ref=ref,slnfig=slnplot)
   elif ary[0]=='hdmr':
-    addHDMR(fname,fname.split('.')[0],ref=ref,slnfig=slnplot)
+    namelist = fname.split('.')[0].split('_')
+    name = '_'.join([namelist[0],namelist[1],namelist[-1]])
+    addHDMR(fname,name,ref=ref,slnfig=slnplot)
 
 #addPlot(MC,'MC',ref=ref)
 #for h in HCs:
@@ -44,19 +46,21 @@ for line in file('list.inp','r'):
 #plt.loglog(xs,ysMC,'k:',label=r'$c\ \eta^{-1/2}$')
 #plt.loglog(xs,ysHC1,'k-.',label=r'$c\ \eta^{-4}$')
 #plt.loglog(xs,ysHC2,'k:')#,label=r'$C_2\eta^{-1/2}$')
-plt.title(r'Error in $<R>$; $N$=%i'%N)
+
+plt.title(r'Error in $<R>$; Projectile, $N$=%i'%N)
 plt.xlabel(r'PDE Solves $\eta$')
 plt.ylabel('Rel. Error')
 plt.legend(loc=3)
 #plt.axis([1,1e4,1e-10,1e-2])
 
 plt.figure(slnplot.number)
-plt.title(r'Solution for $<R>$; $N=$%i'%N)
+#plt.plot([1,1e5],[ref[1],ref[1]],'k:')
+plt.title(r'Solution for $<R>$; Projectile, $N=$%i'%N)
 plt.xlabel(r'PDE Solves $\eta$')
 plt.ylabel(r'$<R>$')
 plt.legend(loc=4)
+#plt.axis([1,int(1e5),2.5e-2,4.5e-2])
 plt.gca().set_xscale('log')
-#plt.axis([1,int(1e5),0.999,1.005])
 
 
 plt.show()

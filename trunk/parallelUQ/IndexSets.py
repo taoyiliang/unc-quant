@@ -41,6 +41,7 @@ def TotalDegree(orderlist,maxorder,impwts):
   def rule(i):
     return np.sum(i)<=sum(impwts)/float(len(i))*maxorder
   end = multiidxGenerator(len(orderlist),rule,maxorder)
+  print 'int total degree, returning',end
   return end
 
 
@@ -50,7 +51,7 @@ def HyperbolicCross(orderlist,maxorder,impwts):
     where for combination (p1,p2), p1*p2<=maxorder
   '''
   print '  ...level:',maxorder
-  target = (maxorder+1)**(sum(impwts)/float(len(impwts)))
+  target = (maxorder+1)**(sum(impwts))#/float(len(impwts))) FIXME
   def rule(i):
     tot=1;
     for e,val in enumerate(i):
