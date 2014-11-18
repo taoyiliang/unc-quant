@@ -144,6 +144,32 @@ class HDMR_ROM(ROM):
     if verbose: print 'mean',tot,'\n'
     return tot
 
+  def moment(self,lvl,r=1,verbose=False): #r is moment, defaults to mean
+    samples={}
+    ref=0
+    if verbose: print '\nMEAN'
+    for i in range(lvl+1):
+      for romk,romv in self.ROMs.iteritems():
+        if len(romv.varDict)!=i:continue
+        if verbose: print 'i,romk:',i,romk
+        samples[romk]=romv.moment(r)
+        if i==0:
+          ref=samples[romk]
+        else:
+          samples[romk]-=ref
+        for j in range(1,i):
+          #if verbose:print '  trying j =',j
+          for sampk,sampv in samples.iteritems():
+            if len(sampk.split('_'))-1!=j:continue
+            if all(s in romk.split('_') for s in sampk.split('_'))\
+                and sampk.split('_')[-1]!='':
+                #or sampk.split('_')[-1]=='':#len(sampk.split('_'))==1:
+              if verbose: print '  subtracting',sampk
+              samples[romk]-=sampv
+    tot=sum(samples.values())
+    if verbose: print 'moment',r,':',tot,'\n'
+    return tot
+
 
 
 class LagrangeROM(ROM):
