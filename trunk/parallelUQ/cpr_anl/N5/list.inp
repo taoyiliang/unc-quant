@@ -1,7 +1,9 @@
 MC_h1_thirty5.samples
 TD_h1_thirty5.moments
-# HC_h1_thirty5.moments
-#hdmr_TD_N5_H1.out
-#hdmr_TD_N5_H2.out
-#hdmr_TD_N5_H3.out
+HC_h1_thirty5.moments
+hdmr_TD_N5_H1.out
+hdmr_HC_N5_H1.out
+hdmr_TD_N5_H2.out
 hdmr_HC_N5_H2.out
+hdmr_TD_N5_H3.out
+hdmr_HC_N5_H3.out
