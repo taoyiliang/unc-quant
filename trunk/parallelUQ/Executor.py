@@ -177,7 +177,6 @@ class Executor(object): #base class
           procs[-1].start()
       self.done = len(procs)==0 and self.sampler.converged
       time.sleep(0.1)
-    print 'DEBUG here'
 
   def runSample(self,runDict):
     self.ie.runSolve(runDict['inp_file'])

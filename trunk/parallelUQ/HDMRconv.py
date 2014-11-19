@@ -1,7 +1,7 @@
 import os
 import sys
 
-runs=range(10)
+runs=range(7)
 
 #runs=[0   ,2   ,4   ,8  ,
 #      10  ,20  ,40  ,80 ,

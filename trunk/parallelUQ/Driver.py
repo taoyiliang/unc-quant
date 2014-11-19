@@ -144,6 +144,8 @@ class HDMR_Driver(Driver):
     return ret
 
   def createROMs(self):
+    print ''
+    print 'Beginning HDMR term calculations...'
     self.ROMs={}
     ie = InputEditor.HDMR_IO()
     #reference run
@@ -158,9 +160,9 @@ class HDMR_Driver(Driver):
     numruns={}
     for i in range(1,self.hdmr_level+1):
       nr=0
-      print '\n=================================='
-      print '      STARTING ORDER %i RUNS' %i +'      '
-      print '==================================\n'
+      print '\n===================================='
+      print '    STARTING %i-INPUT INTERACTIONS' %i
+      print   '====================================\n'
       new=self.createROMLevel(i,ie)
       for key,value in new.iteritems():
         nr+=1
@@ -170,8 +172,8 @@ class HDMR_Driver(Driver):
     xs={}
     for key,value in self.varDict.iteritems():
       xs[key]=1
-    for key,value in self.ROMs.iteritems():
-      print 'mean',key,':',value.moment(1)
+    #for key,value in self.ROMs.iteritems():
+    #  print 'mean',key,':',value.moment(1)
     print '\nROMs per level:'
     for key,value in numruns.iteritems():
       print ' ',key,value
@@ -187,7 +189,18 @@ class HDMR_Driver(Driver):
     case+= '_H'+str(self.hdmr_level)
     #case+= '_L'+self.input_file('Sampler/SC/expOrd','')
     mean = self.HDMR_ROM.moment(self.hdmr_level,r=1,verbose=False)
-    secm = self.HDMR_ROM.moment(self.hdmr_level,r=2,verbose=False)
+    if self.input_file('HDMR/anova',0)>0:
+      secm,contribs = self.HDMR_ROM.moment(self.hdmr_level,r=2,anova=True)
+      anovaFileName = case+'.anova'
+      anovaFile = file(anovaFileName,'w')
+      for i,j in contribs.iteritems():
+          name = '-'.join(i.split('_')[1:])
+          value = str(j/secm)
+          anovaFile.writelines(name+','+value+'\n')
+      anovaFile.close()
+      print 'ANOVA analysis written to',anovaFileName
+    else:
+      secm = self.HDMR_ROM.moment(self.hdmr_level,r=2,verbose=False)
     outFile = file(case+'.out','a')
     outFile.writelines('\nRuns,SC Level,Mean\n')
     outFile.writelines(str(self.HDMR_ROM.numRunsToCreate())+',')
