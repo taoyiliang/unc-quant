@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def addPlot(title,lbl,ref=None,r=1,slnfig=None):
-  if r>1:
-    print 'HDMR cannot do r>1, tried to do r =',r
-    return
+  #if r>1:
+  #  print 'HDMR cannot do r>1, tried to do r =',r
+  #  return
   inFile = file(title,'r')
 
   entries=[]
@@ -14,9 +14,10 @@ def addPlot(title,lbl,ref=None,r=1,slnfig=None):
       continue
     entries.append([])
     vals=line.strip().split(',')
-    entries[-1].append(int(vals[0]))
-    entries[-1].append(int(vals[1]))
-    entries[-1].append(float(vals[2]))
+    entries[-1].append(int(vals[0])) #comp solves
+    entries[-1].append(int(vals[1])) #level
+    entries[-1].append(float(vals[2])) #mean
+    entries[-1].append(float(vals[3])) #variance
 
   entries=np.array(entries)
   entries=entries[entries[:,0].argsort()]
@@ -28,18 +29,17 @@ def addPlot(title,lbl,ref=None,r=1,slnfig=None):
     #entr[:,2]=(1.-entr[:,2])/entr[:,2]
     entr=zip(*entr)
     plt.figure(slnfig.number)
-    plt.plot(entr[0],entr[2],'-x',label=lbl)
+    plt.plot(entr[0],entr[r+1],'-x',label=lbl)
     plt.figure(errfig.number)
 
   errs=np.zeros([len(entries),3])
   if ref==None:
     errs[:,0] = entries[:-1,0]
-    #errs[:,1] = abs(entries[:-1,1]-entries[-1,1])/entries[-1,1]
-    errs[:,1] = abs(entries[:-1,2]-entries[-1,2])/entries[-1,2]
+    errs[:,1] = abs(entries[:-1,r+1]-entries[-1,r+1])/entries[-1,r+1]
   else:
     errs[:,0] = entries[:,0]
     #errs[:,1] = abs(entries[:,1]-ref[1])/ref[1]
-    errs[:,1] = abs(entries[:,2]-ref[1])/ref[1]
+    errs[:,1] = abs(entries[:,r+1]-ref[r])/ref[r]
 
   #for e in errs:
   #  print e
@@ -48,7 +48,7 @@ def addPlot(title,lbl,ref=None,r=1,slnfig=None):
   #for e in errs:
   #  print e
   errs=zip(*errs)
-  plt.loglog(errs[0],errs[r],'-o',label=lbl)
+  plt.loglog(errs[0],errs[1],'-o',label=lbl)
 
 
 

@@ -4,6 +4,8 @@ from plotHDMR import addPlot as addHDMR
 import matplotlib.pyplot as plt
 import numpy as np
 
+mom=2
+
 for line in file('ref.inp','r'):
   if line.startswith('N'):N=int(line.strip().split('=')[1])
   elif line.startswith('ref'):
@@ -20,34 +22,17 @@ for line in file('list.inp','r'):
   fname = line.strip()
   ary=fname.split('.')[0].split('_')
   if ary[0]=='MC':
-    pltMC(fname,'MC',ref=ref,slnfig=slnplot)
+    pltMC(fname,'MC',ref=ref,r=mom,slnfig=slnplot)
   elif ary[0] in ['HC','TD']:
     ary=ary[0]#.remove(ary[1])
-    addPlot(fname,ary,ref=ref,slnfig=slnplot)
+    addPlot(fname,ary,ref=ref,r=mom,slnfig=slnplot)
   elif ary[0]=='hdmr':
     namelist = fname.split('.')[0].split('_')
-    name = namelist[0]+'_'+namelist[-1]
-    addHDMR(fname,name,ref=ref,slnfig=slnplot)
+    name = '_'.join([namelist[0],namelist[1],namelist[-1]])
+    addHDMR(fname,name,ref=ref,r=mom,slnfig=slnplot)
 
-#addPlot(MC,'MC',ref=ref)
-#for h in HCs:
-#  addPlot(h,'HC_iso',ref=ref,slnfig=slnplot)
-#for h in TDs:
-#  addPlot(h,'TD_iso',ref=ref,slnfig=slnplot)
 
-#for h in anis:
-#  addPlot(h,h.split('_')[0]+'_aniso',ref=ref)#+h.split('.')[0].split('_')[1],ref=ref)
-#pltMC(MC,'MC',ref=ref,slnfig=slnplot)
-
-#xs=np.linspace(2,32000,3)
-#ysMC = 1e-2/np.sqrt(xs)
-#ysHC1 = 1e-0*xs**(-3)
-#ysHC2 = 5e-5*xs**(-0.5)
-#plt.loglog(xs,ysMC,'k:',label=r'$c\ \eta^{-1/2}$')
-#plt.loglog(xs,ysHC1,'k-.',label=r'$c\ \eta^{-4}$')
-#plt.loglog(xs,ysHC2,'k:')#,label=r'$C_2\eta^{-1/2}$')
-
-plt.title(r'Error in $<u>$; $N$=%i'%N)
+plt.title(r'Error in $<R^%i>$; Attenuation, $N$=%i'%(mom,N))
 plt.xlabel(r'PDE Solves $\eta$')
 plt.ylabel('Rel. Error')
 plt.legend(loc=3)
@@ -55,11 +40,11 @@ plt.legend(loc=3)
 
 plt.figure(slnplot.number)
 #plt.plot([1,1e5],[ref[1],ref[1]],'k:')
-plt.title(r'Solution for $<u>$; $N=$%i'%N)
+plt.title(r'Solution for $<R^%i>$; Attenuation, $N$=%i'%(mom,N))
 plt.xlabel(r'PDE Solves $\eta$')
-plt.ylabel(r'$<u>$')
+plt.ylabel(r'$<R>$')
 plt.legend(loc=4)
-plt.axis([1,int(1e5),2.5e-2,4.5e-2])
+#plt.axis([1,int(1e5),2.5e-2,4.5e-2])
 plt.gca().set_xscale('log')
 
 
