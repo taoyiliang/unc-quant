@@ -197,7 +197,7 @@ class LagrangeROM(ROM):
         soln = self.solns[slnidx]
         prod = 1
         for v,(key,var) in enumerate(self.varDict.iteritems()):
-          polyeval = var.lagrange(pt[v],xs[key],pts_by_var[key],verbose)
+          polyeval = var.lagrange(pt[v],xs[v],pts_by_var[key],verbose)
           prod*=polyeval
         tptot += prod*soln
       tot+=tptot*self.cofs[c]
