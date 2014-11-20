@@ -44,13 +44,15 @@ class Driver(object):
     print '\nLoading uncertain variables...'
     uVars = self.input_file('Variables/names','').split(' ')
     self.varDict={}
+    doAnis = self.input_file('Sampler/SC/anis',0)
     for var in uVars:
       path = self.input_file('Variables/'+var+'/path',' ')
       dist = self.input_file('Variables/'+var+'/dist',' ')
       args = self.input_file('Variables/'+var+'/args',' ').split(' ')
       for a,arg in enumerate(args):
         args[a]=float(arg)
-      impwt = self.input_file('Variables/'+var+'/weight',1.0)
+      if doAnis: impwt = self.input_file('Variables/'+var+'/weight',1.0)
+      else: impwt = 1
       self.varDict[var]=Variables.VariableFactory(dist,var,path,impwt)
       self.varDict[var].setDist(args)
 
@@ -193,10 +195,11 @@ class HDMR_Driver(Driver):
       secm,contribs = self.HDMR_ROM.moment(self.hdmr_level,r=2,anova=True)
       anovaFileName = case+'.anova'
       anovaFile = file(anovaFileName,'w')
+      anovaFile.writelines('Variables,Contribution,Percent\n')
       for i,j in contribs.iteritems():
           name = '-'.join(i.split('_')[1:])
-          value = str(j/secm)
-          anovaFile.writelines(name+','+value+'\n')
+          value = str(j**2/secm)
+          anovaFile.writelines(name+','+str(j**2)+','+value+'\n')
       anovaFile.close()
       print 'ANOVA analysis written to',anovaFileName
     else:

@@ -11,13 +11,15 @@
 
 [HDMR]
   level=1
+  anova=1
 []
 
 [Sampler]
   [./SC]
-    indexSet = HC
-    expOrd = 1
+    indexSet = TD
+    expOrd = 4
     quadrule = single
+    anis = 1
   [../]
   [./MC]
     maxSamples = 100000
@@ -43,26 +45,31 @@
     path = 'Problem/a1'
     dist = 'uniform'
     args = '3.5 2.5'
+    weight = 4
   [../]
   [./a2]
     path = 'Problem/a2'
     dist = 'uniform'
     args = '3.5 2.5'
+    weight = 4
   [../]
   [./a3]
     path = 'Problem/a3'
     dist = 'uniform'
     args = '3.5 2.5'
+    weight = 2
   [../]
   [./a4]
     path = 'Problem/a4'
     dist = 'uniform'
     args = '3.5 2.5'
+    weight = 2
   [../]
   [./a5]
     path = 'Problem/a5'
     dist = 'uniform'
     args = '3.5 2.5'
+    weight = 1
   [../]
 
   [./a6]

@@ -1,8 +1,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def addPlot(title,lbl,ref=None,r=1,slnfig=None):
-  inFile = file(title,'r')
+def addPlot(title,inFile,lbl,ref=None,r=1,slnfig=None):
+  inFile.seek(0)
+
+  if 'TD' in lbl:
+    color='k'
+    marker=':o'
+  elif 'HC' in lbl:
+    color='k'
+    marker=':^'
 
   entries=[]
   for line in inFile:
@@ -25,7 +32,7 @@ def addPlot(title,lbl,ref=None,r=1,slnfig=None):
     #entr[:,2]=((1.-entr[:,2])/entr[:,2])
     entr=zip(*entr)
     plt.figure(slnfig.number)
-    plt.plot(entr[0],entr[r],'-x',label=lbl)
+    plt.plot(entr[0],entr[r],color+marker,label=lbl)
     plt.figure(errfig.number)
 
   if ref==None:
@@ -46,7 +53,7 @@ def addPlot(title,lbl,ref=None,r=1,slnfig=None):
   #for e in errs:
   #  print e
   errs=zip(*errs)
-  plt.loglog(errs[0],errs[1],'-x',label=lbl)
+  plt.loglog(errs[0],errs[1],color+marker,label=lbl)
 
 
 

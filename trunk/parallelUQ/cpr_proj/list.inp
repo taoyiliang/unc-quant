@@ -1,6 +1,7 @@
 MC_h1_proj.samples
 TD_h1_projectile.moments
 HC_h1_projectile.moments
-hdmr_HC_N8_H1.out
-hdmr_HC_N8_H2.out
-hdmr_TD_N8_H1.out
+#hdmr_HC_N8_H1.out
+#hdmr_HC_N8_H2.out
+#hdmr_TD_N8_H1.out
+TD_h1_projectile_anis.moments

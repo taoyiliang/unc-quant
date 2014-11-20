@@ -141,7 +141,10 @@ class HDMR_ROM(ROM):
                 #or sampk.split('_')[-1]=='':#len(sampk.split('_'))==1:
               if verbose: print '  subtracting',sampk
               samples[romk]-=sampv
-    tot=sum(samples.values())
+    tot=0
+    for s in samples.values():
+      tot+=s**r
+    #tot=sum(samples.values())
     if verbose: print 'moment',r,':',tot,'\n'
     if anova: return tot,samples
     else: return tot
