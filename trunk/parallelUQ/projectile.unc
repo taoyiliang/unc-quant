@@ -11,14 +11,16 @@
 []
 
 [HDMR]
-  level=3
+  level = 1
+  anova = 1
 []
 
 [Sampler]
   [./SC]
-    indexSet = HC
-    expOrd = 0
+    indexSet = TD
+    expOrd = 4
     quadrule = single
+    anis = 1
   [../]
   [./MC]
     maxSamples = 100000
@@ -29,7 +31,7 @@
 
 [Backend]
   makePDF = 0
-  outLabel = 'projectile'
+  outLabel = 'projectile_anis'
   writeOut = 1
 []
 
@@ -39,41 +41,49 @@
     path = 'Problem/m'
     dist = 'uniform'
     args = '0.145 0.0725'
+    weight = 5
   [../]
   [./r]
     path = 'Problem/r'
     dist = 'uniform'
     args = '0.0336 0.00336'
+    weight = 5
   [../]
   [./C]
     path = 'Problem/C'
     dist = 'uniform'
     args = '0.5 0.5'
+    weight = 1
   [../]
   [./rho]
     path = 'Problem/rho'
     dist = 'uniform'
     args = '1.2 0.1'
+    weight = 6
   [../]
   [./v]
     path = 'Problem/v'
     dist = 'uniform'
     args = '50 5'
+    weight = 7
   [../]
   [./ang]
     path = 'Problem/ang'
     dist = 'uniform'
     args = '45 10'
+    weight = 2
   [../]
   [./g]
     path = 'Problem/g'
     dist = 'uniform'
     args = '9.7988 0.0349'
+    weight = 12
   [../]
   [./sy]
     path = 'Problem/sy'
     dist = 'uniform'
     args = '1 1'
+    weight = 5
   [../]
 []
 

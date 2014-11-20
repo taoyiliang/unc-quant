@@ -393,52 +393,100 @@ where the weights $w_k$ and points $Y^{(k)}$ come from the multivariate quadratu
 Figs. \ref{n1}-\ref{n5} show the comparison of Monte Carlo convergence to stochastic collocation for $N=1,3,5$ where $N$ is the number of uncertain parameters.  Both total degree (TD) and hyperbolic cross (HC) index sets have been included for $N>1$ (they are indistinguishable for $N=1$).  Additionally, we include two low-anisotropy anisotropic grids.\\
 
 Because of the regularity of $k(Y)=u(Y)$, the total degree index set is as cost effective as the hyperbolic cross index set.  For a less regular stochastic solution, we expect hyperbolic cross would be more efficient.  We also expect the convergence rate to diminish with increasing $N$, and that trend can be seen in the figures for the mean and variance of $k(Y)$. Both the magnitude of the error as well as the convergence rate of stochastic collocation outperforms Monte Carlo for any number of runs.  In addition, heuristic selection of importance weighting improved the accuracy of sparse grid methods by approximately half an order of magnitude.\\
-\begin{figure}[H]
-\centering
-  \begin{subfigure}[b]{0.49 \textwidth}
-   \includegraphics[width=\textwidth]{N1_h5_MCHC}
-   \caption{Mean}
-   \label{n1mean}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.49 \textwidth}
-   \includegraphics[width=\textwidth]{N1_h5_MCHC_2}
-   \caption{Variance}
-   \label{n1var}
-  \end{subfigure}
-  \caption{$N=1$}
-  \label{n1}
-\end{figure}
+%\begin{figure}[H]
+%\centering
+%  \begin{subfigure}[b]{0.49 \textwidth}
+%   \includegraphics[width=\textwidth]{N1_h5_MCHC}
+%   \caption{Mean}
+%   \label{n1mean}
+%  \end{subfigure}
+%  \begin{subfigure}[b]{0.49 \textwidth}
+%   \includegraphics[width=\textwidth]{N1_h5_MCHC_2}
+%   \caption{Variance}
+%   \label{n1var}
+%  \end{subfigure}
+%  \caption{$N=1$}
+%  \label{n1}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\centering
+%  \begin{subfigure}[b]{0.49 \textwidth}
+%   \includegraphics[width=\textwidth]{N3_h5_MCHC}
+%   \caption{Mean}
+%   \label{n3mean}
+%  \end{subfigure}
+%  \begin{subfigure}[b]{0.49 \textwidth}
+%   \includegraphics[width=\textwidth]{N3_h5_MCHC_2}
+%   \caption{Variance}
+%   \label{n3var}
+%  \end{subfigure}
+%  \caption{$N=3$}
+%  \label{n3}
+%\end{figure}
 
 \begin{figure}[H]
 \centering
   \begin{subfigure}[b]{0.49 \textwidth}
-   \includegraphics[width=\textwidth]{N3_h5_MCHC}
-   \caption{Mean}
-   \label{n3mean}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.49 \textwidth}
-   \includegraphics[width=\textwidth]{N3_h5_MCHC_2}
-   \caption{Variance}
-   \label{n3var}
-  \end{subfigure}
-  \caption{$N=3$}
-  \label{n3}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-  \begin{subfigure}[b]{0.49 \textwidth}
-   \includegraphics[width=\textwidth]{N5_h5_MCHC}
-   \caption{Mean}
+   \includegraphics[width=\textwidth]{../graphics/soln_5}
+   \caption{Values}
    \label{n5mean}
   \end{subfigure}
   \begin{subfigure}[b]{0.49 \textwidth}
-   \includegraphics[width=\textwidth]{N5_h5_MCHC_2}
-   \caption{Variance}
+   \includegraphics[width=\textwidth]{../graphics/err_5}
+   \caption{Errors}
+   \label{n5mean}
+  \end{subfigure}
+  \caption{Diffusion, $N=5$, Mean}
+  \label{n5}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+  \begin{subfigure}[b]{0.49 \textwidth}
+   \includegraphics[width=\textwidth]{../graphics/N5_iso_var_vals}
+   \caption{Values}
    \label{n5var}
   \end{subfigure}
-  \caption{$N=5$}
+  \begin{subfigure}[b]{0.49 \textwidth}
+   \includegraphics[width=\textwidth]{../graphics/N5_iso_var_errs}
+   \caption{Errors}
+   \label{n5var}
+  \end{subfigure}
+  \caption{Diffusion, $N=5$, Variance}
   \label{n5}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+  \begin{subfigure}[b]{0.49 \textwidth}
+   \includegraphics[width=\textwidth]{../graphics/soln_14}
+   \caption{Values}
+   \label{n14mean}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.49 \textwidth}
+   \includegraphics[width=\textwidth]{../graphics/err_14}
+   \caption{Errors}
+   \label{n14mean}
+  \end{subfigure}
+  \caption{Diffusion, $N=14$, Mean}
+  \label{n14}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+  \begin{subfigure}[b]{0.49 \textwidth}
+   \includegraphics[width=\textwidth]{../graphics/N14_iso_var_vals}
+   \caption{Values}
+   \label{n14var}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.49 \textwidth}
+   \includegraphics[width=\textwidth]{../graphics/N14_iso_var_errs}
+   \caption{Errors}
+   \label{n14var}
+  \end{subfigure}
+  \caption{Diffusion, $N=14$ Variance}
+  \label{n14}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -468,22 +516,28 @@ In this formulation, greater values of $\alpha_n$ result in less quadrature poin
 \subsection{HDMR}
 Despite the gains in efficiency from using anisotropic sparse grids, stochastic collocation still suffers from the curse of dimensionality, becoming computationally unwieldy for more than a dozen uncertain inputs.  We can further improve the efficiency of deterministic uncertainty quantification by making use of high-density model reduction (HDMR) techniques \cite{hdmr}.  These methods have been applied recently to neutronics problems for significant gain in efficiency \cite{hdmr_neutron}.\\
 
-Cut-HDMR makes use of representative ``slices'' or cuts of the uncertainty space.  In particular, it approximates a function as a sum of increasing interactions,
+Cut-HDMR makes use of representative ``slices'' or cuts of the uncertainty space.  This slice in uncertainty space makes use of ``reference values'' for each of the uncertain inputs, often the mean or most likely value for the parameter.  We denote the reference value for input parameter $Y_n$ as $Y_n^{(0)}$.  Cut-HDMR uses reference values for the majority of inputs at a time and varies small numbers of parameters, then constructs the results as a linear sum of the contributions.
+It approximates a function as a sum of increasing interactions,
 \begin{equation}
-u(Y)= H[u](Y)=u_0 + \sum_i^N u_i + \sum_i^N\sum_j^i u_{i,j}+...,
+u(Y)= H[u](Y)=u_0 + \sum_{n_1=1}^N u_{n_1} + \sum_{n_1=1}^N\sum_{n_2=1}^{n_1} u_{n_1,n_2} + 
+                     \sum_{n_1=1}^N\sum_{n_2=1}^{n_1}\sum_{n_3=1}^{n_2}u_{n_1,n_2,n_3}+...,
 \end{equation}
 \begin{equation}
-u_0=u(\bar Y),
+u_0=u(Y^{(0)}),
 \end{equation}
 \begin{equation}
-u_i\equiv u(Y_i,\bar Y) - u_0,
+u_{n}\equiv u(Y_n) - u_0,
 \end{equation}
 \begin{equation}
 u_{i,j}\equiv u(Y_i,Y_j,\bar Y) - u_i - u_j - u_0,
 \end{equation}
-and so on.  Here $N$ is the total number of uncertain inputs, and $\bar Y$ indicates holding any variables not explicitly listed at a reference value (in this case, the mean value).  That is,
+and so on.  Here $N$ is the total number of uncertain inputs, and 
 \begin{equation}
-u(Y_i,\bar Y) \equiv u(\bar Y_1,\ldots,Y_i,\ldots,\bar Y_N).
+u(Y_{n})=u\big|_{Y_i=Y_i^{(0)},i\neq n}\equiv u(Y_1^{(0)},Y_2^{(0)},\ldots,Y_n,\ldots,Y_N^{(0)}),
+\end{equation}
+indicates holding any variables not explicitly listed at the reference value.  For multiple listed uncertain inputs,
+\begin{equation}
+u(Y_m,Y_{n})\equiv u(Y_1^{(0)},Y_2^{(0)},\ldots,Y_m,\ldots,Y_n,\ldots,Y_N^{(0)}),
 \end{equation}
 This Cut-HDMR representation allows us to approximate by truncating at a particular interaction level $H$.  For instance, an $H2$ approximation would only include the terms
 \begin{equation}
@@ -502,26 +556,179 @@ S_i\equiv S[u](Y_i,\bar Y) - S_0,
 \begin{equation}
 S_{i,j}\equiv S[u](Y_i,Y_j,\bar Y) - S_i - S_j - S_0.
 \end{equation}
+Moments $r$ of this HDMR approximation can be obtained simply as - TODO is this true? - 
+\begin{equation}
+\expv{u(Y)^r}=\expv{H[u](Y)^r}=u_0^r + \sum_i^N u_i^r + \sum_i^N\sum_j^i u_{i,j}^r+...
+\end{equation}
 
-\subsection{Attenuation Problem Results}
+\subsubsection{Attenuation Problem Results}
 Figures \ref{atn vals hdmr} and \ref{atn errs hdmr} compare the convergence of the additional methods described here as a function of the number of deterministic solves required.  Because each variable contributes identically, anisotropic methods did not show any improvement over collocation and are omitted for this problem.  We note that, for five input parameters, it appears HDMR at best can tie the uncertainty convergence obtained by full collocation.  This is sensible, as using sparse grid quadrature already removes most of the higher-order interactions between variables from consideration.  We expect that as the number of input parameters increases, the benefit of HDMR will as well.
 \begin{figure}[H]
     \centering
-    %\begin{subfigure}[b]{0.49 \textwidth}
-      \includegraphics[width=0.5\textwidth]{../graphics/attenuate_N5_soln_hdmr}
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/attenuate_N5_soln_hdmr}
       \caption{$<u>$ Values}
       \label{atn vals hdmr}
-\end{figure}
-\begin{figure}[H]
+  \end{subfigure}
+\begin{subfigure}[b]{0.49 \textwidth}
 \centering
-      \includegraphics[width=0.5\textwidth]{../graphics/attenuate_N5_conv_hdmr}
+      \includegraphics[width=\textwidth]{../graphics/attenuate_N5_conv_hdmr}
       \caption{Error in $<u>$}
       \label{atn errs hdmr}
-    %\end{subfigure}
-  %\caption{Attenuation UQ Results}
-  %\label{atn results}
+    \end{subfigure}
+  \caption{Attenuation UQ Results, Mean}
+  \label{atn results}
   \end{figure}
 
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/attenuate_N5_soln_hdmr_variance}
+      \caption{$<u>$ Values}
+      \label{atn vals hdmr}
+  \end{subfigure}
+\begin{subfigure}[b]{0.49 \textwidth}
+\centering
+      \includegraphics[width=\textwidth]{../graphics/attenuate_N5_conv_hdmr_variance}
+      \caption{Error in $<u>$}
+      \label{atn errs hdmr}
+    \end{subfigure}
+  \caption{Attenuation UQ Results, Variance}
+  \label{atn results}
+  \end{figure}
+
+
+\subsubsection{Projectile Problem Results}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/projectile_solns_hdmr}
+      \caption{$<u>$ Values}
+      \label{atn vals hdmr}
+  \end{subfigure}
+\begin{subfigure}[b]{0.49 \textwidth}
+\centering
+      \includegraphics[width=\textwidth]{../graphics/projectile_errs_hdmr}
+      \caption{Error in $<u>$}
+      \label{atn errs hdmr}
+    \end{subfigure}
+  \caption{Projectile UQ Results, Mean}
+  \label{atn results}
+  \end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/projectile_solns_hdmr_variance}
+      \caption{$<u>$ Values}
+      \label{atn vals hdmr}
+  \end{subfigure}
+\begin{subfigure}[b]{0.49 \textwidth}
+\centering
+      \includegraphics[width=\textwidth]{../graphics/projectile_errs_hdmr_variance}
+      \caption{Error in $<u>$}
+      \label{atn errs hdmr}
+    \end{subfigure}
+  \caption{Projectile UQ Results, Variance}
+  \label{atn results}
+  \end{figure}
+
+
+
+\subsubsection{Diffusion Problem Results}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/projectile_solns_hdmr_variance}
+      \caption{$<u>$ Values}
+      \label{atn vals hdmr}
+  \end{subfigure}
+\begin{subfigure}[b]{0.49 \textwidth}
+\centering
+      \includegraphics[width=\textwidth]{../graphics/projectile_errs_hdmr_variance}
+      \caption{Error in $<u>$}
+      \label{atn errs hdmr}
+    \end{subfigure}
+  \caption{Projectile UQ Results, Variance}
+  \label{atn results}
+  \end{figure}
+
+
+
+\subsection{Anisotropic Sparse Grid}
+One disadvantage of sparse grids as defined above is that it treats all dimensions of uncertainty space equally.  In many cases, however, the sensitivity of the stochastic solution to one dimension is less than another.  For example, we heuristically expect the sensitivity of the $k$-eigenvalue to the reflecting material (material 5) diffusion coefficient to be much less than the sensitivity to the fission cross section in the main fissile material (material 1).  \\
+
+We can leverage the varying sensitivity by introducing importance parameters $\vec\alpha=[\alpha_1,\cdots,\alpha_N]$ that parametrize the sensitivity of the stochastic solution to each dimension.  Using the one-norm
+\begin{equation}
+\qty|\vec\alpha|_1\equiv\frac{1}{N}\sum_{n=1}^N \alpha_n,
+\end{equation}
+these weight parameters adjust the index set rules $\Lambda(L)$ for total degree and hyperbolic cross as
+\begin{equation}
+\tilde\Lambda_\text{TD}(L)=\Big\{\bar p=[p_1,...,p_N]:\sum_{n=1}^N \alpha_n p_n \leq \qty|\vec\alpha|_1 L \Big\},
+\end{equation}
+\begin{equation}
+\tilde\Lambda_\text{HC}(L)=\Big\{\bar p=[p_1,...,p_N]:\prod_{n=1}^N \qty(p_n+1)^{\alpha_n} \leq \qty(L+1)^{\qty|\vec\alpha|_1} \Big\}.
+\end{equation}
+In this formulation, greater values of $\alpha_n$ result in less quadrature points for uncertain input $Y_n$.  Smaller values of $\alpha_n$ are assigned to more sensitive dimensions to prioritize collocation points.
+
+One method to quantify the sensitivity of the quantity of interest to changes in each input parameter is by using an ANOVA-like approach with a well-converged HDMR calculation.  We derive an importance factor based on the contribution of each single variable to the overall second moment.
+\begin{equation}
+\expv{u(Y)^2} \approx \expv{H_3[u](Y)^2} =
+                    u_0^2 + \sum_{n_1=1}^N u_{n_1}^2 + \sum_{n_1=1}^N\sum_{n_2=1}^{n_1} u_{n_1,n_2}^2 + 
+                     \sum_{n_1=1}^N\sum_{n_2=1}^{n_1}\sum_{n_3=1}^{n_2}u_{n_1,n_2,n_3}^2,
+\end{equation}
+\begin{equation}
+\alpha_n = -\log\left(\frac{u_n^2}{\expv{H_3[u](Y)^2}}\right).
+\end{equation}
+
+We omit results for the attenuation case, as each variable contributes identically and no anisotropy performs better than isotropic sparse grid for this case.
+
+\subsubsection{Projectile Problem}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/projectile_solns_aniso}
+      \caption{$<u>$ Values}
+      \label{atn vals hdmr}
+  \end{subfigure}
+\begin{subfigure}[b]{0.49 \textwidth}
+\centering
+      \includegraphics[width=\textwidth]{../graphics/projectile_errs_aniso}
+      \caption{Error in $<u>$}
+      \label{atn errs hdmr}
+    \end{subfigure}
+  \caption{Projectile UQ Results, Mean}
+  \label{atn results}
+  \end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49 \textwidth}
+      \includegraphics[width=\textwidth]{../graphics/projectile_solns_aniso_variance}
+      \caption{$<u>$ Values}
+      \label{atn vals hdmr}
+  \end{subfigure}
+\begin{subfigure}[b]{0.49 \textwidth}
+\centering
+      \includegraphics[width=\textwidth]{../graphics/projectile_errs_aniso_variance}
+      \caption{Error in $<u>$}
+      \label{atn errs hdmr}
+    \end{subfigure}
+  \caption{Projectile UQ Results, Variance}
+  \label{atn results}
+  \end{figure}
+
+
+\subsubsection{Diffusion Problem}
+TODO
+
+
+\section{Conclusion}
+TODO\\Ongoing:
+\begin{itemize}
+\item Adaptive Anisotropic Sparse Grid
+\item Adaptive HDMR
+\end{itemize}
 %
 %\subsection{Selecting Anisotropy}
 %Because of the heuristic nature of anisotropy importance weights, we present here several weight choices and the effect on absolute error and convergence.  We consider four cases along with Monte Carlo and isotropic sparse grids.  Each case is labeled by its importance weights in order of the input parameters listed in Table \ref{params}. The choice of weights is informed by considering the convergence rate of each individual parameter alone with increasing quadrature order, as shown in Fig. \ref{indconv}.  We surmise from this figure that the material 1 cross sections converge the slowest, while the material 5 diffusion coefficient converges most quickly.  We choose the sample cases 1-1-2-2-4 and 1-1-4-4-8 to put increasing weight on the material 1 cross sections and remove weight from the material 5 diffusion coefficient.  In addition, we choose the case 1-1-2-1-1 as an example of a somewhat arbitrary choice of coefficient to remove weight from.  Lastly, we intentionally choose a poor weighting scheme with 8-8-4-4-1 to show worst-case effects of including poor importance weights.  The results are compared in Figs. \ref{aniso1} and \ref{aniso2} for the mean and variance. 
@@ -567,7 +774,7 @@ Figures \ref{atn vals hdmr} and \ref{atn errs hdmr} compare the convergence of t
 %Lastly, our work so far has been demonstrated exclusively with uniformly-distributed random variables as input parameters.  To more accurately approximate the shape of an arbitrary probability distribution, we intend to implement Beta-distributed random variables using Jacobi quadrature, with two shaping parameters $\alpha,\beta$.  The Beta distribution is also distributed finitely between two points, but $\alpha,\beta$ can be adjusted to accommodate a wide range of uncertain distributions including uniform and truncated Gaussian normal distributions.  While Beta distributions cannot exactly replicate all other distributions, we expect it can replicate them without introducing a greater error than introduced by the Monte Carlo and stochastic collocation methods presented.
 %
 \section{Acknowledgments}
-TODO This research was supported by research grants from Idaho National Laboratory.
+This research was supported by research grants from Idaho National Laboratory.
 
 \newpage
 \bibliography{../bibliography/uq}
