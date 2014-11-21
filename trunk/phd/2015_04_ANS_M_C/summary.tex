@@ -636,22 +636,22 @@ Figures \ref{atn vals hdmr} and \ref{atn errs hdmr} compare the convergence of t
 
 
 \subsubsection{Diffusion Problem Results}
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[b]{0.49 \textwidth}
-      \includegraphics[width=\textwidth]{../graphics/projectile_solns_hdmr_variance}
-      \caption{$<u>$ Values}
-      \label{atn vals hdmr}
-  \end{subfigure}
-\begin{subfigure}[b]{0.49 \textwidth}
-\centering
-      \includegraphics[width=\textwidth]{../graphics/projectile_errs_hdmr_variance}
-      \caption{Error in $<u>$}
-      \label{atn errs hdmr}
-    \end{subfigure}
-  \caption{Projectile UQ Results, Variance}
-  \label{atn results}
-  \end{figure}
+%\begin{figure}[H]
+%    \centering
+%    \begin{subfigure}[b]{0.49 \textwidth}
+%      \includegraphics[width=\textwidth]{../graphics/projectile_solns_hdmr_variance}
+%      \caption{$<u>$ Values}
+%      \label{atn vals hdmr}
+%  \end{subfigure}
+%\begin{subfigure}[b]{0.49 \textwidth}
+%\centering
+%      \includegraphics[width=\textwidth]{../graphics/projectile_errs_hdmr_variance}
+%      \caption{Error in $<u>$}
+%      \label{atn errs hdmr}
+%    \end{subfigure}
+%  \caption{Projectile UQ Results, Variance}
+%  \label{atn results}
+%  \end{figure}
 
 
 
@@ -678,44 +678,62 @@ One method to quantify the sensitivity of the quantity of interest to changes in
                      \sum_{n_1=1}^N\sum_{n_2=1}^{n_1}\sum_{n_3=1}^{n_2}u_{n_1,n_2,n_3}^2,
 \end{equation}
 \begin{equation}
-\alpha_n = -\log\left(\frac{u_n^2}{\expv{H_3[u](Y)^2}}\right).
+\alpha_n = \text{ceil}\left[-\log\left(\frac{u_n^2}{\expv{H[u](Y)^2}}\right)\right].
 \end{equation}
+While not the only method for calculating weight factors, this formulation ensures positive integers with a minimum of 1 for each weight factor.\\
 
 We omit results for the attenuation case, as each variable contributes identically and no anisotropy performs better than isotropic sparse grid for this case.
 
 \subsubsection{Projectile Problem}
+Table \ref{tab:proj anis} shows values found using an order $H_1[u](Y)$ approximation for the projectile problem.  The drag coefficient $C$ is clearly the input with the most impact, while the gravitational acceleration constant $g$ has the least effect.  We note that these sensitivities are based on the uncertain ranges given above; changing the uncertainty ranges or distribution could impact the weighting factors $\alpha$.  As shown in Figures \ref{proj anis mean} and \ref{proj anis variance}, employing a variance-based anisotropic sparse grid collocation shows orders of magnitude improvement in convergence and overall error when compared to isotropic sparse grid collocation.
+\begin{table}[H]
+\centering
+\begin{tabular}{c|c c|c}
+$Y_n$ & $Y_n^2$ & $\frac{Y_n^2}{H_1^2[u](Y)}$ & $\alpha_n$ \\ \hline
+$m$ & 2.57E4 & 6.2E-5 & 5 \\
+$r$ & 2.61E4 & 6.3E-5 & 5 \\
+$C$ & 9.45E7 & 2.3E-1 & 1 \\
+$\rho$ & 1.52E3 & 3.6E-6 & 6 \\
+$v$ & 4.18E1 & 1.0E-7 & 7 \\
+$\theta$ & 1.93E7 & 4.6E-2 & 2 \\
+$g$ & 2.77E-3 & 6.6E-12 & 12 \\
+$y_i$ & 1.56E4 & 5.7E-5 & 5
+\end{tabular}
+\caption{Anisotropies for Projectile Problem}
+\label{tab:proj anis}
+\end{table}
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.49 \textwidth}
       \includegraphics[width=\textwidth]{../graphics/projectile_solns_aniso}
-      \caption{$<u>$ Values}
+      \caption{Values}
       \label{atn vals hdmr}
   \end{subfigure}
 \begin{subfigure}[b]{0.49 \textwidth}
 \centering
       \includegraphics[width=\textwidth]{../graphics/projectile_errs_aniso}
-      \caption{Error in $<u>$}
+      \caption{Error}
       \label{atn errs hdmr}
     \end{subfigure}
   \caption{Projectile UQ Results, Mean}
-  \label{atn results}
+  \label{proj anis mean}
   \end{figure}
 
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.49 \textwidth}
       \includegraphics[width=\textwidth]{../graphics/projectile_solns_aniso_variance}
-      \caption{$<u>$ Values}
+      \caption{Values}
       \label{atn vals hdmr}
   \end{subfigure}
 \begin{subfigure}[b]{0.49 \textwidth}
 \centering
       \includegraphics[width=\textwidth]{../graphics/projectile_errs_aniso_variance}
-      \caption{Error in $<u>$}
+      \caption{Error}
       \label{atn errs hdmr}
     \end{subfigure}
   \caption{Projectile UQ Results, Variance}
-  \label{atn results}
+  \label{proj anis variance}
   \end{figure}
 
 
