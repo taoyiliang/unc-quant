@@ -6,7 +6,7 @@
   inputDir     = '../projectile/'
   input_editor = 'IE_projectile'
   numprocs     = 1
-  mesh_factor  = 1
+  mesh_factor  = 5
   time_step    = 1e-4
 []
 
