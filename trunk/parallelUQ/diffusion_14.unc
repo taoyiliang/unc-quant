@@ -6,7 +6,7 @@
   execDir        = '../diffusion/'
   inputDir       = '../diffusion/'
   input_editor   = 'IE_Diffusion'
-  numprocs       = 6
+  numprocs       = 2
   mesh_factor    = 5
 []
 
@@ -23,9 +23,9 @@
   [../]
   [./SC]
     indexSet = TD
-    expOrd = 3
+    expOrd = 5
     quadrule = single
-    anis=0
+    anis=1
   [../]
 []
 
@@ -83,7 +83,7 @@
     path = 'Material/1/g2/D'
     dist = uniform
     args = '0.211 0.0211'
-    weight = 1
+    weight = 128
   [../]
   [./1xc2]
     path = 'Material/1/g2/sigc'
@@ -127,7 +127,7 @@
     path = 'Material/2/g2/D'
     dist = uniform
     args = '0.1902 0.01902'
-    weight = 1
+    weight = 128
   [../]
   [./2xc2]
     path = 'Material/2/g2/sigc'
@@ -139,7 +139,7 @@
     path = 'Material/2/g2/nsigf'
     dist = uniform
     args = '0.08675 0.008675'
-    weight = 1
+    weight = 2
   [../]
 
   #MATERIAL 3
@@ -171,7 +171,7 @@
     path = 'Material/3/g2/D'
     dist = uniform
     args = '0.2091 0.02091'
-    weight = 1
+    weight = 256
   [../]
   [./3xc2]
     path = 'Material/3/g2/sigc'
@@ -215,19 +215,19 @@
     path = 'Material/4/g2/D'
     dist = uniform
     args = '0.2091 0.02091'
-    weight = 1
+    weight = 256
   [../]
   [./4xc2]
     path = 'Material/4/g2/sigc'
     dist = uniform
     args = '0.03131 0.003131'
-    weight = 3
+    weight = 8
   [../]
   [./4xf2]
     path = 'Material/4/g2/nsigf'
     dist = uniform
     args = '0.1021 0.01021'
-    weight = 4
+    weight = 16
   [../]
   
   #MATERIAL 5
@@ -253,12 +253,12 @@
     path = 'Material/5/g2/D'
     dist = uniform
     args = '0.1592 0.01592'
-    weight = 7
+    weight = 128
   [../]
   [./5xc2]
     path = 'Material/5/g2/sigc'
     dist = uniform
     args = '0.01911 0.001911'
-    weight = 1
+    weight = 16
   [../]
 []
