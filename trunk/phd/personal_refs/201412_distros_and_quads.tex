@@ -1,0 +1,174 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{graphicx}%
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{cite}
+
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{physics}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
+\newcommand{\xs}[2]{\ensuremath{\Sigma_{#1}^{(#2)}}}
+\newcommand{\intO}{\ensuremath{\int\limits_{4\pi}}}
+\newcommand{\intz}{\ensuremath{\int\limits_0^1}}
+\newcommand{\intf}{\ensuremath{\int\limits_{-\infty}^\infty}}
+\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+\newcommand{\LargerCdot}{\raisebox{-0.25ex}{\scalebox{1.2}{$\cdot$}}}
+
+\textwidth6.6in
+\textheight9in
+
+
+\setlength{\topmargin}{0.3in} \addtolength{\topmargin}{-\headheight}
+\addtolength{\topmargin}{-\headsep}
+
+\setlength{\oddsidemargin}{0in}
+
+\oddsidemargin  0.0in \evensidemargin 0.0in \parindent0em
+
+%\pagestyle{fancy}\lhead{MATH 579 (UQ for PDEs)} \rhead{02/24/2014}
+%\chead{Project Proposal} \lfoot{} \rfoot{\bf \thepage} \cfoot{}
+
+
+\begin{document}
+
+\title{Distributions and Quadratures}
+
+\author[]{Paul Talbot\thanks{talbotp@unm.edu}}
+%\date{}
+\renewcommand\Authands{ and }
+\maketitle
+
+\section{General Syntax}
+\begin{itemize}
+\item Probability Measure: $f(y)$
+\item Normalization Factor: $A$
+\item Probability Distribution: $Af(y)$
+\item Generic function: $h(y)$
+\end{itemize}
+
+
+\section{Distributions}
+\subsection{Uniform}
+\begin{equation}
+\mu = \frac{R+L}{2},
+\end{equation}
+\begin{equation}
+\sigma = \frac{R-L}{2}
+\end{equation}
+\begin{equation}
+f(y) = \frac{1}{2\sigma},
+\end{equation}
+\begin{equation}
+A=1,
+\end{equation}
+\begin{equation}
+  1 = \frac{1}{2\sigma}\int_L^R dy,
+\end{equation}
+
+\subsection{Normal}
+\begin{equation}
+f(y) = \exp\qty(-\frac{(y-\mu)^2}{2\sigma^2}),
+\end{equation}
+\begin{equation}
+A = \frac{1}{\sigma\sqrt{2\pi}}
+\end{equation}
+\begin{equation}
+  1 =\frac{1}{\sigma\sqrt{2\pi}} \int_{-\infty}^\infty \exp\qty( -\frac{(y-\mu)^2}{2\sigma^2} )dy,
+\end{equation}
+
+\subsection{Gamma}
+\begin{equation}
+f(y) = y^{\alpha-1}e^{-\beta y},
+\end{equation}
+\begin{equation}
+A = \frac{\beta^\alpha}{\Gamma(\alpha)},
+\end{equation}
+\begin{equation}
+1 = \frac{\beta^\alpha}{\Gamma(\alpha)}\int_L^\infty (y-L)^{\alpha-1}e^{-\beta (y-L)} dy,
+\end{equation}
+
+\subsection{Beta}
+\begin{equation}
+f(y) = y^{\alpha-1}(1-y)^{\beta-1},
+\end{equation}
+\begin{equation}
+A =\frac{ \Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)},
+\end{equation}
+\begin{equation}
+1 = \frac{ \Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\int_L^R y^{\alpha-1}(1-y)^{\beta-1} dy.
+\end{equation}
+
+\section{Quadrature}
+\subsection{Legendre}
+\begin{equation}
+ \int_{-1}^1 h(x)d(x) = \sum_{\ell=1}^\infty w_\ell h(x_\ell)
+\end{equation}
+
+\subsection{Hermite}
+\begin{equation}
+\int_{-\infty}^\infty h(x)\exp(\frac{-x^2}{2})dy = \sum_{h=1}^\infty w_h h(x_h)
+\end{equation}
+
+\subsection{Laguerre}
+\begin{equation}
+\int_0^\infty h(x) x^\alpha e^{-x} dx = \sum_{\mathcal{L}=1}^\infty w_\mathcal{L} h(x_\mathcal{L})
+\end{equation}
+
+\subsection{Jacobi}
+\begin{equation}
+\int_{-1}^1 h(x)(1-x)^\alpha (1+x)^\beta dx = \sum_{j=1}^\infty w_j h(x_j)
+\end{equation}
+
+\subsection{Clenshaw-Curtis}
+\begin{equation}
+\int_{-1}^1 h(x)dx = \sum w_{cc} h(x_{cc})
+\end{equation}
+
+\section{Conversions}
+\subsection{Uniform and Legendre}
+\begin{equation}
+y = \sigma x+\mu,
+\end{equation}
+\begin{equation}
+x = \frac{y-\mu}{\sigma},
+\end{equation}
+\begin{equation}
+\int_a^b h(y)f_\ell(y)dy =\frac{1}{2} \sum_{\ell=1}^\infty w_\ell h(\sigma x_\ell+\mu)
+\end{equation}
+
+\subsection{Normal and Hermite}
+\begin{equation}
+y = \sigma x+\mu,
+\end{equation}
+\begin{equation}
+x = \frac{y-\mu}{\sigma},
+\end{equation}
+\begin{equation}
+\int_{-\infty}^\infty h(y)f_h(y)dy =\frac{1}{\sqrt{2\pi}} \sum_{h=1}^\infty w_h h(\sigma x_h+\mu)
+\end{equation}
+
+\subsection{Gamma and Laguerre}
+\begin{equation}
+y = \frac{x}{\beta}+L,
+\end{equation}
+\begin{equation}
+x = (y-L)\beta,
+\end{equation}
+\begin{equation}
+\int_{L}^\infty h(y)f_g(y)dy =\frac{1}{(\alpha-1)!} \sum_{g=1}^\infty w_g h\qty(\frac{x_g}{\beta}+L)
+\end{equation}
+
+\subsection{Beta and Jacobi}
+
+
+\end{document}
