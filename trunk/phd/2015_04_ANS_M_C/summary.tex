@@ -737,11 +737,10 @@ $y_i$ & 1.56E4 & 5.7E-5 & 5
   \end{figure}
 
 \subsubsection{Diffusion Problem, $N=5$}
-Table \ref{tab:diff5 anis} shows values found using an $H_1[u](Y)$ approximation for the projectile problem.  As expected, the capture and fission cross sections in the most prevalent materials have the greatest effect on the $k$-eigenvalue.
+Table \ref{tab:diff5 anis} shows values found using an hdmr-based $H_1[u](Y)$ approximation for the diffusion problem.  As expected, the capture and fission cross sections in the most prevalent materials have the greatest effect on the $k$-eigenvalue.
+As shown in Figures \ref{diff5 anis mean} and \ref{diff5 anis variance}, employing a variance-based anisotropic sparse grid collocation shows some improvement over an isotropic sparse grid.  There also is some indication of the resolution of the benchmark solution; the convergence of the mean becomes unstable around 10$^{-7}$ (10$^{-5}$ for the variance).  We expect a further-resolved benchmark would demonstrate continued convergence in all methods.
 
-As shown in Figures \ref{diff5 anis mean} and \ref{diff5 anis variance}, employing a variance-based anisotropic sparse grid collocation shows some improvement over an isotropic sparse grid.
-
-TODO FIX THIS
+TODO Update table values with new ANOVA run
 
 \begin{table}[H]
 \centering
@@ -761,34 +760,34 @@ $D^{(5)}_2$ & 6.18E-13 & 6.2E-13 & 13
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.49 \textwidth}
-      \includegraphics[width=\textwidth]{../graphics/N14_aniso_vals}
+      \includegraphics[width=\textwidth]{../graphics/N5_aniso_vals}
       \caption{Values}
       \label{atn vals hdmr}
   \end{subfigure}
 \begin{subfigure}[b]{0.49 \textwidth}
 \centering
-      \includegraphics[width=\textwidth]{../graphics/N14_aniso_errs}
+      \includegraphics[width=\textwidth]{../graphics/N5_aniso_errs}
       \caption{Error}
       \label{atn errs hdmr}
     \end{subfigure}
-  \caption{Diffusion ($N=14$ UQ Results, Mean}
+  \caption{Diffusion ($N=5$) UQ Results, Mean}
   \label{diff5 anis mean}
   \end{figure}
 
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.49 \textwidth}
-      \includegraphics[width=\textwidth]{../graphics/N14_aniso_var_vals}
+      \includegraphics[width=\textwidth]{../graphics/N5_aniso_var_vals}
       \caption{Values}
       \label{atn vals hdmr}
   \end{subfigure}
 \begin{subfigure}[b]{0.49 \textwidth}
 \centering
-      \includegraphics[width=\textwidth]{../graphics/N14_aniso_var_errs}
+      \includegraphics[width=\textwidth]{../graphics/N5_aniso_var_errs}
       \caption{Error}
       \label{atn errs hdmr}
     \end{subfigure}
-  \caption{Projectile UQ Results, Variance}
+  \caption{Diffusion ($N=5$) UQ Results, Variance}
   \label{diff5 anis variance}
   \end{figure}
 
@@ -832,7 +831,7 @@ $\Sigma_{c,2}^{(5)}$ & 3.24E-10 & 3.2E-10 & 10
       \caption{Error}
       \label{atn errs hdmr}
     \end{subfigure}
-  \caption{Diffusion ($N=14$ UQ Results, Mean}
+  \caption{Diffusion ($N=14$) UQ Results, Mean}
   \label{diff14 anis mean}
   \end{figure}
 
@@ -849,7 +848,7 @@ $\Sigma_{c,2}^{(5)}$ & 3.24E-10 & 3.2E-10 & 10
       \caption{Error}
       \label{atn errs hdmr}
     \end{subfigure}
-  \caption{Projectile UQ Results, Variance}
+  \caption{Diffusion ($N=14$) UQ Results, Variance}
   \label{diff14 anis variance}
   \end{figure}
 
