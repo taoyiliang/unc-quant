@@ -54,11 +54,14 @@
 \item Normalization Factor: $A$
 \item Probability Distribution: $Af(y)$
 \item Generic function: $h(y)$
+\item Lower bound $L$
+\item Upper bound $R$
 \end{itemize}
-
+\newpage
 
 \section{Distributions}
 \subsection{Uniform}
+Continuous values $y\in[L,R]$.
 \begin{equation}
 \mu = \frac{R+L}{2},
 \end{equation}
@@ -76,6 +79,7 @@ A=1,
 \end{equation}
 
 \subsection{Normal}
+Continuous values $y\in(-\infty,\infty)$.
 \begin{equation}
 f(y) = \exp\qty(-\frac{(y-\mu)^2}{2\sigma^2}),
 \end{equation}
@@ -87,6 +91,7 @@ A = \frac{1}{\sigma\sqrt{2\pi}}
 \end{equation}
 
 \subsection{Gamma}
+Continuous values $y\in[L,\infty)$.
 \begin{equation}
 f(y) = y^{\alpha-1}e^{-\beta y},
 \end{equation}
@@ -98,6 +103,7 @@ A = \frac{\beta^\alpha}{\Gamma(\alpha)},
 \end{equation}
 
 \subsection{Beta}
+Continuous values $y\in[L,R]$.
 \begin{equation}
 f(y) = y^{\alpha-1}(1-y)^{\beta-1},
 \end{equation}
@@ -107,6 +113,104 @@ A =\frac{ \Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)},
 \begin{equation}
 1 = \frac{ \Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\int_L^R y^{\alpha-1}(1-y)^{\beta-1} dy.
 \end{equation}
+
+\subsection{Triangular}
+Continuous values $y\in[L,R]$.
+$c$ is the $y$-value where the apex sits, and has a value of $\frac{2}{R-L}$.
+\begin{equation}
+f(y) = \left\{
+ \begin{array}{lr}
+  \frac{y-L}{c-L} & L\leq y < c,\vspace{5pt} \\ 
+  1 & y=c, \vspace{5pt} \\
+  \frac{R-y}{R-c} & c<y\leq R, \vspace{5pt} \\
+  0 & \text{else}.
+ \end{array}
+\right.
+\end{equation}
+\begin{equation}
+A = \frac{2}{R-L},
+\end{equation}
+\begin{equation}
+1 = \int_L^c \frac{2}{(R-L)}\frac{y-L}{(c-L)} dy + \int_c^R \frac{2}{(R-L)}\frac{R-y}{(R-c)} dy
+\end{equation}
+
+\subsection{Poisson}
+Discrete values $y\in\mathbb{N}_0$.
+\begin{equation}
+f(y) = \frac{\lambda^y}{y!},
+\end{equation}
+\begin{equation}
+A = e^{-\lambda},
+\end{equation}
+\begin{equation}
+1 = e^{-\lambda}\sum_{y=0}^\infty  \frac{\lambda^y}{y!},\hspace{10pt}y\in\mathbb{N}_0.
+\end{equation}
+
+\subsection{Binomial}
+Discrete values $y\in\mathbb{N_0},y<n$,
+\begin{equation}
+f(y)=p^y(1-p)^{n-y},
+\end{equation}
+\begin{equation}
+A=\frac{n!}{y!(n-y)!},
+\end{equation}
+\begin{equation}
+1=\frac{n!}{y!(n-y)!}\sum_{y=0}^n p^y(1-p)^{n-y}.
+\end{equation}
+
+\subsection{Bernoulli}
+Boolean values $y\in[0,1]$.
+\begin{equation}
+f(y)=\left\{
+  \begin{array}{lr}
+    1-p & y=0,\\
+    p & y=1,
+  \end{array}
+\right.
+\end{equation}
+\begin{equation}
+A=1,
+\end{equation}
+\begin{equation}
+1 = \sum_{y=1}^2 f(y) = p + (1-p).
+\end{equation}
+
+\subsection{Logistic}
+Continuous values $y\in(-\infty,\infty)$.
+\begin{equation} % \frac{\exp\qty(-\frac{y-\mu}{s})}{s\qty(1+\exp\qty(-\frac{y-\mu}{s}))}
+f(y) =\sech^2\qty(\frac{y-\mu}{2s}),
+\end{equation}
+\begin{equation}
+A=\frac{1}{4s},
+\end{equation}
+\begin{equation}
+1=\frac{1}{4s}\int_{-\infty}^\infty \sech^2\qty(\frac{y-\mu}{2s}) dy.
+\end{equation}
+
+\subsection{Exponential}
+Continuous values $y\in[0,\infty)$ TODO make L to infinity
+\begin{equation}
+f(y)=e^{-\lambda x},
+\end{equation}
+\begin{equation}
+A=\lambda,
+\end{equation}
+\begin{equation}
+1=\int_0^\infty \lambda e^{-\lambda x}.
+\end{equation}
+
+\subsection{Arbitrary}
+Continuous values $-\infty < L \leq y \leq R < \infty$
+\begin{equation}
+f(y) = f(y),
+\end{equation}
+\begin{equation}
+F(y) = \int_{L}^y f(y')dy',
+\end{equation}
+\begin{equation}
+1 = \int_{L}^R f(y')dy'. 
+\end{equation}
+
 
 \section{Quadrature}
 \subsection{Legendre}
@@ -167,8 +271,75 @@ x = (y-L)\beta,
 \begin{equation}
 \int_{L}^\infty h(y)f_g(y)dy =\frac{1}{(\alpha-1)!} \sum_{g=1}^\infty w_g h\qty(\frac{x_g}{\beta}+L)
 \end{equation}
+Points $x_g$ and weights $w_g$ must be obtained from Laguerre quadrature as
+\begin{verbatim}
+pts,wts = laguerre_generator(alpha-1).
+\end{verbatim}
 
 \subsection{Beta and Jacobi}
+General Beta:
+\begin{equation}
+1=\frac{1}{\text{B}(\alpha,\beta)(R-L)}\int_L^R \qty(\frac{y-L}{R-L})^{\alpha-1}\qty(1-\frac{y-L}{R-L})^{\beta-1}dy,
+\end{equation}
+To convert to standard Beta:
+\begin{equation}
+z=\frac{y-L}{R-L},\hspace{10pt}y=(R-L)z+L,\hspace{10pt} dy=(R-L)dz,
+\end{equation}
+\begin{equation}
+1=\frac{1}{\text{B}(\alpha,\beta)}\int_0^1 z^{\alpha-1}(1-z)^{\beta-1}dz,
+\end{equation}
+To convert to same form as Jacobi:
+\begin{equation}
+z=\frac{1+x}{2},\hspace{10pt}x=2z-1,\hspace{10pt}dz=\frac{1}{2}dx,
+\end{equation}
+\begin{equation}
+1=\frac{1}{2^{\alpha+\beta-1}\text{B}(\alpha,\beta)}\int_{-1}^1 (1+x)^{\alpha-1}(1-x)^{\beta-1} dx,
+\end{equation}
+Combined:
+\begin{equation}
+y=\frac{R-L}{2}x+\frac{R+L}{2},\hspace{10pt}x=\qty(y-\frac{R+L}{2})\qty(\frac{2}{R-L})
+\end{equation}
+Especially note the naming convention
+\begin{equation}
+\alpha_\text{Jacobi} = \beta_\text{Beta}-1,\hspace{15pt}\beta_\text{Jacobi} = \alpha_\text{Beta}-1,
+\end{equation}
+So,
+\begin{equation}
+\int_L^R h(y)f_B(y)dy = \frac{1}{2^{\alpha_B+\beta_B-1}\text{B}(\alpha_B,\beta_B)}\sum_{b=1}^\infty w_b h\qty(\frac{R-L}{2}x_b+\frac{R+L}{2}).
+\end{equation}
+Points $x_j$ and weights $w_j$ must be obtained from Jacobi quadrature as
+\begin{verbatim}
+pts,wts = jacobi_generator(beta-1, alpha-1).
+\end{verbatim}
 
+
+\subsection{Arbitrary and Legendre}
+Let $u\in[0,1]$, and note $F(y)\in[0,1]$.
+\begin{equation}
+du = dF(y) = f(y)dy,
+\end{equation}
+\begin{equation}
+F(y)=u\hspace{10pt}\therefore\hspace{10pt}y=F^{-1}(u),
+\end{equation}
+\begin{equation}
+dy = \frac{1}{f(y)}du,
+\end{equation}
+\begin{align}
+\int_L^R h(y)f(y)dy &= \int_0^1 h\qty(F^{-1}(u))f\qty(F^{-1}(u))\frac{1}{f\qty(F^{-1}(u))}du,\\
+  &=\int_0^1 h\qty(F^{-1}(u))du.
+\end{align}
+\begin{equation}
+x = \frac{u-\mu}{\sigma}\therefore u=\sigma x+\mu,
+\end{equation}
+\begin{equation}
+u = \frac{R-L}{2}x+\frac{R+L}{2},\hspace{10pt}R=1,L=0,
+\end{equation}
+\begin{equation}
+u = \frac{1}{2}(x+1),
+\end{equation}
+\begin{align}
+\int_L^R h(y)f(y)dy&= \int_0^1 h\qty(F^{-1}(u))du,\\
+  &=\frac{1}{2}\sum_{\ell=1}^\infty w_\ell h\qty(F^{-1}\qty(\frac{1}{2}(x+1)))du.
+\end{align}
 
 \end{document}

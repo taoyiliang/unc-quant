@@ -1,0 +1,98 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{graphicx}%
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{cite}
+
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{physics}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
+\newcommand{\xs}[2]{\ensuremath{\Sigma_{#1}^{(#2)}}}
+\newcommand{\intO}{\ensuremath{\int\limits_{4\pi}}}
+\newcommand{\intz}{\ensuremath{\int\limits_0^1}}
+\newcommand{\intf}{\ensuremath{\int\limits_{-\infty}^\infty}}
+\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+\newcommand{\LargerCdot}{\raisebox{-0.25ex}{\scalebox{1.2}{$\cdot$}}}
+
+\textwidth6.6in
+\textheight9in
+
+
+\setlength{\topmargin}{0.3in} \addtolength{\topmargin}{-\headheight}
+\addtolength{\topmargin}{-\headsep}
+
+\setlength{\oddsidemargin}{0in}
+
+\oddsidemargin  0.0in \evensidemargin 0.0in \parindent0em
+
+%\pagestyle{fancy}\lhead{MATH 579 (UQ for PDEs)} \rhead{02/24/2014}
+%\chead{Project Proposal} \lfoot{} \rfoot{\bf \thepage} \cfoot{}
+
+
+\begin{document}
+
+\title{Quadrature Orders}
+
+\author[]{Paul Talbot\thanks{talbotp@unm.edu}}
+%\date{}
+\renewcommand\Authands{ and }
+\maketitle
+
+\section{Gaussian}
+The key to Gaussian quadrature is the ability to use $L$ sets of points and weights to integrate a polynomial of order $2L-1$; or, equivalently, an $n$-th order polynomial can be integrated exactly by $\frac{1}{2}\qty(n+1)$ sets of points and weights.  That is,
+\begin{equation}
+\int P_n(x) dx = \sum_{\ell=1}^{L=\frac{1}{2}\qty(n+1)} w_\ell P_n(x_\ell),
+\end{equation}
+is exact.  The integrals we need to solve in stochastic collocation methods for uncertainty quantification are of the form
+\begin{equation}\label{int}
+\int u(x(Y)) \phi_i(x) dx,
+\end{equation}
+where $\phi_i(x)$ are $i$-th order orthogonal polynomials of some type, $x(Y)$ is a change-of-variable function, and $u(Y)$ is the deterministic solver as a function of the uncertain input space $Y$.  The stochastic collocation approximation for $u(Y)$ is given by
+\begin{equation} \label{sc}
+u(Y) = \sum_{j=0}^\infty u_j\phi_j(x) dx,
+\end{equation}
+where $u_i$ is a scalar coefficient given by the integral above,
+\begin{equation}
+u_j = \frac{\int u(x(Y)) \phi_j(x)dx}{\int \phi_j^2(x) dx}.
+\end{equation}
+We can plug (\ref{sc}) into (\ref{int}) and use the orthogonality of $\phi_n(x)$ to obtain
+\begin{align}
+\int u(x(Y)) \phi_i(x) dx &=\int \qty(\sum_{j=0}^\infty u_j\phi_j(x))\phi_i(x)dx,\\ 
+  &= \sum_{j=0}^\infty u_j \int\phi_j(x)\phi_i(x)dx,\\
+  &= u_i \int \phi_i(x)^2 dx.
+\end{align}
+Because $\phi_i(x)^2$ is a polynomial of order $2i$, we can write
+\begin{equation}
+\int \phi_i(x)^2 dx = \int \xi_{2i}(x) dx,
+\end{equation}
+where $\xi_n(x)$ is a new polynomial of order $n$ whose other properties we are not concerned with.  To exactly integrate this polynomial of order $n=2i$, we need a number of points equal to 
+\begin{equation}
+L=\frac{1}{2}(n+1)=\frac{1}{2}(2n+1)=n+\frac{1}{2}\approx n+1.
+\end{equation}
+Thus, for Gauss quadrature, an appropriate quadrature rule $p(i)$ for number of points $L$ as a function of the basis polynomial order $i$ is
+\begin{equation}
+L = p(i)+1=i+1, 
+\end{equation}
+\begin{equation}
+p(i)=i.
+\end{equation}
+
+\section{Clenshaw-Curtis}
+Clenshaw-Curtis quadrature cannot make the same claim regarding quadrature order as Gauss quadrature can; instead, the main feature of this quadrature is that select orders are nested.  In order to assure each increasing quadrature level has all the previous level's points plus another point between each previous one, we apply the rule
+\begin{equation}
+L = p(i)+1 = 2^n+1,
+\end{equation}
+\begin{equation}
+p(i) = 2^n.
+\end{equation}
+\end{document}
