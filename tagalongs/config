@@ -1,0 +1,47 @@
+# Multiplex connections for less RSA typing
+Host *
+        ControlMaster auto
+        ControlPath ~/.ssh/master-%r@%h:%p
+
+# General Purpose HPC Machines
+Host *.inl.gov *.inel.gov flogin1 flogin2 quark bechler hpcweb hpcsc
+        User USERNAME
+        ProxyCommand ssh USERNAME@hpclogin.inl.gov netcat %h %p
+
+
+
+# Forward license servers, webpages, and source control
+Host hpclogin  hpclogin.inl.gov
+        User USERNAME
+        HostName hpclogin.inl.gov
+        LocalForward 8080 hpcweb:80
+        LocalForward 8181 hpcsc:80
+        LocalForward 2222 hpcsc:22
+        LocalForward 3128 hpcweb:3128
+        LocalForward 40000 hpclm1:40000
+        LocalForward 40001 hpclm1:40001
+        LocalForward 40002 hpclm1:40002
+        LocalForward 40003 hpclm1:40003
+        LocalForward 40004 hpclm1:40004
+        LocalForward 40005 hpclm1:40005
+        LocalForward 40006 hpclm1:40006
+        LocalForward 40007 hpclm1:40007
+        LocalForward 40008 hpclm1:40008
+        LocalForward 40009 hpclm1:40009
+        LocalForward 40010 hpclm1:40010
+        LocalForward 40011 hpclm1:40011
+        LocalForward 40012 hpclm1:40012
+        LocalForward 40013 hpclm1:40013
+        LocalForward 40014 hpclm1:40014
+        LocalForward 40015 hpclm1:40015
+        LocalForward 40016 hpclm1:40016
+        LocalForward 40017 hpclm1:40017
+        LocalForward 40018 hpclm1:40018
+        LocalForward 40019 hpclm1:40019
+        LocalForward 40020 hpclm1:40020
+
+
+
+# Hack for cheating with the source control paths (More to do on this one)
+Host localhost
+        Port 2222
