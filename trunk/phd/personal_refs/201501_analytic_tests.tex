@@ -1,0 +1,186 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{graphicx}%
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{cite}
+
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{physics}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
+\newcommand{\xs}[2]{\ensuremath{\Sigma_{#1}^{(#2)}}}
+\newcommand{\intO}{\ensuremath{\int\limits_{4\pi}}}
+\newcommand{\intnp}{\ensuremath{\int\limits_{-1}^1}}
+\newcommand{\intab}[1]{\ensuremath{\int\limits_{a_{#1}}^{b_#1}}}
+\newcommand{\intz}{\ensuremath{\int\limits_0^1}}
+\newcommand{\intf}{\ensuremath{\int\limits_{-\infty}^\infty}}
+\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+\newcommand{\LargerCdot}{\raisebox{-0.25ex}{\scalebox{1.2}{$\cdot$}}}
+
+\textwidth6.6in
+\textheight9in
+
+
+\setlength{\topmargin}{0.3in} \addtolength{\topmargin}{-\headheight}
+\addtolength{\topmargin}{-\headsep}
+
+\setlength{\oddsidemargin}{0in}
+
+\oddsidemargin  0.0in \evensidemargin 0.0in \parindent0em
+
+%\pagestyle{fancy}\lhead{MATH 579 (UQ for PDEs)} \rhead{02/24/2014}
+%\chead{Project Proposal} \lfoot{} \rfoot{\bf \thepage} \cfoot{}
+
+
+\begin{document}
+
+\title{Analytic Tests regarding Stochastoc Collocation for gPC}
+
+\author[]{Paul Talbot\thanks{talbotp@unm.edu}}
+%\date{}
+\renewcommand\Authands{ and }
+\maketitle
+
+\section{Uniform Uncertainty}
+
+\subsection{$u(Y)=y_1+y_2$}
+\[y_1 \sim U(a_1,b_1),\]
+\[y_2 \sim U(a_2,b_2),\]
+\[R_i \equiv b_i-a_i,\]
+%\[y_i = \frac{R_i}{2}z_i + \frac{b_i+a_i}{2},\]
+\subsubsection{Moments}
+\begin{align}
+\expv{u(Y)^r}&=\intab{1}\intab{2}\Big(y_1+y_2\Big)^r\rho(y_1)\rho(y_2) dy_2 dy_1,\\
+  &=\intab{1}\intab{2}\frac{(y_1+y_2)^r}{R_1R_2}dy_2 dy_1,\\
+%  &=\frac{1}{R_1R_2}\left[\intab{2}\intab{1}y_1\ dy_1dy_2+\intab{1}\intab{2}y_2\ dy_2dy_1\right],\\
+%  &=\frac{1}{2R_1R_2}\left[(b_2-a_2)(b_1^2-a_1^2) + (b_1-a_1)(b_2^2-a_2^2)\right],\\
+%  &=\frac{1}{2}(b_1+a_1 + b_2+a_2).
+\end{align}
+For $b_i=5,a_i=1\ \forall i\in[1,2]$,
+\begin{align}
+  \expv{u(Y)} &= 6,\\
+  \expv{u(Y)^2} &= \frac{116}{3}\approx 38.66667,\\
+  \expv{u(Y)^3} &= 264,\\
+  \expv{u(Y)^4} &= \frac{28336}{15}\approx 1889.066667.
+\end{align}
+
+
+
+\section{Normal Uncertainty}
+
+\subsection{$u(Y)=y_1+y_2$}
+\[y_1 \sim N(\mu_1,\sigma_1),\]
+\[y_2 \sim N(\mu_2,\sigma_2),\]
+%\[y_i = \frac{R_i}{2}z_i + \frac{b_i+a_i}{2},\]
+\subsubsection{Moments}
+\begin{align}
+\expv{u(Y)^r}&=\intf\intf\Big(y_1+y_2\Big)^r\rho(y_1)\rho(y_2) dy_2 dy_1,\\
+  &=\intf\intf\frac{(y_1+y_2)^r}{\sigma_1\sigma_22\pi}\exp[-\frac{(y_1-\mu_1)^2}{2\sigma_1^2}]\exp[-\frac{(y_2-\mu_2)^2}{2\sigma_2^2}]dy_2 dy_1,\\
+%  &=\frac{1}{2\pi\sigma_1\sigma_2}\left[\intf\intf y_1\exp[-\frac{(y_1-\mu_1)^2}{2\sigma_1^2}]\ dy_1dy_2+\intf\intf y_2\exp[-\frac{(y_2-\mu_2)^2}{2\sigma_2^2}]\ dy_2dy_1\right],\\ 
+% &=\frac{1}{2\pi\sigma_1\sigma_2}\left[\intf dy_2\intf y_1\exp[-\frac{(y_1-\mu_1)^2}{2\sigma_1^2}]\ dy_1+\intf dy_1\intf y_2\exp[-\frac{(y_2-\mu_2)^2}{2\sigma_2^2}]\ dy_2\right],\\ 
+%  &=\frac{1}{2\pi\sigma_1\sigma_2}\left[\intf y_1\exp[-\frac{(y_1-\mu_1)^2}{2\sigma_1^2}]\ dy_1+\intf y_2\exp[-\frac{(y_2-\mu_2)^2}{2\sigma_2^2}]\ dy_2\right],\\ 
+%  &=\mu_1+\mu_2.
+\end{align}
+For $\mu_i=3,\sigma_i=2\ \forall i\in[1,2]$,
+\begin{align}
+  \expv{u(Y)} &= 6,\\
+  \expv{u(Y)^2} &=44,\\
+  \expv{u(Y)^3} &=360,\\
+  \expv{u(Y)^4} &=3216.
+\end{align}
+%\subsubsection{Second Moment}
+%Let
+%\begin{equation}
+%\xi_1 = \exp[-\frac{(y_1-\mu_1)^2}{2\sigma_1^2}],
+%\end{equation}
+%then
+%\begin{align}
+%\expv{u(Y)^2}&=\intf\intf\Big(y_1+y_2\Big)^2\rho(y_1)\rho(y_2) dy_2 dy_1,\\
+%  &= \frac{1}{2\pi\sigma_1\sigma_2}\intf\intf\Big(y_1^2+2y_1y_2+y_2^2\Big)\xi_1\xi_2\ dy_1dy_2,\\
+%  &=\frac{1}{2\pi\sigma_1\sigma_2}\left[\intf \xi_2 dy_2\intf y_1^2\xi_1 dy_1 +2 \intf y_1\xi_1dy_1 \intf y_2\xi_2 dy_2 + \intf \xi_1 dy_1 \intf y_2^2 \xi_2 dy_2\right], \\
+%  &=\mu_1^2+\sigma_1^2 + 2\mu_1\mu_2 + \mu_2^2+\sigma_2^2.
+%\end{align}
+%For  $\mu_i=3,\sigma_i=2\ \forall i\in[1,2]$,
+%\begin{equation}
+%\expv{u(Y)^2}=13+2(9)+13 = 44.
+%\end{equation}
+
+\section{Gamma Uncertainty}
+
+\subsection{$u(Y)=y_1+y_2$}
+\[y_i \sim G(\min,\alpha)\ \forall i\in[1,2],\]
+\subsubsection{Moments}
+\begin{align}
+\expv{u(Y)^r}&=\int_{\min}^\infty\int_{\min}^\infty\Big(y_1+y_2\Big)^r\rho(y_1)\rho(y_2) dy_2 dy_1,\\
+   &=\int_{\min}^\infty\int_{\min}^\infty \frac{(y_1+y_2)^r}{(\alpha-1)!(\alpha-1)!}y_1^{\alpha-1}y_2^{\alpha-1}e^{-y_1-y_2}dy_2 dy_1.
+\end{align}
+For $\min =0,\alpha=2$,
+\begin{align}
+  \expv{u(Y)} &= 4,\\
+  \expv{u(Y)^2} &=20,\\
+  \expv{u(Y)^3} &=120,\\
+  \expv{u(Y)^4} &=840.
+\end{align}
+
+\section{Beta Uncertainty}
+
+\subsection{$u(Y)=y_1+y_2$}
+\[y_i \sim B(a,b,\alpha,\beta)\ \forall i\in[1,2],\]
+\subsubsection{Moments}
+\begin{align}
+\expv{u(Y)^r}&=\intab{1}\intab{2}\Big(y_1+y_2\Big)^r\rho(y_1)\rho(y_2) dy_2 dy_1,\\
+   &=\intab{1}\intab{2} (y_1+y_2)^r \frac{(\alpha+\beta-1)!}{(\alpha-1)!(\beta-1)!}   y_1^{\alpha-1}y_2^{\alpha-1}(1-y_1)^{\beta-1}(1-y_2)^{\beta-1}dy_2 dy_1.
+\end{align}
+For $a =0,b=1,\alpha=2,\beta=5$,
+\begin{align}
+  \expv{u(Y)} &= \frac{4}{7}\sim0.571429,\\
+  \expv{u(Y)^2} &=\frac{37}{98}\sim0.377551,\\
+  \expv{u(Y)^3} &=\frac{41}{147}\sim0.278912,\\
+  \expv{u(Y)^4} &=\frac{265}{1176}\sim0.22534.
+\end{align}
+
+
+\section{Triangular Uncertainty}
+
+\subsection{$u(Y)=y_1+y_2$}
+\[y_i \sim T(a,b,c)\ \forall i\in[1,2],\]
+\subsubsection{Moments}
+\begin{align}
+\expv{u(Y)^r}=&\int_a^c\int_a^c(y_1+y_2)^r\frac{y_1-a}{c-a}\frac{y_2-a}{c-a}dy_2dy_1 \\
+  &+2\int_a^c\int_c^b (y_1+y_2)^r\frac{y_1-a}{c-a}\frac{b-y_2}{b-c}dy_2 dy_1 \\
+  &+\int_c^b\int_c^b (y_1+y_2)^r\frac{b-y_1}{b-c}\frac{b-y_2}{b-c}dy_2 dy_1.
+\end{align}
+For $a =1,b=5,c=4$,
+\begin{align}
+  \expv{u(Y)} &= \frac{20}{3}\sim6.66667,\\
+  \expv{u(Y)^2} &=\frac{413}{9}\sim45.88889,\\
+  \expv{u(Y)^3} &=\frac{974}{3}\sim324.66667,\\
+  \expv{u(Y)^4} &=\frac{23523}{10}\sim2352.3.
+\end{align}
+
+
+\section{Exponential Uncertainty}
+
+\subsection{$u(Y)=y_1+y_2$}
+\[y_i \sim E(\lambda)\ \forall i\in[1,2],\]
+\subsubsection{Moments}
+\begin{align}
+\expv{u(Y)^r}=&\int_0^\infty\int_0^\infty(y_1+y_2)^r\lambda^2e^{-\lambda(x+y)}dxdy
+\end{align}
+For $\lambda =1.5$,
+\begin{align}
+  \expv{u(Y)} &= \frac{4}{3}\sim1.33333,\\
+  \expv{u(Y)^2} &=\frac{8}{3}\sim2.66667,\\
+  \expv{u(Y)^3} &=\frac{64}{9}\sim7.11111,\\
+  \expv{u(Y)^4} &=\frac{640}{27}\sim23.7037.
+\end{align}
+\end{document}
