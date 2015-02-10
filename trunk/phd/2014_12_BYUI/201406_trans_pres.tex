@@ -34,7 +34,7 @@
 \newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
 
 \title[Numerical UQ Methods] % (optional, use only with long paper titles)
-{Numerical Methods for Uncertainty Quantification}
+{Numerical Methods\\ for\\ Uncertainty Quantification}
 
 %\subtitle
 %{A Term Project}
@@ -52,7 +52,7 @@
 }
 
 \date[BYU-I, 2014] % (optional, should be abbreviation of conference name)
-{BYU-Idaho Physics Dept. Colloquium, December 2014}
+{BYU-Idaho Physics Colloquium, February 26th 2015}
 
 
 \subject{Uncertainty Quantification}
@@ -87,6 +87,9 @@
 \begin{frame}{Uncertainty}
 \begin{itemize}
 \item Aleatory (physical)
+\begin{itemize}
+  \item Quantum effects, 
+\end{itemize}
 \item Epistemic (measured)
 \end{itemize}
 \end{frame}
@@ -97,11 +100,17 @@ y_f=y_i + v\sin(\theta)t - \frac{1}{2}gt^2,
 \end{equation}
 \begin{equation}
 x_f=v\cos(\theta)t.
-\end{equation}\vspace{-10pt}
+\end{equation}
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.5\textwidth]{../graphics/projectile}
+  \end{figure}
+\vspace{-10pt}
 Solution: $x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)$
 \end{frame}
 
 \begin{frame}{Example Stochastic Problem}\vspace{-50pt}
+
 \begin{equation}
 x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)
 \end{equation}
@@ -161,7 +170,7 @@ Works well for simple functions
 %\begin{equation}
 %x_f=v\cos(\theta)t.
 %\end{equation}
-With Air Resistance:
+\vspace{-20pt}With Air Resistance:
 \begin{equation}
 y_f=\frac{v_t}{g}(v\sin\theta+v_t)\left(1-e^{-gt/v_t}\right)-v_tt,
 \end{equation}
@@ -172,6 +181,17 @@ x_f=\frac{vv_t\cos\theta}{g}\qty(1-e^{-gt/v_t}).
 v_t=\frac{mg}{D},\hspace{20pt}D=\frac{\rho C A}{2},\hspace{20pt}A=\pi r^2
 \end{equation}
 \hspace{30pt}Solve numerically to get $x_f$ (Forward Euler).
+\end{frame}
+
+\begin{frame}{A More Difficult Problem}
+\vspace{-30pt}Forward Euler\\
+\texttt{while $y_k>0$:}
+\begin{align*}
+a^{(x)}_{k+1} = \frac{-D}{m}v_k\ v_k^{(x)},&\hspace{15pt}a^{(y)}_{k+1} = -g-\frac{D}{m}v_k\ v_k^{(x)},\\[15pt]
+v^{(x)}_{k+1} =v^{(x)}_{k}+ a^{(x)}_{k+1}\Delta_t,&\hspace{15pt}v^{(y)}_{k+1} =v^{(y)}_{k}+ a^{(y)}_{k+1}\Delta_t,\\[15pt]
+x_{k+1} =x_k+ v_{k+1}^{(x)}\Delta_t + \frac{1}{2}a_{k+1}^{(x)} \Delta_t^2,&\hspace{15pt}y_{k+1} =y_k+ v_{k+1}^{(y)}\Delta_t + \frac{1}{2}a_{k+1}^{(y)} \Delta_t^2.
+\end{align*}
+(video)
 \end{frame}
 
 \begin{frame}{Additional Uncertainty}
@@ -204,9 +224,9 @@ How do we quantify uncertainty for problems without simple analytic solutions?\v
 \begin{itemize}
 \item Let $u(Y)$ be any system, like $x_f(v,\theta,g,y_i$)
 \item Randomly sample input parameters, record outputs
+\item Repeat $M$ times
 \item Calculate moments (mean, variance, skew, kurtosis)
 \end{itemize}
-\[\expv{u^r}\approx\frac{1}{M}\sum_{m=1}^M u\left(Y^{(m)}\right)^r\]%TODO pictures
 \centerline{Mean: $\bar u\approx\frac{1}{M}\sum u\left(Y^{(m)}\right)$}
 (video)
 \end{frame}
