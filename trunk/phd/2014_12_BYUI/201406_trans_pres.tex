@@ -151,7 +151,7 @@ Some way to quantify uncertainty:
   \item Good for monotonic problems
   \end{itemize}\vspace{10pt}}
 \visible<3->{
-\item Analytic Uncertainty
+\item Sandwich Formula
   \begin{itemize}
   \item Good for analytic solutions
   \end{itemize}\vspace{10pt}}
@@ -180,7 +180,7 @@ Result: $x_f\approx124\pm18.3$ m \vspace{15pt}\\ \pause
 \end{frame}
 
 \begin{frame}{Uncertainty Quantification}\vspace{-20pt}
-Analytic Uncertainty
+Sandwich Formula (simplified):
 \begin{equation*}
 \sigma_{x_f} = \sqrt{\left(\pdv{x_f}{y_i}\right)^2\sigma_{y_i}^2 + \left(\pdv{x_f}{v}\right)^2\sigma_{v}^2 + \left(\pdv{x_f}{g}\right)^2\sigma_{g}^2 + \left(\pdv{x_f}{\theta}\right)^2\sigma_{\theta}^2}
 \end{equation*}
@@ -196,7 +196,7 @@ Works well for simple functions
 \begin{equation*}
 x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)
 \end{equation*}%\vspace{10pt}
-Analytic Uncertainty
+Sandwich Formula:
 \[\sigma_{x_f} = \sqrt{\left(\pdv{x_f}{y_i}\right)^2\sigma_{y_i}^2 + \left(\pdv{x_f}{v}\right)^2\sigma_{v}^2 + \left(\pdv{x_f}{g}\right)^2\sigma_{g}^2 + \left(\pdv{x_f}{\theta}\right)^2\sigma_{\theta}^2}\]% \vspace{20pt}\\
 Result: $x_f=120\pm62.44$ m  \vspace{10pt}\\
 \end{frame}
