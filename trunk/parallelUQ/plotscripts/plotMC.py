@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def addPlot(title,inFile,lbl,ref=None,r=1,slnfig=None):
+def addPlot(title,inFile,lbl,ref=None,r=1,slnfig=None,alpha=0.5):
   #inFile = file(title,'r')
   inFile.seek(0)
   entries=[]
@@ -24,7 +24,7 @@ def addPlot(title,inFile,lbl,ref=None,r=1,slnfig=None):
     #entr[:,2]=((1.-entr[:,2])/entr[:,2])
     entr=zip(*entr)
     plt.figure(slnfig.number)
-    plt.plot(entr[0],entr[r],'-',label=lbl,alpha=0.2)
+    plt.plot(entr[0],entr[r],'-',label=lbl,alpha=alpha)
     plt.figure(errfig.number)
 
 
@@ -46,7 +46,7 @@ def addPlot(title,inFile,lbl,ref=None,r=1,slnfig=None):
 #  for e in errs:
 #    print e
   errs=zip(*errs)
-  plt.loglog(errs[0],errs[1],'-',label=lbl,alpha=0.2)
+  plt.loglog(errs[0],errs[1],'-',label=lbl,alpha=alpha)
 
 
 

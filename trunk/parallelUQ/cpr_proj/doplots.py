@@ -6,6 +6,8 @@ cursys=sys.path
 sys.path.append('/'.join(os.getcwd().split('/')[:-1])+'/plotscripts')
 from slnerrplot import slnerrplot
 
+alpha=0.4
+
 cases=OrderedDict({})
 for line in file('list.inp','r'):
   if line.startswith('#'):continue
@@ -28,9 +30,9 @@ for line in reffile:
     ref[2]=float(ref[2]) #variance
 
 print 'starting first moment...'
-slnerrplot(cases,title,N,xlim,s1ylim,e1ylim,ref,1)
+slnerrplot(cases,title,N,xlim,s1ylim,e1ylim,ref,1,alpha=alpha)
 print 'starting second moment...'
-slnerrplot(cases,title,N,xlim,s2ylim,e2ylim,ref,2)
+slnerrplot(cases,title,N,xlim,s2ylim,e2ylim,ref,2,alpha=alpha)
 
 for cfile in cases.values():
     cfile.close()

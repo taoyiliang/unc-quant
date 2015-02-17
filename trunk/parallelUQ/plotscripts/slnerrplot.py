@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def slnerrplot(cases,title,N,xlim,sylim,eylim,ref,mom):
+def slnerrplot(cases,title,N,xlim,sylim,eylim,ref,mom,alpha=0.5):
     slnplot=plt.figure()
     errplot=plt.figure()
     plt.figure(errplot.number)
@@ -14,7 +14,7 @@ def slnerrplot(cases,title,N,xlim,sylim,eylim,ref,mom):
     for cname,cfile in cases.iteritems():
       ary=cname.split('.')[0].split('_')
       if ary[0]=='MC':
-        pltMC(cname,cfile,'MC',ref=ref,r=mom,slnfig=slnplot)
+        pltMC(cname,cfile,'MC',ref=ref,r=mom,slnfig=slnplot,alpha=alpha)
       elif ary[0] in ['HC','TD'] and 'anis' not in ary:
         ary=ary[0]#.remove(ary[1])
         addPlot(cname,cfile,ary,ref=ref,r=mom,slnfig=slnplot)

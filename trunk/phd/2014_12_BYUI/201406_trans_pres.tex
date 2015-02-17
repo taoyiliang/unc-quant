@@ -34,21 +34,21 @@
 \newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
 
 \title[Numerical UQ Methods] % (optional, use only with long paper titles)
-{Numerical Methods\\ for\\ Uncertainty Quantification}
+{Uncertainty Quantification\\ for\\ Complex Systems}
 
 %\subtitle
 %{A Term Project}
 
 \author[Talbot] % (optional, use only with lots of authors)
-{Paul W. Talbot\inst{1}}
+{Paul W. Talbot\inst{1}, Anil K. Prinja\inst{1}, Cristian Rabiti\inst{2}}
 
 
 \institute[University of New Mexico] % (optional, but mostly needed)
 {
   \inst{1}%
   University of New Mexico\\
-   \vspace{10pt}
-\footnotesize{Supported by Idaho National Laboratory}
+  \inst{2}
+  Idaho National Laboratory
 }
 
 \date[BYU-I, 2014] % (optional, should be abbreviation of conference name)
@@ -84,23 +84,30 @@
 \end{frame}
 
 \section{Sources of Uncertainty}
-\begin{frame}{Uncertainty}
+\begin{frame}{Uncertainty}{Two Types}\vspace{-30pt}
 \begin{itemize}
-\item Aleatory (physical)
+\item Aleatory - True Randomness
 \begin{itemize}
-  \item Quantum effects, 
-\end{itemize}
-\item Epistemic (measured)
+  \item Quantum effects
+  \item Particle-Material interactions (gold foil)
+  \item Brownian Motion
+\end{itemize}\vspace{20pt}
+\item Epistemic - Unmeasured Uncertainty
+  \begin{itemize}
+  \item Tool Accuracy
+  \item Complicated Dependencies (arrow, double pendulum)
+  \item Documentation
+  \end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Example Stochastic Problem}\vspace{-30pt}
-\begin{equation}
+\begin{frame}{Example Stochastic Problem}{Projectile Motion}\vspace{-30pt}
+\begin{equation*}
 y_f=y_i + v\sin(\theta)t - \frac{1}{2}gt^2,
-\end{equation}
-\begin{equation}
+\end{equation*}
+\begin{equation*}
 x_f=v\cos(\theta)t.
-\end{equation}
+\end{equation*}
   \begin{figure}[h!]
     \centering
       \includegraphics[width=0.5\textwidth]{../graphics/projectile}
@@ -109,29 +116,51 @@ x_f=v\cos(\theta)t.
 Solution: $x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)$
 \end{frame}
 
-\begin{frame}{Example Stochastic Problem}\vspace{-50pt}
-
-\begin{equation}
+\begin{frame}{Example Stochastic Problem}{Solved!}\vspace{-50pt}
+\begin{equation*}
 x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)
-\end{equation}
+\end{equation*}
 \begin{itemize}
 \item initial height $y_i = 2$ m
-\item initial velocity $v = 50$ m/s
+\item initial velocity $v = 35$ m/s
 \item initial trajectory $\theta = 35^o$
 \item accel. gravity $g = -9.81$ m/s/s
 \end{itemize}
+Solution: $x_f\approx120$ m
 \end{frame}
 
-\begin{frame}{Example Stochastic Problem}\vspace{-50pt}
-\begin{equation}
+\begin{frame}{Example Stochastic Problem}{Uncertainty}\vspace{-50pt}
+\begin{equation*}
 x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)
-\end{equation}
+\end{equation*}
 \begin{itemize}
 \item initial height $y_i = 1\pm1$ m
-\item initial velocity $v = 50\pm5$ m/s
+\item initial velocity $v = 35.5\pm2.5$ m/s
 \item initial trajectory $\theta = 45\pm10^o$
 \item accel. gravity $g = 9.7988 \pm0.0349$ m/s/s
 \end{itemize}
+Solution: $x_f$=?
+\end{frame}
+
+\begin{frame}{Uncertainty Quantification}{Methods}\vspace{-20pt}
+Some way to quantify uncertainty:
+\visible<2->{
+\begin{itemize}\vspace{10pt}
+\item Min-Max
+  \begin{itemize}
+  \item Good for monotonic problems
+  \end{itemize}\vspace{10pt}}
+\visible<3->{
+\item Analytic Uncertainty
+  \begin{itemize}
+  \item Good for analytic solutions
+  \end{itemize}\vspace{10pt}}
+\visible<4->{
+\item Perturbation
+  \begin{itemize}
+  \item Valid for small uncertainty
+  \end{itemize}
+\end{itemize}}
 \end{frame}
 
 \section{Analytic Methods}
@@ -139,30 +168,41 @@ x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\righ
 \[x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)\]
 Min-Max
 \tiny
-\[x_{f,\text{min}}=\frac{(45)(0.5736)}{9.7369}\left((45)(0.8192)+\sqrt{(45)^2(0.8192)^2+2(9.7369)(0)}\right)= 195.45 \text{ m}\]
-\[x_{f,\text{max}}=\frac{(55)(0.8192)}{9.8337}\left((55)(0.5736)+\sqrt{(55)^2(0.5736)^2+2(9.8337)(2)}\right)= 291.92 \text{ m}\]
+\[x_{f,\text{min}}=\frac{(33)(0.5736)}{9.8337}\left((33)(0.8192)+\sqrt{(33)^2(0.8192)^2+2(9.8337)(0)}\right)= 105.46 \text{ m}\]
+\[x_{f,\text{max}}=\frac{(55)(0.8192)}{9.7369}\left((55)(0.5736)+\sqrt{(55)^2(0.5736)^2+2(9.8337)(2)}\right)= 142.17 \text{ m}\]
 \normalsize
-Result: $x_f\approx244\pm48$ m \vspace{15pt}\\ \pause
-Flawed Reasoning
+Result: $x_f\approx124\pm18.3$ m \vspace{15pt}\\ \pause
+\visible<2->{Flawed Reasoning
 \begin{itemize}
-\item Nonlinear Flight Path
+\item $\theta$ not monotonic!
 \item Does increasing $\theta$ make a longer or shorter range?
-\end{itemize}
+\end{itemize}}
 \end{frame}
 
-\begin{frame}{Uncertainty Quantification}\vspace{-30pt}
-$x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)$\\\vspace{10pt}
+\begin{frame}{Uncertainty Quantification}\vspace{-20pt}
 Analytic Uncertainty
-\[\sigma_{x_f} = \sqrt{\left(\pdv{x_f}{y_i}\right)^2\sigma_{y_i}^2 + \left(\pdv{x_f}{v}\right)^2\sigma_{v}^2 + \left(\pdv{x_f}{g}\right)^2\sigma_{g}^2 + \left(\pdv{x_f}{\theta}\right)^2\sigma_{\theta}^2}\]% \vspace{20pt}\\
-Result: $x_f=256\pm51$ m  \vspace{10pt}\\
+\begin{equation*}
+\sigma_{x_f} = \sqrt{\left(\pdv{x_f}{y_i}\right)^2\sigma_{y_i}^2 + \left(\pdv{x_f}{v}\right)^2\sigma_{v}^2 + \left(\pdv{x_f}{g}\right)^2\sigma_{g}^2 + \left(\pdv{x_f}{\theta}\right)^2\sigma_{\theta}^2}
+\end{equation*}
 Works well for simple functions
 \begin{itemize}
 \item Simple derivatives
 \item Analytic solution
+\item Assumes mean is reference value
 \end{itemize}
 \end{frame}
 
-\begin{frame}{A More Difficult Problem}
+\begin{frame}{Uncertainty Quantification}\vspace{-30pt}
+\begin{equation*}
+x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)
+\end{equation*}%\vspace{10pt}
+Analytic Uncertainty
+\[\sigma_{x_f} = \sqrt{\left(\pdv{x_f}{y_i}\right)^2\sigma_{y_i}^2 + \left(\pdv{x_f}{v}\right)^2\sigma_{v}^2 + \left(\pdv{x_f}{g}\right)^2\sigma_{g}^2 + \left(\pdv{x_f}{\theta}\right)^2\sigma_{\theta}^2}\]% \vspace{20pt}\\
+Result: $x_f=120\pm62.44$ m  \vspace{10pt}\\
+\end{frame}
+
+
+\begin{frame}{A More Difficult Problem}{Air Resistance}
 %No Air Resistance:
 %\begin{equation}
 %y_f=v\sin(\theta)t - \frac{1}{2}gt^2,
@@ -171,47 +211,62 @@ Works well for simple functions
 %x_f=v\cos(\theta)t.
 %\end{equation}
 \vspace{-20pt}With Air Resistance:
-\begin{equation}
-y_f=\frac{v_t}{g}(v\sin\theta+v_t)\left(1-e^{-gt/v_t}\right)-v_tt,
-\end{equation}
-\begin{equation}
-x_f=\frac{vv_t\cos\theta}{g}\qty(1-e^{-gt/v_t}).
-\end{equation}
-\begin{equation}
-v_t=\frac{mg}{D},\hspace{20pt}D=\frac{\rho C A}{2},\hspace{20pt}A=\pi r^2
-\end{equation}
+\begin{equation*}
+y_f=\frac{v_T}{g}(v\sin\theta+v_T)\left(1-e^{-gt/v_T}\right)-v_Tt,
+\end{equation*}
+\begin{equation*}
+x_f=\frac{vv_T\cos\theta}{g}\qty(1-e^{-gt/v_T}).
+\end{equation*}
+\begin{equation*}
+v_T=\frac{mg}{D},\hspace{20pt}D=\frac{\rho C A}{2},\hspace{20pt}A=\pi r^2
+\end{equation*}
 \hspace{30pt}Solve numerically to get $x_f$ (Forward Euler).
 \end{frame}
 
-\begin{frame}{A More Difficult Problem}
-\vspace{-30pt}Forward Euler\\
-\texttt{while $y_k>0$:}
+\begin{frame}{A More Difficult Problem}{Aside: Forward Euler}
+\vspace{-20pt}Take small $\Delta_t$ time steps
+\texttt{while $y^t>0$: $t=t+\Delta_t,$}
 \begin{align*}
-a^{(x)}_{k+1} = \frac{-D}{m}v_k\ v_k^{(x)},&\hspace{15pt}a^{(y)}_{k+1} = -g-\frac{D}{m}v_k\ v_k^{(x)},\\[15pt]
-v^{(x)}_{k+1} =v^{(x)}_{k}+ a^{(x)}_{k+1}\Delta_t,&\hspace{15pt}v^{(y)}_{k+1} =v^{(y)}_{k}+ a^{(y)}_{k+1}\Delta_t,\\[15pt]
-x_{k+1} =x_k+ v_{k+1}^{(x)}\Delta_t + \frac{1}{2}a_{k+1}^{(x)} \Delta_t^2,&\hspace{15pt}y_{k+1} =y_k+ v_{k+1}^{(y)}\Delta_t + \frac{1}{2}a_{k+1}^{(y)} \Delta_t^2.
+a_{x}^{(t+\Delta_t)} = \frac{-D}{m}v^{(t)}\ v^{(t)}_{x},
+        &\hspace{30pt}a_{y}^{(t+\Delta_t)} = -g-\frac{D}{m}v^{(t)}\ v^{(t)}_{x},\\[15pt]
+v_{x}^{(t+\Delta_t)} =v_{x}^{(t)}+ a_{x}^{(t+\Delta_t)}\Delta_t,
+        &\hspace{30pt}v_{y}^{(t+\Delta_t)} =v_{y}^{(t)}+ a_{y}^{(t+\Delta_t)}\Delta_t,
+        \end{align*}
+        \begin{align*}
+x^{(t+\Delta_t)} &=x^{(t)}+ v^{(t+\Delta_t)}_{x}\Delta_t + \frac{1}{2}a^{(t+\Delta_t)}_{x} \Delta_t^2,\\
+y^{(t+\Delta_t)} &=y^{(t)}+ v^{(t+\Delta_t)}_{y}\Delta_t + \frac{1}{2}a^{(t+\Delta_t)}_{y} \Delta_t^2.
 \end{align*}
-(video)
+\hspace{50pt}(video)
 \end{frame}
 
-\begin{frame}{Additional Uncertainty}
-\begin{equation}
-y_f=\frac{v_t}{g}(v\sin\theta+v_t)\left(1-e^{-gt/v_t}\right)-v_tt,
-\end{equation}
-\begin{equation}
-x_f=\frac{vv_t\cos\theta}{g}\qty(1-e^{-gt/v_t}).
-\end{equation}
-\begin{equation}
-v_t=\frac{mg}{D},\hspace{20pt}D=\frac{\rho C A}{2},\hspace{20pt}A=\pi r^2
-\end{equation}
-\begin{align}
-m=0.145\pm0.0725\text{ kg},\hspace{30pt}&r=0.0336\pm0.00336\text{ m},\\
-C=0.5\pm0.5,\hspace{35pt}&\rho_\text{air}=1.2\pm0.1\text{ kg/m$^3$}.
-\end{align}
+\begin{frame}[label=unc_sum]{A More Difficult Problem}{Uncertainty Summary}\vspace{-30pt}
+\begin{align*}
+y_i=1&\pm1\text{ m},\\
+v=35.5&\pm2.5\text{ m/s},\\
+\theta=45&\pm10^o,\\
+g=9.7988&\pm0.0349,\\
+m=0.145&\pm0.0725\text{ kg},\\
+r=0.0336&\pm0.00336\text{ m},\\
+C=0.5&\pm0.5,\\
+\rho_\text{air}=1.2&\pm0.1\text{ kg/m$^3$}.
+\end{align*}
+\begin{center}\hyperlink{sens_res}{\beamergotobutton{Sensitivity Study}}\end{center}
+\end{frame}
+
+\begin{frame}{A More Difficult Problem}{Equation Summary}
+\begin{equation*}
+y_f=\frac{v_T}{g}(v\sin\theta+v_T)\left(1-e^{-gt/v_T}\right)-v_Tt,
+\end{equation*}\vspace{15pt}
+\begin{equation*}
+x_f=\frac{vv_T\cos\theta}{g}\qty(1-e^{-gt/v_T}).
+\end{equation*}\vspace{15pt}
+\begin{equation*}
+v_T=\frac{mg}{D},\hspace{20pt}D=\frac{\rho C A}{2},\hspace{20pt}A=\pi r^2
+\end{equation*}
 \end{frame}
 
 \section{Numerical Methods}
-\begin{frame}{Uncertainty Quantification: Complicated Problems}\vspace{-20pt}
+\begin{frame}{Uncertainty Quantification}{Complicated Problems}\vspace{-20pt}
 How do we quantify uncertainty for problems without simple analytic solutions?\vspace{15pt}
 \begin{itemize}
 \item Monte Carlo sampling
@@ -222,7 +277,7 @@ How do we quantify uncertainty for problems without simple analytic solutions?\v
 
 \begin{frame}{Uncertainty Quantification}{Monte Carlo}\vspace{-30pt}
 \begin{itemize}
-\item Let $u(Y)$ be any system, like $x_f(v,\theta,g,y_i$)
+\item Let $u(Y)$ be any system, like $x_f(y_i,v,\theta,g,m,r,C,\rho$)
 \item Randomly sample input parameters, record outputs
 \item Repeat $M$ times
 \item Calculate moments (mean, variance, skew, kurtosis)
@@ -231,6 +286,306 @@ How do we quantify uncertainty for problems without simple analytic solutions?\v
 (video)
 \end{frame}
 
+%\section{Stochastic Collocation}
+\begin{frame}{Uncertainty Quantification}{Stochastic Collocation}\vspace{-30pt}
+\begin{itemize}
+\item Let $u(Y)$ be any system, like $x_f(y_i,v,\theta,g,m,r,C,\rho)$
+\item Represent original model with polynomials
+\item Calculate moments (mean, variance, skew, kurtosis)
+\end{itemize}
+\begin{equation*}
+u(Y)\approx\sum_{k\in\Lambda}c_k\Phi_k(Y),
+\end{equation*}
+\begin{equation*}
+\Phi_k(Y) = \phi_{k_1}(Y_1)\cdot\phi_{k_2}(Y_2)\cdot\ldots\cdot\phi_{k_N}(Y_N)
+\end{equation*}
+\end{frame}
+
+\begin{frame}{Uncertainty Quantification}{Stochastic Collocation}\vspace{-20pt}
+For example:
+\begin{equation*}
+x_f(y_i,v,\theta,g,m,r,C,\rho)\approx\sum_{k\in\Lambda}c_k\Phi_k(y_i,v,\theta,g,m,r,C,\rho),
+\end{equation*}
+\begin{equation*}
+\Phi_k(y_i,v,\theta,g,m,r,C,\rho) = \phi_{y_i}(y_i)\cdot\phi_{v}(v)\cdot\ldots\cdot\phi_{\rho}(\rho).\vspace{10pt}
+\end{equation*}
+For $k=(1,1,2,2,3,3,4,4)$ and \\$\phi$ as monomials ($1,x^2,x^3,x^4,\ldots$),
+\begin{equation*}
+\Phi_k(y_i,v,\theta,g,m,r,C,\rho) = y_i\cdot v\cdot \theta^2\cdot g^2\cdot m^3\cdot r^3\cdot C^4\cdot \rho^4.
+\end{equation*}
+\end{frame}
+
+\begin{frame}{Uncertainty Quantification}{Stochastic Collocation}\vspace{-20pt}
+Comparison
+\begin{table}
+\centering
+\begin{tabular}{c|c}\small
+Monte Carlo & Stochastic Collocation \\\hline
+Dimension-independent & Calculations grow with dimension* \\
+Slow converging & Very fast convergence* \\
+ & Can replace original model
+\end{tabular}
+\end{table}
+\end{frame}
+
+\section{Results}
+\begin{frame}{Uncertainty Quantification}{Results: pdf}
+TODO
+\end{frame}
+
+\begin{frame}{Uncertainty Quantification}{Results: Expected Value, Values}
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.7\textwidth]{../graphics/projectile_solns}
+      \caption{$\expv{x_f}$}
+%    \begin{subfigure}[b]{0.49 \textwidth}
+%      \includegraphics[width=\textwidth]{../graphics/projectile_solns_aniso}
+%      \caption{$<R>$ Values}
+%      \label{err_5}
+%    \end{subfigure}
+%    \begin{subfigure}[b]{0.49 \textwidth}
+%      \includegraphics[width=\textwidth]{../graphics/projectile_errs_aniso}
+%      \caption{Error in $<R>$}
+%      \label{err_14}
+%    \end{subfigure}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Uncertainty Quantification}{Results: Expected Value, Errors}
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.7\textwidth]{../graphics/projectile_errs}
+      \caption{Error in $\expv{x_f}$}
+  \end{figure}
+\end{frame}
+
+%\begin{frame}{Uncertainty Quantification}{Results: Second Moment, Values}
+%  \begin{figure}[h!]
+%    \centering
+%      \includegraphics[width=0.7\textwidth]{../graphics/projectile_solns_variance}
+%      \caption{$\expv{x_f^2}$}
+%  \end{figure}
+%\end{frame}
+%
+%\begin{frame}{Uncertainty Quantification}{Results: Second Moment, Errors}
+%  \begin{figure}[h!]
+%    \centering
+%      \includegraphics[width=0.7\textwidth]{../graphics/projectile_errs_variance}
+%      \caption{Error in $\expv{x_f^2}$}
+%  \end{figure}
+%  \begin{figure}[h!]
+%    \centering
+%    \begin{subfigure}[b]{0.49 \textwidth}
+%      \includegraphics[width=\textwidth]{../graphics/projectile_solns_aniso_variance}
+%      \caption{$<R>$ Values}
+%      \label{err_5}
+%    \end{subfigure}
+%    \begin{subfigure}[b]{0.49 \textwidth}
+%      \includegraphics[width=\textwidth]{../graphics/projectile_errs_aniso_variance}
+%      \caption{Error in $<R>$}
+%      \label{err_14}
+%    \end{subfigure}
+%  \end{figure}
+%\end{frame}
+
+\section{Bonus: Sensitivity Analysis}
+\begin{frame}{Sensitivity Analysis}{Polynomial Expansion Revisited}\vspace{-30pt}
+Recall: $u(Y)\approx\sum_{k\in\Lambda}c_k\Phi_k(Y),$ so for $x_f(y_i,v,\theta,g,m,r,C,\rho)$:
+\begin{align*}
+&x_f \approx c_{(0,0,0,0,0,0,0,0)} \\
+ &+c_{(1,0,0,0,0,0,0,0)}y_i + c_{(0,1,0,0,0,0,0,0)}v + c_{(0,0,1,0,0,0,0,0)}\theta+\ldots\\
+ &+c_{(2,0,0,0,0,0,0,0)}y_i^2 + c_{(1,1,0,0,0,0,0,0)}y_i\cdot v + c_{(1,0,1,0,0,0,0,0)}y_i\cdot \theta +\ldots\\
+ &+c_{(3,0,0,0,0,0,0,0)}y_i^3 + c_{(1,1,0,0,0,0,0,0)}y_i\cdot v\cdot\theta +\ldots\\
+ &\ldots
+\end{align*}
+\end{frame}
+
+\begin{frame}{Sensitivity Analysis}{Polynomial Expansion Revisited}\vspace{-30pt}
+Rearrange:
+\begin{align*}
+&x_f \approx c_{(0,0,0,0,0,0,0,0)} \\
+ &+c_{(1,0,0,0,0,0,0,0)}y_i + c_{(2,0,0,0,0,0,0,0)}y_i^2 + c_{(3,0,0,0,0,0,0,0)}y_i^3+\ldots\\
+ &+c_{(0,1,0,0,0,0,0,0)}v + c_{(0,2,0,0,0,0,0,0)}v^2 + c_{(0,3,0,0,0,0,0,0)}v^3+\ldots\\
+ &\ldots\\
+ &+c_{(1,1,0,0,0,0,0,0)}y_i\cdot v + c_{(1,2,0,0,0,0,0,0)}y_i\cdot v^2+\ldots\\
+ &\ldots
+\end{align*}
+\end{frame}
+
+\begin{frame}[label=sens_res]{Sensitivity Analysis}{ANOVA}
+ANOVA: [AN]alysis [O]f [VA]riance
+\begin{itemize}
+\item How much does each input contribute to the variance?
+\end{itemize}
+\begin{table}
+\centering
+  \begin{tabular}{c|l|l|c}
+    Input & Variance & \% Variance & Weight\\ \hline
+    $C$ & 0.523 & 0.6657 & 1\\
+    $\theta$ & 0.236 & 0.3006 & 1/2\\
+    $r$ & 0.00868 & 0.0111 & 1/5\\
+    $m$ & 0.00862 & 0.0110 & 1/5\\
+    $y_i$ & 0.00671 & 0.0085 & 1/5\\
+    $\rho$ & 0.00209 & 0.0027 & 1/6\\
+    $v$ & 0.000348 & 0.0004 & 1/7\\
+    $g$ & 2.83$\times10^{-6}$ & 3.601$\times10^{-6}$ & 1/12
+  \end{tabular}
+\end{table}
+\begin{center}\hyperlink{unc_sum}{\beamergotobutton{Uncertainty Ranges}}\end{center}
+\end{frame}
+
+\begin{frame}{Sensitivity Analysis}{Results: Expected Value, Values}
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.7\textwidth]{../graphics/projectile_solns_aniso}
+      \caption{$\expv{x_f}$}
+%    \begin{subfigure}[b]{0.49 \textwidth}
+%      \includegraphics[width=\textwidth]{../graphics/projectile_solns_aniso}
+%      \caption{$<R>$ Values}
+%      \label{err_5}
+%    \end{subfigure}
+%    \begin{subfigure}[b]{0.49 \textwidth}
+%      \includegraphics[width=\textwidth]{../graphics/projectile_errs_aniso}
+%      \caption{Error in $<R>$}
+%      \label{err_14}
+%    \end{subfigure}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Uncertainty Quantification}{Results: Expected Value, Errors}
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.7\textwidth]{../graphics/projectile_errs_aniso}
+      \caption{Error in $\expv{x_f}$}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Uncertainty Quantification}{Results: Second Moment, Values}
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.7\textwidth]{../graphics/projectile_solns_aniso_variance}
+      \caption{$\expv{x_f^2}$}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Uncertainty Quantification}{Results: Second Moment, Errors}
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.7\textwidth]{../graphics/projectile_errs_aniso_variance}
+      \caption{Error in $\expv{x_f^2}$}
+  \end{figure}
+%  \begin{figure}[h!]
+%    \centering
+%    \begin{subfigure}[b]{0.49 \textwidth}
+%      \includegraphics[width=\textwidth]{../graphics/projectile_solns_aniso_variance}
+%      \caption{$<R>$ Values}
+%      \label{err_5}
+%    \end{subfigure}
+%    \begin{subfigure}[b]{0.49 \textwidth}
+%      \includegraphics[width=\textwidth]{../graphics/projectile_errs_aniso_variance}
+%      \caption{Error in $<R>$}
+%      \label{err_14}
+%    \end{subfigure}
+%  \end{figure}
+\end{frame}
+
+\begin{frame}[label=conc]{Conclusions}\vspace{-20pt}
+\begin{itemize}
+\item Uncertainty Quantification methods
+    \begin{itemize}
+    \item Analytic methods: good, but possible deceiving
+    \item Numerical methods: expensive, but robust
+    \end{itemize}\vspace{10pt}
+\item Sensitivity Analysis
+    \begin{itemize}
+    \item Reveals importance of parameters
+    \item Tighten uncertainty in experiment/model
+    \end{itemize}\vspace{10pt}
+\item Areas of study
+   \begin{itemize}
+   \item Adaptive sampling
+   \item Sparse quadrature integration
+   \item Improved Monte Carlo methods
+   \item Efficient statistics algorithms
+   \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+$\ $
+\end{frame}
+
+\begin{frame}{Polynomial Index Sets}{Choosing what polynomial degrees to use}\vspace{-20pt}
+\begin{itemize}
+\item Tensor Product:\scriptsize\[\Lambda_\text{TP}(L)=\Big\{\bar p=[p_1,...,p_N]: \max_{1\leq n\leq N}p_n\leq L \Big\},\eta=(L+1)^N\]\normalsize
+\item Total Degree: \scriptsize\[\Lambda_\text{TD}(L)=\Big\{\bar p=[p_1,...,p_N]:\sum_{n=1}^N p_n \leq L \Big\},\eta={L+N\choose N}\]\normalsize
+\item Hyperbolic Cross: \scriptsize\[\Lambda_\text{HC}(L)=\Big\{\bar p=[p_1,...,p_N]:\prod_{n=1}^N p_n+1 \leq L+1 \Big\},\eta\leq (L+1)(1+\log(L+1))^{N-1}\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Polynomial Index Sets}{2D Example}\vspace{-20pt}
+\begin{figure}[H]
+\centering
+  \begin{subfigure}[b]{0.32 \textwidth}
+   \includegraphics[width=\textwidth]{../graphics/TP}
+   \caption{Tensor Product}
+   \label{TP}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.32 \textwidth}
+   \includegraphics[width=\textwidth]{../graphics/TD}
+   \caption{Total Degree}
+   \label{TD}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.32 \textwidth}
+   \includegraphics[width=\textwidth]{../graphics/HC}
+   \caption{Hyperbolic Cross}
+   \label{HC}
+  \end{subfigure}
+  \caption{Index Set Examples: $N=2,L=4$}
+  \label{indexsets}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Calculating $c_k$}{Where the algorithmic rubber hits the mathematical road.}
+\normalsize\vspace{-20pt}
+\begin{equation*}
+u(Y)\approx\mathcal{S}_{N,\Lambda(L)}[u](Y)=\sum_{\boldsymbol{i}\in\Lambda(L)}c(\boldsymbol{i})\bigotimes_{n=1}^N\mathcal{U}_{n,p(i_n)}[u](Y),
+\end{equation*}
+\begin{equation*}
+c(\boldsymbol{i})=\sum_{\substack{\boldsymbol{j}=\{0,1\}^N,\\ \boldsymbol{i}+\boldsymbol{j}\in\Lambda(L)}}(-1)^{|\boldsymbol{j}|_1},
+\end{equation*}
+\begin{align*}
+\bigotimes_{n=1}^N\mathcal{U}_{n,p(i_n)}[u](Y)&\equiv\sum_{k_1=0}^{p(i_1)}\cdots\sum_{k_N=0}^{p(i_N)}u_h\qty(Y^{(k_1)},\cdots,Y^{(k_N)})\prod_{n=1}^N \mathcal{L}_{k_n}(Y_n),\\
+  &=\sum_{k}^{p(\vec i)}u_h\qty(Y^{(k)})\mathcal{L}_k(Y),
+\end{align*}
+\end{frame}
+
+\begin{frame}{Calculating $c_k$}{2D Examples}\normalsize\vspace{-20pt}
+\begin{figure}[H]
+\centering
+  \includegraphics[width=\linewidth]{../graphics/jpgsparse}
+  \caption{Sparse Grids, $N=2,L=4,p(i)=i$, Legendre points}
+  \label{collsets}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Calculating $c_k$}{Some Numbers}\normalsize\vspace{-20pt}
+\begin{table}
+\centering
+\begin{tabular}{c|c|c|c c|c c}
+ &  & TP & \multicolumn{2}{|c|}{TD} & \multicolumn{2}{|c}{HC} \\ 
+$N$ & $L$ & $\qty|\Lambda(L)|$ & $\qty|\Lambda(L)|$ & $\eta$ & $\qty|\Lambda(L)|$ & $\eta$\\ \hline
+3 & 4 & 125    & 35    & 165   & 16 & 31\\
+ & 8   & 729    & 165  & 2,097  & 44 & 153\\
+ & 16 & 4,913  & 969   & 41,857 & 113 & 513\\
+ & 32 & 35,737 & 6,545 & 1,089,713 & 309 & 2,181\\ \hline
+5 & 2 & 293 & 21 & 61 & 11 & 11\\
+ & 4 & 3,125 & 126 & 781 & 31 & 71\\
+ & 8 & 59,049 & 1,287 & 28,553 & 111 & 481 
+\end{tabular}
+\caption{Index Set and Collocation Size Comparison}
+\label{compIS}
+\end{table}
+\end{frame}
+
 \end{document}
-
-
