@@ -79,11 +79,24 @@
 \end{frame}
 
 \begin{frame}{Outline}{Discussion Points}\vspace{-20pt}
-  \tableofcontents[pausesections]
+  \tableofcontents%[pausesections]
   % You might wish to add the option [pausesections]
 \end{frame}
 
 \section{Sources of Uncertainty}
+\begin{frame}{Introduction}{Who is this guy?}\vspace{-30pt}
+Current: 
+\begin{itemize}
+\item  Ph.D Nuclear Engineering student, UNM
+\item  Idaho National Laboratory (RAVEN, MOOSE)
+\end{itemize}
+Past: 
+\begin{itemize}
+\item M.S. Nuclear Engineering, Oregon State University
+\item B.S. Physics, BYU-Idaho (2010)
+\end{itemize}
+\end{frame}
+
 \begin{frame}{Uncertainty}{Two Types}\vspace{-30pt}
 \begin{itemize}
 \item Aleatory - True Randomness
@@ -103,10 +116,10 @@
 
 \begin{frame}{Example Stochastic Problem}{Projectile Motion}\vspace{-30pt}
 \begin{equation*}
-y_f=y_i + v\sin(\theta)t - \frac{1}{2}gt^2,
+y(t)=y_i + v\sin(\theta)t - \frac{1}{2}gt^2,
 \end{equation*}
 \begin{equation*}
-x_f=v\cos(\theta)t.
+x(t)=v\cos(\theta)t.
 \end{equation*}
   \begin{figure}[h!]
     \centering
@@ -212,10 +225,10 @@ Result: $x_f=120\pm62.44$ m  \vspace{10pt}\\
 %\end{equation}
 \vspace{-20pt}With Air Resistance:
 \begin{equation*}
-y_f=\frac{v_T}{g}(v\sin\theta+v_T)\left(1-e^{-gt/v_T}\right)-v_Tt,
+y(t)=\frac{v_T}{g}(v\sin\theta+v_T)\left(1-e^{-gt/v_T}\right)-v_Tt,
 \end{equation*}
 \begin{equation*}
-x_f=\frac{vv_T\cos\theta}{g}\qty(1-e^{-gt/v_T}).
+x(t)=\frac{vv_T\cos\theta}{g}\qty(1-e^{-gt/v_T}).
 \end{equation*}
 \begin{equation*}
 v_T=\frac{mg}{D},\hspace{20pt}D=\frac{\rho C A}{2},\hspace{20pt}A=\pi r^2
@@ -244,7 +257,7 @@ y^{(t+\Delta_t)} &=y^{(t)}+ v^{(t+\Delta_t)}_{y}\Delta_t + \frac{1}{2}a^{(t+\Del
 y_i=1&\pm1\text{ m},\\
 v=35.5&\pm2.5\text{ m/s},\\
 \theta=45&\pm10^o,\\
-g=9.7988&\pm0.0349,\\
+g=9.7988&\pm0.0349\text{ m/s/s},\\
 m=0.145&\pm0.0725\text{ kg},\\
 r=0.0336&\pm0.00336\text{ m},\\
 C=0.5&\pm0.5,\\
@@ -255,10 +268,10 @@ C=0.5&\pm0.5,\\
 
 \begin{frame}{A More Difficult Problem}{Equation Summary}
 \begin{equation*}
-y_f=\frac{v_T}{g}(v\sin\theta+v_T)\left(1-e^{-gt/v_T}\right)-v_Tt,
+y(t)=\frac{v_T}{g}(v\sin\theta+v_T)\left(1-e^{-gt/v_T}\right)-v_Tt,
 \end{equation*}\vspace{15pt}
 \begin{equation*}
-x_f=\frac{vv_T\cos\theta}{g}\qty(1-e^{-gt/v_T}).
+x(t)=\frac{vv_T\cos\theta}{g}\qty(1-e^{-gt/v_T}).
 \end{equation*}\vspace{15pt}
 \begin{equation*}
 v_T=\frac{mg}{D},\hspace{20pt}D=\frac{\rho C A}{2},\hspace{20pt}A=\pi r^2
@@ -271,7 +284,7 @@ How do we quantify uncertainty for problems without simple analytic solutions?\v
 \begin{itemize}
 \item Monte Carlo sampling
 \item Stochastic Collocation
-\item High Density Model Reduction (low-order)
+%\item High Density Model Reduction (low-order)
 \end{itemize}
 \end{frame}
 
@@ -302,18 +315,47 @@ u(Y)\approx\sum_{k\in\Lambda}c_k\Phi_k(Y),
 \end{frame}
 
 \begin{frame}{Uncertainty Quantification}{Stochastic Collocation}\vspace{-20pt}
-For example:
+Our case:
 \begin{equation*}
 x_f(y_i,v,\theta,g,m,r,C,\rho)\approx\sum_{k\in\Lambda}c_k\Phi_k(y_i,v,\theta,g,m,r,C,\rho),
 \end{equation*}
 \begin{equation*}
 \Phi_k(y_i,v,\theta,g,m,r,C,\rho) = \phi_{y_i}(y_i)\cdot\phi_{v}(v)\cdot\ldots\cdot\phi_{\rho}(\rho).\vspace{10pt}
 \end{equation*}
-For $k=(1,1,2,2,3,3,4,4)$ and \\$\phi$ as monomials ($1,x^2,x^3,x^4,\ldots$),
 \begin{equation*}
-\Phi_k(y_i,v,\theta,g,m,r,C,\rho) = y_i\cdot v\cdot \theta^2\cdot g^2\cdot m^3\cdot r^3\cdot C^4\cdot \rho^4.
+c_k = \frac{\int\int\int\int\int\int\int\int x_f\Phi\ d(y_i,v,\theta,g,m,r,C,\rho)}{\int\int\int\int\int\int\int\int \Phi^2\ d(y_i,v,\theta,g,m,r,C,\rho)}.
 \end{equation*}
+%For example: $k=(1,1,2,2,3,3,4,4)$ and \\$\phi$ as monomials ($1,x,x^2,x^3,x^4,\ldots$),
+%\begin{equation*}
+%\Phi_k(y_i,v,\theta,g,m,r,C,\rho) = y_i\cdot v\cdot \theta^2\cdot g^2\cdot m^3\cdot r^3\cdot C^4\cdot \rho^4.
+%\end{equation*}
 \end{frame}
+
+\begin{frame}{Uncertainty Quantification}{Combining polynomials?}
+For example, let $\phi$ be monomials $(1,x,x^2,x^3,x^4,...)$.
+\begin{equation*}\small
+\Lambda = \left\{
+\begin{array}{c}
+(0,0,0,0,0,0,0,0), \\
+(1,0,0,0,0,0,0,0), \\
+(0,1,0,0,0,0,0,0), \\
+\ldots \\
+(1,2,3,4,5,6,7,8), \\
+\ldots \\
+\end{array}\right\}
+\end{equation*}\normalsize
+\begin{table}
+\centering
+\begin{tabular}{c c}
+$k$ & polynomial $\Phi$ \\ \hline
+(0,0,0,0,0,0,0,0) &  $y_i^0 \cdot v^0 \cdot \theta^0 \cdot g^0 \cdot m^0 \cdot r^0 \cdot C^0 \cdot \rho^0 = 1$ \\
+(1,2,3,4,5,6,7,8) &  $y_i^1 \cdot v^2 \cdot \theta^3 \cdot g^4 \cdot m^5 \cdot r^6 \cdot C^7 \cdot \rho^8$ \\
+(1,1,1,1,1,1,1,1) & $ y_i \cdot v \cdot \theta \cdot g \cdot m \cdot r \cdot C \cdot \rho$ \\
+\end{tabular}
+\end{table}
+\end{frame}
+
+
 
 \begin{frame}{Uncertainty Quantification}{Stochastic Collocation}\vspace{-20pt}
 Comparison
@@ -392,7 +434,7 @@ Slow converging & Very fast convergence* \\
 %  \end{figure}
 %\end{frame}
 
-\section{Bonus: Sensitivity Analysis}
+\section{Extra: Sensitivity Analysis}
 \begin{frame}{Sensitivity Analysis}{Polynomial Expansion Revisited}\vspace{-30pt}
 Recall: $u(Y)\approx\sum_{k\in\Lambda}c_k\Phi_k(Y),$ so for $x_f(y_i,v,\theta,g,m,r,C,\rho)$:
 \begin{align*}
