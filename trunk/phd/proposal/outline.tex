@@ -1,0 +1,147 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{amsthm}
+\usepackage{amscd}
+%\usepackage{amsfonts}
+\usepackage{graphicx}%
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{cite}
+\usepackage{fullpage}
+%\usepackage[T1]{fontenc}
+%\usepackage[utf8]{inputenc}
+%\usepackage{authblk}
+\usepackage{physics}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\setlength{\columnsep}{0.5 in}
+
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
+\newcommand{\xs}[2]{\ensuremath{\Sigma_{#1}^{(#2)}}}
+\newcommand{\intO}{\ensuremath{\int\limits_{4\pi}}}
+\newcommand{\intz}{\ensuremath{\int\limits_0^1}}
+\newcommand{\intf}{\ensuremath{\int\limits_{-\infty}^\infty}}
+\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+\newcommand{\LargerCdot}{\raisebox{-0.25ex}{\scalebox{1.2}{$\cdot$}}}
+
+%\textwidth6.6in
+%\textheight9in
+
+
+%\setlength{\topmargin}{0.3in} \addtolength{\topmargin}{-\headheight}
+%\addtolength{\topmargin}{-\headsep}
+
+%\setlength{\oddsidemargin}{0in}
+
+%\oddsidemargin  0.0in \evensidemargin 0.0in \parindent0em
+
+%\pagestyle{fancy}\lhead{MATH 579 (UQ for PDEs)} \rhead{02/24/2014}
+%\chead{Project Proposal} \lfoot{} \rfoot{\bf \thepage} \cfoot{}
+\title{Adaptive Sparse-Grid Stochastic Collocation Uncertainty Quantification \\ \vspace{10pt}\normalsize A Ph.D. Research Proposal}
+
+\author{Paul W. Talbot\\talbotp@unm.edu\\Department of Nuclear Engineering\\University of New Mexico}
+%\date{}
+
+
+\begin{document}
+\maketitle
+\section{Motivation}
+\begin{itemize}
+\item With the increase of numerical models, UQ is critical.
+\item For low-dimension uncertainty space, MC is inefficient.
+\item Generalized polynomial chaos (gPC) is a suitable surrogate approximation.
+\item Stochastic collocation (SC) is very efficient compared to MC for small input spaces.
+\item Sobol decomposition is a natural extension of gPC.
+\end{itemize}
+
+\section{Theory}
+\subsection{gPC}
+  \begin{itemize}
+  \item Represent stochastic process as sum of product of weighted sets of orthonormal polynomials
+  \item Index Sets determine combination of polynomial orders to use based on truncation level $L$
+  \item Further, use anisotropy to increase polynomial focus where sensitivity is highest
+  \end{itemize}
+\subsection{SC}
+  \begin{itemize}
+  \item To determine coefficients for polynomial products, use quadrature integration
+  \item Use Smoljak-like sparse grids to alleviate curse of dimensionality
+  \end{itemize}
+\subsection{HDMR/Sobol decomposition}
+  \begin{itemize}
+  \item First decompose QoI into reference, singlet, duplet, etc. terms
+  \item Second, evaluate each sub-term using SC for gPC
+  \item Doesn't improve on gPC generally for convergence, but provides sensitivities
+  \item For large dimension, can use nested quadrature to reduce work necessary
+  \end{itemize}
+
+\section{Demonstrated Results}
+\subsection{Static Sparse Grid}
+\subsubsection{Analytical Function, $N=5$}
+  \begin{itemize}
+  \item TD best, HC next, MC last (5 inputs)
+  \item Exponential convergence for TD
+  \end{itemize}
+\subsection{Projectile, $N=8$}
+  \begin{itemize}
+  \item HC best, TD next, MC last
+  \item Demonstrate lower regularity
+  \end{itemize}
+\subsection{Reactor Core}
+  \begin{itemize}
+  \item $N=5$
+    \begin{itemize}
+    \item HC best, TD next, MC last
+    \item Similar convergence between index sets
+    \end{itemize}
+  \item $N=14$
+    \begin{itemize}
+    \item On-par with Monte Carlo
+    \end{itemize}
+  \end{itemize}
+\subsection{Anisotropic Sparse Grid}
+  \begin{itemize}
+  \item Correctly chosen, always improves convergence
+  \item Incorrectly chosen, slower convergence
+  \item Can unexpectedly increase total computations for the same polynomial level $L$ for large anisotropy (compared to isotropic sparse grid)
+  \end{itemize}
+\subsection{Sobol Decomposition (HDMR)}
+  \begin{itemize}
+  \item Sparse grid accomplishes nearly the same effect as HDMR
+  \item However, HDMR still good for sensitivity analysis and creating anisotropic weights
+  \end{itemize}
+  
+  \newpage
+\section{Intended Research}
+\subsection{Adaptivity}
+  \begin{itemize}
+  \item Polynomial selection - add polynomial choices in any dimension/combination of dimensions until contribution is less than a relative tolerance.
+  \begin{itemize}
+     \item Algorithm:
+     \item Loop: start with minimal index set, e.g. $\{(0,0,0),(1,0,0),(0,1,0),(0,0,1)\}$, calculate SC for gPC variance
+     \item In each dimension, and each combination of dimensions that are only 1 greater than each existing dimension order, add a point
+     \item See the contribution from each point to the new variance, and close off any dimensions that are converged to tolerance
+     \item Continue until all dimensions/combinations of dimensions are converged
+     \item Using a database of nested points, few additional evaluations should be needed each iteration.
+     \end{itemize}
+  \item HDMR - Similarly, choose component Sobol factors to be included, then solve each one using adaptive SC for gPC.
+     \begin{itemize}
+     \item Algorithm:
+     \item Outer loop: add terms in HDMR
+     \item Inner loop: create surrogate model for each term using AASC for gPC
+     \item If new term contributes less than tolerance, consider dimensions varied to be converged.
+     \item Stop adding terms in a dimension if all the lower-order terms for the dimension are converged.
+     \item Continue until all dimensions and combinations are converged.
+     \end{itemize}
+  \end{itemize}
+  
+\subsection{Surrogate Modeling}
+  \begin{itemize}
+  \item Feature of interest: limit search algorithm - This particular existing \texttt{RAVEN} tool adaptively chooses points to solve in order to define a limiting surface, e.g. between ``success'' and ``failure'' regions.  Failure probability is integral of failure region.
+  \item Computationally expensive to directly solve algorithm each sample, so use gPC as surrogate model instead
+  \item Metric for Adaptive Anisotropic Sparse Grid Stochastic Collocation for Generalized Polynomial Chaos expansion: ability to determine limit surface and failure probability accurately.
+  \item Suggested problem: irradiated fuel in cladding, power ramp up until fuel touches cladding, do limit search around limiting Von Mises stress.
+  \end{itemize}
+\end{document}
