@@ -97,20 +97,34 @@ Past:
 \end{itemize}
 \end{frame}
 
+\begin{frame}{RAVEN}{...and its place in the herd.}\vspace{-20pt}
+MOOSE herd
+\begin{itemize}
+\item \texttt{MARMOT}: Mesoscale materials
+\item \texttt{BISON}: Engineering-scale materials
+\item \texttt{RattleSNake}: Neutronics
+\item \texttt{RELAP-7}: Thermal Hydraulics
+\end{itemize}\vspace{10pt}
+A different kind of critter...
+\begin{itemize}
+\item \texttt{RAVEN}: Uncertainty Quantification
+\end{itemize}
+\end{frame}
+
 \begin{frame}{Uncertainty}{Two Types}\vspace{-30pt}
 \begin{itemize}
-\item Aleatory - True Randomness
-\begin{itemize}
-  \item Quantum effects
-  \item Particle-Material interactions (gold foil)
-  \item Brownian Motion
-\end{itemize}\vspace{20pt}
 \item Epistemic - Unmeasured Uncertainty
   \begin{itemize}
   \item Tool Accuracy
   \item Complicated Dependencies (arrow, double pendulum)
   \item Documentation
-  \end{itemize}
+  \end{itemize}\vspace{20pt}
+\item Aleatory - True Randomness
+\begin{itemize}
+  \item Quantum effects
+  \item Particle-Material interactions (gold foil)
+  \item Brownian Motion
+\end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -129,7 +143,7 @@ x(t)=v\cos(\theta)t.
 Solution: $x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)$
 \end{frame}
 
-\begin{frame}{Example Stochastic Problem}{Solved!}\vspace{-50pt}
+\begin{frame}{Example Stochastic Problem}{Solved...?}\vspace{-50pt}
 \begin{equation*}
 x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)
 \end{equation*}
@@ -137,12 +151,12 @@ x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\righ
 \item initial height $y_i = 2$ m
 \item initial velocity $v = 35$ m/s
 \item initial trajectory $\theta = 35^o$
-\item accel. gravity $g = -9.81$ m/s/s
+\item accel. gravity $g = 9.81$ m/s/s
 \end{itemize}
 Solution: $x_f\approx120$ m
 \end{frame}
 
-\begin{frame}{Example Stochastic Problem}{Uncertainty}\vspace{-50pt}
+\begin{frame}{Example Stochastic Problem}{...I'm not so certain anymore.}\vspace{-50pt}
 \begin{equation*}
 x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)
 \end{equation*}
@@ -263,6 +277,7 @@ r=0.0336&\pm0.00336\text{ m},\\
 C=0.5&\pm0.5,\\
 \rho_\text{air}=1.2&\pm0.1\text{ kg/m$^3$}.
 \end{align*}
+\begin{center}\hyperlink{sens_use}{\beamergotobutton{UQ Uses}}\end{center}\vspace{-20pt}
 \begin{center}\hyperlink{sens_res}{\beamergotobutton{Sensitivity Study}}\end{center}
 \end{frame}
 
@@ -307,7 +322,7 @@ How do we quantify uncertainty for problems without simple analytic solutions?\v
 \item Calculate moments (mean, variance, skew, kurtosis)
 \end{itemize}
 \begin{equation*}
-u(Y)\approx\sum_{k\in\Lambda}c_k\Phi_k(Y),
+u(Y)\approx S[u(Y)]\equiv\sum_{k\in\Lambda}c_k\Phi_k(Y),
 \end{equation*}
 \begin{equation*}
 \Phi_k(Y) = \phi_{k_1}(Y_1)\cdot\phi_{k_2}(Y_2)\cdot\ldots\cdot\phi_{k_N}(Y_N)
@@ -316,9 +331,10 @@ u(Y)\approx\sum_{k\in\Lambda}c_k\Phi_k(Y),
 
 \begin{frame}{Uncertainty Quantification}{Stochastic Collocation}\vspace{-20pt}
 Our case:
-\begin{equation*}
-x_f(y_i,v,\theta,g,m,r,C,\rho)\approx\sum_{k\in\Lambda}c_k\Phi_k(y_i,v,\theta,g,m,r,C,\rho),
-\end{equation*}
+\begin{align*}
+x_f(y_i,v,\theta,g,m,r,C,\rho)&\approx S[x_f(y_i,v,\theta,g,m,r,C,\rho)],\\
+  &\approx\sum_{k\in\Lambda}c_k\Phi_k(y_i,v,\theta,g,m,r,C,\rho),
+\end{align*}
 \begin{equation*}
 \Phi_k(y_i,v,\theta,g,m,r,C,\rho) = \phi_{y_i}(y_i)\cdot\phi_{v}(v)\cdot\ldots\cdot\phi_{\rho}(\rho).\vspace{10pt}
 \end{equation*}
@@ -435,13 +451,30 @@ Slow converging & Very fast convergence* \\
 %\end{frame}
 
 \section{Extra: Sensitivity Analysis}
+\begin{frame}[label=sens_use]{Sensitivity Analysis}{So...what?}\vspace{-20pt}
+Uses for uncertainty quantification:\vspace{5pt}
+\begin{itemize}
+\item Understand range of possible solutions
+\item Worse-case scenarios
+\item Sensitivity Analysis
+  \begin{itemize}
+  \item Who is contributing the most to our spread?
+  \item Which measurements should I focus on improving?
+  \item Which design specification should I tighten down on?
+  \end{itemize}
+\end{itemize}\vspace{-15pt}
+\begin{center}\hyperlink{unc_sum}{\beamergotobutton{Inputs}}\end{center}
+\end{frame}
+
 \begin{frame}{Sensitivity Analysis}{Polynomial Expansion Revisited}\vspace{-30pt}
-Recall: $u(Y)\approx\sum_{k\in\Lambda}c_k\Phi_k(Y),$ so for $x_f(y_i,v,\theta,g,m,r,C,\rho)$:
+Recall: $u(Y)\approx S[u(Y)]=\sum_{k\in\Lambda}c_k\Phi_k(Y),$ 
+
+so for $x_f(y_i,v,\theta,g,m,r,C,\rho)$:
 \begin{align*}
-&x_f \approx c_{(0,0,0,0,0,0,0,0)} \\
+&x_f \approx S[x_f]= c_{(0,0,0,0,0,0,0,0)} \\
  &+c_{(1,0,0,0,0,0,0,0)}y_i + c_{(0,1,0,0,0,0,0,0)}v + c_{(0,0,1,0,0,0,0,0)}\theta+\ldots\\
  &+c_{(2,0,0,0,0,0,0,0)}y_i^2 + c_{(1,1,0,0,0,0,0,0)}y_i\cdot v + c_{(1,0,1,0,0,0,0,0)}y_i\cdot \theta +\ldots\\
- &+c_{(3,0,0,0,0,0,0,0)}y_i^3 + c_{(1,1,0,0,0,0,0,0)}y_i\cdot v\cdot\theta +\ldots\\
+ &+c_{(3,0,0,0,0,0,0,0)}y_i^3 + c_{(1,1,1,0,0,0,0,0)}y_i\cdot v\cdot\theta +\ldots\\
  &\ldots
 \end{align*}
 \end{frame}
@@ -449,7 +482,7 @@ Recall: $u(Y)\approx\sum_{k\in\Lambda}c_k\Phi_k(Y),$ so for $x_f(y_i,v,\theta,g,
 \begin{frame}{Sensitivity Analysis}{Polynomial Expansion Revisited}\vspace{-30pt}
 Rearrange:
 \begin{align*}
-&x_f \approx c_{(0,0,0,0,0,0,0,0)} \\
+&x_f \approx S[x_f]=c_{(0,0,0,0,0,0,0,0)} \\
  &+c_{(1,0,0,0,0,0,0,0)}y_i + c_{(2,0,0,0,0,0,0,0)}y_i^2 + c_{(3,0,0,0,0,0,0,0)}y_i^3+\ldots\\
  &+c_{(0,1,0,0,0,0,0,0)}v + c_{(0,2,0,0,0,0,0,0)}v^2 + c_{(0,3,0,0,0,0,0,0)}v^3+\ldots\\
  &\ldots\\
@@ -458,15 +491,27 @@ Rearrange:
 \end{align*}
 \end{frame}
 
+\begin{frame}{Sensitivity Analysis}{``It is simple to show...''}\vspace{-20pt}
+This is the same as \vspace{-10pt}
+\begin{align*}
+x_f \approx &\ x_{f,\text{ref}} \\
+ &+S[x_f(y_i)]+S[x_f(v)]+\ldots+S[x_f(g)]\\
+ &+S[x_f(y_i,v)] + S[x_f(y_i,\theta)]+\ldots+S[x_f(C,\rho)]\\
+ &+\ldots\\
+ &+S[x_f(y_i,v,\theta,g,m,r,C,\rho)].
+\end{align*}
+ANOVA - [AN]alysis [O]f [VA]riance:
+\begin{equation*}
+\text{Sensitivity}(v) \equiv \frac{\text{var}(S[x_f(v)])}{\text{var}(x_f)}
+\end{equation*}
+\end{frame}
+
 \begin{frame}[label=sens_res]{Sensitivity Analysis}{ANOVA}
-ANOVA: [AN]alysis [O]f [VA]riance
-\begin{itemize}
-\item How much does each input contribute to the variance?
-\end{itemize}
+How much does each input contribute to the variance?
 \begin{table}
 \centering
   \begin{tabular}{c|l|l|c}
-    Input & Variance & \% Variance & Weight\\ \hline
+    Input & $\Delta$Variance & \% Variance & Weight\\ \hline
     $C$ & 0.523 & 0.6657 & 1\\
     $\theta$ & 0.236 & 0.3006 & 1/2\\
     $r$ & 0.00868 & 0.0111 & 1/5\\
@@ -558,9 +603,13 @@ ANOVA: [AN]alysis [O]f [VA]riance
 \end{frame}
 
 \begin{frame}
-$\ $
+The End ($\pm$ a few slide-minutes).\vspace{30pt}
+
+More questions? talbotpne@gmail.com
 \end{frame}
 
+\appendix
+\section{Polynomial Index Sets}
 \begin{frame}{Polynomial Index Sets}{Choosing what polynomial degrees to use}\vspace{-20pt}
 \begin{itemize}
 \item Tensor Product:\scriptsize\[\Lambda_\text{TP}(L)=\Big\{\bar p=[p_1,...,p_N]: \max_{1\leq n\leq N}p_n\leq L \Big\},\eta=(L+1)^N\]\normalsize
@@ -592,6 +641,7 @@ $\ $
 \end{figure}
 \end{frame}
 
+\section{Coefficient Calculations: Sparse Grid}
 \begin{frame}{Calculating $c_k$}{Where the algorithmic rubber hits the mathematical road.}
 \normalsize\vspace{-20pt}
 \begin{equation*}
