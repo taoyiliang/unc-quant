@@ -1,0 +1,128 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{graphicx}%
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{cite}
+
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{physics}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
+\newcommand{\xs}[2]{\ensuremath{\Sigma_{#1}^{(#2)}}}
+\newcommand{\intO}{\ensuremath{\int\limits_{4\pi}}}
+\newcommand{\intnp}{\ensuremath{\int\limits_{-1}^1}}
+\newcommand{\intab}[1]{\ensuremath{\int\limits_{a_{#1}}^{b_#1}}}
+\newcommand{\intz}{\ensuremath{\int\limits_0^1}}
+\newcommand{\intf}{\ensuremath{\int\limits_{-\infty}^\infty}}
+\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+\newcommand{\LargerCdot}{\raisebox{-0.25ex}{\scalebox{1.2}{$\cdot$}}}
+
+\textwidth6.6in
+\textheight9in
+
+
+\setlength{\topmargin}{0.3in} \addtolength{\topmargin}{-\headheight}
+\addtolength{\topmargin}{-\headsep}
+
+\setlength{\oddsidemargin}{0in}
+
+\oddsidemargin  0.0in \evensidemargin 0.0in \parindent0em
+
+%\pagestyle{fancy}\lhead{MATH 579 (UQ for PDEs)} \rhead{02/24/2014}
+%\chead{Project Proposal} \lfoot{} \rfoot{\bf \thepage} \cfoot{}
+
+
+\begin{document}
+
+\title{A Failing Point for the Gerstner-Griebel Adaptive Sparse Grid Index Set Sampling Scheme}
+
+\author[]{Paul Talbot\thanks{talbotp@unm.edu}}
+\date{}
+\renewcommand\Authands{ and }
+\maketitle
+\section{Introduction}
+In the 2003 paper by Gerstner and Griebel published in Austrian publication \emph{Computing} (also used in Ayres and Eaton's 2015 paper), they propose an adaptive algorithm for determining an ideal Smoljak-like anisotropic sparse grid $Q$ for integrating a given function $f(\vec\xi)$.  By way of example, we consider $\vec\xi=(x,y)$.\\
+
+In essence, the algorithm begins with a single quadrature point in each input space dimension $\xi_n\in\vec\xi$ (for example, the quadrature points for each dimension are (1,1) for $x$ and $y$ respectively).  An active set is then considered, composed of the next higher quadrature increment in each dimension (in our example, (2,1) and (1,2) ).  A metric is then used to determine which active quadrature set has the largest impact; using Ayres and Eaton, for example, the metric is the second moment of the function as integrated by the quadrature set.  The impact $g_k$ for iteration $k$ is given by
+\begin{equation}
+g_k = \frac{Q_k[f(\vec\xi)^2] - Q_{k-1}[f(\vec\xi)^2]}{Q_{k-1}[f(\vec\xi)^2]},
+\end{equation}
+where $Q_k[f(\vec\xi)^2]$ indicates using the sparse grid $Q_k$ to integrate function $f(\vec\xi)^2$.
+\\
+
+The active quadrature point with the largest impact is accepted into the established set, and new active points are added.   In our example, let us say (2,1) had a larger effect on the second moment integration; our established set is now (1,1) and (2,1), and the active set is (1,2). In order for a new active point to be added, the previous increment in each dimension must already be present in the established set. Since adding (2,1), we can now add (3,1) to the active index set, and try both (1,2) and (3,1) to see which has a larger impact.\\
+
+ This process continues until the total impact of the active index set is less than a tolerance threshold, at which point the established set is taken to be a suitable quadrature-producing index set. 
+
+\section{The Problem}
+A problem occurs if the partial derivative of a function with respect to any dimension, evaluated at the reference or mean point, is zero.  That is, the algorithm fails if
+\begin{equation}
+\frac{\partial f(\vec\xi)}{\xi_n}\Bigg|_\text{ref} = 0,
+\end{equation}
+for any dimension $\xi_n\in\vec\xi$.  For example, we consider the function
+\begin{equation}
+f(\vec\xi)=f(x,y)=x^2y^2,
+\end{equation}
+with $x$ and $y$ both uniformly distributed on [-1,1].  The partial derivatives at the reference (0,0) are:
+\begin{equation}
+\frac{\partial f(x,y)}{\partial x}\Bigg|_{y=0} = 2x\cdot 0^2 = 0,
+\end{equation}
+\begin{equation}
+\frac{\partial f(x,y)}{\partial y}\Bigg|_{x=0} = 2y\cdot 0^2 = 0.
+\end{equation}
+Proceeding with the adaptive algorithm,
+we take the first point in the established quadrature index set to be the reference, or
+\begin{equation}
+\Lambda_E = \{ (1,1) \}.
+\end{equation}
+The point in this quadrature set is (0,0).  Taking the second moment of the function using this quadrature, then, gives
+\begin{equation}
+\expv{f(x,y)^2}=\int_{-1}^1 \int_{-1}^1 \frac{1}{4} f(x,y)^2 dx dy\approx Q_1[f(x,y)^2] = \sum_{\ell=1}^L w_\ell f(x_\ell,y_\ell)^2,
+\end{equation}
+where $Q_i$ is the $i-th$ sparse quadrature operator and $\ell$ indexes the quadrature points, of which there are $L$ sets of points $(x_\ell,y_\ell)$ and weights $w_\ell$.  We note here we are using Gauss-Legendre points and weights. In this case the sum is simple:
+\begin{equation}
+Q_1[f(x,y)^2] = (2)(0^2 0^2) = 0.
+\end{equation}
+We then consider the next neighbor index sets, (2,1) and (1,2).  In the case of (2,1), we have the quadrature points $(\pm \frac{1}{\sqrt{3}},0)$, each with weight 1.
+\begin{equation}
+Q^{(2,1)}_2[f(x,y)^2] = -(1)\left(\frac{1}{\sqrt{3}}\cdot 0\right)^2 + (1)\left(\frac{1}{\sqrt{3}}\cdot 0\right)^2 = 0.
+\end{equation}
+Because of the symmetry of this function, the second moment using (2,1) is the same as (1,2),
+\begin{equation}
+Q^{(2,1)}_2[f(x,y)^2] = Q^{(1,2)}_2[f(x,y)^2] = 0.
+\end{equation}
+\\
+Herein lies the problem: the impact of both (2,1) and (1,2) is zero, so the total active impact is 0. According to the algorithm, we are converged; however, our index set contains only the quadrature set (1,1).  Since the function is $f(x,y)=x^2y^2$, we expect at least to obtain (2,2).  \\
+
+In general, because the adaptive algorithm only searches along each axial direction for changes to the integral metric, if the change along axial directions is zero, the adaptive algorithm has no basis to continue.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

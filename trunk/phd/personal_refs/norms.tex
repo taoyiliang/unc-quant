@@ -1,0 +1,85 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{graphicx}%
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{cite}
+
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{physics}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
+\newcommand{\xs}[2]{\ensuremath{\Sigma_{#1}^{(#2)}}}
+\newcommand{\intO}{\ensuremath{\int\limits_{4\pi}}}
+\newcommand{\intnp}{\ensuremath{\int\limits_{-1}^1}}
+\newcommand{\intab}[1]{\ensuremath{\int\limits_{a_{#1}}^{b_#1}}}
+\newcommand{\intz}{\ensuremath{\int\limits_0^1}}
+\newcommand{\intf}{\ensuremath{\int\limits_{-\infty}^\infty}}
+\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+\newcommand{\LargerCdot}{\raisebox{-0.25ex}{\scalebox{1.2}{$\cdot$}}}
+
+\textwidth6.6in
+\textheight9in
+
+
+\setlength{\topmargin}{0.3in} \addtolength{\topmargin}{-\headheight}
+\addtolength{\topmargin}{-\headsep}
+
+\setlength{\oddsidemargin}{0in}
+
+\oddsidemargin  0.0in \evensidemargin 0.0in \parindent0em
+
+%\pagestyle{fancy}\lhead{MATH 579 (UQ for PDEs)} \rhead{02/24/2014}
+%\chead{Project Proposal} \lfoot{} \rfoot{\bf \thepage} \cfoot{}
+
+
+\begin{document}
+
+\title{Adaptive gPC Convergence Criteria Norms}
+
+\author[]{Paul Talbot\thanks{talbotp@unm.edu}}
+\date{}
+\renewcommand\Authands{ and }
+\maketitle
+\section{Notation}
+\begin{itemize}
+\item $\xi$ - The vector of input variables $\xi=(\xi_1,\xi_2,\cdots,\xi_N)$
+\item $\Omega$ - The input space spanned by the input variable distributions
+\item $\epsilon$ - The error between an iteration $\Lambda_2$ and $\Lambda_1$
+\item $k$ - A combination of polynomial orders, given as a tuple
+\item $\Lambda_1$ - The set of all desired polynomial combinations $k$ for the current iteration
+\item $\Lambda_2$ - The set of all desired polynomial combinations $k$ for the next iteration
+\item $c_{i,k}$ - The scalar coefficient for polynomial combination with orders $k$ in index set $\Lambda_i$
+\item $\Phi_k$ - The multidimensional orthonormal polynomial basis with degrees $k$.
+\end{itemize}
+\section{L2 of Difference Space}
+\begin{equation}
+\epsilon = \sqrt{\int_\Omega d\xi \left[ \sum_{k\in\Lambda_2} c_{2,k}\Phi_k(\xi) - \sum_{k\in\Lambda_1} c_{1,k}\Phi_k(\xi) \right]^2}.
+\end{equation}
+
+Let $c_{1,k}=0\forall k\notin\Lambda_1$, and noting
+\begin{equation}
+\int_\Omega \Phi_j(\xi)\Phi_k(\xi)P(\xi) d\xi = \delta_{jk},
+\end{equation}
+
+\begin{align}
+\epsilon &= \sqrt{\int_\Omega d\xi \left[ 
+    %\sum_{k\in\Lambda_2} c^2_{2,k}\Phi_k^2(\xi)
+   %-2 \sum_{k\in\Lambda_2}c_{2,k}c_{1,k}\Phi_k^2(\xi)
+    %+ \sum_{k\in\Lambda_2}c_{1,k}^2\Phi_k^2(\xi) 
+     \sum_{m=1}^2\sum_{n=1}^2\sum_{j\in\Lambda_2}\sum_{k\in\Lambda_2}c_{m,k}c_{n,j}\Phi_k(\xi)\Phi_j(\xi)
+    \right]},\\
+  &= \sqrt{\sum_{k\in\Lambda_2} c^2_{2,k} -2 \sum_{k\in\Lambda_2}c_{2,k}c_{1,k} + \sum_{k\in\Lambda_2}c_{1,k}^2}, \\
+  &= \sqrt{\sum_{k\in\Lambda_2}(c_{2,k}-c_{1,k})^2}.
+\end{align}
+
+
+\end{document}

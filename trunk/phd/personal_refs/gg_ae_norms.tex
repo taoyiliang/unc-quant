@@ -1,0 +1,234 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{graphicx}%
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{cite}
+
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{physics}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
+\newcommand{\xs}[2]{\ensuremath{\Sigma_{#1}^{(#2)}}}
+\newcommand{\intO}{\ensuremath{\int\limits_{4\pi}}}
+\newcommand{\intnp}{\ensuremath{\int\limits_{-1}^1}}
+\newcommand{\intab}[1]{\ensuremath{\int\limits_{a_{#1}}^{b_#1}}}
+\newcommand{\intz}{\ensuremath{\int\limits_0^1}}
+\newcommand{\intf}{\ensuremath{\int\limits_{-\infty}^\infty}}
+\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+\newcommand{\LargerCdot}{\raisebox{-0.25ex}{\scalebox{1.2}{$\cdot$}}}
+
+\textwidth6.6in
+\textheight9in
+
+
+\setlength{\topmargin}{0.3in} \addtolength{\topmargin}{-\headheight}
+\addtolength{\topmargin}{-\headsep}
+
+\setlength{\oddsidemargin}{0in}
+
+\oddsidemargin  0.0in \evensidemargin 0.0in \parindent0em
+
+%\pagestyle{fancy}\lhead{MATH 579 (UQ for PDEs)} \rhead{02/24/2014}
+%\chead{Project Proposal} \lfoot{} \rfoot{\bf \thepage} \cfoot{}
+
+
+\begin{document}
+
+\title{Analyzing convergence criteria for Gerstner-Griebel and Ayres-Eaton}
+
+\author[]{Paul Talbot\thanks{talbotp@unm.edu}}
+\date{}
+\renewcommand\Authands{ and }
+\maketitle
+\section{Notation}
+\begin{itemize}
+\item $\xi$ - The vector of input variables $\xi=(\xi_1,\xi_2,\cdots,\xi_N)$
+\item $\Omega$ - The input space spanned by the input variable distributions
+\item $g_k$ - The error between an iteration $\Lambda_2$ and $\Lambda_1$
+\item $k$ - A combination of polynomial orders, given as a tuple
+\item $\Lambda_1$ - The set of all desired polynomial combinations $k$ for the current iteration
+\item $\Lambda_2$ - The set of all desired polynomial combinations $k$ for the next iteration
+\item $c_{i,k}$ - The scalar coefficient for polynomial combination with orders $k$ in index set $\Lambda_i$
+\item $\Phi_k$ - The multidimensional orthonormal polynomial basis with degrees $k$.
+\end{itemize}
+\section{Gerstner-Griebel}
+\begin{equation}
+g_k = \max\left\{ \alpha\frac{|\Delta_k f|}{|\Delta_1 f|},\alpha\frac{n_1}{n_k}\right\},
+\end{equation}
+where $n_k$ is the number of quadrature points with index set $\Lambda_k$, $\alpha\in[0.1]$ is a work scaling factor, and
+\begin{equation}
+\Delta_k f = (Q_k - Q_{k-1})f,
+\end{equation}
+\begin{equation}
+Q_k f = \sum_\ell w_\ell f(\xi_\ell),
+\end{equation}
+which is an approximation as
+\begin{equation}
+\int_\Omega f(\xi) P(\xi) d\xi \approx \sum_\ell w_\ell f(\xi_\ell).
+\end{equation}
+Thus, $|\Delta_k f|$ indicates the change in fidelity between one higher-order sparse quadrature set and a lower one.  We desire to understand the numerical difference between successive quadratures.  We consider the first moment of the function in probability space,
+\begin{equation}
+\expv{f(\xi)}=\int_\Omega f(\xi) P(\xi) d\xi.
+\end{equation}
+With appropriate change of variable, we can rewrite the probability weighting term,
+\begin{equation}
+\expv{f(\xi)}=\expv{f(u)}=\int_\Omega f(u) du.
+\end{equation}
+We now note that the function $f(u)$ can be expressed exactly as an infinite sum of orthogonal multidimensional polynomials $\Phi(u)$, as
+\begin{equation}
+f(u) = \sum_{i=0}^\infty f_{k_i} \Phi_{k_i}(u),
+\end{equation}
+where $k\in\Lambda_\infty$ is a choice of polynomial order from $\Lambda_\infty$ which contains all possible polynomials of any order spanned by the set of polynomials $\Phi(u)$, and $f_{k_i}$ is a scaling coefficient for the $i$-th polynomial (which polynomial has multi-order $k$).\\
+
+We consider $\Lambda_k\subset\Lambda_\infty$, which is a sparse index set that generates a sparse grid quadrature $Q_k$ with points $x_\ell$ and weights $w_\ell$, as
+\begin{equation}
+\int_\Omega g(x)dx\approx Q_k g(x) = \sum_{\ell=1}^L w_\ell g(x_\ell),
+\end{equation}
+where $L=|Q_k|$ is the number of point-weight combinations in the sparse grid quadrature. $Q_k g(x)$ is exactly $\int g(x) dx$ only if $g(x)$ is a polynomial of order $J\equiv 2L-1$ (for Gauss quadrature).  Returning to the first moment,
+\begin{equation}
+\expv{f(u)} = \int_\Omega f(u)du,
+\end{equation}
+we expand $f(u)$ using the orthogonal multidimensional polynomials,
+\begin{equation}
+\expv{f(u)} = \int_\Omega \sum_{i=0}^\infty f_{k_i}\Phi_{k_i}(u) du.
+\end{equation}
+We can then split the sum at an integration order $J$ corresponding to a particular index set $\Lambda_k$,
+\begin{equation}
+\expv{f(u)} = \int_\Omega\left[ \sum_{i=0}^J f_{k_i}\Phi_{k_i}(u) + \sum_{i=J+1}^\infty f_{\tilde k_i}\Phi_{\tilde k_i}(u) \right]du,
+\end{equation}
+where $\tilde k\in\Lambda_\infty$ while $k\in\Lambda_k$.  In other words, $f(u)$ is split into two parts: that which is integrated exactly by the sparse grid quadrature $Q_k$ generated by the index set $\Lambda_k$; and that which requires polynomials and coefficients not provided by the index set $\Lambda_k$ but exists in $\Lambda_\infty$.  We rewrite and consider both terms independently.
+\begin{align}
+\expv{f(u)} &= \int_\Omega \sum_{i=0}^J f_{k_i}\Phi_{k_i}(u) du + \int_\Omega \sum_{i=J+1}^\infty f_{\tilde k_i}\Phi_{\tilde k_i}(u) du.
+\end{align}
+The first term by definition is exactly integrated by the sparse quadrature $Q_k$,
+\begin{align}
+\int_\Omega \sum_{i=0}^J f_{k_i}\Phi_{k_i}(u) du &= \sum_{\ell=0}^L w_\ell \sum_{i=0}^J f_{k_i}\Phi_{k_i}(u_\ell) \\
+  &= Q_k\left[\sum_{i=0}^J f_{k_i}\Phi_{k_i}(u)\right].
+\end{align}
+Because of orthogonality and the nature of the polynomials over their domain, this simplifies to
+\begin{equation}
+Q_k\left[\sum_{i=0}^J f_{k_i}\Phi_{k_i}(u)\right] = f_0.
+\end{equation}
+The second term, however, is inexact,
+\begin{align}
+\int_\Omega \sum_{i=J+1}^\infty f_{\tilde k_i}\Phi_{\tilde k_i}(u) du &= R_k +\sum_{\ell=0}^L w_\ell \sum_{i=J+1}^\infty f_{\tilde k_i}\Phi_{\tilde k_i}(u_\ell) \\
+  &= R_k + Q_k\left[\sum_{i=J+1}^\infty f_{\tilde k_i}\Phi_{\tilde k_i}(u)\right]
+\end{align}
+where $R_k$ is the residual, given by
+\begin{equation}
+R_k = \int_\Omega f(u) du - f_0 - Q_k\left[\sum_{i=J+1}^\infty f_{\tilde k_i}\Phi_{\tilde k_i}(u)\right].
+\end{equation}
+Thus, the error in the first moment using an index set $\Lambda_k$ is given by
+\begin{align}
+\expv{f(u)} -\expv{f(u)}_k &= f_0 + Q_k\left[\sum_{i=J+1}^\infty f_{\tilde k_i}\Phi_{\tilde k_i}(u)\right] + R_k - f_0,\\
+  &= Q_k\left[\sum_{i=J+1}^\infty f_{\tilde k_i}\Phi_{\tilde k_i}(u)\right] + R_k.
+\end{align}
+As $\Lambda_k\to\Lambda_\infty$, the first term in the difference should vanish, as will $R_k$.
+
+
+
+
+\section{Ayres-Eaton}
+In similar fashion we consider the second moment convergence,
+\begin{equation}
+g_k = \frac{Q_k f^2 - Q_{k-1} f^2}{Q_{k-1} f^2},
+\end{equation}
+\begin{equation}
+\expv{f(u)^2} = \int_\Omega f(u)^2 du.
+\end{equation}
+We again expand $f(u)$ in multidimensional orthogonal polynomials,
+\begin{align}
+\expv{f(u)^2} &= \int_\Omega \left[ \sum_{i=0}^\infty f_{k_i} \Phi_{k_i}(u)\right]^2 du,\\
+ &= \int_\Omega \left[  \sum_{i=0}^J f_{k_i}\Phi_{k_i}(u) + \sum_{i=J+1}^\infty f_{\tilde k_i}\Phi_{\tilde k_i}(u)\right]^2 du,
+\end{align}
+\begin{align}
+ = \int_\Omega \Bigg[&\sum_{i=0}^J\sum_{j=0}^J f_{k_i}\Phi_{k_i}(u)f_{k_j}\Phi_{k_j}(u) \label{expo1}\\
+                   &+ 2\sum_{i=0}^J\sum_{j=J+1}^\infty f_{k_i}\Phi_{k_i}(u)f_{\tilde k_j}\Phi_{\tilde k_j}(u) \label{expo2}\\
+                   &+ \sum_{i=J+1}^\infty \sum_{j=J+1}^\infty f_{\tilde k_i}\Phi_{\tilde k_i}(u)f_{\tilde k_j}\Phi_{\tilde k_j}(u)\Bigg] du.\label{expo3}
+\end{align}
+Of the three sum-product terms above, only the first (Eq. \ref{expo1}) will have any terms in which the overall polynomial order is small enough to integrate exactly using quadrature set $Q_k$. We split this term as
+\begin{equation}
+\int_\Omega \sum_{i=0}^J\sum_{j=0}^J f_{k_i}\Phi_{k_i}(u)f_{k_j}\Phi_{k_j}(u)du = \int_\Omega \left[\sum_{i=0}^J\sum_{j=0}^{J-i} f_{k_i}\Phi_{k_i}(u)f_{k_j}\Phi_{k_j}(u) + \sum_{i=0}^J\sum_{j=J-i+1}^{J} f_{k_i}\Phi_{k_i}(u)f_{k_j}\Phi_{k_j}(u)\right] du.
+\end{equation}
+Using quadrature and because of orthogonality, the first term reduces to
+\begin{align}
+\int_\Omega \sum_{i=0}^J\sum_{j=0}^{J-i} f_{k_i}\Phi_{k_i}(u)f_{k_j}\Phi_{k_j}(u) &= Q_k\left[\sum_{i=0}^J\sum_{j=0}^{J-i} f_{k_i}\Phi_{k_i}(u)f_{k_j}\Phi_{k_j}(u)\right], \\
+  & = \sum_{i=0}^{J/2}f_{k_i}^2.
+\end{align}
+The second term will have some residual error $R_{k,1}$ from inaccurate quadrature integration, as
+\begin{equation}
+\int_\Omega \sum_{i=0}^J\sum_{j=J-i+1}^{J} f_{k_i}\Phi_{k_i}(u)f_{k_j}\Phi_{k_j}(u) du = R_{k,1} + Q_k\left[\sum_{i=0}^J\sum_{j=J-i+1}^{J} f_{k_i}\Phi_{k_i}(u)f_{k_j}\Phi_{k_j}(u)\right].
+\end{equation}
+Thus, the term in Eq. \ref{expo1} can be rewritten as
+\begin{equation}
+\int_\Omega \sum_{i=0}^J\sum_{j=0}^J f_{k_i}\Phi_{k_i}(u)f_{k_j}\Phi_{k_j}(u)du = \sum_{i=0}^{J/2}f_{k_i}^2 + R_{k,1} + Q_k\left[\sum_{i=0}^J\sum_{j=J-i+1}^{J} f_{k_i}\Phi_{k_i}(u)f_{k_j}\Phi_{k_j}(u)\right].
+\end{equation}
+None of the remaining terms (Eqs. \ref{expo2}, \ref{expo3}) can be integrated exactly using $Q_k$.  By term, this results in
+\begin{equation}
+\int_\Omega 2\sum_{i=0}^J\sum_{j=J+1}^\infty f_{k_i}\Phi_{k_i}(u)f_{\tilde k_j}\Phi_{\tilde k_j}(u) du =2R_{k,2}+ 2Q_k\left[\sum_{i=0}^J\sum_{j=J+1}^\infty f_{k_i}\Phi_{k_i}(u)f_{\tilde k_j}\Phi_{\tilde k_j}(u)\right],
+\end{equation}
+\begin{equation}
+\int_\Omega \sum_{i=J+1}^\infty \sum_{j=J+1}^\infty f_{\tilde k_i}\Phi_{\tilde k_i}(u)f_{\tilde k_j}\Phi_{\tilde k_j}(u) du = R_{k,3} + Q_k\left[\sum_{i=J+1}^\infty \sum_{j=J+1}^\infty f_{\tilde k_i}\Phi_{\tilde k_i}(u)f_{\tilde k_j}\Phi_{\tilde k_j}(u)\right].
+\end{equation}
+The second moment, then, is given by
+\begin{align}
+\expv{f(u)^2} =&  \sum_{i=0}^{J/2}f_{k_i}^2 \\
+ & + Q_k\left[\sum_{i=0}^J\sum_{j=J-i+1}^{J} f_{k_i}\Phi_{k_i}(u)f_{k_j}\Phi_{k_j}(u)\right] \\
+        &+ 2Q_k\left[\sum_{i=0}^J\sum_{j=J+1}^\infty f_{k_i}\Phi_{k_i}(u)f_{\tilde k_j}\Phi_{\tilde k_j}(u)\right] \\
+        &+ Q_k\left[\sum_{i=J+1}^\infty \sum_{j=J+1}^\infty f_{\tilde k_i}\Phi_{\tilde k_i}(u)f_{\tilde k_j}\Phi_{\tilde k_j}(u)\right] \\
+  & + R_{k,1} + 2R_{k,2} + R_{k,3}.
+\end{align}
+The three integration terms as well as the residuals should vanish as $\Lambda_k\to\Lambda_\infty$.
+
+
+
+
+\section{L2 of coefficient diffs}
+\begin{equation}
+g_k = \sqrt{\sum_{i\in\Lambda_k}\left(f_{k_i}^{(k)} - f_{k_i}^{(k-1)}\right)^2},
+\end{equation}
+\begin{align}
+f_{k_i} &= \int_\Omega f(u)\Phi_{k_i}(u)du, \\
+ & = \int_\Omega \Phi_{k_i}(u)\sum_{j=0}^\infty f_{k_j}\Phi_{k_j}(u) du, \\
+ & = \int_\Omega \Phi_{k_i}(u)\left[\sum_{j=0}^{J-k_i}f_{k_j}\Phi_{k_j}(u) + \sum_{j=J-k_j+1}^{\infty}f_{\tilde k_j}\Phi_{\tilde k_j}(u)\right]du.
+\end{align}
+The first term is integrated exactly by $Q_k$,
+\begin{align}
+\int_\Omega \Phi_{k_i}(u)\sum_{j=0}^{J-i} f_{k_j}\Phi_{k_j}(u)du &= Q_k\left[\Phi_{k_i}(u)\sum_{j=0}^{J-i} f_{k_j}\Phi_{k_j}(u)\right].
+\end{align}
+If $2i\leq J$, this simplifies to $f_i$.  Otherwise, this first term is zero.  In either case, the second term is not integrated exactly,
+\begin{equation}
+\int_\Omega \Phi_{k_i}(u)\sum_{j=J-k_1}^\infty f_{k_j}\Phi_{k_j}(u)du = Q_k\left[\Phi_{k_i}(u)\sum_{j=J-k_1}^\infty f_{k_j}\Phi_{k_j}(u)\right]+R_{k_i}.
+\end{equation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
