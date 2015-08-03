@@ -1,0 +1,48 @@
+% Chapter Template
+
+\chapter{Stochastic Collocation and generalized Polynomial Chaos} % Main chapter title
+
+\label{Chapter3} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+
+\lhead{Chapter 3. \emph{SC and gPC}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+
+\section{Uncertainty Quantification Methods}
+We consider a few methods for uncertainty quantification (UQ).  One method to classify UQ methods is by their
+interaction level with a simulation code.  Non-intrusive methods treat the code as a black box, perturbing the
+inputs and collecting the outputs without modifying the code.  These methods are ideal for generic application
+frameworks, where the simulation code may be unknown or precompiled.  Examples of non-intrusive methods
+include analog Monte Carlo (MC), Latin Hypercube sampling (LHS), and deterministic collocation methods.
+Alternatively, intrusive methods require access to the solution algorithm itself.  Sometimes this can provide
+more efficient solutions.  In particular, adjoint methods require the solution operator to be reversible, and
+provide very efficient methods to determine sensitivities and analyze output-input dependence.  While many
+intrusive methods have benefits, they lack the flexibility and universal applicability of non-intrusive
+methods, and so we neglect them in this work.
+
+\section{Correlation}
+An assumption we make going forward is that the uncertain input parameters are independent or at least
+uncorrelated.  If this is not the case, methods such as Karhunen-Loeve expansion can be used to develop an orthogonal
+input space to replace the original.  Similarly, principle component analysis can be used to attempt to find
+the fundamental uncorrelated space that maps into the correlated variable space.
+
+\section{Monte Carlo}
+In analog Monte Carlo uncertainty quantification, a single point in the input space is selected randomly,
+and an output collected, until an appropriately accurate view of the output space is acquired.  While few
+samples result in a poor understanding of the quantity of interest, sufficiently large samples converge on a
+correct solution.  The convergence rate of Monte Carlo is consistent, as
+\begin{equation}
+  \epsilon = \frac{c}{\sqrt{\eta}},
+\end{equation}
+where $c$ is a constant and $\eta$ is the number of samples taken.  While this convergence rate is slow, it is possibly one of the
+most reliable methods available.  This makes MC a good choice for benchmarking.
+
+One of the downsides of MC (and LHS) when compared with other methods is that they do not generate a
+reduced-order model as part of the evaluation; however, interpolation methods can be used to generate
+additional samples.
+
+\section{Latin Hypercube Sampling}
+Latin hypercube sampling\cite{lhs} is another stochastic method that specializes in multidimensional
+distributions.  In this method
