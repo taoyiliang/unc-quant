@@ -58,5 +58,5 @@ def takeAStep(t,dt,vx,vy,sx,sy,D,m,g,verbose=True):
   return old,new
 
 if __name__=="__main__":
-  res = R(0.145,0.0336,0.5,1.2,50.,45.,9.81,sy=1,dt=1e-4,verbose=True,retpts=False)
+  res = R(0.145,0.0336,0.5,1.2,50.,45.,9.81,sy=1,dt=1e-5,verbose=True,retpts=False)
   print 'Range:',res

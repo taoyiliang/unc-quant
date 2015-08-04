@@ -1,0 +1,35 @@
+% Chapter Template
+
+\chapter{Proposed Work} % Main chapter title
+
+\label{Chapter4} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+
+\lhead{Chapter 4. \emph{Proposed Work}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+
+\section{Proposal}
+There are several opportunities to continue this preliminary work.  First, it is possible \cite{Gerstner} to
+adaptively construct polynomial index sets instead of using deterministic index sets.  Similarly, HDMR can be
+expanded with adaptive algorithms to build up the representation in consecutive subsets\cite{Ayres}.  These adaptive
+algorithms have been shown to greatly affect the curse of dimensionality, to the point where HDMR based on
+SCgPC is competitive with Monte Carlo sampling for input spaces with dimensionality on the order of hundreds.
+
+In concert with this, while Gaussian quadrature is effective at integrating polynomials, it has been shown
+\cite{goodclenshaw} that other quadratures with convenient properties can compete effectively with them.  In
+particular, when performing adaptive sampling, nested quadratures offer a significant reduction in necessary
+computational cost for convergence, since quadrature points are re-used in successive layers.  We propose
+implementing and considering some nested quadrature strategies such as Clenshaw-Curtis and Gauss-Patterson and
+analyzing their impact on convergence when used in SCgPC.
+
+Similarly, it would be of interest to contrast the use of Lagrange polynomials in the gPC expansion with
+versus the Wiener-Askey polynomials used thus far.  We expect to see little change in convergence rates except
+in cases where the simulation model is easily-replicated by either set of polynomial families.
+
+Lastly, we propose implementing all the methods described in this work in the \raven{} uncertainty
+quantification framework, and perform thorough analysis on a selected \bison{} case.  Similar analysis has
+been performed recently \cite{bigbison} but without the benefit of some of the adaptive and combined
+strategies established and proposed in this work.  Such implementation would demonstrate significant viability
+for the methods and make them more readily available to uncertainty quantification analysts.

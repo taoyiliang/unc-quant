@@ -1,6 +1,9 @@
-\beamer@endinputifotherversion {3.31pt}
+\beamer@endinputifotherversion {3.33pt}
 \select@language {english}
-\beamer@sectionintoc {1}{Deterministic Problem}{7}{0}{1}
-\beamer@sectionintoc {2}{UQ Methodology}{11}{0}{2}
-\beamer@sectionintoc {3}{Results}{20}{0}{3}
-\beamer@sectionintoc {4}{Ongoing Work}{22}{0}{4}
+\beamer@sectionintoc {1}{Sources of Uncertainty}{3}{0}{1}
+\beamer@sectionintoc {2}{Analytic Methods}{13}{0}{2}
+\beamer@sectionintoc {3}{Numerical Methods}{21}{0}{3}
+\beamer@sectionintoc {4}{Results}{27}{0}{4}
+\beamer@sectionintoc {5}{Extra: Sensitivity Analysis}{30}{0}{5}
+\beamer@sectionintoc {6}{Polynomial Index Sets}{41}{1}{6}
+\beamer@sectionintoc {7}{Coefficient Calculations: Sparse Grid}{43}{1}{7}
