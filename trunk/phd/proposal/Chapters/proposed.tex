@@ -1,0 +1,60 @@
+% Chapter Template
+
+\chapter{Proposed Work} % Main chapter title
+
+\label{ch:proposed} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+
+\lhead{Chapter 5. \emph{Proposed Work}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+
+\section{Proposal}
+There are several opportunities to continue this preliminary work.  First, it is possible \cite{Gerstner} to
+adaptively construct polynomial index sets instead of using deterministic index sets.  Similarly, HDMR can be
+expanded with adaptive algorithms to build up the representation in consecutive subsets\cite{Ayres}.  These adaptive
+algorithms have been shown to greatly affect the curse of dimensionality, to the point where HDMR based on
+SCgPC is competitive with Monte Carlo sampling for input spaces with dimensionality on the order of hundreds.
+
+In concert with this, while Gaussian quadrature is effective at integrating polynomials, it has been shown
+\cite{goodclenshaw} that other quadratures with convenient properties can compete effectively with them.  In
+particular, when performing adaptive sampling, nested quadratures offer a significant reduction in necessary
+computational cost for convergence, since quadrature points are re-used in successive layers.  We propose
+implementing and considering some nested quadrature strategies such as Clenshaw-Curtis and Gauss-Patterson and
+analyzing their impact on convergence when used in SCgPC.
+
+Similarly, it would be of interest to contrast the use of Lagrange polynomials in the gPC expansion with
+versus the Wiener-Askey polynomials used thus far.  We expect to see little change in convergence rates except
+in cases where the simulation model is easily-replicated by either set of polynomial families.
+
+Lastly, we propose implementing all the methods described in this work in the \raven{} uncertainty
+quantification framework, and perform thorough analysis on a selected \bison{} case.  Similar analysis has
+been performed recently \cite{bigbison} but without the benefit of some of the adaptive and combined
+strategies established and proposed in this work.  Such implementation would demonstrate significant viability
+for the methods and make them more readily available to uncertainty quantification analysts.
+
+The work necessary in \raven{} to incorporate SCgPC methods involves some additional development within that
+framework, aside from the SCgPC algorithms discussed in this work.  For instance, 
+\begin{itemize}
+  \item Current \raven{} support for many statistical distributions does not allow them to
+be scaled or shifted.  These methods should be added for at least the Gamma and Beta distributions.
+  \item While the probability distributions and corresponding orthogonality weights for Gaussian polynomials
+    are similar in form, a series of translation algorithms are necessary to ensure their exact equality.
+  \item A capacity to ``store'' a SCgPC reduced-order model for re-use in the future will need to be
+    developed.
+  \item Parts of the SCgPC algorithms will need to be parallelized to ensure efficient operation.
+  \item A more rigorous method for communication between sampling algorithms and reduced-order model
+    algorithms will be necessary.  Currently in \raven{} there is almost no information shared between these
+    algorithms.
+  \item Improvements will be needed in the data input-and-output methods and storage containers to assist in
+    constructing and preserving model solutions needed for SCgPC reduced-order model construction.
+  \item It may be necessary to optimize the polynomial orthonormal scaling factors to ensure swift performance
+    on large-scale problem sets.
+  \item Tools for obtaining statistical data available through the SCgPC reduced-order model will need to be
+    implemented, as currently no reduced-order models in \raven{} have this functionality.
+  \item Because of the potential for non-deterministic behavior in parallelizing JFNK finite element codes,
+    restart methods will need to be implemented to allow partially-complete SCgPC reduced-order models to be
+    completed on successive runs.
+\end{itemize}
+

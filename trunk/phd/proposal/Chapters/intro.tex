@@ -1,0 +1,91 @@
+% Chapter 1
+
+\chapter{Introduction} % Main chapter title
+
+\label{ch:intro} % For referencing the chapter elsewhere, use \ref{Chapter1} 
+
+\lhead{1. \emph{Introduction}} % This is for the header on each page - perhaps a shortened title
+
+%----------------------------------------------------------------------------------------
+
+%\section{Welcome and Thank You}
+
+%problem description
+Fuels performance codes are numerical simulations intended to characterize the performance of a set of
+materials in a particular geometry under a certain environment, over time.  The environmental considerations
+might include temperature, neutron flux, external pressure, and similar factors.  In many cases, the
+performance is quantified by considering the maximum stress undergone by cladding around the fuel as it
+expands and makes contact.  By varying the construction materials and geometry of the fuel, its cladding, and
+the gap between them, fuel can be designed for optimal performance without experiencing a rupture or similar
+break.
+
+%introduce uq for problem
+There are a plethora of parameters that go into simulating fuel performance.  The fuel itself is made up of
+many constituent materials with a variety of densities and structures, as well as behavior under irradiation.
+The contents of the fuel-cladding gap determine how effectively heat can conduct out of the fuel and to the
+cladding, then out to a moderator, and the thickness of this gap determines the amount of fuel expansion
+allowed before contact is made and outward pressure begins increasing.  The material and geometry of the
+cladding determine limits on stress and efficiency of heat transfer.  Any of the material properties in the
+fuel, gap, or cladding, along with the environmental conditions, can be a source of uncertainty in determining
+the maximum stress applied to the cladding.
+
+%explain nature of uncertainty
+There are two categories into which sources of uncertainty fall: aleatoric, or the statistical uncertainty inherent in a
+system; and epistemic, or the systematic uncertainty due to imprecision in measurement or existence of
+measurable unknowns.  While there are aleatoric uncertainties in fuel performance (such as the neutronics of
+irradiated fuel), in this work we consider mostly epistemic uncertainties surrounding the material properties
+and geometries of the problems.  For an example case, we can consider the overall reactor power, fuel mesoscale
+grain growth, and fuel thermal expansion coefficient as uncertain input parameters, with maximum Von Mises stress in the 
+axial center of a fuel rod as a quantity of interest in the output space.
+
+%explain scope of proposal
+In this work, we consider several methodologies for quantifying the uncertainty in fuel performance
+calculations.  In order to demonstrate clearly the function of these methods, we demonstrate them first on
+several simpler problems, such as polynomial evaluations or projectile motion.  The first method we consider
+is traditional, analog Monte Carlo (MC) analysis, wherein random sampling of the input space generates a view of
+the output space.  MC is used as a benchmark methodology; if other methods converge on quantities of interest
+more quickly and accurately than MC, we consider them ``better'' for our purposes.
+
+The second method we consider is isotropic, tensor-product (TP) stochastic collocation for generalized polynomial
+chaos (SCgPC)\cite{sparseSC}\cite{sparse1}\cite{sparse2}\cite{xiu}, whereby deterministic collocation points are used to develop a polynomial reduced-order model
+of the output quantities of interest as a function of the inputs.  The other methods we consider expand on
+this method.  First, we introduce non-tensor-product methods for determining polynomial bases, using the 
+total degree (TD) and hyperbolic cross (HC) polynomial set construction methods\cite{hctd}.
+These bases will then be used to construct Smolyak-like sparse grids for collocation\cite{smolyak}.  Second, we consider
+anisotropic sparse grids,
+allowing additional collocation points for preferential input parameters.  We also consider methods for
+determining weights that determine the level of preference to give parameters, and explore the effects of a
+variety of anisotropic choices.
+
+The third method we consider is high-dimension model representation (HDMR), which correlates with Sobol
+decomposition \cite{hdmr}.  This method is useful both for developing sensitivities of the quantity of interest to subsets
+of the input space, as well as constructing a reduced-order model itself.  We demonstrate the strength of HDMR
+as a method to inform anisotropic sensitivity weights for SCgPC.
+
+Additionally, we propose continued work on developing adaptive algorithms for both SCgPC and HDMR\cite{Ayres}.  In adaptive
+SCgPC, the polynomial basis is constructed level-by-level based on the highest-impact subset polynomials.  In
+adaptive HDMR, the constituent subset input spaces are developed similarly, based on the highest-impact input
+subset.  The crowning achievement we propose is combining HDMR and SCgPC to develop both the subset input
+space as well as the overall reduced-order model adaptively in an attempt to construct a
+competitively-efficient method for uncertainty quantification.
+
+Finally, we propose all these methods be developed within Idaho National Laboratory's \raven{}\cite{raven}
+uncertainty quantification framework. \raven{} is a Python-written framework that non-intrusively provides
+tools for analysts to quantify the uncertainty in their simulations with minimal impact. \raven{}  has already
+been shown to work seamlessly with \moose{}-based fuel performance code \bison{}\cite{moose}\cite{bison}, on which we propose to demonstrate the various
+methods described above.
+
+%outline chapters
+The remainder of this work will proceed as follows:
+\begin{itemize}
+  \item Chapter 2: We mathematically describe the problems solved by the simulations we will be running,
+    including polynomial evaluations, attenuation, projectile, diffusion, and fuel performance.  We discuss
+    their potential applications and approach using random sampling.
+  \item Chapter 3: We describe several methods for uncertainty quantification, including Monte Carlo, Latin
+    Hypercube sampling, generalized Polynomial Chaos, and high-dimension model representation.  We also
+    discuss methods to accelerate the convergence of SCgPC and HDMR models and.
+  \item Chapter 4: We discuss proposed work extending both SCgPC and HDMR to be constructed adaptively.  We
+    also discuss the predicted shortfalls in the adaptive algorithms and some potential methods to address
+    them.
+\end{itemize}
+%----------------------------------------------------------------------------------------
