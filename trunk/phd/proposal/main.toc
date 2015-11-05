@@ -1,8 +1,8 @@
 \contentsline {chapter}{Abstract}{i}{dummy.1}
 \vspace {1em}
 \contentsline {chapter}{Contents}{ii}{dummy.2}
-\contentsline {chapter}{List of Figures}{iii}{dummy.4}
-\contentsline {chapter}{List of Tables}{iv}{dummy.6}
+\contentsline {chapter}{List of Figures}{iv}{dummy.4}
+\contentsline {chapter}{List of Tables}{v}{dummy.6}
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.8}
 \contentsline {chapter}{\numberline {2}Simulation Physics}{4}{chapter.9}
 \contentsline {section}{\numberline {2.1}Simulations Used}{4}{section.10}
@@ -22,6 +22,15 @@
 \contentsline {section}{\numberline {3.6}Stochastic Collocation}{15}{section.60}
 \contentsline {subsection}{\numberline {3.6.1}Smolyak Sparse Grids}{17}{subsection.73}
 \contentsline {section}{\numberline {3.7}High-Dimension Model Representation (HDMR)}{18}{section.83}
-\contentsline {chapter}{\numberline {4}Proposed Work}{20}{chapter.96}
-\contentsline {section}{\numberline {4.1}Proposal}{20}{section.97}
-\contentsline {chapter}{Bibliography}{22}{dummy.98}
+\contentsline {chapter}{\numberline {4}Preliminary Results}{20}{chapter.96}
+\contentsline {section}{\numberline {4.1}Polynomial Evaluations}{20}{section.97}
+\contentsline {section}{\numberline {4.2}Attenuation}{21}{section.102}
+\contentsline {section}{\numberline {4.3}Projectile}{23}{section.107}
+\contentsline {section}{\numberline {4.4}Neutron Diffusion}{24}{section.112}
+\contentsline {section}{\numberline {4.5}Fuel Rod Performance}{26}{section.116}
+\contentsline {section}{\numberline {4.6}Conclusions}{26}{section.117}
+\contentsline {chapter}{\numberline {5}Proposed Work}{28}{chapter.118}
+\contentsline {section}{\numberline {5.1}DRAFT NOTES}{28}{section.119}
+\contentsline {section}{\numberline {5.2}Adaptive Sparse Grid}{28}{section.120}
+\contentsline {section}{\numberline {5.3}Adaptive HDMR}{30}{section.122}
+\contentsline {chapter}{Bibliography}{32}{dummy.127}

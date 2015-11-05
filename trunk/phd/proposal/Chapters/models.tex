@@ -19,10 +19,10 @@ iterative solvers representing complex codes.  We describe each briefly here.
 \section{Polynomial Evaluations}
 In order to benchmark the simplest cases, we make use of simple polynomial expressions of the form
 \begin{equation}
-  u(Y) = \prod_{i=1}^N (y^b_i+a),
+  u(Y) = \prod_{n=1}^N (y_n+1),
 \end{equation}
-where $u(Y)$ is the quantity of interest, $Y=[y_1,y_2,\ldots,y_N]$ is the vector of uncertain inputs, and $a$
-and $b$ are arbitrary scalar values.  The input variables $Y$ can be distributed arbitrarily.
+where $u(Y)$ is the quantity of interest and $Y=[y_1,y_2,\ldots,y_N]$ is the vector of uncertain inputs.
+The input variables $Y$ can be distributed arbitrarily; we distribute them uniformly from 0 to 1.
 These polynomials are demonstrations where SCgPC evaluates exactly at some
 finite expansion level.
 
