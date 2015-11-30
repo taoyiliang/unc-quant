@@ -34,9 +34,9 @@ as follows:
   \item While not converged:
     \begin{itemize}
       \item Collect a list of the polynomial index set whose predecessors have all been evaluated.
-      \item Consider the impact of adding each polynomial to the existing polynomial index set.
+      \item Predict the impact of adding each polynomial to the existing polynomial index set.
       \item If the total impact of all indices is less than tolerance, convergence is reached.
-      \item Otherwise, add the highest-impact polynomial and loop back.
+      \item Otherwise, add the predicted highest-impact polynomial and loop back.
     \end{itemize}
 \end{itemize}
 This adaptive algorithm has the strength of determining the appropriate anisotropy to apply when generating a
@@ -46,7 +46,7 @@ high-impact polynomials in the expansion.
 
 There are, however, some weak points in this algorithm.  First, the current algorithm has no predictive method
 to determine the next polynomial index to include in the set; instead, it evaluates each potential index and
-selects the one with the most impact.  This is somewhat inefficient, because of SCgPC representations created
+selects the one with the most impact \cite{Ayres}.  This is somewhat inefficient, because of SCgPC representations created
 that are not used in the final product.  In addition to including this algorithm, we propose to develop a
 method for predicting high-impact points based on the impact of their predecessors in the set.
 
@@ -76,7 +76,7 @@ limitation, or at least to warn the user when such a case is likely to exist.
 Despite the benefits of ideal anisotropic polynomial set construction promised by the adaptive SCgPC
 algorithm, we expect the adaptive SCgPC to fall short for models where many input parameters provide relevant
 uncertainty.  While the adaptive polynomial index set construction can preferentially emphasize particular
-dimensions, it doesn't reduce the input cardinality of the problem.  An additional algorithm presented by
+dimensions, it does not reduce the input cardinality of the problem.  An additional algorithm presented in
 \cite{Ayres} uses an adaptively-constructed HDMR representation to alleviate the curse of dimensionality for
 the adaptive SCgPC method.
 
@@ -99,17 +99,21 @@ for a model $f(a,b,c)$, the full HDMR expansion is
     &+ f_{abc}. \label{eq:exhdmr3}
 \end{align}
 Truncating, a first-order HDMR expansion includes just the terms in Eq. \ref{eq:exhdmr1}, and a second-order
-expansion additionally includes all the terms in Eq. \ref{eq:exhdmr2}.  However, it is entirely likely that
+expansion additionally includes all the terms in Eq. \ref{eq:exhdmr2}.  However, it is entirely possible and
+often likely that
 some subsets have larger impact than others, and some might be ignored altogether without significantly
-impacting the overall expansion.  Adaptive HDMR proceeds as follows:
+impacting the overall expansion.  Adaptive HDMR (AHDMR) is an algorithm that considers the potential impacts
+of adding new polynomials to existing subsets (as in the Adpative Sparse Grid algorithm) as well as the
+potential impact of adding new subsets to the HDMR expansion. The AHDMR algorithm proceeds as follows:
 \begin{itemize}
   \item Evaluate the reference (all mean) case.
   \item Construct all first-order expansion surrogate models.
   \item While not converged:
   \begin{itemize}
     \item Using existing subset sensitivities, predict the importance of future subsets
-    \item Construct highest-estimated sensitivity surrogate model.
-    \item If contribution of newest model is less than tolerance, convergence is reached.
+    \item Consider the impact of adding polynomial indices to existing subset PCE representations.
+    \item Choose between expanding existing subsets or adding new subsets based on impact.
+    \item If the relative contribution of the new HDMR expectation is less than tolerance, convergence is reached.
   \end{itemize}
 \end{itemize}
 All the surrogate models for each subtype in the expansion are constructed using adaptive SCgPC expansions.
@@ -117,4 +121,6 @@ Because the input space for the subset surrogates is small, and grows slowly as 
 are ideally suited for SCgPC methods.
 
 For the case demonstrated by \cite{Ayres}, combining adaptive HDMR and adaptive SCgPC makes it possible to
-compete in convergence with Monte Carlo for input spaces with cardinality nearly up to a thousand.
+compete in convergence with Monte Carlo for input spaces with cardinality nearly up to a thousand.  Adding
+more efficient polynomial index set choices for adaptive SCgPC, we expect to see additional increases in 
+performance.

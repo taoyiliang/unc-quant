@@ -64,6 +64,9 @@ def HyperbolicCross(orderlist,maxorder,impwts):
       tot*=(val+1)**impwts[e]
     return tot<=target;
   end = multiidxGenerator(len(orderlist),rule,maxorder)
+  print 'end:'
+  for e in end:
+    print e
   return end
 
 def multiidxGenerator(N,rule,L,I=None,MI=None):
