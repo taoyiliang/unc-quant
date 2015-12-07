@@ -65,9 +65,10 @@
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % New command to make the lines in the title page
 
 %code handling
-\newcommand{\raven}{\texttt{RAVEN}}
-\newcommand{\bison}{\texttt{BISON}}
-\newcommand{\moose}{\texttt{MOOSE}}
+\newcommand{\raven}{\texttt{Raven}}
+\newcommand{\bison}{\texttt{Bison}}
+\newcommand{\moose}{\texttt{Moose}}
+\newcommand{\rattlesnake}{\texttt{RattleSNake}}
 
 % some handy math stuff
 \newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
@@ -184,29 +185,38 @@
 
 \abstract{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
 
-As the complexity of experiments in fields such as nuclear engineering continues to increase, so too does the
-demand for robust computational methods to simulate these experiments in virtual space.  In many of these
-simulations, exact input design parameters as well as intrinsic properties of the experiment are often sources
-of input uncertainty.  Often, small perturbations in these uncertain parameters have significant impact on the
-outcome of an experiment.  For instance, when considering nuclear fuel performance experiments, small changes
-in the thermal conductivity of the fuel can greatly affect the maximum stress on the surrounding cladding.
-The difficulty of quantifying the impact of input uncertainties in such experimental systems has grown as the
-complexities in these systems increase.  For some problems, the input parametric space and corresponding
+As experiment complexity in fields such as nuclear engineering continues to increase, so does the
+demand for robust computational methods to simulate them.  In many 
+simulations, input design parameters as well as intrinsic experiment properties are sources
+of input uncertainty.  Often, small perturbations in uncertain parameters have significant impact on the
+experiment outcome.  For instance, when considering nuclear fuel performance, small changes
+in the fuel thermal conductivity can greatly affect the maximum stress on the surrounding cladding.
+The difficulty of quantifying the impact of input uncertainties in such systems has grown with the
+complexity of the systems.  Traditionally, uncertainty quantification has been approached using
+random sampling methods like Monte Carlo.
+For some problems, the input parametric space and corresponding
 quantity of interest output space is sufficiently explored with a few low-cost computational calculations.
 For others, however, the computational model is costly and it takes a great many random samples to obtain a
-good understanding of the output space.  This research explores the possibilities of advanced methods in
+good understanding of the output space.  
+
+To combat the costliness of random sampling, 
+this research explores the possibilities of advanced methods in
 stochastic collocation for generalized polynomial chaos (SCgPC) as an alternative to traditional uncertainty
 quantification techniques such as Monte Carlo (MC) and Latin Hypercube sampling (LHS) methods.  In this
 proposal we explore the behavior of traditional isotropic tensor product (TP) SCgPC, then expand to consider
 truncated polynomial spaces using total degree (TD) and hyperbolic cross (HC) construction strategies.  Next,
 we consider applying anisotropy to the polynomial space construction, and analyze methods whereby the level of
-anisotropy can be approximated.  This leads to introducing the Sobol decomposition method, or high-dimensional
-model representation (HDMR) method, both as a reduced-order model and as a method of obtaining sensitivity indices
-for informing anisotropic SCgPC. We analyze these methods on nontrivial neutron diffusion transport problems.
-Finally, we propose implementing adaptive algorithms for building both the polynomial space for SCgPC and the
-constituent subset space of HDMR in order to approach ideal efficiency in modeling high-dimension problems.
-Further, we propose implementing these methods in the uncertainty qunatification framework RAVEN and applying
-them to nuclear fuels performance code BISON.
+anisotropy can be approximated.  
+We analyze these methods on a series of models, including two analytic models, some simple projectile physics, and
+a nontrivial neutron diffusion transport model.  For this analysis, we demonstrate the application of the
+algorithms discussed in \raven, a production-level uncertainty quantification framework.
+
+Finally, we propose several improvements to the algorithms discussed.  First, we propose developing Sobol
+decomposition, or the high-dimensional model representation (HDMR) method, wherein the uncertainty space is
+divided into constituent subspaces.  Second, we propose developing adaptive algorithms for the intelligent
+construction of both the SCgPC and HDMR methods.  Lastly, we propose all algorithms discussed in this proposal
+be implemented in \raven{} and tested on an engineering-scale multiphysics model coupling neutronics and
+nuclear fuel performance.
 }
 
 \clearpage % Start a new page
