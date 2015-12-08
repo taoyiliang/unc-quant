@@ -13,17 +13,17 @@
 \section{Uncertainty Quantification Methods}
 We consider a few methods for uncertainty quantification (UQ).  One method to classify UQ methods is by their
 interaction level with a simulation code.  Non-intrusive methods treat the code as a black box, perturbing the
-inputs and collecting the outputs without modifying the code.  These methods are ideal for generic application
+inputs and collecting the outputs without modifying the solver code.  These methods are ideal for generic application
 frameworks, where the simulation code may be unknown or precompiled.  Examples of non-intrusive methods
-include analog Monte Carlo (MC), Latin Hypercube sampling (LHS), and deterministic collocation methods.
+include analog Monte Carlo (MC), Latin Hypercube sampling (LHS), and some deterministic collocation methods.
 Alternatively, intrusive methods require access to the solution algorithm itself.  Sometimes this can provide
 more efficient solutions.  In particular, adjoint methods require the solution operator to be reversible, and
 provide very efficient methods to determine sensitivities and analyze output-input dependence.  While many
 intrusive methods have benefits, they lack the flexibility and universal applicability of non-intrusive
-methods, and so we neglect them in this work.
+methods, and so we focus strictly on non-intrusive methods in this work.
 
 \section{Correlation}
-An assumption we make going forward is that the uncertain input parameters are independent or at least
+An assumption we make in this work is that the uncertain input parameters are independent or at least
 uncorrelated.  If this is not the case, methods such as Karhunen-Loeve expansion can be used to develop an orthogonal
 input space to replace the original.  Similarly, principle component analysis can be used to attempt to find
 the fundamental uncorrelated space that maps into the correlated variable space.
