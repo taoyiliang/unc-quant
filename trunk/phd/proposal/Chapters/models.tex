@@ -22,37 +22,62 @@ In order to benchmark the simplest cases, we make use of simple polynomial expre
   u(Y) = \prod_{n=1}^N (y_n+1),
 \end{equation}
 where $u(Y)$ is the quantity of interest and $Y=[y_1,y_2,\ldots,y_N]$ is the vector of uncertain inputs.
-The input variables $Y$ can be distributed arbitrarily; we distribute them uniformly from 0 to 1.
-These polynomials are demonstrations where SCgPC evaluates exactly at some
-finite expansion level.
+The input variables $Y$ can be distributed arbitrarily; we distribute them uniformly from -1 to 1.  This
+results in an isotropic hypercube domain extending from -1 to 1 in all dimensions.  
+Because this model is a sum of polynomials, SCgPC can represent it exactly.  Because it is highly regular, we
+also expect SCgPC to be efficient.
 
 
 
 
 \section{Attenuation}
 To demonstrate the convergence rates of various methods, we make use of an adjusted attenuation problem that
-is equivalent to the penetration of point particles in a purely-absorbing medium.  The uncertain input
-variables are each the length of a segment of material, and each segment has an identical cross section equal
-to 1.  The quantity of
-interest is the percentage of particles exiting the material.  We normalize the length of the segments to
-preserve significant values for the percentage exiting.  The solution to this problem is
+is equivalent to the penetration of neutral particles in a one-dimensional purely-absorbing medium.  For this
+problem we set the physical domain to $x\in[0,1]$, with the material occupying all of the domain space.  If $m$
+particles are incident on a material with length $dx$, the resulting change in the number of particles $dm$
+due to absorption is
+\begin{equation}
+  dm = -y m dx,
+\end{equation}
+where $y$ is the absorption cross section (probability of absorption per unit length) of the neutral particles
+in the material.  The solution for the fraction of particles still present after passing through the material
+for any position $x$ is
+\begin{equation}
+  m(x) = e^{-yx}.
+\end{equation}
+To expand the number of input parameters to the problem, we subdivide the material into $N$ independent
+materials indexed by $n$, each with absorption cross section $y_n$ and length $h=\frac{1}{N}$.  We introduce uncertainty
+by allowing each absorption cross section to vary uniformly between 0 and 1, resulting in a hypercube
+uncertainty domain.  We establish our quantity of interest as the percent of incident particles at the left
+domain ($m(0)$) that remain after passing completely through the material ($m(L)$).  Introducing the
+uncertain material properties as parameters for the quantity of interest, we define
+\begin{equation}
+  u(Y) = m(L,Y),\hspace{15pt}Y\equiv[y_1,\ldots,y_N].
+\end{equation}
+This subdivided domain model can be considered as distinct attenuation problems, where the fraction of
+particles passing through one material are the full number incident on the next material.  Thus, the solution
+is a product of the solution to the one-dimension ODE,
 \begin{align}
-  u(Y) &= \prod_{i=1}^N e^{-Y_i/L},\\
-  u(Y) &= \sum_{i=1}^N \exp\left[\frac{\sum_{i=1}^N -Y_i}{L}\right],
+  u(Y) &= m_1(h,y_2)\cdot m_2(h,y_2)\cdot\ldots\cdot m_N(h,y_N),\\
+    &= \prod_{n=1}^N e^{-h y_n},\\
+    &= \prod_{n=1}^N e^{-y_n/N}.
 \end{align}
-where $L=|Y|_1$ is the total segment length.  The input variables $Y$ can be distributed arbitrarily.
 
-The benefit of this model is a simple analytic solution, which makes analytic benchmarks possible.  In
+The benefit of this model is a simple analytic solution, which makes analytic benchmarks straightforward to
+compute.  In
 addition, because of the exponential form, SCgPC will converge on a solution, but not replicate it exactly as
-in the polynomial case.  This allows accurate comparison between MC, SCgPC methods, and HDMR methods.
+in the polynomial case.  This allows accurate comparison between MC, SCgPC methods, and HDMR methods in a
+highly regular analytic case.
 
 
 
 
 \section{Projectile}
 For a nonlinear case without an analytic solution, we consider the path traveled by a projectile near the
-surface of the Earth, considering varying gravitational pull with height as well as drag on the projectile
-from stagnant air.  The equations governing travel in both vertical position $x$ and horizontal position $y$
+surface of the Earth, considering drag on the projectile from stagnant air.  
+The physical domain for this problem extends from $x=0,y=0$ as far as necessary for the projectile to reach
+its apex and return to $y=0$.
+The equations governing travel in both vertical position $x$ and horizontal position $y$
 are given by
 \begin{equation}
   y(t) = \frac{v_T}{g}(v\sin\theta+v_T)\left(1-\exp\left[\frac{-gt}{v_T}\right]\right)-v_T t,
@@ -61,7 +86,7 @@ are given by
   x(t) = \frac{vv_T\cos\theta}{g}\left(1-\exp\left[\frac{-gt}{v_T}\right]\right),
 \end{equation}
 where $t$ is time, $g$ is acceleration due to gravity, $v$ is scalar velocity, $\theta$ the angle between the
-velocity vector and the horizontal ground, $v_T=\frac{mg}{D}$ is terminal velocity, $D=\frac{\rho CA}{2}$ is
+velocity vector and the horizontal ground (x-axis), $v_T=\frac{mg}{D}$ is terminal velocity, $D=\frac{\rho CA}{2}$ is
 the acceleration due to drag, $C$ is the drag coefficient, and $A=\pi r^2$
 is the surface area of the projectile in the direction of travel.  The projectile is assumed to present an
 identical surface area in both $x$ and $y$ directions.  The quantity of interest is the range, or the total
@@ -86,14 +111,18 @@ distributed uniformly as described in Table \ref{tab:proj dist}.
 \end{table}
 
 This simulation has the benefit of an analytic solution when $C=0$ and eight distinct input parameters of
-varying importance.  This is especially useful in considering anisotropic treatment of the input space.
+varying importance.  This is especially useful in considering anisotropic treatment of the input space.  The
+regularity of the response is not well known, as there is no analytic solution to this case; however, we
+expect the range to be less regular than the quantity of interest in the previous two cases.
 
 
 
 
 \section{Neutron Diffusion}
 For a nonlinear system with complicated physics, we consider a two-group, two-dimensional neutron diffusion
-criticality calculation.  We make use of the diffusion approximation for neutron transport, which provides us
+criticality calculation.  The physical domain for this problem extends along $x\in[0,165\text{ cm}]$ and
+$y\in[0,165\text{ cm}]$.
+We make use of the diffusion approximation for neutron transport, which when restricted to two energy groups provides us
 with a coupled set of elliptic PDEs to solve:
 \begin{equation}
 -\grad\cdot\qty( D_1(\bar x)\grad\phi_1(\bar x))+\qty(\xs{a}{1}(\bar x)+\xs{s}{1\to2}(\bar x))\phi_1(\bar x) = \frac{1}{k(\phi)}\sum_{g'=1}^2\nu_{g'}\xs{f}{g'}(\bar x)\phi_{g'}(\bar x),
@@ -101,9 +130,11 @@ with a coupled set of elliptic PDEs to solve:
 \begin{equation}
 -\grad \cdot\qty(D_2(\bar x)\grad \phi_2(\bar x))+\xs{a}{2}(\bar x)\phi_2(\bar x) = \xs{s}{1\to 2}(\bar x)\phi_1(\bar x),
 \end{equation}
-where we use the following parametric coefficients: the absorption cross section
-$\Sigma_{g,a}=\Sigma_{g,c}+\Sigma_{g,f}$; the capture and fission cross sections $\Sigma_{g,c}$ and
-$\Sigma_{g,f}$; the diffusion coefficient $D_g$ which depends on the scattering cross section of the medium;
+where we use the following parametric coefficients: 
+the absorption cross section $\Sigma_{g,a}=\Sigma_{g,c}+\Sigma_{g,f}$; 
+the capture and fission cross sections $\Sigma_{g,c}$ and $\Sigma_{g,f}$; 
+the energy-group scattering cross section $\Sigma_s^{(g'\to g)}$; 
+the diffusion coefficient $D_g$ which depends on the scattering cross section of the medium;
 and the fission multiplication factor $\nu_g$, the ratio of new neutrons per fission-producing neutron.  The
 solution to this PDE is the neutron scalar flux $\phi_g(\bar x)$.  We apply no-traction conditions on the
 vacuum boundaries and zero-derivative current on the reflecting boundaries for both energy groups:
@@ -124,7 +155,8 @@ The criticality eigenvalue and quantity of interest $k(\phi)$ is given by
 \begin{equation}
 k(\phi)=\sum_{g=1}^2\iint\limits_D\frac{\nu\xs{f}{g}\phi_g(\bar x)}{\qty(-\nabla\cdot D_g\nabla+\Sigma_r^{(g)})\phi_g(\bar x)}~d\bar x.
 \end{equation}
-We address solving $\phi_1,\phi_2,$ and $k$ nonlinearly and simultaneously.  
+We address solving $\phi_1,\phi_2,$ and $k$ nonlinearly and simultaneously using FEM and Jacobian-free
+Newton-Krylov iterations.  
 The material properties are shown in Table \ref{tab:coremats}, and the domain $\Omega=[0,200\text{ cm}]^2$.
 The reference flux solutions are plotted in Fig. \ref{benchflux}, and for the reference problem
 $k$=1.00007605445.  \begin{figure}[H]
@@ -166,41 +198,3 @@ Region & Group & $D_g$ & $\Sigma_{a,g}$ & $\nu\Sigma_{f,g}$ & $\Sigma_s^{1,2}$ \
   \caption{Reference Flux Profiles}
   \label{benchflux}
 \end{figure}
-
-
-
-\section{Fuel Rod Performance}
-While the previous codes were designed and written by the author, \bison{} is a professional use code
-maintained by Idaho National Laboratory.  The fuel performance simulation used in this work is described
-in \cite{cristiansmeared},
-and involves an axial-symmetric LWR fuel rodlet, composed of ten uranium dioxide pellets, zirconium-4
-cladding, gap, and upper plenum.  The problem is a power ramp-up transient as delineated in Table
-\ref{tab:bison power ramp}.  The three uncertain input parameters are distributed in a truncated normal and
-are shown in Table \ref{tab:bison dists}.  Note that scaling parameters are used for both grain radius and
-reactor power, such that a scaling factor of one is the nominal unperturbed case.
-\begin{table}[h]
-  \centering
-  \begin{tabular}{c|c}
-    Time (s) & Linear Power (W/m) \\ \hline
-    0 & 0 \\
-    1e4 & 3.5e4 \\
-    1.5e8 & 3.5e4
-  \end{tabular}
-  \caption{Linear Power Time Evolution}
-  \label{tab:bison power ramp}
-\end{table}
-\begin{table}[h]
-  \centering
-  \begin{tabular}{c|c|c}
-    Variable & Min. Value & Max. Value \\ \hline
-    Grain Radius Scale Factor & 0.4 & 1.5 \\
-    Thermal Expansion Coefficient & 9e-6 & 1.1e-5 \\
-    Linear Power Scaling Factor & 0.95 & 1.05
-  \end{tabular}
-  \caption{Fuel Performance Input Distributions}
-  \label{tab:bison dists}
-\end{table}
-
-The quantity of interest are the stresses on the axial center of the cladding.  The
-uncertain parameters used in this test case are the mesoscale grain radius of the fuel, the simulated power
-of the reactor surrounding the fuel rod, and the thermal expansion coefficient of the fuel.

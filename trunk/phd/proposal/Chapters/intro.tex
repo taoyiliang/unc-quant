@@ -11,56 +11,111 @@
 %\section{Welcome and Thank You}
 
 %problem description
-Fuels performance codes are numerical simulations intended to characterize the performance of a set of
-materials in a particular geometry under a certain environment, over time.  Environmental considerations
-for nuclear fuels might include temperature, neutron flux, and external pressure.  In many cases, the
-performance is quantified by considering the maximum stress undergone by cladding around the fuel as it
-expands and makes contact.  By varying the construction materials and geometry of the fuel, its cladding, and
-the gap between them, fuel can be designed for optimal performance without experiencing a rupture or similar
-break.
+In simulation modeling, we attempt to capture the behavior of a physical system by describing it in a series
+of equations, often partial differential equations.  These equations may be time-dependent, and capture
+physics of interest for understanding the system.  A \emph{solver} is then written that can solve the series
+of equations and determine quantities of interest (QoI).  Typically, a solver accepts a set of inputs and
+produces a set of outputs, often single-valued.  For instance, a solver might solve equations related to the
+attenuation of a beam of photons through a material, and the QoI might be the strength of the beam exiting the
+material.  A single run of the solver usually results in a single value, or realization, of the quantity of
+interest.
 
-%introduce uq for problem
-There are a plethora of parameters that go into simulating fuel performance.  The fuel itself is made up of
-many constituent materials with a variety of densities and structures, as well as behavior under irradiation.
-The contents of the fuel-cladding gap determine how effectively heat can conduct out of the fuel and to the
-cladding, then out to a moderator, and the thickness of this gap determines the amount of fuel expansion
-allowed before contact is made and outward pressure begins increasing.  The material and geometry of the
-cladding determine limits on stress and efficiency of heat transfer.  Any of the material properties in the
-fuel, gap, or cladding, along with the environmental conditions, can be a source of uncertainty in determining
-the maximum stress applied to the cladding.
+This single realization might be misleading, however.  In most systems there is some degree of uncertainty in
+the input parameters to the solver.  Some of these uncertainties may be epistemic, or systematic uncertainty
+originating with inexact measurements or measurable unknowns.  Other uncertainties might be aleatoric,
+intrinsic uncertainty in the system itself, such as probabilistic interactions or random motion.  Taken
+together, the input parameter uncertainties exist within a multidimensional probabilistic space.  While some
+points in that space may be more likely than others, the possible range of values for the QoI is only
+understood when the uncertain input space is considered as a whole.  We note here that while it is possible
+that some of the input parameters are correlated in their probabilistic distribution, it is also possible to
+decouple them into uncorrelated variables.  Throughout this work we will assume the input parameters have been
+uncorrelated from one another.
 
-%explain nature of uncertainty
-There are two categories into which sources of uncertainty fall: aleatoric, or the statistical uncertainty inherent in a
-system; and epistemic, or the systematic uncertainty due to imprecision in measurement or existence of
-measurable unknowns.  While there are aleatoric uncertainties in fuel performance (such as the neutronics of
-irradiated fuel), in this work we consider mostly epistemic uncertainties surrounding the material properties
-and geometries of the problems.  For an example case, we can consider the overall reactor power, fuel mesoscale
-grain growth, and fuel thermal expansion coefficient as uncertain input parameters, with maximum Von Mises stress in the 
-axial center of a fuel rod as a quantity of interest in the output space.
+One traditional method for exploring the uncertain input space is through random sampling, such as in analog Monte
+Carlo sampling.  In this method, a point in the input space is chosen at random based on probability.  This
+point represents values for the input parameters to the solver.  The solver is executed with these inputs, and
+the QoI is collected.  Then, another point in the input space is chosen at random.  This process continues
+until the properties of the QoI or \emph{response} is well understood.
+
+While Monte Carlo sampling is effective at developing an understanding of the response, the sheer volume of
+samples needed to improve that understanding is sometimes prohibitive.  One way to reduce the number of
+samples is by a Latin Hypercube Sampling (LHS) approach.  In this method, the input domain is divided into
+orthogonal hypervolumes.  For instance, for a problem with two uncertain input parameters, the corresponding
+input space is two-dimensional, and the LHS grid would appear as a Cartesian grid of the input space.  Once
+the grid is constructed, a random sample is taken.  Once a sample is taken in one of the grid locations, no
+additional samples can be taken that are within the same uncertainty range in any dimension.  In the two
+dimensional example, once a point is sampled, no additional points can be sampled in the same row or column as
+the sampled points.  In this way, the samples are distributed more thoroughly throughout the input space, and
+may provide a more clear response with less realizations than analog Monte Carlo.
+
+There are some beneficial properties to both Monte Carlo and LHS methods.  Significantly, they are unintrusive; that
+is, there is no need to modify the solver in order to use these methods.  This allows a framework of
+algorithms to be developed which know only the input space and QoI of a solver, but need no further knowledge
+about its operation.  Unintrusive methods are desirable because the uncertainty quantification algorithms can
+be developed and maintained separately from the solver.
+
+However, both Monte Carlo and LHS sampling are relatively slow to converge on the response surface.  For
+example, with Monte Carlo sampling, in order to reduce the error in the mean value of the response by a factor
+of two, it is necessary to take four times as many samples.  If a solver is sufficiently computationally
+inexpensive, running additional solutions is not a large concern; however, for lengthy and expensive solvers,
+it may not be practical to run sufficient realizations to obtain a clear response.
 
 %explain scope of proposal
-In this work, we consider several methodologies for quantifying the uncertainty in fuel performance
-calculations.  In order to demonstrate clearly the function of these methods, we demonstrate them first on
-several simpler problems, such as polynomial evaluations or projectile motion.  The first method we consider
-is traditional, analog Monte Carlo (MC) analysis, wherein random sampling of the input space generates a view of
-the output space.  MC is used as a benchmark methodology; if other methods converge on quantities of interest
-more quickly and accurately than MC, we consider them ``better'' for our purposes.
+In this work, we consider several methodologies for quantifying the uncertainty in expensive solver
+calculations.  In order to demonstrate clearly the function of these methods, we apply them first on
+several simpler problems, such as polynomial evaluations and analytic attenuation.  These models have a high
+degree of regularity, and their analyticity provides for straightforward benchmarking.  We then apply the
+methods to an intermediate-level solver for range of a projectile including drag.  This model is nonlinear and
+has finite regularity, and has no analytic solution.  These properties challenge the methods while still
+maintaining a fast and simple solver.  Finally, we apply the methods to an engineering-scale solver that
+models the neutronics of a nuclear reactor core.  While not as complex as a multiphysics model, this will
+demonstrate the ``real life'' application of the uncertainty quantification methods, where the regularity and
+other properties of the model are not well understood.
 
-The second method we consider is isotropic, tensor-product (TP) stochastic collocation for generalized polynomial
-chaos (SCgPC)\cite{sparseSC}\cite{sparse1}\cite{sparse2}\cite{xiu}, whereby deterministic collocation points are used to develop a polynomial reduced-order model
-of the output quantities of interest as a function of the inputs.  The other methods we consider expand on
-this method.  First, we introduce non-tensor-product methods for determining polynomial bases, using the 
+The first uncertainty quantification method we consider
+is traditional analog Monte Carlo (MC) analysis, wherein random sampling of the input space generates a view of
+the response.  MC is used as a benchmark methodology; if other methods converge on moments of the quantities
+of interest more quickly and consistently than MC, we consider them ``better'' for our purposes.
+
+The second method we consider is isotropic, tensor-product stochastic collocation for generalized polynomial
+chaos (SCgPC)\cite{sparseSC}\cite{sparse1}\cite{sparse2}\cite{xiu}, whereby deterministic collocation points 
+are used to develop a polynomial-interpolated reduced-order model
+of the response as a function of the inputs.  This method algorithmically expands the solver as the sum of
+orthogonal multidimensional polynomials with scalar coefficients.  The scalar coefficients are obtained by
+numerical integration using multidimensional collocation (quadrature) points.  The chief distinction between
+SCgPC and Monte Carlo methods is that SCgPC is deterministic, in that the realizations required from the
+solver are predetermined instead of randomly sampled.  There are two major classes of deterministic
+uncertainty quantification methods: intrusive and unintrusive.  Like Monte Carlo and LHS, SCgPC is unintrusive
+and performs well without any need to access the operation of the solver.  This behavior is desirable for
+construction black-box approach algorithms for uncertainty quantification.  Other intrusive methods such as
+stochastic Galerkin exist \cite{galerkin}, but require solver modification to operate.  This makes them
+solver-dependent and undesirable for an independent uncertainty quantification framework.
+
+The other methods we present here expand on
+SCgPC.  First, we introduce non-tensor-product methods for determining the set of polynomial bases to
+use in the expansion.  Because a tensor product grows exponentially with increasing cardinality of the input
+space, we combat this curse of dimensionality using the 
 total degree (TD) and hyperbolic cross (HC) polynomial set construction methods\cite{hctd}.
-These bases will then be used to construct Smolyak-like sparse grids for collocation\cite{smolyak}.  Second, we consider
+These bases will then be used to construct Smolyak-like sparse grids \cite{smolyak} to provide collocation
+points that in turn calculate the coefficients in the polynomial expansion.  Second, we consider
 anisotropic sparse grids,
-allowing additional collocation points for preferential input parameters.  We also consider methods for
-determining weights that determine the level of preference to give parameters, and explore the effects of a
+allowing higher-order polynomials for particular input parameters.  We also consider methods for
+obtaining weights that determine the level of anisotropic preference to give parameters, and explore the effects of a
 variety of anisotropic choices.
 
-The third method we consider is high-dimension model representation (HDMR), which correlates with Sobol
-decomposition \cite{hdmr}.  This method is useful both for developing sensitivities of the quantity of interest to subsets
-of the input space, as well as constructing a reduced-order model itself.  We demonstrate the strength of HDMR
-as a method to inform anisotropic sensitivity weights for SCgPC.
+%The third method we consider is high-dimension model representation (HDMR), which correlates with Sobol
+%decomposition \cite{hdmr}.  This method is useful both for developing sensitivities of the quantity of interest to subsets
+%of the input space, as well as constructing a reduced-order model itself.  We demonstrate the strength of HDMR
+%as a method to inform anisotropic sensitivity weights for SCgPC.
+
+Based on the preliminary work demonstrated here, we propose several improvements.  First, we propose
+implementing high-dimension model representation (HDMR) as a method to decompose the input uncertainty space
+into low-dimensional subspaces \cite{hdmr}.  This method, sometimes referred to as Sobol decomposition,
+provides two significant functions.  First, this method provides the \emph{Sobol sensitivities}, which are
+parameters based on analysis of variance (ANOVA).  Sobol sensitivities indicate the sensitivity of the
+response QoI to changes in each subset space.  The first-order sensitivities can be used to determine suitable
+anisotropic weighting for SCgPC.  Additionally, HDMR acts as a reduced-order model for the solver, potentially
+providing more efficient evaluations.
 
 Additionally, we propose continued work on developing adaptive algorithms for both SCgPC and HDMR\cite{Ayres}.  In adaptive
 SCgPC, the polynomial basis is constructed level-by-level based on the highest-impact subset polynomials.  In
@@ -71,23 +126,58 @@ competitively-efficient method for uncertainty quantification.
 
 Finally, we propose all these methods be developed within Idaho National Laboratory's \raven{}\cite{raven}
 uncertainty quantification framework. \raven{} is a Python-written framework that non-intrusively provides
-tools for analysts to quantify the uncertainty in their simulations with minimal impact. \raven{}  has already
-been shown to work seamlessly with \moose{}-based fuel performance code \bison{}\cite{moose}\cite{bison}, on which we propose to demonstrate the various
-methods described above.
+tools for analysts to quantify the uncertainty in their simulations with minimal development.  To demonstrate
+the application of the method developed, we propose a complex non-linear multiphysics system solver simulating
+the operation of a fuel pin within a nuclear reactor core, including both neutronics and fuel performance
+physics kernals.  For this solver, we propose to use the coupled \rattlesnake{}\cite{rattlesnake} and 
+\bison{}\cite{bison}\cite{mammoth} production codes.
+Both of these codes are developed and maintained within the \moose{}\cite{moose} environment.  The
+multiphysics nonlinear system will provide a challenge with unknown response properties for the uncertainty
+quantification methods discussed in this proposal.
 
 %outline chapters
 The remainder of this work will proceed as follows:
 \begin{itemize}
   \item Chapter 2: We mathematically describe the problems solved by the simulations we will be running,
-    including polynomial evaluations, attenuation, projectile, diffusion, and fuel performance.  We discuss
-    their potential applications and approach using random sampling.
+    including polynomial evaluations, attenuation, projectile, neutronics, and rector performance.  We discuss
+    their potential approach and applications.
   \item Chapter 3: We describe several methods for uncertainty quantification, including Monte Carlo, Latin
-    Hypercube sampling, generalized Polynomial Chaos, and high-dimension model representation.  We also
-    discuss methods to accelerate the convergence of SCgPC and HDMR models and.
+    Hypercube sampling, and generalized Polynomial Chaos.  We also
+    discuss methods to accelerate the convergence of SCgPC.
   \item Chapter 4: We analyze results obtained thus far for SCgPC methods, and contrast them with traditional
     Monte Carlo convergence on statistical moments.
-  \item Chapter 5: We discuss proposed work extending both SCgPC and HDMR to be constructed adaptively.  We
+  \item Chapter 5: We discuss proposed work both with HDMR and extending SCgPC to be constructed adaptively.  We
     also discuss the predicted shortfalls in the adaptive algorithms and some potential methods to address
     them.
 \end{itemize}
 %----------------------------------------------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%  OLD  %%%%%%%%%%%%%%%%%%%%%%
+%
+%Fuels performance codes are numerical simulations intended to characterize the performance of a set of
+%materials in a particular geometry under a certain environment, over time.  Environmental considerations
+%for nuclear fuels might include temperature, neutron flux, and external pressure.  In many cases, the
+%performance is quantified by considering the maximum stress undergone by cladding around the fuel as it
+%expands and makes contact.  By varying the construction materials and geometry of the fuel, its cladding, and
+%the gap between them, fuel can be designed for optimal performance without experiencing a rupture or similar
+%break.
+%
+%%introduce uq for problem
+%There are a plethora of parameters that go into simulating fuel performance.  The fuel itself is made up of
+%many constituent materials with a variety of densities and structures, as well as behavior under irradiation.
+%The contents of the fuel-cladding gap determine how effectively heat can conduct out of the fuel and to the
+%cladding, then out to a moderator, and the thickness of this gap determines the amount of fuel expansion
+%allowed before contact is made and outward pressure begins increasing.  The material and geometry of the
+%cladding determine limits on stress and efficiency of heat transfer.  Any of the material properties in the
+%fuel, gap, or cladding, along with the environmental conditions, can be a source of uncertainty in determining
+%the maximum stress applied to the cladding.
+%
+%%explain nature of uncertainty
+%There are two categories into which sources of uncertainty fall: aleatoric, or the statistical uncertainty inherent in a
+%system; and epistemic, or the systematic uncertainty due to imprecision in measurement or existence of
+%measurable unknowns.  While there are aleatoric uncertainties in fuel performance (such as the neutronics of
+%irradiated fuel), in this work we consider mostly epistemic uncertainties surrounding the material properties
+%and geometries of the problems.  For an example case, we can consider the overall reactor power, fuel mesoscale
+%grain growth, and fuel thermal expansion coefficient as uncertain input parameters, with maximum Von Mises stress in the 
+%axial center of a fuel rod as a quantity of interest in the output space.
+%
