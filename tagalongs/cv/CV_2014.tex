@@ -1,0 +1,140 @@
+% LaTeX file for resume 
+% This file uses the resume document class (res.cls)
+
+\documentclass{res} 
+%\usepackage{helvetica} % uses helvetica postscript font (download helvetica.sty)
+%\usepackage{newcent}   % uses new century schoolbook postscript font 
+\newsectionwidth{0pt}  % So the text is not indented under section headings
+\usepackage{fancyhdr}  % use this package to get a 2 line header
+\renewcommand{\headrulewidth}{0pt} % suppress line drawn by default by fancyhdr
+\setlength{\headheight}{24pt} % allow room for 2-line header
+\setlength{\headsep}{24pt}  % space between header and text
+\setlength{\headheight}{24pt} % allow room for 2-line header
+\pagestyle{fancy}     % set pagestyle for document
+\rhead{ {\it P. Talbot}\\{\it p. \thepage} } % put text in header (right side)
+\cfoot{}                                     % the foot is empty
+\topmargin=-0.5in % start text higher on the page
+
+\begin{document}
+\thispagestyle{empty} % this page has no header  
+\name{Paul W. Talbot\\[12pt]}% the \\[12pt] adds a blank line after name
+
+\address{{\bf School Address} \\ Farris Engineering Center, Suite 209 \\
+  University of New Mexico \\   Albuquerque, NM 87106}      
+                                      
+\address{{\bf Home Address} \\ 2558 Prospect Dr \#3 \\Idaho Falls, ID 83401 \\ (509) 713-2842}
+
+
+
+\begin{resume}
+ 
+%\section{\centerline{OBJECTIVE}}
+%\vspace{8pt} % provide vertical space between section title and contents
+%A summer position with the MOOSE team at Idaho National Laboratory working on numerical methods.
+ 
+\vspace{0.2in}
+\section{\centerline{EDUCATION}} 
+\vspace{8pt} 
+{\sl Doctor of Philosophy}, Nuclear Engineering \\
+University of New Mexico, Albuquerque, New Mexico \hspace{0.2in} GPA 4.08 \hfill Winter 2015
+
+{\sl Master of Science}, Nuclear Engineering \\
+Oregon State University, Corvallis, Oregon \hspace{0.2in} GPA 3.75 \hfill March 2013 %\\
+%Thesis - Extending the Discrete Maximum Principle for the IMC Equations
+ 
+{\sl Bachelor of Science}, Physics \\ % \sl will be bold italic in
+					 % New Century Schoolbook (or
+					 % any postscript font) and
+					 % just slanted in Computer
+					 % Modern (default) font
+BYU-Idaho, Rexburg, Idaho \hspace{0.2in} GPA 3.84     \hfill    April 2010
+  
+\vspace{0.2in} 
+\section{\centerline{PROFESSIONAL EXPERIENCE}} 
+\vspace{8pt}
+
+{\sl Idaho National Laboratory, Idaho Falls, ID} \\[2pt]
+MOOSE project \hfill    Summer 2012
+
+ \begin{itemize} \itemsep -2pt
+   \item Worked within multiphysics object-oriented software environment (MOOSE)
+  \item Used method of manufactured solutions to test functionality
+  \item Implemented unit tests for finite element basis functions in MOOSE
+  \item Coded in C++
+\end{itemize} \vspace{-6pt}
+
+{\sl Los Alamos National Laboratory, Los Alamos, NM} \hfill        Summer 2011 \\
+     CCS-2  \hfill   
+  
+   \begin{itemize} \itemsep -2pt % reduce space between items
+   \item Extrapolated existing pseudo-analytic single-dimensional discrete maximum principle for the implicit Monte Carlo equations governing radiative heat transfer to include multiple dimensions, non-equilibrium conditions, and mutligroup energies. 
+  \item Implemented predictive capacity into use codes at LANL to predict boundedness in choices of spatial and time discretization.
+ \end{itemize}
+
+{\sl Idaho National Laboratory, Idaho Falls, ID} \\[2pt]
+MARMOT project \hfill    Summer 2010 
+
+ \begin{itemize} \itemsep -2pt
+  \item Optimized polynomial fits to place voids and interstitials realistically in irradiated material models
+  \item Worked within multiphysics object-oriented software environment (MOOSE)
+  \item Used C++, Python, MatLab
+\end{itemize} \vspace{-6pt}
+ 
+{\sl AREVA, NP} \\[2pt]
+BWR Neutronics \hfill    Summers 2008, 2009 
+ \begin{itemize} 
+ \item  Assisted in benchmarking software version update
+  \item Used simulation codes CASMO4 and MICROBURN-B2
+ \item  Researched effect of BLEU fuel in Browns Ferry Unit 2 rector
+  \item Used simulation codes ALADDIN, CASMO3G, CASMO4
+  \item Developed in UNIX environment
+ \end{itemize}
+
+\vspace{0.2in} 
+\section{\centerline{ COMPUTING SKILLS }}
+\vspace{8pt} 
+Experienced with C++, Python, MatLab, Unix, Visual Basic, subversion tools
+ 
+\vspace{0.2in} 
+\section{\centerline{PUBLICATIONS}} 
+\vspace{15pt}
+\begin{itemize}
+  \item P. W. Talbot, A. K. Prinja, ``Sparse-Grid Stochastic Collocation Uncertainty Quantification Convergence for Multigroup Diffusion,'' Accepted, 2014 ANS winter conference transactions, M \& C division
+  \item P. W. Talbot, ``Extending the Discrete Maximum Principle for the IMC equations,'' Oregon State University masters thesis, September 2012
+   \item P. W. Talbot, A. B. Wollaber, T. Palmer, ``Implementing a Discrete Maximum Principle for the IMC Equations," 2012 ANS general conference transactions, M \& C division
+   \item A. B. Wollaber, J. D. Densmore, E. W. Larsen, and P. W. Talbot, ``A discrete maximum principle of the Implicit Monte Carlo equations," ADTSC Science Highlights 2012, No. LA-UR 12-20429, Los Alamos National Laboratory, 2012.
+   \item M. R. Tonks, D. Gaston, P. C. Millett, D. Andrs, P. W. Talbot, ``An object-oriented finite element framework for multiphysics phase field simulations," J. Computational Materials Science, Vol. 50 issue 3, January 2011
+   \end{itemize}
+
+
+\vspace{0.2in} 
+\section{\centerline{MEMBERSHIPS}} 
+\vspace{-5pt} % reduce space between section title and contents
+\begin{center}
+      American Nuclear Society - Alpha Nu Sigma \\
+      Society of Physics Students \\ 
+ \end{center}
+ \vspace{0.2in}
+ 
+\vspace{0.2in}
+%\section{\centerline{INTERESTS}} 
+%\vspace{-5pt} 
+%\begin{center}
+%scripting and coding, Jazz, family, rock climbing
+%\end{center} 
+ 
+\end{resume} 
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
