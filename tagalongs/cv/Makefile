@@ -1,11 +1,11 @@
-SRC = CV_2014
+SRC = cv
 
 all: tidy
 
-tidy: CV_2014.tex
+tidy: cv.tex
 
 	pdflatex $(SRC).tex
-	bibtex $(SRC)
+	# bibtex $(SRC)
 	pdflatex $(SRC).tex
 	pdflatex $(SRC).tex
 

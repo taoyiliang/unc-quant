@@ -17,19 +17,23 @@ inputs and collecting the outputs without modifying the solver code.  These meth
 frameworks, where the simulation code may be unknown or precompiled.  Examples of non-intrusive methods
 include analog Monte Carlo (MC), Latin Hypercube sampling (LHS), and some deterministic collocation methods.
 Alternatively, intrusive methods require access to the solution algorithm itself.  Sometimes this can provide
-more efficient solutions.  In particular, adjoint methods require the solution operator to be reversible, and
+more efficient solutions.  In particular, adjoint methods require the solution operator to be invertible, and
 provide very efficient methods to determine sensitivities and analyze output-input dependence.  While many
-intrusive methods have benefits, they lack the flexibility and universal applicability of non-intrusive
+intrusive methods have efficiency benefits, they lack the flexibility and universal applicability of non-intrusive
 methods, and so we focus strictly on non-intrusive methods in this work.
 
 \section{Correlation}
 An assumption we make in this work is that the uncertain input parameters are independent or at least
-uncorrelated.  If this is not the case, methods such as Karhunen-Loeve expansion can be used to develop an orthogonal
+uncorrelated.  When we indicate two parameters are \emph{correlated} we mean that the distribution of one
+parameter depends on the distribution of another.  For instance, the density of a material and its thermal
+conductivity are correlated.  If input parameters are correlated, methods such as the Karhunen-Loeve
+expansion \cite{textbook}
+can be used to develop an orthogonal
 input space to replace the original.  Similarly, principle component analysis can be used to attempt to find
 the fundamental uncorrelated space that maps into the correlated variable space.
 
 \section{Monte Carlo}
-In analog Monte Carlo uncertainty quantification, a single point in the input space is selected randomly,
+In analog Monte Carlo\cite{lhs} uncertainty quantification, a single point in the input space is selected randomly,
 and an output collected, until an appropriately accurate view of the output space is acquired.  While few
 samples result in a poor understanding of the quantity of interest, sufficiently large samples converge on a
 correct solution.  The convergence rate of Monte Carlo is consistent, as
@@ -58,8 +62,8 @@ subdividing and tracking the grid on the input space.
 
 
 \section{Generalized Polynomial Chaos}
-In general, polynomial chaos expansion (PCE) methods seek to represent the simulation code as a combination of
-polynomials of varying degree and combination in each dimension of the input space.  Originally Wiener
+In general, polynomial chaos expansion (PCE) methods seek to interpolate the simulation code as a combination of
+polynomials of varying degree in each dimension of the input space.  Originally Wiener
 proposed expanding in Hermite polynomials for Gaussian-normal distributed variables \cite{wiener}.  Askey and
 Wilson generalized this method for a range of Gaussian-based distributions with corresponding polynomials,
 including Legendre polynomials for uniform distributions, Laguerre polynomials for Gamma distributions, and
@@ -74,7 +78,8 @@ methodologies have grown from gPC application.  The first makes use of Lagrange 
 original function or simulation code, as they can be made orthogonal over the same domain as the
 distributions\cite{SCLagrange}; the other uses the Wiener-Askey polynomials\cite{xiu}.  We consider the latter in this work.
 
-We consider a simulation code that produces a quantity of interesy $u$ as a function $u(Y)$ whose arguments are the uncertain, distributed input
+We consider a simulation code that produces a quantity of interest $u$ as a function $u(Y)$ whose arguments are
+the uncertain, distributed input
 parameters $Y=[Y_1,\ldots,Y_n,\ldots,Y_N]$.  A particular realization $\omega$ of $Y_n$ is expressed by
 $Y_n(\omega)$, and a single realization of the entire input space results in a solution to the function as
 $u(Y(\omega))$.  We acknowledge obtaining a realization of $u(Y)$ may take considerable computation time and
@@ -85,17 +90,20 @@ value that is temporally or spatially distributed; in any case, we restrict $u(Y
 output.
 
 We expand $u(Y)$ in orthonormal multidimensional polynomials $\Phi_k(Y)$, where $k$ is a multi-index tracking
-the polynomial in each axis of the polynomial Hilbert space, and $\Phi_k(Y)$ is constructed as
+the polynomial order in each axis of the polynomial Hilbert space, and $\Phi_k(Y)$ is constructed as
 \begin{equation}\label{eq:gPC}
   \Phi_k(Y) = \prod_{n=1}^N \phi_{k_n}(Y_n),
 \end{equation}
 where $\phi_{k_n}(Y_n)$ is a single-dimension Wiener-Askey orthonormal polynomial of order $k_n$ and
-$k=[k_1,\ldots,k_n,\ldots,k_N]$.  The gPC for $u(Y)$ using this notation is
+$k=[k_1,\ldots,k_n,\ldots,k_N]$, $k_n\in\mathbb{N}^0$.  For example, given $u(y_1,y_2,y_3)$, $k=(2,1,4)$ 
+is the multi-index of the
+product of: a second-order polynomial in $y_1$; a first-order polynomial in $y_2$; and a fourth-order
+polynomial in $y_4$. The gPC for $u(Y)$ using this notation is
 \begin{equation}
   u(Y) \approx \sum_{k\in\Lambda(L)} u_k\Phi_k(Y),
 \end{equation}
-where $u_k$ is a weighting polynomial coefficient. The polynomials used in the expansion are determined
-by the set of multi-indices $\Lambda(L)$, where $L$ is a truncation order for isotropic methods.  In the limit
+where $u_k$ is a scalar weighting polynomial coefficient. The polynomials used in the expansion are determined
+by the set of multi-indices $\Lambda(L)$, where $L$ is a truncation order.  In the limit
 that $\Lambda$ contains all possible combinations of polynomials of any order, Eq. \ref{eq:gPC} is exact.
 Practically, however, $\Lambda$ is truncated to some finite set of combinations, discussed in section
 \ref{sec:index sets}.
@@ -125,7 +133,10 @@ coll}.
 
 
 \subsection{Polynomial Index Set Construction}\label{sec:index sets}
-There are many ways by which a polynomial index set can be constructed.  Here we present three: tensor
+The chief concern in expanding a function in interpolating multidimensional polynomials is choosing appropriate polynomials to
+make up the expansion.
+There are many generic ways by which a polynomial set can be constructed.  Here we present three static
+approaches: tensor
 product, total degree, and hyperbolic cross.
 
 In the nominal tensor
@@ -155,12 +166,12 @@ and second order in $Y_2$.
 It is evident there is some inefficiencies in this index set.  First, it suffers dramatically from the
 \emph{curse of dimensionality}; that is, the number of polynomials required grows exponentially with
 increasing dimension.  Second, the total order of polynomials is not considered.  Assuming the contribution of
-each higher-order polynomial is smaller than lower-order polynomials as per gPC, the (3,3) term is
+each higher-order polynomial is smaller than lower-order polynomials, the (3,3) term is
 contributing sixth-order corrections that are likely smaller than the error introduced by ignoring
 fourth-order corrections (4,0) and (0,4).  This leads to the development of the \emph{total degree} (TD) and
-\emph{hyperbolic cross} (HC) index set construction strategies\cite{hctd}.
+\emph{hyperbolic cross} (HC) polynomial index set construction strategies\cite{hctd}.
 
-In TD, only multidimensional polynomials whose \emph{total} order is less than $L$ are permitted, as
+In TD, only multidimensional polynomials whose \emph{total} order at most $L$ are permitted,
 \begin{equation}
   \Lambda_\text{TD}(L)=\Big\{\bar p=[p_1,\cdots,p_N]:\sum_{n=1}^N p_n \leq L
 \Big\}.
@@ -200,7 +211,7 @@ grows even more slowly than TD with increasing dimension, as shown in Table \ref
     (0,0) & (0,1) & (0,2) & (0,3)
   \end{tabular}
   \caption{Hyperbolic Cross Index Set, $N=2,L=3$}
-  \label{tab:TD}
+  \label{tab:HC}
 \end{table}
 
 It has been shown that the effectiveness of TD and HC as index set choices depends strongly on the regularity
@@ -209,8 +220,8 @@ while HC is more effective for surfaces with limited smoothness or discontinuiti
 
 \subsection{Anisotropy}
 While using TD or HC to construct the polynomial index set combats the curse of dimensionality present in TP,
-it is not eliminated and continues to be a problem for problems of large dimension.  Another method that can
-be applied to mitigate dimensionality problem is anisotropy, or the unequal treatment of multiple dimensions.
+it is not eliminated and continues to be an issue for problems of large dimensionality.  Another method that can
+be applied to mitigate this issue is index set anisotropy, or the unequal treatment of various dimensions.
 In this strategy, weighting factors $\alpha=[\alpha_1,\ldots,\alpha_n,\ldots,\alpha_N]$ are applied in each
 dimension to allow additional polynomials in some dimensions and less in others.  This change adjusts the TD
 and HC construction rules as follows, where $|\alpha|_1$ is the one-norm of $\alpha$.
@@ -255,20 +266,20 @@ There are many methods by which anisotropy weights can be assigned.  Often, if a
 analyst, it may be enough to use heuristics to assign importance arbitrarily.  Otherwise, a smaller
 uncertainty quantification solve can be used to roughly determine sensitivity coefficients (such as Pearson
 coefficients), and the inverse of those can then be applied as anisotropy weights.  Sobol coefficients
-obtained from first- or second-order HDMR, discussed later, could also serve as a basis for these weights.
+obtained from first- or second-order HDMR, a proposed development for this work, could also serve as a basis for these weights.
 As will be shown, a good choice of anisotropy weight can greatly speed up convergence; however, a
 poor choice can slow convergence considerably, as computational resources are used to resolve low-importance
 dimensions.
 
 
-\section{Stochastic Collocation}
+\section{Stochastic Collocation}\label{sec:stoch coll}
 Stochastic collocation is the process of using collocated points to approximate integrals of stochastic space
 numerically.  In particular we consider using Gaussian quadratures (Legendre, Hermite, Laguerre, and Jacobi)
 corresponding to the polynomial expansion polynomials for numerical integration.  Quadrature integration takes
 the form
 \begin{align}
   \int_a^b f(x)\rho(x) &= \sum_{\ell=1}^\infty w_\ell f(x_\ell),\\
-  &\approx \sum_{\ell=1}^L w_\ell f(x_\ell),
+  &\approx \sum_{\ell=1}^i{\hat L} w_\ell f(x_\ell),
 \end{align}
 where $w_\ell,x_\ell$ are corresponding points and weights belonging to the quadrature set, truncated at order
 $\hat L$.  At this point, this $\hat L$ should not be confused with the polynomial expansion truncation order $L$.  We
@@ -286,9 +297,11 @@ It is worth noting each quadrature may have distinct points and weights; they ne
 the same quadrature rule.
 In general, one-dimensional Gaussian
 quadrature excels in exactly integrating polynomials of order $2p-1$ using $p$ points and weights;
-equivalently, it requires $(p+1)/2$ points to integrate an order $p$ polynomial. <TODO> A
-summary of the Gaussian quadratures and corresponding probability distribution weight functions are described
-in an appendix </TODO>.  For convenience we repeat here the coefficient integral we desire to evaluate, Eq.
+equivalently, it requires $(p+1)/2$ points to integrate an order $p$ polynomial. 
+%<TODO> A
+%summary of the Gaussian quadratures and corresponding probability distribution weight functions are described
+%in an appendix </TODO>.
+For convenience we repeat here the coefficient integral we desire to evaluate, Eq.
 \ref{eq:polycoeff}.
 \begin{equation}
   u_k = \langle u(Y)\Phi_k(Y) \rangle.
@@ -349,7 +362,7 @@ quadrature sets.  Returning momentarily to a one-dimensional problem, we introdu
 \begin{equation}
   q_0^{(\hat L)}[f(x)] = 0.
 \end{equation}
-A Smolyak sparse grid then be defined and applied to the desired integral in Eq. \ref{eq:polycoeff},
+A Smolyak sparse grid is then defined and applied to the desired integral in Eq. \ref{eq:polycoeff},
 \begin{equation}
   S^{(\vec{\hat L})}_{\Lambda,N}[u(Y)\Phi_k(Y)] = \sum_{k\in\Lambda(L)} (\Delta_{k_1}^{(\hat L_1)} \otimes \cdots \otimes
   \Delta_{k_N}^{(\hat L_N)}[u(Y)\Phi_k(Y)].
@@ -367,65 +380,121 @@ using the traditional 1-norm for $|j|_1$.
 The values for $u_k$ can then be calculated as
 \begin{align}
   u_k &= \langle u(Y)\Phi_k(Y) \rangle,\\
-      &\approx S^{(\vec{\hat L})}_{\Lambda,N}[u(Y)\Phi_k(Y)],
+      &\approx S^{(\vec{\hat L})}_{\Lambda,N}[u(Y)\Phi_k(Y)].
 \end{align}
-and gPC for $u(Y)$ is complete.
+With this numerical method to determine coefficients, we have a complete method for performing SCgPC
+analysis in an algorithmic manner.
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                   ASG                        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\section{Adaptive Sparse Grid}
+%One method for improving SCgPC is to construct the polynomial index set adaptively.  This effectively
+%constructs anisotropic index sets based on properties of the expansion as it is constructed, instead of in a
+%predetermined way.  This method is presented in \cite{Gerstner} and used in \cite{Ayres}.  The algorithm
+%proceeds generally as follows:
+%\begin{itemize}
+%  \item Begin with the mean (zeroth-order) polynomial expansion.
+%  \item While not converged:
+%    \begin{itemize}
+%      \item Collect a list of the polynomial index set whose predecessors have all been evaluated.
+%      \item Predict the impact of adding each polynomial to the existing polynomial index set.
+%      \item If the total impact of all indices is less than tolerance, convergence is reached.
+%      \item Otherwise, add the predicted highest-impact polynomial and loop back.
+%    \end{itemize}
+%\end{itemize}
+%This adaptive algorithm has the strength of determining the appropriate anisotropy to apply when generating a
+%polynomial index set.  For strongly  anisotropic cases, or cases where the static index set construction rules are not
+%ideal, the adaptive index set could potentially provide a method to avoid wasted calculations and emphasize
+%high-impact polynomials in the expansion.
+%%TODO visual example
+%
+%There are, however, some weak points in this algorithm.  First, the current algorithm has no predictive method
+%to determine the next polynomial index to include in the set; instead, it evaluates each potential index and
+%selects the one with the most impact \cite{Ayres}.  This is somewhat inefficient, because of SCgPC representations created
+%that are not used in the final product.  We address this as part of proposed work.
+%%In addition to including this algorithm, we propose to develop a
+%%method for predicting high-impact points based on the impact of their predecessors in the set.
+%
+%Second, there are certain types of models for which the adaptive algorithm will stall, converge too early, or
+%similarly fail.  For instance, if the partial derivative of the model with respect to any of the
+%input dimensions is zero when evaluated at the mean point (but nonzero elsewhere), the algorithm will falsely
+%converge prematurely, as adding additional polynomial orders to the input in question will not change the
+%value of the model at the mean point.  For example, consider a model
+%\begin{equation}
+%  f(a,b) = a^3b^3,
+%\end{equation}
+%with both $a$ and $b$ uniformly distributed on [-1,1].  We note the partial derivatives with respect to either
+%input variable evaluated at the central point (0,0) are zero.  The first polynomial index set point to
+%evaluate is zeroth-order in each dimension, [0,0].  We distinguish input domain points from polynomial index
+%set points by using parenthesis for the former and square brackets for the latter. The quadrature point to
+%evaluate this polynomial coefficient is (0,0), which, when evaluated, gives $f(0,0)=0$.  The next polynomial
+%index set combinations are [1,2] and [2,1].  For [1,2], the quadrature points required are
+%(0,$\pm\sqrt{1/3}$).  This evaluates to $f(0,\pm\sqrt{1/3})=0$, as well.  Because of symmetry, we obtain the
+%same result of [2,1].  According to our algorithm, because our old value was 0, and the sum of the new
+%contributions is 0, we have converged; however, we know this is false convergence.  While we expect few
+%applications for SCgPC to exhibit these zero partial derivatives in the input space, it is a limitation to be
+%aware of.  An argument can be made that, since lower-order polynomials correspond to lower-energy modes of the
+%modeled physics, it is expected that higher-order polynomials should rarely contribute to an accurate
+%expansion unless lower-order polynomials contribute as well.
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                  HDMR                        %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{High-Dimension Model Representation (HDMR)}
-While using SCgPC is one method for creating a reduced-order model for a simulation code $u(Y)$, another
-useful model reduction is HDMR\cite{hdmr}, or Sobol decomposition.  In particular, we consider Cut-HDMR in this work.  
-In this methodology, the representation of $u(Y)$ is built up from the contributions of subsets of the input
-space.  We consider a reference point realization of $Y$ (nominally the mean of each distribution) $Y^{(0)} =
-[Y_1^{(0)},\ldots,Y_N^{(0)}]$ and introduce the notation
-\begin{equation}
-  \hat Y_n \equiv [Y_1,\ldots,Y_{n-1},Y_{n+1},\ldots,Y_N],
-\end{equation}
-and
-\begin{equation}
-  u(Y_n)\hold{\hat Y_n} \equiv u(\hat Y_n^{(0)},Y_n).
-\end{equation}
-In words, this notation describes holding all the input variables except $Y_n$ constant and only allowing
-$Y_n$ to vary.  Similarly for higher dimensions,
-\begin{align}
-  u(Y_m,Y_n)\hold{\hat Y_{m,n}} &\equiv u(\hat Y_{m,n}^{(0)},Y_m,Y_n),\\
-      &=
-      u(Y_1^{(0)},\ldots,Y_{m-1}^{(0)},Y_m,Y_{m+1}^{(0)},\ldots,Y_{n-1}^{(0)},Y_n,Y_{n+1}^{(0)},\ldots,Y_N^{(0)}).
-\end{align}
-The HDMR reduced-order model is then constructed as
-\begin{align}
-  u(Y) = u_0 &+ \sum_{n=1}^N u_{Y_n} \nonumber\\
-  &+ \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} u_{Y_{n_1},Y_{n_2}} \nonumber \\
-  &+ \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} \sum_{n_3=1}^{n_2-1} u_{Y_{n_1},Y_{n_2},Y_{n_3}} \nonumber \\
-  &\cdots\\
-  &+u_{Y_{n_1},\cdots,Y_{n_N}},
-\end{align}
-where
-\begin{align}
-  u_0 &= u(Y^{(0)}),\\
-  u_{Y_n} &= u(Y_n)\hold{Y_n} - u_0,\\
-  u_{Y_m,Y_n} &= u(Y_m,Y_n)\hold{Y_m,Y_n} - u_{Y_m} - u_{Y_n} - u_0,\\
-  \cdots&
-\end{align}
-If not truncated, this wastes significant computational effort; however, truncating at second- or third-order
-interactions can often capture much of the physics with less computation effort than a full solve.  It is
-important to note that the HDMR is not a value itself, but a reduced-order model.  To speed up computation
-using this model, each component term in the HDMR expansion can be replaced in turn by a reduced-order model.
-In particular, because SCgPC is most effective in calculations involving a small input space, gPC
-reduced-order models are excellent for representing components of the HDMR expansion.
-
-In addition, Sobol sensitivity indices $s$ can be obtained by taking the ratio of any one expansion term against
-the remainder of the terms.  For first-order sensitivities,
-\begin{equation}
-  s_n = \frac{\text{var}(u_{Y_n})}{\text{var}(u(Y))},
-\end{equation}
-and for second-order,
-\begin{equation}
-  s_{m,n} = \frac{\text{var}(u_{Y_m,Y_n})}{\text{var}(u(Y))},
-\end{equation}
-etc.  These sensitivities can be used to inform adaptive SCgPC calculations on the full model.
+%\section{High-Dimension Model Representation (HDMR)}
+%While using SCgPC is one method for creating a reduced-order model for a simulation code $u(Y)$, another
+%useful model reduction is HDMR\cite{hdmr}, or Sobol decomposition.  In particular, we consider Cut-HDMR in this work.  
+%In this methodology, the representation of $u(Y)$ is built up from the contributions of subsets of the input
+%space.  We consider a reference point realization of $Y$ (nominally the mean of each distribution) $Y^{(0)} =
+%[Y_1^{(0)},\ldots,Y_N^{(0)}]$ and introduce the notation
+%\begin{equation}
+%  \hat Y_n \equiv [Y_1,\ldots,Y_{n-1},Y_{n+1},\ldots,Y_N],
+%\end{equation}
+%and
+%\begin{equation}
+%  u(Y_n)\hold{\hat Y_n} \equiv u(\hat Y_n^{(0)},Y_n).
+%\end{equation}
+%In words, this notation describes holding all the input variables except $Y_n$ constant and only allowing
+%$Y_n$ to vary.  Similarly for higher dimensions,
+%\begin{align}
+%  u(Y_m,Y_n)\hold{\hat Y_{m,n}} &\equiv u(\hat Y_{m,n}^{(0)},Y_m,Y_n),\\
+%      &=
+%      u(Y_1^{(0)},\ldots,Y_{m-1}^{(0)},Y_m,Y_{m+1}^{(0)},\ldots,Y_{n-1}^{(0)},Y_n,Y_{n+1}^{(0)},\ldots,Y_N^{(0)}).
+%\end{align}
+%The HDMR reduced-order model is then constructed as
+%\begin{align}
+%  u(Y) = u_0 &+ \sum_{n=1}^N u_{Y_n} \nonumber\\
+%  &+ \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} u_{Y_{n_1},Y_{n_2}} \nonumber \\
+%  &+ \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} \sum_{n_3=1}^{n_2-1} u_{Y_{n_1},Y_{n_2},Y_{n_3}} \nonumber \\
+%  &\cdots\\
+%  &+u_{Y_{n_1},\cdots,Y_{n_N}},
+%\end{align}
+%where
+%\begin{align}
+%  u_0 &= u(Y^{(0)}),\\
+%  u_{Y_n} &= u(Y_n)\hold{Y_n} - u_0,\\
+%  u_{Y_m,Y_n} &= u(Y_m,Y_n)\hold{Y_m,Y_n} - u_{Y_m} - u_{Y_n} - u_0,\\
+%  \cdots&
+%\end{align}
+%If not truncated, this wastes significant computational effort; however, truncating at second- or third-order
+%interactions can often capture much of the physics with less computation effort than a full solve.  It is
+%important to note that the HDMR is not a value itself, but a reduced-order model.  To speed up computation
+%using this model, each component term in the HDMR expansion can be replaced in turn by a reduced-order model.
+%In particular, because SCgPC is most effective in calculations involving a small input space, gPC
+%reduced-order models are excellent for representing components of the HDMR expansion.
+%
+%In addition, Sobol sensitivity indices $s$ can be obtained by taking the ratio of any one expansion term against
+%the remainder of the terms.  For first-order sensitivities,
+%\begin{equation}
+%  s_n = \frac{\text{var}(u_{Y_n})}{\text{var}(u(Y))},
+%\end{equation}
+%and for second-order,
+%\begin{equation}
+%  s_{m,n} = \frac{\text{var}(u_{Y_m,Y_n})}{\text{var}(u(Y))},
+%\end{equation}
+%etc.  These sensitivities can be used to inform adaptive SCgPC calculations on the full model.
