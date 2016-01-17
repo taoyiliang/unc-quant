@@ -14,20 +14,15 @@ degree work.
 %----------------------------------------------------------------------------------------
 \section{DRAFT NOTES}
 \begin{itemize}
-  \item I've included results from the Adaptive Sparse Grid sampler in the Results section as well as this proposal
-section, as I'm not confident which section we want it to belong to.  I can move the ``proposed'' to
-``methods'' if we want to showcase it for the proposal.
-  \item The colors for the first two convergence plots are off for the Diffusion model, but that should be
-    easy to fix for the final draft.
-  \item There's no results for the adaptive sparse grid for the diffusion model, as I haven't been able to run
-    the diffusion model in RAVEN and my pre-RAVEN UQ framework doesn't include the adaptive methodology.
-    There's an outside chance I could get the two working together on a clean-built machine.
+  \item I'm still updating the colors and contents of the results plots.  They'll be ready by January.
 \end{itemize}
 
 \section{Adaptive Sparse Grid}
 
 There is a method proposed by \cite{Gerstner} and used in \cite{Ayres} whereby the polynomial index set to be
-used in constructing the sparse grid quadrature is constructed adaptively.  The algorithm proceeds generally
+used in constructing the sparse grid quadrature is constructed adaptively.  We have demonstrated its
+effectiveness in a preliminary manner in this work, but further improvements and demonstrations are critical
+in exploring this method's potential.  The algorithm proceeds generally
 as follows:
 \begin{itemize}
   \item Begin with the mean (zeroth-order) polynomial expansion.
@@ -44,11 +39,14 @@ polynomial index set.  For anisotropic cases, or cases where the static index se
 ideal, the adaptive index set could potentially provide a method to avoid wasted calculations and emphasize
 high-impact polynomials in the expansion.
 
-There are, however, some weak points in this algorithm.  First, the current algorithm has no predictive method
+PLACEHOLDER: VISUAL EXAMPLE OF 2D ADAPTIVE PROGRESSION
+
+There are, however, some weak points in this algorithm.  First, the algorithm in literature has no predictive method
 to determine the next polynomial index to include in the set; instead, it evaluates each potential index and
 selects the one with the most impact \cite{Ayres}.  This is somewhat inefficient, because of SCgPC representations created
 that are not used in the final product.  In addition to including this algorithm, we propose to develop a
-method for predicting high-impact points based on the impact of their predecessors in the set.
+method for predicting high-impact points based on the impact of their predecessors in the set.  Results shown
+in this work are a first step in that direction.
 
 Second, there are certain types of models for which the adaptive algorithm will stall, converge too early, or
 otherwise generally fail.  For instance, if the partial derivative of the model with respect to any of the
@@ -118,9 +116,25 @@ potential impact of adding new subsets to the HDMR expansion. The AHDMR algorith
 \end{itemize}
 All the surrogate models for each subtype in the expansion are constructed using adaptive SCgPC expansions.
 Because the input space for the subset surrogates is small, and grows slowly as the method progresses, they
-are ideally suited for SCgPC methods.
+are ideally suited for SCgPC methods.  However, we note that any surrogate model, or the original model
+itself, can be used instead of adaptive SCgPC reduced-order models.
 
 For the case demonstrated by \cite{Ayres}, combining adaptive HDMR and adaptive SCgPC makes it possible to
 compete in convergence with Monte Carlo for input spaces with cardinality nearly up to a thousand.  Adding
 more efficient polynomial index set choices for adaptive SCgPC, we expect to see additional increases in 
 performance.
+
+\section{Quadrature}
+The numerical integrations in this work have all been performed using classic Gaussian quadrature sets
+(Legendre, Hermite, Laguerre, Jacobi).  It is also possible to use other quadrature sets for integration, such
+as Clenshaw-Curtis or Gauss-Patterson.  These quadratures have the benefit of nested quadratures when chosen
+correctly, which, especially for adaptive methods, can save considerable computation.  We propose to implement
+at least one of these nested quadratures and contrast the performance of SCgPC methods using both classic and
+nested quadratures.
+
+\section{Engineering Application}
+Lastly, we propose to implement all of the methods discussed here in production-scale uncertainty
+quantification code \raven{}, and apply them in quantifying the uncertainty of a nonlinear multiphysics
+problem.  In particular, we propose considering a two-dimensional quarter-pin cell nuclear engineering problem
+coupling \moose{} applications \rattlesnake{}, a neutron transport code, and \bison{}, a fuel performance
+code.

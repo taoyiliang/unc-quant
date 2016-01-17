@@ -191,12 +191,12 @@ simulations, input design parameters as well as intrinsic experiment properties 
 of input uncertainty.  Often, small perturbations in uncertain parameters have significant impact on the
 experiment outcome.  For instance, when considering nuclear fuel performance, small changes
 in the fuel thermal conductivity can greatly affect the maximum stress on the surrounding cladding.
-The difficulty of quantifying the impact of input uncertainties in such systems has grown with the
-complexity of the systems.  Traditionally, uncertainty quantification has been approached using
+The difficulty of quantifying input uncertainty impact in such systems has grown with the
+complexity of the numerical models.  Traditionally, uncertainty quantification has been approached using
 random sampling methods like Monte Carlo.
-For some problems, the input parametric space and corresponding
-quantity of interest output space is sufficiently explored with a few low-cost computational calculations.
-For others, however, the computational model is costly and it takes a great many random samples to obtain a
+For some models, the input parametric space and corresponding
+quantity-of-interest output space is sufficiently explored with a few low-cost computational calculations.
+For other models, computation is costly and takes many random samples to obtain a
 good understanding of the output space.  
 
 To combat the costliness of random sampling, 
@@ -213,7 +213,8 @@ algorithms discussed in \raven, a production-level uncertainty quantification fr
 
 Finally, we propose several improvements to the algorithms discussed.  First, we propose developing Sobol
 decomposition, or the high-dimensional model representation (HDMR) method, wherein the uncertainty space is
-divided into constituent subspaces.  Second, we propose developing adaptive algorithms for the intelligent
+treated as the superposition of constituent subspaces.  
+Second, we propose developing adaptive algorithms for the intelligent
 construction of both the SCgPC and HDMR methods.  Lastly, we propose all algorithms discussed in this proposal
 be implemented in \raven{} and tested on an engineering-scale multiphysics model coupling neutronics and
 nuclear fuel performance.

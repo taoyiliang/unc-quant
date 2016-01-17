@@ -16,6 +16,7 @@ several independent simulations (hereafter referred to as ``codes'') of increasi
 range from simple polynomial evaluations to analytic solutions of simple physics, to nonlinear multistage
 iterative solvers representing complex codes.  We describe each briefly here.
 
+
 \section{Polynomial Evaluations}
 In order to benchmark the simplest cases, we make use of simple polynomial expressions of the form
 \begin{equation}
@@ -30,8 +31,9 @@ also expect SCgPC to be efficient.
 
 
 
+
 \section{Attenuation}
-To demonstrate the convergence rates of various methods, we make use of an adjusted attenuation problem that
+To demonstrate the convergence rates of various methods, we make use of an attenuation problem that
 is equivalent to the penetration of neutral particles in a one-dimensional purely-absorbing medium.  For this
 problem we set the physical domain to $x\in[0,1]$, with the material occupying all of the domain space.  If $m$
 particles are incident on a material with length $dx$, the resulting change in the number of particles $dm$
@@ -47,7 +49,7 @@ for any position $x$ is
 \end{equation}
 To expand the number of input parameters to the problem, we subdivide the material into $N$ independent
 materials indexed by $n$, each with absorption cross section $y_n$ and length $h=\frac{1}{N}$.  We introduce uncertainty
-by allowing each absorption cross section to vary uniformly between 0 and 1, resulting in a hypercube
+by allowing each absorption cross section to vary uniformly between 0 and 1, resulting in a hypercubic
 uncertainty domain.  We establish our quantity of interest as the percent of incident particles at the left
 domain ($m(0)$) that remain after passing completely through the material ($m(L)$).  Introducing the
 uncertain material properties as parameters for the quantity of interest, we define
@@ -56,7 +58,7 @@ uncertain material properties as parameters for the quantity of interest, we def
 \end{equation}
 This subdivided domain model can be considered as distinct attenuation problems, where the fraction of
 particles passing through one material are the full number incident on the next material.  Thus, the solution
-is a product of the solution to the one-dimension ODE,
+is a product of the solutions to the one-dimension ODE,
 \begin{align}
   u(Y) &= m_1(h,y_2)\cdot m_2(h,y_2)\cdot\ldots\cdot m_N(h,y_N),\\
     &= \prod_{n=1}^N e^{-h y_n},\\
@@ -68,9 +70,6 @@ compute.  In
 addition, because of the exponential form, SCgPC will converge on a solution, but not replicate it exactly as
 in the polynomial case.  This allows accurate comparison between MC, SCgPC methods, and HDMR methods in a
 highly regular analytic case.
-
-
-
 
 \section{Projectile}
 For a nonlinear case without an analytic solution, we consider the path traveled by a projectile near the
@@ -114,6 +113,7 @@ This simulation has the benefit of an analytic solution when $C=0$ and eight dis
 varying importance.  This is especially useful in considering anisotropic treatment of the input space.  The
 regularity of the response is not well known, as there is no analytic solution to this case; however, we
 expect the range to be less regular than the quantity of interest in the previous two cases.
+
 
 
 
