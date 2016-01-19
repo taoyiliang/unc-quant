@@ -13,7 +13,7 @@
 \section{Simulations Used}
 To demonstrate the efficacy of the various uncertainty quantification methods we use in this work, we employ
 several independent simulations (hereafter referred to as ``codes'') of increasing complexity.  These codes
-range from simple polynomial evaluations to analytic solutions of simple physics, to nonlinear multistage
+range from simple polynomial evaluations to nonlinear multistage
 iterative solvers representing complex codes.  We describe each briefly here.
 
 
@@ -22,7 +22,7 @@ In order to benchmark the simplest cases, we make use of simple polynomial expre
 \begin{equation}
   u(Y) = \prod_{n=1}^N (y_n+1),
 \end{equation}
-where $u(Y)$ is the quantity of interest and $Y=[y_1,y_2,\ldots,y_N]$ is the vector of uncertain inputs.
+where $u(Y)$ is the quantity of interest and $Y=(y_1,y_2,\ldots,y_N)$ is the vector of uncertain inputs.
 The input variables $Y$ can be distributed arbitrarily; we distribute them uniformly from -1 to 1.  This
 results in an isotropic hypercube domain extending from -1 to 1 in all dimensions.  
 Because this model is a sum of polynomials, SCgPC can represent it exactly.  Because it is highly regular, we
@@ -47,6 +47,10 @@ for any position $x$ is
 \begin{equation}
   m(x) = e^{-yx}.
 \end{equation}
+The fraction of particles retained after passing through a segment of the domain is similarly
+\begin{equation}
+  m(x+\Delta_x) = e^{-y\Delta_x}.
+\end{equation}
 To expand the number of input parameters to the problem, we subdivide the material into $N$ independent
 materials indexed by $n$, each with absorption cross section $y_n$ and length $h=\frac{1}{N}$.  We introduce uncertainty
 by allowing each absorption cross section to vary uniformly between 0 and 1, resulting in a hypercubic
@@ -54,7 +58,7 @@ uncertainty domain.  We establish our quantity of interest as the percent of inc
 domain ($m(0)$) that remain after passing completely through the material ($m(L)$).  Introducing the
 uncertain material properties as parameters for the quantity of interest, we define
 \begin{equation}
-  u(Y) = m(L,Y),\hspace{15pt}Y\equiv[y_1,\ldots,y_N].
+  u(Y) = m(L,Y),\hspace{15pt}Y\equiv(y_1,\ldots,y_N).
 \end{equation}
 This subdivided domain model can be considered as distinct attenuation problems, where the fraction of
 particles passing through one material are the full number incident on the next material.  Thus, the solution
@@ -71,49 +75,49 @@ addition, because of the exponential form, SCgPC will converge on a solution, bu
 in the polynomial case.  This allows accurate comparison between MC, SCgPC methods, and HDMR methods in a
 highly regular analytic case.
 
-\section{Projectile}
-For a nonlinear case without an analytic solution, we consider the path traveled by a projectile near the
-surface of the Earth, considering drag on the projectile from stagnant air.  
-The physical domain for this problem extends from $x=0,y=0$ as far as necessary for the projectile to reach
-its apex and return to $y=0$.
-The equations governing travel in both vertical position $x$ and horizontal position $y$
-are given by
-\begin{equation}
-  y(t) = \frac{v_T}{g}(v\sin\theta+v_T)\left(1-\exp\left[\frac{-gt}{v_T}\right]\right)-v_T t,
-\end{equation}
-\begin{equation}
-  x(t) = \frac{vv_T\cos\theta}{g}\left(1-\exp\left[\frac{-gt}{v_T}\right]\right),
-\end{equation}
-where $t$ is time, $g$ is acceleration due to gravity, $v$ is scalar velocity, $\theta$ the angle between the
-velocity vector and the horizontal ground (x-axis), $v_T=\frac{mg}{D}$ is terminal velocity, $D=\frac{\rho CA}{2}$ is
-the acceleration due to drag, $C$ is the drag coefficient, and $A=\pi r^2$
-is the surface area of the projectile in the direction of travel.  The projectile is assumed to present an
-identical surface area in both $x$ and $y$ directions.  The quantity of interest is the range, or the total
-distance in $x$ traveled by the ball before reaching a height of $y=0$.  The uncertain input variables are
-distributed uniformly as described in Table \ref{tab:proj dist}.
-
-\begin{table}[h]
-\centering
-\begin{tabular}{c | l | c c | c}
-  Variable & Name & Mean & Range ($\pm$) & Units \\\hline
-  $y_i$ & Initial Height & 1 & 1 & m\\
-  $v$ & Initial Velocity & 35.5 & 2.5 & m/s\\
-  $\theta$ & Initial Angle & 45 & 10 & degrees\\
-  $g$ & Accel. Gravity & 9.79888 & 0.0349 & m/s/s\\
-  $m$ & Projectile Mass & 0.145 & 0.0725 & kg\\
-  $r$ & Projectile Radius & 0.0336 & 0.00336 & m\\
-  $C$ & Drag Coefficient & 0.5 & 0.5 & \\
-  $\rho$ & Air Density & 1.2 & 0.1 & kg/m$^3$ \\
-\end{tabular}
-\caption{Projectile Problem Distributions}
-\label{tab:proj dist}
-\end{table}
-
-This simulation has the benefit of an analytic solution when $C=0$ and eight distinct input parameters of
-varying importance.  This is especially useful in considering anisotropic treatment of the input space.  The
-regularity of the response is not well known, as there is no analytic solution to this case; however, we
-expect the range to be less regular than the quantity of interest in the previous two cases.
-
+%\section{Projectile}
+%For a nonlinear case without an analytic solution, we consider the path traveled by a projectile near the
+%surface of the Earth, considering drag on the projectile from stagnant air.  
+%The physical domain for this problem extends from $x=0,y=0$ as far as necessary for the projectile to reach
+%its apex and return to $y=0$.
+%The equations governing travel in both vertical position $x$ and horizontal position $y$
+%are given by
+%\begin{equation}
+%  y(t) = \frac{v_T}{g}(v\sin\theta+v_T)\left(1-\exp\left[\frac{-gt}{v_T}\right]\right)-v_T t,
+%\end{equation}
+%\begin{equation}
+%  x(t) = \frac{vv_T\cos\theta}{g}\left(1-\exp\left[\frac{-gt}{v_T}\right]\right),
+%\end{equation}
+%where $t$ is time, $g$ is acceleration due to gravity, $v$ is scalar velocity, $\theta$ the angle between the
+%velocity vector and the horizontal ground (x-axis), $v_T=\frac{mg}{D}$ is terminal velocity, $D=\frac{\rho CA}{2}$ is
+%the acceleration due to drag, $C$ is the drag coefficient, and $A=\pi r^2$
+%is the surface area of the projectile in the direction of travel.  The projectile is assumed to present an
+%identical surface area in both $x$ and $y$ directions.  The quantity of interest is the range, or the total
+%distance in $x$ traveled by the ball before reaching a height of $y=0$.  The uncertain input variables are
+%distributed uniformly as described in Table \ref{tab:proj dist}.
+%
+%\begin{table}[h]
+%\centering
+%\begin{tabular}{c | l | c c | c}
+%  Variable & Name & Mean & Range ($\pm$) & Units \\\hline
+%  $y_i$ & Initial Height & 1 & 1 & m\\
+%  $v$ & Initial Velocity & 35.5 & 2.5 & m/s\\
+%  $\theta$ & Initial Angle & 45 & 10 & degrees\\
+%  $g$ & Accel. Gravity & 9.79888 & 0.0349 & m/s/s\\
+%  $m$ & Projectile Mass & 0.145 & 0.0725 & kg\\
+%  $r$ & Projectile Radius & 0.0336 & 0.00336 & m\\
+%  $C$ & Drag Coefficient & 0.5 & 0.5 & \\
+%  $\rho$ & Air Density & 1.2 & 0.1 & kg/m$^3$ \\
+%\end{tabular}
+%\caption{Projectile Problem Distributions}
+%\label{tab:proj dist}
+%\end{table}
+%
+%This simulation has the benefit of an analytic solution when $C=0$ and eight distinct input parameters of
+%varying importance.  This is especially useful in considering anisotropic treatment of the input space.  The
+%regularity of the response is not well known, as there is no analytic solution to this case; however, we
+%expect the range to be less regular than the quantity of interest in the previous two cases.
+%
 
 
 
@@ -159,7 +163,7 @@ We address solving $\phi_1,\phi_2,$ and $k$ nonlinearly and simultaneously using
 Newton-Krylov iterations.  
 The material properties are shown in Table \ref{tab:coremats}, and the domain $\Omega=[0,200\text{ cm}]^2$.
 The reference flux solutions are plotted in Fig. \ref{benchflux}, and for the reference problem
-$k$=1.00007605445.  \begin{figure}[H]
+$k$=1.00007605445 with a relative iterative convergence of 1 pcm.  \begin{figure}[H]
 \centering
   \includegraphics[width=0.4\linewidth]{core}
   \caption{Core Geometry}

@@ -52,7 +52,7 @@
 }
 
 \date[Jan 22 2016] % (optional, should be abbreviation of conference name)
-{Dissertation Proposal, January 22nd 2016}
+{Dissertation Proposal, January 22nd 2016\\\vspace{10pt}\small Funded by a Laboratory Directed Research effort at Idaho National Laboratory}
 
 
 \subject{Uncertainty Quantification}
@@ -72,7 +72,18 @@
   \insertframenumber/\inserttotalframenumber
 }
 
+\makeatletter
+\def\beamer@tocaction@only#1{\only<.(1)>{\usebeamertemplate**{#1}}}
+\define@key{beamertoc}{subsectionsonly}[]{\beamer@toc@subsectionstyle{show/only}\beamer@toc@subsubsectionstyle{show/shaded/hide}}
+\makeatother
+
 \begin{document}
+\AtBeginSection[]{\begin{frame}{Outline}\vspace{-20pt}
+  \tableofcontents[currentsection,hideothersubsections]%,subsectionsonly]
+\end{frame}}
+%\AtBeginSection[]{\begin{frame}{Outline}
+%  \tableofcontents[subsectionsonly,pausesections]
+%\end{frame}}
 
 \begin{frame}
   \titlepage
@@ -82,56 +93,415 @@
 %        OUTLINE        %
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{Outline}{Discussion Points}\vspace{-20pt}
-  \tableofcontents[hideallsubsections]%[pausesections]
-  % You might wish to add the option [pausesections]
+\begin{frame}{Outline}{Discussion Points}
+  \begin{columns}
+  \begin{column}{0.1\textwidth}
+  \end{column}
+  \begin{column}{0.9\textwidth}
+    \setcounter{tocdepth}{2}
+    \tableofcontents[]
+  \end{column}
+  \end{columns}
 \end{frame}
+%\begin{frame}{Outline}{Discussion Points}\vspace{-20pt}
+%  \tableofcontents[hideallsubsections]%[pausesections]
+  % You might wish to add the option [pausesections]
+%\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %        BACKGROUND        % 10 minutes
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Background}
 
+\subsection{Terminology}
+% describe uq in general
+% introduce terminology
+\begin{frame}{Background}{Terminology}
+  \begin{itemize}
+  \item Model - Mathematical representation
+  \item Simulation/Code - Algorithms to Solve Model
+  \item Output - Solution to Model \vspace{20pt}
+  \item Input Space - Space Spanning Possible Input Values
+  \item Response - Map of Input Space to Output Space
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Background}{UQ}
+  Understanding Simulations
+  \begin{itemize}
+    \item Verification - Is the code consistent?
+      \begin{itemize}
+        \item Spatial, Temporal Convergence
+      \end{itemize}
+    \item Validation - Does it match experiment?
+      \begin{itemize}
+        \item Fitting, Extrapolation
+      \end{itemize}
+    \item Uncertainty Quantification - Behavior of Response
+      \begin{itemize}
+        \item Response Surface Characterization
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Background}{Verification and Validation}
+  \vspace{-50pt}
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.8\textwidth]{../../graphics/v_and_v_1}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Background}{Uncertainty Quantification}
+  \vspace{-20pt}
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.8\textwidth]{../../graphics/v_and_v_uq}
+  \end{figure}
+  \hfill Oberkampf and Roy, 2010
+\end{frame}
+
+
 \subsection{Raven}
 \begin{frame}{Background}{RAVEN}\vspace{-20pt}
   \begin{itemize}
-    \item Risk Analysis Virtual ENvironment
+    \item (R)isk (A)nalysis (V)irtual (EN)vironment
     \item Verification and Validation
     \item Uncertainty Quantification
     \item Response Surfaces, Risk
-    \item Non-Intrusive, Event Trees
+    \item Reduced-Order Models
+    \item Operates on Black-box Models
   \end{itemize}
+  Goal: Add New UQ Methods to RAVEN
 \end{frame}
-\subsection{Introduction}
-% describe uq in general
-% introduce terminology
+
 \subsection{Intrusiveness}
 % Galerkin/Adjoint methods vs non-intrusive
+\begin{frame}{Background}{Intrusiveness}\vspace{-20pt}
+  Two approaches to UQ:\vspace{10pt}
+  \begin{itemize}
+    \item Intrusive
+       \begin{itemize}
+         \item Interacts with Simulation Algorithms
+         \item Examples: Stochastic Galerkin, Adjoint-Based
+       \end{itemize}
+    \item Non-Intrusive
+      \begin{itemize}
+        \item Agnostic of Code
+        \item Example: Monte Carlo, Stochastic Collocation
+      \end{itemize}
+  \end{itemize}\vspace{10pt}
+  For RAVEN, need non-intrusive algorithms
+\end{frame}
+
 \subsection{Sampling Strategies}
+\begin{frame}{Sampling Strategies}{Non-Intrusive Sampling Strategies}
+  \vspace{-20pt}
+  \begin{columns}
+  \begin{column}{0.6\textwidth}
+  Monte Carlo
+    \begin{itemize}
+      \item Generate independent, identically-distributed samples
+      \item Derive mean, variance, response surface
+    \end{itemize}
+  Latin Hypercube
+    \begin{itemize}
+      \item Distributed Monte Carlo
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.4\textwidth}
+    \begin{figure}[h!]
+      \centering
+        \includegraphics[width=\textwidth]{../../graphics/mc}
+      \end{figure} \vspace{-20pt}
+    \begin{figure}[h!]
+      \centering
+        \includegraphics[width=\textwidth]{../../graphics/lhs}
+    \end{figure}
+  \end{column}
+  \end{columns}
+\end{frame}
 % Monte Carlo and LHS
 % gPC
 
-\begin{frame}{Background}{todo}
-  todo
+\begin{frame}{Sampling Strategies}{Limitations}\vspace{-20pt}
+  Monte Carlo common choice for UQ\vspace{10pt}
+  \begin{itemize}
+    \item Pro: Convergence agnostic of dimensionality
+    \item Con: Convergence can take many, many samples
+  \end{itemize}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %         METHODS          % 20-30 minutes
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Methods}
-\begin{frame}{Methods}{Outline}\vspace{-20pt}
-  \tableofcontents[currentsection]
+%\begin{frame}{Methods}{Outline}\vspace{-20pt}
+%  \tableofcontents[currentsection,hideothersubsections]%,subsectionsonly]
+%\end{frame}
+
+
+\subsection{UQ Methods}
+\begin{frame}{Definitions}{}\vspace{-20pt}
+  \begin{itemize}
+    \item $N\in\mathbb{N^+}$ - Cardinality of Input Space
+    \item Probabilty Space $(\Omega,\Theta,\rho)$, $Y:\Theta\to\mathbb{R}^N$
+    \item $Y=(y_1,\cdots,y_N)$ - Uncertain Input Parameter Vector
+    \item Subspaces $(\Omega_n,\Theta_n,\rho_n)$
+    \item $Y\in\mathbb{R}^N$, $y_n\in\mathbb{R}\forall n\leq N,n\in\mathbb{N^+}$
+    \item Members of $Y$ are uncorrelated
+    \item $\rho(Y)=\prod_{n=1}^N \rho_n(y_n)$ - Joint Probability Density Function
+    \vspace{10pt}
+    \item $u(Y)$ - QoI as a function of Input Parameters $Y$
+  \end{itemize}
 \end{frame}
+
+
+\subsubsection{SC for gPC}
+\begin{frame}{Generalized Polynomial Chaos}{gPC}\vspace{-20pt}
+  \begin{equation*}
+    u(Y) = \sum_{k\in\Lambda} c_k \Phi_k(Y),
+  \end{equation*}\vspace{-10pt}
+  \begin{itemize}
+    \item $\Lambda$ - a finite set of polynomial indices,
+    \item $k=(k_1,\cdots,k_N)$ indexes $\Lambda$, $k_n\in\mathbb{N}^0$,
+    \item $c_k\in\mathbb{R}$ - scalar coefficients,
+    \item $\phi_{k_n}(y_n)$ - Gauss polys order $k_n$ orthonormal w.r.t $\rho_n(y_n)$,
+    \item $\Phi_k(Y)=\prod_{n=1}^N\phi_{k_n}(y_n)$,
+    \item $\Phi_k(Y)$ orthonormal w.r.t $\rho(Y)$ over $\Omega$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Generalized Polynomial Chaos}{Truncated}\vspace{-20pt}
+  In practice, truncate to some gPC level $L\in\mathbb{N^+}$,
+  \begin{equation*}
+    u(Y)\approx G_L[u](Y) \equiv \sum_{k\in\Lambda(L)} c_k \Phi_k(Y).
+  \end{equation*}%\vspace{-10pt}
+  Error is of order equal to the polynomial terms removed by truncation.
+\end{frame}
+
+\subsubsection{Polynomial Index Sets}
+\begin{frame}{Generalized Polynomial Chaos}{Constructing $\Lambda(L)$}\vspace{-20pt}
+  $\Lambda(L)$ is list of multidimensional polynomial indices $k$\vspace{25pt}\\
+  For example, $N=3$:
+  \begin{equation*}
+    k = (3,1,2)\hspace{10pt}\to\hspace{10pt} \Phi_k(Y) = \phi_3(y_1)\phi_1(y_2)\phi_2(y_3).
+  \end{equation*}
+\end{frame}
+
+\begin{frame}{Generalized Polynomial Chaos}{Constructing $\Lambda(L)$}%\vspace{-20pt}
+  Na{\"i}ve choice for $\Lambda(L)$ is tensor product of all polynomials of order less than or equal to $L$,
+  \begin{equation*}
+      \Lambda_\text{TP}(L)=\Big\{k=(k_1,\cdots,k_N): \max_{1\leq n\leq N}k_n\leq L\Big\}.
+  \end{equation*}
+  Size of Index Set: $|\Lambda_\text{TP}(L)|=(L+1)^N$.
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{c c c c}
+    (3,0) & (3,1) & (3,2) & (3,3) \\
+    (2,0) & (2,1) & (2,2) & (2,3) \\
+    (1,0) & (1,1) & (1,2) & (1,3) \\
+    (0,0) & (0,1) & (0,2) & (0,3)
+    \end{tabular}
+    \caption{Tensor Product Index Set, $N=2,L=3$}
+    \label{tab:TP}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Generalized Polynomial Chaos}{Constructing $\Lambda(L)$}%\vspace{-20pt}
+  Common choice for $\Lambda(L)$: Total Degree of all polynomials of order less than or equal to $L$,
+  \begin{equation*}
+    \Lambda_\text{TD}(L)=\Big\{\bar p=(p_1,\cdots,p_N):\sum_{n=1}^N p_n \leq L\Big\}.
+  \end{equation*}
+  Size of Index Set: $|\Lambda_\text{TD}(L)|={L+N\choose N}$.
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{c c c c}
+    (3,0) &       &       &       \\
+    (2,0) & (2,1) &       &       \\
+    (1,0) & (1,1) & (1,2) &       \\
+    (0,0) & (0,1) & (0,2) & (0,3)
+    \end{tabular}
+    \caption{Total Degree Index Set, $N=2,L=3$}
+    \label{tab:TD}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Generalized Polynomial Chaos}{Constructing $\Lambda(L)$}%\vspace{-20pt}
+  Hyperbolic Cross: Limited by product of all polynomial orders,
+  \begin{equation*}
+    \Lambda_\text{HC}(L)=\Big\{\bar p=(p_1,\ldots,p_N):\prod_{n=1}^N p_n+1 \leq L+1\Big\}.
+  \end{equation*}
+  Index Set Bound: $|\Lambda_\text{HC}(L)|\leq (L+1)(1+\log(L+1))^{N-1}$.
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{c c c c}
+    (3,0) &       &       &       \\
+    (2,0) &       &       &       \\
+    (1,0) & (1,1) &       &       \\
+    (0,0) & (0,1) & (0,2) & (0,3)
+    \end{tabular}
+    \caption{Hyperbolic Cross Index Set, $N=2,L=3$}
+    \label{tab:HC}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Generalized Polynomial Chaos}{Constructing $\Lambda(L)$}%\vspace{-20pt}
+  Anisotropic Rules using weights $\alpha = (\alpha_1,\cdots,\alpha_N)$
+  \begin{equation*}
+    \tilde\Lambda_\text{TD}(L)=\Big\{\bar p=(p_1,\cdots,p_N):\sum_{n=1}^N \alpha_n p_n \leq \qty|\alpha|_1 L
+  \Big\},
+  \end{equation*}
+  \begin{equation*}
+    \tilde\Lambda_\text{HC}(L)=\Big\{\bar p=(p_1,\cdots,p_N):\prod_{n=1}^N \qty(p_n+1)^{\alpha_n} \leq
+    \qty(L+1)^{\qty|\alpha|_1} \Big\}.
+  \end{equation*}
+  \begin{equation*}
+    |\alpha|_1 \equiv \frac{\sum_{n=1}^N \alpha_n}{N}.
+  \end{equation*}
+\end{frame}
+
+
+\subsubsection{Sparse Grid Quadrature}
+\begin{frame}{Generalized Polynomial Chaos}{Sparse Grid Quadrature}%\vspace{-20pt}
+  Necessary to find coefficients $c_k$,
+  \begin{equation*}
+    G[u](Y) = \sum_{k\in\Lambda(L)} c_k \Phi_k(Y).
+  \end{equation*}%\vspace{-10pt}
+  Using orthonormality of $\Phi_k(Y)$,
+  \begin{equation*}
+    c_k = \langle u(Y)\Phi_k(Y) \rangle = \int_\Omega \rho(Y) u(Y)\Phi_k(Y) dY
+  \end{equation*}
+\end{frame}
+
+\begin{frame}{Generalized Polynomial Chaos}{Sparse Grid Quadrature}%\vspace{-20pt}
+  The quadrature and polynomials to use depends on the distribution $\rho_n(y_n)$,
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{c|c}
+      PDF Kind & Polynomials / Quadrature \\ \hline
+      Uniform & Legendre \\
+      Normal  & Hermite  \\
+      Gamma   & Laguerre \\
+      Beta    & Jacobi   
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Generalized Polynomial Chaos}{Order of Quadrature}%\vspace{-20pt}
+  Determine order of quadrature
+  \begin{equation*}
+    \int_{\Omega_x} f(x)\rho(x)dx = \sum_{\ell=1}^\infty w_\ell f(x_\ell).
+  \end{equation*}
+  If $f(x)$ is a polynomial of order $2m-1$,
+  \begin{equation*}
+    \int_{\Omega_x} f(x)\rho(x)dx = \sum_{\ell=1}^m w_\ell f(x_\ell).
+  \end{equation*}
+  Let
+  \begin{equation*}
+    q^{m}[f(x)] \equiv \sum_{\ell=1}^m w_\ell f(x_\ell).
+  \end{equation*}
+  In our case (let $N$=1),
+  \begin{equation*}
+    c_k = \int_{\Omega} u(Y)\Phi(Y)\rho(Y)dY = q^m[u(Y)\Phi(Y)].
+  \end{equation*}
+  Unknown $m$.
+\end{frame}
+
+\begin{frame}{Generalized Polynomial Chaos}{Order of Quadrature}\vspace{-20pt}
+  \begin{equation*}
+    c_k = \int_{\Omega} u(Y)\Phi(Y)\rho(Y)dY = q^m[u(Y)\Phi_k(Y)].
+  \end{equation*}
+  To determine $m$, replace $u(Y)=G[u](Y)$:
+  \begin{align*}
+    c_k &= q^m\left[\Phi_k(Y)\sum_{k'\in\Lambda(L)}c_{k'}\Phi_{k'}(Y)\right], \\
+        &= q^m\left[c_k\Phi_k(Y)^2\right],\\
+        &= q^m\left[\mathcal{O}(k^2)\right],
+  \end{align*}
+  so
+  \begin{equation*}
+    2m+1 = 2k \hspace{10pt}\to\hspace{10pt}m=k+\frac{1}{2}\approx m=k+1.
+  \end{equation*}
+\end{frame}
+
+\begin{frame}{Generalized Polynomial Chaos}{Sparse Grid Quadrature}\vspace{-20pt}
+  Multidimensional Quadrature
+  \begin{itemize}
+    \item Each point needs $N$ quadrature sets
+    \item Ex. $N=2$, $k$=(4,4), need (5,5) quadratures
+    \item Needed for each $k$ in $\Lambda$
+  \end{itemize}
+  \begin{columns}
+  \begin{column}{0.6\linewidth}
+  Tensor quadrature
+  \begin{align*}
+    Q^{M} &\equiv q^{m_1}_1 \otimes q^{m_2}_2 \otimes \cdots \otimes q^{m_N}_N,\\
+                       &= \bigotimes_{n=1}^N q^{m_n}_n.
+  \end{align*}
+  \end{column}
+  \begin{column}{0.4\linewidth}
+    \begin{figure}[h!]
+      \centering
+        \includegraphics[width=\textwidth]{../../graphics/tpquad}
+    \end{figure}
+  \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Generalized Polynomial Chaos}{Sparse Grid Quadrature}\vspace{-20pt}
+Smolyak sparse grids $S[u](Y)$:
+\begin{equation*}
+  \text{Let }\Delta_k^{m}[f(x)] \equiv \qty(q_k^{m} - q_{k-1}^{m})[f(x)].
+\end{equation*}
+\vspace{10pt}
+\begin{equation*}
+  S^{M}_{\Lambda,N}[u(Y)\Phi_k(Y)] = \sum_{k\in\Lambda(L)} \left(\Delta_{k_1}^{m_1} \otimes \cdots \otimes
+  \Delta_{k_N}^{m_N}\right)[u(Y)\Phi_k(Y)].
+\end{equation*}
+\end{frame}
+
+\begin{frame}{Generalized Polynomial Chaos}{Sparse Grid Quadrature}%\vspace{-20pt}
+  Equivalently,
+\begin{equation*}
+  S^{M}_{\Lambda,N}[u(Y)\Phi_k(Y)] = \sum_{k\in\Lambda(L)} s(k)\bigotimes_{n=1}^N
+  q^{m_n}_n[u(Y)\Phi_k(Y)],
+\end{equation*}
+\begin{equation*}
+  s(k) = \sum_{\substack{j=\{0,1\}^N,\\k+j\in\Lambda}} (-1)^{|j|_1},\hspace{10pt}|j|_1 \equiv \sum_{p\in j}p.
+\end{equation*}
+\begin{align*}
+  c_k &= \langle u(Y)\Phi_k(Y) \rangle,\\
+      &\approx S^{M}_{\Lambda,N}[u(Y)\Phi_k(Y)].
+\end{align*}
+\end{frame}
+
+\begin{frame}{Generalized Polynomial Chaos}{Sparse Grid Quadrature}%\vspace{-20pt}
+Comparison, $N=2$, $L=4$
+    \begin{figure}[h!]
+      \centering
+       \hspace{-40pt}\includegraphics[width=1.15\textwidth]{../../graphics/sparse_plot}
+    \end{figure}
+\end{frame}
+
+\subsubsection{Adaptive Sparse Grid}
+\begin{frame}{Generalized Polynomial Chaos}{Adaptive Index Sets}%\vspace{-20pt}
+Special property of gPC:
+\begin{equation*}
+  G[u](Y) = \sum_{k\in\Lambda}c_k\Phi_k(Y),
+\end{equation*}
+\begin{equation*}
+  \text{mean}=\langle G[u](Y)\rangle = c_{\{0\}^N},
+\end{equation*}
+\begin{align*}
+  \text{var} &=\langle G[u](Y)^2\rangle - c_{\{0\}^N}^2,\\
+      &= \sum_{k\in\Lambda}c_k^2 - c_{\{0\}^N}^2.
+\end{align*}
+\end{frame}
+
 \subsection{Physics Models}
 \subsubsection{Tensor Polynomials}
 \subsubsection{Attenuation}
 \subsubsection{Neutron Diffusion}
-
-\subsection{UQ Methods}
-\subsubsection{SC for gPC}
-\subsubsection{Polynomial Index Sets}
-\subsubsection{Sparse Grid Quadrature}
-\subsubsection{Adaptive Sparse Grid}
 
 \begin{frame}{Methods}{todo}
   todo
@@ -142,8 +512,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Proposal}
 
+\subsection{Adaptive Sparse Grid}
 \subsection{HDMR}
-\subsection{AHDMR}
+\subsection{Adaptive HDMR}
 \subsection{Mammoth}
 \subsubsection{RattleS$_\text{N}$ake}
 \subsubsection{Bison}
@@ -158,413 +529,4 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-\section{Sources of Uncertainty}
-\begin{frame}{Introduction}{Who is this guy?}\vspace{-30pt}
-Current: 
-\begin{itemize}
-\item  Ph.D Nuclear Engineering student, UNM
-\item  Idaho National Laboratory (RAVEN, MOOSE)
-\end{itemize}
-Past: 
-\begin{itemize}
-\item M.S. Nuclear Engineering, Oregon State University
-\item B.S. Physics, BYU-Idaho (2010)
-\end{itemize}
-\end{frame}
-
-\begin{frame}{RAVEN}{...and its place in the herd.}\vspace{-20pt}
-MOOSE herd
-\begin{itemize}
-\item \texttt{MARMOT}: Mesoscale materials
-\item \texttt{BISON}: Engineering-scale materials
-\item \texttt{RattleSNake}: Neutronics
-\item \texttt{RELAP-7}: Thermal Hydraulics
-\end{itemize}\vspace{10pt}
-A different kind of critter...
-\begin{itemize}
-\item \texttt{RAVEN}: Uncertainty Quantification
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Uncertainty}{Two Types}\vspace{-30pt}
-\begin{itemize}
-\item Epistemic - Unmeasured Uncertainty
-  \begin{itemize}
-  \item Tool Accuracy
-  \item Complicated Dependencies (arrow, double pendulum)
-  \item Documentation
-  \end{itemize}\vspace{20pt}
-\item Aleatory - True Randomness
-\begin{itemize}
-  \item Quantum effects
-  \item Particle-Material interactions (gold foil)
-  \item Brownian Motion
-\end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Example Stochastic Problem}{Projectile Motion}\vspace{-30pt}
-\begin{equation*}
-y(t)=y_i + v\sin(\theta)t - \frac{1}{2}gt^2,
-\end{equation*}
-\begin{equation*}
-x(t)=v\cos(\theta)t.
-\end{equation*}
-%  \begin{figure}[h!]
-%    \centering
-%      \includegraphics[width=0.5\textwidth]{../graphics/projectile}
-%  \end{figure}
-%\vspace{-10pt}
-Solution: $x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)$
-\end{frame}
-
-\begin{frame}{Example Stochastic Problem}{Solved...?}\vspace{-50pt}
-\begin{equation*}
-x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)
-\end{equation*}
-\begin{itemize}
-\item initial height $y_i = 2$ m
-\item initial velocity $v = 35$ m/s
-\item initial trajectory $\theta = 35^o$
-\item accel. gravity $g = 9.81$ m/s/s
-\end{itemize}
-Solution: $x_f\approx120$ m
-\end{frame}
-
-\begin{frame}{Example Stochastic Problem}{...I'm not so certain anymore.}\vspace{-50pt}
-\begin{equation*}
-x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)
-\end{equation*}
-\begin{itemize}
-\item initial height $y_i = 1\pm1$ m
-\item initial velocity $v = 35.5\pm2.5$ m/s
-\item initial trajectory $\theta = 45\pm10^o$
-\item accel. gravity $g = 9.7988 \pm0.0349$ m/s/s
-\end{itemize}
-Solution: $x_f$=?
-\end{frame}
-
-\begin{frame}{Uncertainty Quantification}{Methods}\vspace{-20pt}
-Some way to quantify uncertainty:
-\visible<2->{
-\begin{itemize}\vspace{10pt}
-\item Min-Max
-  \begin{itemize}
-  \item Good for monotonic problems
-  \end{itemize}\vspace{10pt}}
-\visible<3->{
-\item Sandwich Formula
-  \begin{itemize}
-  \item Good for analytic solutions
-  \end{itemize}\vspace{10pt}}
-\visible<4->{
-\item Perturbation
-  \begin{itemize}
-  \item Valid for small uncertainty
-  \end{itemize}
-\end{itemize}}
-\end{frame}
-
-\section{Analytic Methods}
-\begin{frame}{Uncertainty Quantification}\vspace{-20pt}
-\[x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)\]
-Min-Max
-\tiny
-\[x_{f,\text{min}}=\frac{(33)(0.5736)}{9.8337}\left((33)(0.8192)+\sqrt{(33)^2(0.8192)^2+2(9.8337)(0)}\right)= 105.46 \text{ m}\]
-\[x_{f,\text{max}}=\frac{(55)(0.8192)}{9.7369}\left((55)(0.5736)+\sqrt{(55)^2(0.5736)^2+2(9.8337)(2)}\right)= 142.17 \text{ m}\]
-\normalsize
-Result: $x_f\approx124\pm18.3$ m \vspace{15pt}\\ \pause
-\visible<2->{Flawed Reasoning
-\begin{itemize}
-\item $\theta$ not monotonic!
-\item Does increasing $\theta$ make a longer or shorter range?
-\end{itemize}}
-\end{frame}
-
-\begin{frame}{Uncertainty Quantification}\vspace{-20pt}
-Sandwich Formula (simplified):
-\begin{equation*}
-\sigma_{x_f} = \sqrt{\left(\pdv{x_f}{y_i}\right)^2\sigma_{y_i}^2 + \left(\pdv{x_f}{v}\right)^2\sigma_{v}^2 + \left(\pdv{x_f}{g}\right)^2\sigma_{g}^2 + \left(\pdv{x_f}{\theta}\right)^2\sigma_{\theta}^2}
-\end{equation*}
-Works well for simple functions
-\begin{itemize}
-\item Simple derivatives
-\item Analytic solution
-\item Assumes mean is reference value
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Uncertainty Quantification}\vspace{-30pt}
-\begin{equation*}
-x_f=\frac{v\cos{\theta}}{g}\left(v\sin\theta+\sqrt{v^2\sin^2\theta + 2gy_i}\right)
-\end{equation*}%\vspace{10pt}
-Sandwich Formula:
-\[\sigma_{x_f} = \sqrt{\left(\pdv{x_f}{y_i}\right)^2\sigma_{y_i}^2 + \left(\pdv{x_f}{v}\right)^2\sigma_{v}^2 + \left(\pdv{x_f}{g}\right)^2\sigma_{g}^2 + \left(\pdv{x_f}{\theta}\right)^2\sigma_{\theta}^2}\]% \vspace{20pt}\\
-Result: $x_f=120\pm62.44$ m  \vspace{10pt}\\
-\end{frame}
-
-
-\begin{frame}{A More Difficult Problem}{Air Resistance}
-%No Air Resistance:
-%\begin{equation}
-%y_f=v\sin(\theta)t - \frac{1}{2}gt^2,
-%\end{equation}
-%\begin{equation}
-%x_f=v\cos(\theta)t.
-%\end{equation}
-\vspace{-20pt}With Air Resistance:
-\begin{equation*}
-y(t)=\frac{v_T}{g}(v\sin\theta+v_T)\left(1-e^{-gt/v_T}\right)-v_Tt,
-\end{equation*}
-\begin{equation*}
-x(t)=\frac{vv_T\cos\theta}{g}\qty(1-e^{-gt/v_T}).
-\end{equation*}
-\begin{equation*}
-v_T=\frac{mg}{D},\hspace{20pt}D=\frac{\rho C A}{2},\hspace{20pt}A=\pi r^2
-\end{equation*}
-\hspace{30pt}Solve numerically to get $x_f$ (Forward Euler).
-\end{frame}
-
-\begin{frame}{A More Difficult Problem}{Aside: Forward Euler}
-\vspace{-20pt}Take small $\Delta_t$ time steps
-\texttt{while $y^t>0$: $t=t+\Delta_t,$}
-\begin{align*}
-a_{x}^{(t+\Delta_t)} = \frac{-D}{m}v^{(t)}\ v^{(t)}_{x},
-        &\hspace{30pt}a_{y}^{(t+\Delta_t)} = -g-\frac{D}{m}v^{(t)}\ v^{(t)}_{x},\\[15pt]
-v_{x}^{(t+\Delta_t)} =v_{x}^{(t)}+ a_{x}^{(t+\Delta_t)}\Delta_t,
-        &\hspace{30pt}v_{y}^{(t+\Delta_t)} =v_{y}^{(t)}+ a_{y}^{(t+\Delta_t)}\Delta_t,
-        \end{align*}
-        \begin{align*}
-x^{(t+\Delta_t)} &=x^{(t)}+ v^{(t+\Delta_t)}_{x}\Delta_t + \frac{1}{2}a^{(t+\Delta_t)}_{x} \Delta_t^2,\\
-y^{(t+\Delta_t)} &=y^{(t)}+ v^{(t+\Delta_t)}_{y}\Delta_t + \frac{1}{2}a^{(t+\Delta_t)}_{y} \Delta_t^2.
-\end{align*}
-\hspace{50pt}(video)
-\end{frame}
-
-\begin{frame}[label=unc_sum]{A More Difficult Problem}{Uncertainty Summary}\vspace{-30pt}
-\begin{align*}
-y_i=1&\pm1\text{ m},\\
-v=35.5&\pm2.5\text{ m/s},\\
-\theta=45&\pm10^o,\\
-g=9.7988&\pm0.0349\text{ m/s/s},\\
-m=0.145&\pm0.0725\text{ kg},\\
-r=0.0336&\pm0.00336\text{ m},\\
-C=0.5&\pm0.5,\\
-\rho_\text{air}=1.2&\pm0.1\text{ kg/m$^3$}.
-\end{align*}
-\begin{center}\hyperlink{sens_use}{\beamergotobutton{UQ Uses}}\end{center}\vspace{-20pt}
-\begin{center}\hyperlink{sens_res}{\beamergotobutton{Sensitivity Study}}\end{center}
-\end{frame}
-
-\begin{frame}{A More Difficult Problem}{Equation Summary}
-\begin{equation*}
-y(t)=\frac{v_T}{g}(v\sin\theta+v_T)\left(1-e^{-gt/v_T}\right)-v_Tt,
-\end{equation*}\vspace{15pt}
-\begin{equation*}
-x(t)=\frac{vv_T\cos\theta}{g}\qty(1-e^{-gt/v_T}).
-\end{equation*}\vspace{15pt}
-\begin{equation*}
-v_T=\frac{mg}{D},\hspace{20pt}D=\frac{\rho C A}{2},\hspace{20pt}A=\pi r^2
-\end{equation*}
-\end{frame}
-
-\section{Numerical Methods}
-\begin{frame}{Uncertainty Quantification}{Complicated Problems}\vspace{-20pt}
-How do we quantify uncertainty for problems without simple analytic solutions?\vspace{15pt}
-\begin{itemize}
-\item Monte Carlo sampling
-\item Stochastic Collocation
-%\item High Density Model Reduction (low-order)
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Uncertainty Quantification}{Monte Carlo}\vspace{-30pt}
-\begin{itemize}
-\item Let $u(Y)$ be any system, like $x_f(y_i,v,\theta,g,m,r,C,\rho$)
-\item Randomly sample input parameters, record outputs
-\item Repeat $M$ times
-\item Calculate moments (mean, variance, skew, kurtosis)
-\end{itemize}
-\centerline{Mean: $\bar u\approx\frac{1}{M}\sum u\left(Y^{(m)}\right)$}
-(video)
-\end{frame}
-
-%\section{Stochastic Collocation}
-\begin{frame}{Uncertainty Quantification}{Stochastic Collocation}\vspace{-30pt}
-\begin{itemize}
-\item Let $u(Y)$ be any system, like $x_f(y_i,v,\theta,g,m,r,C,\rho)$
-\item Represent original model with polynomials
-\item Calculate moments (mean, variance, skew, kurtosis)
-\end{itemize}
-\begin{equation*}
-u(Y)\approx S[u(Y)]\equiv\sum_{k\in\Lambda}c_k\Phi_k(Y),
-\end{equation*}
-\begin{equation*}
-\Phi_k(Y) = \phi_{k_1}(Y_1)\cdot\phi_{k_2}(Y_2)\cdot\ldots\cdot\phi_{k_N}(Y_N)
-\end{equation*}
-\end{frame}
-
-\begin{frame}{Uncertainty Quantification}{Stochastic Collocation}\vspace{-20pt}
-Our case:
-\begin{align*}
-x_f(y_i,v,\theta,g,m,r,C,\rho)&\approx S[x_f(y_i,v,\theta,g,m,r,C,\rho)],\\
-  &\approx\sum_{k\in\Lambda}c_k\Phi_k(y_i,v,\theta,g,m,r,C,\rho),
-\end{align*}
-\begin{equation*}
-\Phi_k(y_i,v,\theta,g,m,r,C,\rho) = \phi_{y_i}(y_i)\cdot\phi_{v}(v)\cdot\ldots\cdot\phi_{\rho}(\rho).\vspace{10pt}
-\end{equation*}
-\begin{equation*}
-c_k = \frac{\int\int\int\int\int\int\int\int x_f\Phi\ d(y_i,v,\theta,g,m,r,C,\rho)}{\int\int\int\int\int\int\int\int \Phi^2\ d(y_i,v,\theta,g,m,r,C,\rho)}.
-\end{equation*}
-%For example: $k=(1,1,2,2,3,3,4,4)$ and \\$\phi$ as monomials ($1,x,x^2,x^3,x^4,\ldots$),
-%\begin{equation*}
-%\Phi_k(y_i,v,\theta,g,m,r,C,\rho) = y_i\cdot v\cdot \theta^2\cdot g^2\cdot m^3\cdot r^3\cdot C^4\cdot \rho^4.
-%\end{equation*}
-\end{frame}
-
-\begin{frame}{Uncertainty Quantification}{Combining polynomials?}
-For example, let $\phi$ be monomials $(1,x,x^2,x^3,x^4,...)$.
-\begin{equation*}\small
-\Lambda = \left\{
-\begin{array}{c}
-(0,0,0,0,0,0,0,0), \\
-(1,0,0,0,0,0,0,0), \\
-(0,1,0,0,0,0,0,0), \\
-\ldots \\
-(1,2,3,4,5,6,7,8), \\
-\ldots \\
-\end{array}\right\}
-\end{equation*}\normalsize
-\begin{table}
-\centering
-\begin{tabular}{c c}
-$k$ & polynomial $\Phi$ \\ \hline
-(0,0,0,0,0,0,0,0) &  $y_i^0 \cdot v^0 \cdot \theta^0 \cdot g^0 \cdot m^0 \cdot r^0 \cdot C^0 \cdot \rho^0 = 1$ \\
-(1,2,3,4,5,6,7,8) &  $y_i^1 \cdot v^2 \cdot \theta^3 \cdot g^4 \cdot m^5 \cdot r^6 \cdot C^7 \cdot \rho^8$ \\
-(1,1,1,1,1,1,1,1) & $ y_i \cdot v \cdot \theta \cdot g \cdot m \cdot r \cdot C \cdot \rho$ \\
-\end{tabular}
-\end{table}
-\end{frame}
-
-
-
-\begin{frame}{Uncertainty Quantification}{Stochastic Collocation}\vspace{-20pt}
-Comparison
-\begin{table}
-\centering
-\begin{tabular}{c|c}\small
-Monte Carlo & Stochastic Collocation \\\hline
-Dimension-independent & Calculations grow with dimension* \\
-Slow converging & Very fast convergence* \\
- & Can replace original model
-\end{tabular}
-\end{table}
-\end{frame}
-
-
-%\begin{frame}{Uncertainty Quantification}{Results: Expected Value, Values}
-%  \begin{figure}[h!]
-%    \centering
-%      \includegraphics[width=0.7\textwidth]{../graphics/projectile_solns}
-%      \caption{$\expv{x_f}$}
-%    \begin{subfigure}[b]{0.49 \textwidth}
-%      \includegraphics[width=\textwidth]{../graphics/projectile_solns_aniso}
-%      \caption{$<R>$ Values}
-%      \label{err_5}
-%    \end{subfigure}
-%    \begin{subfigure}[b]{0.49 \textwidth}
-%      \includegraphics[width=\textwidth]{../graphics/projectile_errs_aniso}
-%      \caption{Error in $<R>$}
-%      \label{err_14}
-%    \end{subfigure}
-%  \end{figure}
-%\end{frame}
-
-%\begin{frame}{Uncertainty Quantification}{Results: Expected Value, Errors}
-%  \begin{figure}[h!]
-%    \centering
-%      \includegraphics[width=0.7\textwidth]{../graphics/projectile_errs}
-%      \caption{Error in $\expv{x_f}$}
-%  \end{figure}
-%\end{frame}
-
-%\begin{frame}{Uncertainty Quantification}{Results: Second Moment, Values}
-%  \begin{figure}[h!]
-%    \centering
-%      \includegraphics[width=0.7\textwidth]{../graphics/projectile_solns_variance}
-%      \caption{$\expv{x_f^2}$}
-%  \end{figure}
-%\end{frame}
-%
-%\begin{frame}{Uncertainty Quantification}{Results: Second Moment, Errors}
-%  \begin{figure}[h!]
-%    \centering
-%      \includegraphics[width=0.7\textwidth]{../graphics/projectile_errs_variance}
-%      \caption{Error in $\expv{x_f^2}$}
-%  \end{figure}
-%  \begin{figure}[h!]
-%    \centering
-%    \begin{subfigure}[b]{0.49 \textwidth}
-%      \includegraphics[width=\textwidth]{../graphics/projectile_solns_aniso_variance}
-%      \caption{$<R>$ Values}
-%      \label{err_5}
-%    \end{subfigure}
-%    \begin{subfigure}[b]{0.49 \textwidth}
-%      \includegraphics[width=\textwidth]{../graphics/projectile_errs_aniso_variance}
-%      \caption{Error in $<R>$}
-%      \label{err_14}
-%    \end{subfigure}
-%  \end{figure}
-%\end{frame}
-
-\section{Extra: Sensitivity Analysis}
-\begin{frame}[label=sens_use]{Sensitivity Analysis}{So...what?}\vspace{-20pt}
-Uses for uncertainty quantification:\vspace{5pt}
-\begin{itemize}
-\item Understand range of possible solutions
-\item Worse-case scenarios
-\item Sensitivity Analysis
-  \begin{itemize}
-  \item Who is contributing the most to our spread?
-  \item Which measurements should I focus on improving?
-  \item Which design specification should I tighten down on?
-  \end{itemize}
-\end{itemize}\vspace{-15pt}
-\begin{center}\hyperlink{unc_sum}{\beamergotobutton{Inputs}}\end{center}
-\end{frame}
-
-\begin{frame}{Sensitivity Analysis}{Polynomial Expansion Revisited}\vspace{-30pt}
-Recall: $u(Y)\approx S[u(Y)]=\sum_{k\in\Lambda}c_k\Phi_k(Y),$ 
-
-so for $x_f(y_i,v,\theta,g,m,r,C,\rho)$:
-\begin{align*}
-&x_f \approx S[x_f]= c_{(0,0,0,0,0,0,0,0)} \\
- &+c_{(1,0,0,0,0,0,0,0)}y_i + c_{(0,1,0,0,0,0,0,0)}v + c_{(0,0,1,0,0,0,0,0)}\theta+\ldots\\
- &+c_{(2,0,0,0,0,0,0,0)}y_i^2 + c_{(1,1,0,0,0,0,0,0)}y_i\cdot v + c_{(1,0,1,0,0,0,0,0)}y_i\cdot \theta +\ldots\\
- &+c_{(3,0,0,0,0,0,0,0)}y_i^3 + c_{(1,1,1,0,0,0,0,0)}y_i\cdot v\cdot\theta +\ldots\\
- &\ldots
-\end{align*}
-\end{frame}
-
-\begin{frame}{Sensitivity Analysis}{Polynomial Expansion Revisited}\vspace{-30pt}
-Rearrange:
-\begin{align*}
-&x_f \approx S[x_f]=c_{(0,0,0,0,0,0,0,0)} \\
- &+c_{(1,0,0,0,0,0,0,0)}y_i + c_{(2,0,0,0,0,0,0,0)}y_i^2 + c_{(3,0,0,0,0,0,0,0)}y_i^3+\ldots\\
- &+c_{(0,1,0,0,0,0,0,0)}v + c_{(0,2,0,0,0,0,0,0)}v^2 + c_{(0,3,0,0,0,0,0,0)}v^3+\ldots\\
- &\ldots\\
- &+c_{(1,1,0,0,0,0,0,0)}y_i\cdot v + c_{(1,2,0,0,0,0,0,0)}y_i\cdot v^2+\ldots\\
- &\ldots
-\end{align*}
-\end{frame}
 

@@ -13,7 +13,7 @@ models outlined in Chapter \ref{ch:models}, organized by model.
 %----------------------------------------------------------------------------------------
 
 \section{Polynomial Evaluations}
-Using an analytic polynomial evaluation as our model allows observation of SCgPC performance for
+Using an analytic polynomial evaluation as our model allows us to observe SCgPC performance for
 multiple dimension cardinalities.  Uniformly distributing the input parameters from 0 to 1, the mean and variance are
 \begin{align}
   \text{mean}&=\left(\frac{3}{2}\right)^N,\\
@@ -24,7 +24,7 @@ where $N$ is the cardinality of the input space.  As seen in Figures \ref{fig:an
 methods.  There are several
 inferences that we make using these results. In the figures, the following abbreviations are used:
 \begin{itemize}
-  \item \emph{mc}: Monte Carlo traditional sampling,
+  \item \emph{mc}: traditional Monte Carlo sampling,
   \item \emph{tp}: Tensor Product-based SCgPC,
   \item \emph{td}: Total Degree-based SCgPC,
   \item \emph{hc}: Hyperbolic Cross-based SCgPC,
@@ -33,7 +33,7 @@ inferences that we make using these results. In the figures, the following abbre
 
 First, we note the tensor product (tp) method for polynomial basis set construction is an outlier, in that
 with 200 computational solves the error is already converged to 11 orders of magnitude.  This is because of
-the model being solved; it is, in effect, a tensor product of first-order polynomials.  For this particular
+the model being solved, a tensor product of first-order polynomials.  For this particular
 model, the tensor product method should be ideally efficient.  It is omitted in Fig.
 \ref{fig:anl10_varconv} for clarity.
 
@@ -100,7 +100,8 @@ resulting in a large error for that coefficient.  However, when further points a
 poorly-integrated coefficient is resolved, and the variance converges more closely.  This behavior warrants
 more investigation.
 
-Lastly, we see some plateau behavior for the Adaptive SCgPC method. TODO WORKING XXX
+Lastly, we see some plateau behavior for the Adaptive SCgPC method. This is evidence of the adaptive algorithm
+failing because of weaknesses in the search algorithm.
 
 
 
@@ -128,75 +129,75 @@ the curse of dimensionality is clear.
 
 
 
-\section{Projectile}
-Unlike the attenuation and polynomial models, the projectile model is a nonlinear problem without an analytic
-solution.  As a result, the convergence benchmark is one achieved by a large Monte Carlo run, instead of an
-analytic benchmark; thus, the convergence of the various methods is limited to the convergence of the Monte
-Carlo point.  The most converged Monte Carlo point for this work is
-\begin{align}
-  \text{mean} = 1234, \\
-  \text{var} = 1234.
-\end{align}
-Additionally, this is the first model where significant anisotropy exists in the model.  For instance, the
-drag coefficient parameter is many orders of magnitude more influential on the quantity of interest than the
-gravitational acceleration.  
-The results in Fig. \ref{fig:proj_varconv} are interesting, and require additional data points to understand
-clearly.  However, we include Fig. \ref{fig:proj_varval} for clarity.  While it initially looks like the adaptive
-methods converge quickly, it appears that this is misleading, as shown in the values graph.  The adaptive
-method is converging, but passes through the benchmark value before turning back to converge on it.  This
-indicates the adaptive construction introduces too much variance initially, and additional terms are required
-to approach the benchmark solution.
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=0.7\linewidth]{proj_varconv_8}
-    \rule{35em}{0.5pt}
-  \caption{Projectile $N=8$ Error Convergence, Variance}
-  \label{fig:proj_varconv}
-\end{figure}
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=0.7\linewidth]{proj_varvals_8}
-    \rule{35em}{0.5pt}
-  \caption{Projectile $N=8$ Values, Variance}
-  \label{fig:proj_varval}
-\end{figure}
+%\section{Projectile}
+%Unlike the attenuation and polynomial models, the projectile model is a nonlinear problem without an analytic
+%solution.  As a result, the convergence benchmark is one achieved by a large Monte Carlo run, instead of an
+%analytic benchmark; thus, the convergence of the various methods is limited to the convergence of the Monte
+%Carlo point.  The most converged Monte Carlo point for this work is
+%\begin{align}
+%  \text{mean} = 1234, \\
+%  \text{var} = 1234.
+%\end{align}
+%Additionally, this is the first model where significant anisotropy exists in the model.  For instance, the
+%drag coefficient parameter is many orders of magnitude more influential on the quantity of interest than the
+%gravitational acceleration.  
+%The results in Fig. \ref{fig:proj_varconv} are interesting, and require additional data points to understand
+%clearly.  However, we include Fig. \ref{fig:proj_varval} for clarity.  While it initially looks like the adaptive
+%methods converge quickly, it appears that this is misleading, as shown in the values graph.  The adaptive
+%method is converging, but passes through the benchmark value before turning back to converge on it.  This
+%indicates the adaptive construction introduces too much variance initially, and additional terms are required
+%to approach the benchmark solution.
 %\begin{figure}[H]
-% \centering
-%   \includegraphics[width=0.7\linewidth]{projectile_errs}
+%  \centering
+%    \includegraphics[width=0.7\linewidth]{proj_varconv_8}
 %    \rule{35em}{0.5pt}
 %  \caption{Projectile $N=8$ Error Convergence, Variance}
 %  \label{fig:proj_varconv}
 %\end{figure}
-
+%\begin{figure}[H]
+%  \centering
+%    \includegraphics[width=0.7\linewidth]{proj_varvals_8}
+%    \rule{35em}{0.5pt}
+%  \caption{Projectile $N=8$ Values, Variance}
+%  \label{fig:proj_varval}
+%\end{figure}
+%%\begin{figure}[H]
+%% \centering
+%%   \includegraphics[width=0.7\linewidth]{projectile_errs}
+%%    \rule{35em}{0.5pt}
+%%  \caption{Projectile $N=8$ Error Convergence, Variance}
+%%  \label{fig:proj_varconv}
+%%\end{figure}
+%
 
 
 \section{Neutron Diffusion}
 The neutron diffusion model is a complex, nonlinear model that begins to approach an engineering-scale model.
 Because of complications with conflicting libraries, the adaptive SCgPC method was not available for this
-model.  Particularly of note is the clear and obvious loss of convergence rate with increase in the
-cardinality of the input space. \{Note to self: fix coloring in plots.\}
+model.  Particularly of note is the clear loss of convergence rate with increase in the
+cardinality of the input space. %\{Note to self: fix coloring in plots.\}
 
 \begin{figure}[H]
   \centering
-    \includegraphics[width=0.7\linewidth]{N3_h5_MCHC_2}
+    \includegraphics[width=0.7\linewidth]{2D2G_varconv_3}
     \rule{35em}{0.5pt}
   \caption{Diffusion $N=3$ Error Convergence, Variance}
   \label{fig:diff3_varconv}
 \end{figure}
 \begin{figure}[H]
   \centering
-    \includegraphics[width=0.7\linewidth]{N5_h5_MCHC_2}
+    \includegraphics[width=0.7\linewidth]{2D2G_varconv_5}
     \rule{35em}{0.5pt}
   \caption{Diffusion $N=5$ Error Convergence, Variance}
   \label{fig:diff5_varconv}
 \end{figure}
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=0.7\linewidth]{N14_iso_var_errs}
-    \rule{35em}{0.5pt}
-  \caption{Diffusion $N=14$ Error Convergence, Variance}
-  \label{fig:diff14_varconv}
-\end{figure}
+%\begin{figure}[H]
+%  \centering
+%    \includegraphics[width=0.7\linewidth]{N14_iso_var_errs}
+%    \rule{35em}{0.5pt}
+%  \caption{Diffusion $N=14$ Error Convergence, Variance}
+%  \label{fig:diff14_varconv}
+%\end{figure}
 
 
 
@@ -216,8 +217,8 @@ where the variance is chiefly centered on a few input parameters.
 
 Second, it is clear that even with adaptive SCgPC, convergence is poor for input spaces with at least ten
 inputs for less than a thousand solves.  For costly engineering codes, even a thousand runs may be
-impractical, so further improvement of the adaptive algorithm is necessary.  This leads to the desirability of
-the adaptive HDMR method, which can further subdivide the input domain.  These subdivided domains have
+impractical, so further improvement of the adaptive algorithm is necessary.  This leads to the
+proposed HDMR methods, which can further subdivide the input domain.  These subdivided domains have
 cardinality much more suitable to SCgPC methods.
 
 Lastly, because SCgPC methods improve drastically with decreases in input cardinality, we expect SCgPC to

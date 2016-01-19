@@ -14,8 +14,8 @@
 In simulation modeling, we attempt to capture the behavior of a physical system by describing it in a series
 of equations, often partial differential equations.  These equations may be time-dependent, and capture
 physics of interest for understanding the system.  A \emph{solver} is then written that can solve the series
-of equations and determine quantities of interest (QoI).  Typically, a solver accepts a set of inputs and
-produces a set of outputs, often single-valued.  For instance, a solver might solve equations related to the
+of equations and determine quantities of interest (QoI).  A traditional solver accepts a set of inputs and
+produces a set of single-valued outputs.  For instance, a solver might solve equations related to the
 attenuation of a beam of photons through a material, and the QoI might be the strength of the beam exiting the
 material.  A single run of the solver usually results in a single value, or realization, of the quantity of
 interest.
@@ -28,14 +28,14 @@ together, the input parameter uncertainties exist within a multidimensional prob
 points in that space may be more likely than others, the possible range of values for the QoI is only
 understood when the uncertain input space is considered as a whole.  We note here that while it is possible
 that some of the input parameters are correlated in their probabilistic distribution, it is also possible to
-decouple them into uncorrelated variables.  Throughout this work we will assume the input parameters have been
-uncorrelated from one another.
+decouple them into uncorrelated variables.  Throughout this work we will assume the input parameters 
+are uncorrelated.
 
 One traditional method for exploring the uncertain input space is through random sampling, such as in analog Monte
 Carlo sampling.  In this method, a point in the input space is chosen at random based on probability.  This
 point represents values for the input parameters to the solver.  The solver is executed with these inputs, and
-the QoI is collected.  Then, another point in the input space is chosen at random.  This process continues
-until the properties of the QoI or \emph{response} is well understood.
+the QoIs are collected.  Then, another point in the input space is chosen at random.  This process continues
+until the properties of the QoIs, or \emph{response}, are well understood.
 
 While Monte Carlo sampling is effective at developing an understanding of the response, the sheer volume of
 samples needed to improve that understanding is sometimes prohibitive.  One way to reduce the number of
@@ -43,31 +43,33 @@ samples is by a Latin Hypercube Sampling (LHS) approach.  In this method, the in
 orthogonal hypervolumes.  For instance, for a problem with two uncertain input parameters, the corresponding
 input space is two-dimensional, and the LHS grid would appear as a Cartesian grid of the input space.  Once
 the grid is constructed, a random sample is taken.  Once a sample is taken in one of the grid locations, no
-additional samples can be taken that are within the same uncertainty range in any dimension.  In the two
+additional samples are taken that are within the same uncertainty range in any dimension.  In the two
 dimensional example, once a point is sampled, no additional points can be sampled in the same row or column as
 the sampled points.  In this way, the samples are distributed more thoroughly throughout the input space, and
 may provide a more clear response with less realizations than analog Monte Carlo.
 
-There are some beneficial properties to both Monte Carlo and LHS methods.  Significantly, they are unintrusive; that
-is, there is no need to modify the solver in order to use these methods.  This allows a framework of
+There are some beneficial properties to both Monte Carlo and LHS methods.  Significantly, they are unintrusive:
+ there is no need to modify the solver in order to use these methods.  This allows a framework of
 algorithms to be developed which know only the input space and QoI of a solver, but need no further knowledge
 about its operation.  Unintrusive methods are desirable because the uncertainty quantification algorithms can
 be developed and maintained separately from the solver.
 
-However, both Monte Carlo and LHS sampling are relatively slow to converge on the response surface.  For
-example, with Monte Carlo sampling, in order to reduce the error in the mean value of the response by a factor
-of two, it is necessary to take four times as many samples.  If a solver is sufficiently computationally
+Monte Carlo and LHS sampling are relatively slow to converge on the response surface.  For
+example, with Monte Carlo sampling, in order to reduce the standard error of the mean of the response by a factor
+of two, it is necessary to take at least four times as many samples.  If a solver is sufficiently computationally
 inexpensive, running additional solutions is not a large concern; however, for lengthy and expensive solvers,
-it may not be practical to run sufficient realizations to obtain a clear response.
+it may not be practical to obtain sufficient realizations to obtain a clear response.
 
 %explain scope of proposal
 In this work, we consider several methodologies for quantifying the uncertainty in expensive solver
 calculations.  In order to demonstrate clearly the function of these methods, we apply them first on
 several simpler problems, such as polynomial evaluations and analytic attenuation.  These models have a high
-degree of regularity, and their analyticity provides for straightforward benchmarking.  We then apply the
-methods to an intermediate-level solver for range of a projectile including drag.  This model is nonlinear and
-has finite regularity, and has no analytic solution.  These properties challenge the methods while still
-maintaining a fast and simple solver.  Finally, we apply the methods to an engineering-scale solver that
+degree of regularity, and their analyticity provides for straightforward benchmarking.
+%We then apply the
+%methods to an intermediate-level solver for range of a projectile including drag.  This model is nonlinear and
+%has finite regularity, and has no analytic solution.  These properties challenge the methods while still
+%maintaining a fast and simple solver.  
+Finally, we apply the methods to an engineering-scale solver that
 models the neutronics of a nuclear reactor core.  While not as complex as a multiphysics model, this will
 demonstrate the ``real life'' application of the uncertainty quantification methods, where the regularity and
 other properties of the model are not well understood.
@@ -78,7 +80,7 @@ the response.  MC is used as a benchmark methodology; if other methods converge 
 of interest more quickly and consistently than MC, we consider them ``better'' for our purposes.
 
 The second method we consider is isotropic, tensor-product stochastic collocation for generalized polynomial
-chaos (SCgPC)\cite{sparseSC}\cite{sparse1}\cite{sparse2}\cite{xiu}, whereby deterministic collocation points 
+chaos (SCgPC)\cite{sparseSC,sparse1,sparse2,xiu}, whereby deterministic collocation points 
 are used to develop a polynomial-interpolated reduced-order model
 of the response as a function of the inputs.  This method algorithmically expands the solver as the sum of
 orthogonal multidimensional polynomials with scalar coefficients.  The scalar coefficients are obtained by
@@ -117,7 +119,7 @@ response QoI to changes in each subset space.  The first-order sensitivities can
 anisotropic weighting for SCgPC.  Additionally, HDMR acts as a reduced-order model for the solver, potentially
 providing more efficient evaluations.
 
-Additionally, we propose continued work on developing adaptive algorithms for both SCgPC and HDMR\cite{Ayres}.  In adaptive
+Additionally, we propose continued work on developing adaptive algorithms for both SCgPC and HDMR \cite{Ayres}.  In adaptive
 SCgPC, the polynomial basis is constructed level-by-level based on the highest-impact subset polynomials.  In
 adaptive HDMR, the constituent subset input spaces are developed similarly, based on the highest-impact input
 subset.  The crowning achievement we propose is combining HDMR and SCgPC to develop both the subset input
@@ -130,7 +132,7 @@ tools for analysts to quantify the uncertainty in their simulations with minimal
 the application of the method developed, we propose a complex non-linear multiphysics system solver simulating
 the operation of a fuel pin within a nuclear reactor core, including both neutronics and fuel performance
 physics kernals.  For this solver, we propose to use the coupled \rattlesnake{}\cite{rattlesnake} and 
-\bison{}\cite{bison}\cite{mammoth} production codes.
+\bison{} \cite{bison,mammoth} production codes.
 Both of these codes are developed and maintained within the \moose{}\cite{moose} environment.  The
 multiphysics nonlinear system will provide a challenge with unknown response properties for the uncertainty
 quantification methods discussed in this proposal.
@@ -139,8 +141,9 @@ quantification methods discussed in this proposal.
 The remainder of this work will proceed as follows:
 \begin{itemize}
   \item Chapter 2: We mathematically describe the problems solved by the simulations we will be running,
-    including polynomial evaluations, attenuation, projectile, neutronics, and rector performance.  We discuss
-    their potential approach and applications.
+    including polynomial evaluations, attenuation,% projectile, 
+    neutronics, and rector performance.  We discuss
+    potential approaches to model solving and applications of the models.
   \item Chapter 3: We describe several methods for uncertainty quantification, including Monte Carlo, Latin
     Hypercube sampling, and generalized Polynomial Chaos.  We also
     discuss methods to accelerate the convergence of SCgPC.

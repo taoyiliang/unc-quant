@@ -11,7 +11,7 @@
 %----------------------------------------------------------------------------------------
 
 \section{Uncertainty Quantification Methods}
-We consider a few methods for uncertainty quantification (UQ).  One method to classify UQ methods is by their
+We consider a few methods for uncertainty quantification (UQ).  One classification for UQ methods is by their
 interaction level with a simulation code.  Non-intrusive methods treat the code as a black box, perturbing the
 inputs and collecting the outputs without modifying the solver code.  These methods are ideal for generic application
 frameworks, where the simulation code may be unknown or precompiled.  Examples of non-intrusive methods
@@ -20,7 +20,7 @@ Alternatively, intrusive methods require access to the solution algorithm itself
 more efficient solutions.  In particular, adjoint methods require the solution operator to be invertible, and
 provide very efficient methods to determine sensitivities and analyze output-input dependence.  While many
 intrusive methods have efficiency benefits, they lack the flexibility and universal applicability of non-intrusive
-methods, and so we focus strictly on non-intrusive methods in this work.
+methods. We focus strictly on non-intrusive methods in this work.
 
 \section{Correlation}
 An assumption we make in this work is that the uncertain input parameters are independent or at least
@@ -33,10 +33,11 @@ input space to replace the original.  Similarly, principle component analysis ca
 the fundamental uncorrelated space that maps into the correlated variable space.
 
 \section{Monte Carlo}
-In analog Monte Carlo\cite{lhs} uncertainty quantification, a single point in the input space is selected randomly,
+In analog Monte Carlo \cite{lhs} uncertainty quantification, a single point in the input space is selected randomly,
 and an output collected, until an appropriately accurate view of the output space is acquired.  While few
 samples result in a poor understanding of the quantity of interest, sufficiently large samples converge on a
-correct solution.  The convergence rate of Monte Carlo is consistent, as
+correct solution.  The convergence rate of Monte Carlo is consistent for the response mean if it is roughly
+Gaussian in distribution, as
 \begin{equation}
   \epsilon = \frac{c}{\sqrt{\eta}},
 \end{equation}
@@ -48,7 +49,7 @@ reduced-order model as part of the evaluation; however, interpolation methods ca
 additional samples.
 
 \section{Latin Hypercube Sampling}
-Latin hypercube sampling\cite{lhs} is another stochastic method that specializes in multidimensional
+Latin hypercube sampling \cite{lhs} is another stochastic method that specializes in multidimensional
 distributions.  In this method, the input domain is divided into $M^N$ subdomains that contain an equal
 probability volume, with $M$ divisions along each axis.  Sampling is then performed in these volumes, assuring
 no two samples share the same ``row'' for a given input dimension; that is, once a sample is taken within the
@@ -65,29 +66,31 @@ subdividing and tracking the grid on the input space.
 In general, polynomial chaos expansion (PCE) methods seek to interpolate the simulation code as a combination of
 polynomials of varying degree in each dimension of the input space.  Originally Wiener
 proposed expanding in Hermite polynomials for Gaussian-normal distributed variables \cite{wiener}.  Askey and
-Wilson generalized this method for a range of Gaussian-based distributions with corresponding polynomials,
+Wilson generalized Hermite polynomials to include Jacobi polynomials, including Legendre and Laguerre
+polynomials \cite{Wiener-Askey}.  Xiu and Karniadakis combines these concepts to perform PCE for a range of Gaussian-based
+distributions with corresponding polynomials,
 including Legendre polynomials for uniform distributions, Laguerre polynomials for Gamma distributions, and
-Jacobi polynomials for Beta distributions\cite{Wiener-Askey}.
+Jacobi polynomials for Beta distributions \cite{xiu}.
 
 In each of these cases, a probability-weighted
 integral over the distribution can be cast in a way that the corresponding polynomials are orthogonal over the
 same weight and interval.  These chaos Wiener-Askey polynomials were used by Xiu and Karniadakis to develop
 the generalized polynomial chaos expansion method (gPC), including a transformation for applying the same
-method to arbitrary distributions (as long as they have a known inverse CDF)\cite{xiu}.  Two significant
+method to arbitrary distributions (as long as they have a known inverse CDF) \cite{xiu}.  Two significant
 methodologies have grown from gPC application.  The first makes use of Lagrange polynomials to expand the
 original function or simulation code, as they can be made orthogonal over the same domain as the
-distributions\cite{SCLagrange}; the other uses the Wiener-Askey polynomials\cite{xiu}.  We consider the latter in this work.
+distributions \cite{SCLagrange}; the other uses the Wiener-Askey polynomials \cite{xiu}.  We consider the latter in this work.
 
 We consider a simulation code that produces a quantity of interest $u$ as a function $u(Y)$ whose arguments are
 the uncertain, distributed input
-parameters $Y=[Y_1,\ldots,Y_n,\ldots,Y_N]$.  A particular realization $\omega$ of $Y_n$ is expressed by
+parameters $Y=(Y_1,\ldots,Y_n,\ldots,Y_N)$.  A particular realization $\omega$ of $Y_n$ is expressed by
 $Y_n(\omega)$, and a single realization of the entire input space results in a solution to the function as
 $u(Y(\omega))$.  We acknowledge obtaining a realization of $u(Y)$ may take considerable computation time and
-effort, and may be solved nonlinearly and without analytic solution.  There may be other input parameters that
+effort, and may be solved nonlinearly.  There may be other input parameters that
 contribute to the solution of $u(Y)$; we neglect these, as our interest is chiefly in the uncertainty space.
 In addition, it is possible that the quantity of interest $u(Y)$ is an integrated quantity or some norm of a
-value that is temporally or spatially distributed; in any case, we restrict $u(Y(\omega))$ to a single scalar
-output.
+value that is temporally or spatially distributed. We restrict $u(Y(\omega))$ to a single scalar
+output, but the principles apply to a multidimensional response.
 
 We expand $u(Y)$ in orthonormal multidimensional polynomials $\Phi_k(Y)$, where $k$ is a multi-index tracking
 the polynomial order in each axis of the polynomial Hilbert space, and $\Phi_k(Y)$ is constructed as
@@ -95,9 +98,9 @@ the polynomial order in each axis of the polynomial Hilbert space, and $\Phi_k(Y
   \Phi_k(Y) = \prod_{n=1}^N \phi_{k_n}(Y_n),
 \end{equation}
 where $\phi_{k_n}(Y_n)$ is a single-dimension Wiener-Askey orthonormal polynomial of order $k_n$ and
-$k=[k_1,\ldots,k_n,\ldots,k_N]$, $k_n\in\mathbb{N}^0$.  For example, given $u(y_1,y_2,y_3)$, $k=(2,1,4)$ 
+$k=(k_1,\ldots,k_n,\ldots,k_N)$, $k_n\in\mathbb{N}^0$.  For example, given $u(y_1,y_2,y_3)$, $k=(2,1,4)$ 
 is the multi-index of the
-product of: a second-order polynomial in $y_1$; a first-order polynomial in $y_2$; and a fourth-order
+product of a second-order polynomial in $y_1$, a first-order polynomial in $y_2$, and a fourth-order
 polynomial in $y_4$. The gPC for $u(Y)$ using this notation is
 \begin{equation}
   u(Y) \approx \sum_{k\in\Lambda(L)} u_k\Phi_k(Y),
@@ -143,7 +146,7 @@ In the nominal tensor
 product case, $\Lambda(L)$ contains all possible combinations of polynomial indices up to truncation order $L$ in each
 dimension, as
 \begin{equation}
-  \Lambda_\text{TP}(L)=\Big\{\bar p=[p_1,\cdots,p_N]: \max_{1\leq n\leq N}p_n\leq L
+  \Lambda_\text{TP}(L)=\Big\{\bar p=(p_1,\cdots,p_N): \max_{1\leq n\leq N}p_n\leq L
 \Big\}.
 \end{equation}
 The cardinality of this index set is $|\Lambda_\text{TP}(L)|=(L+1)^N$. For example, for a two-dimensional
@@ -165,19 +168,19 @@ and second order in $Y_2$.
 
 It is evident there is some inefficiencies in this index set.  First, it suffers dramatically from the
 \emph{curse of dimensionality}; that is, the number of polynomials required grows exponentially with
-increasing dimension.  Second, the total order of polynomials is not considered.  Assuming the contribution of
+increasing dimensions.  Second, the total order of polynomials is not considered.  Assuming the contribution of
 each higher-order polynomial is smaller than lower-order polynomials, the (3,3) term is
 contributing sixth-order corrections that are likely smaller than the error introduced by ignoring
 fourth-order corrections (4,0) and (0,4).  This leads to the development of the \emph{total degree} (TD) and
-\emph{hyperbolic cross} (HC) polynomial index set construction strategies\cite{hctd}.
+\emph{hyperbolic cross} (HC) polynomial index set construction strategies \cite{hctd}.
 
 In TD, only multidimensional polynomials whose \emph{total} order at most $L$ are permitted,
 \begin{equation}
-  \Lambda_\text{TD}(L)=\Big\{\bar p=[p_1,\cdots,p_N]:\sum_{n=1}^N p_n \leq L
+  \Lambda_\text{TD}(L)=\Big\{\bar p=(p_1,\cdots,p_N):\sum_{n=1}^N p_n \leq L
 \Big\}.
 \end{equation}
 The cardinality of this index set is $|\Lambda_\text{TD}(L)|={L+N\choose N}$, which grows with increasing
-dimension much more slowly than TP.  For the same $N=2,L=3$ case above, the TD index set is given in Table
+dimensions much more slowly than TP.  For the same $N=2,L=3$ case above, the TD index set is given in Table
 \ref{tab:TD}. 
 
 \begin{table}[h]
@@ -196,7 +199,7 @@ In HC, the \emph{product} of polynomial orders is used to restrict allowed polyn
 tends to polarize the expansion, emphasizing higher-order polynomials in each dimension but lower-order
 polynomials in combinations of dimensions, as
 \begin{equation}
-  \Lambda_\text{HC}(L)=\Big\{\bar p=[p_1,\ldots,p_N]:\prod_{n=1}^N p_n+1 \leq L+1
+  \Lambda_\text{HC}(L)=\Big\{\bar p=(p_1,\ldots,p_N):\prod_{n=1}^N p_n+1 \leq L+1
 \Big\}.
 \end{equation}
 The cardinality of this index set is bounded by $|\Lambda_\text{HC}(L)|\leq (L+1)(1+\log(L+1))^{N-1}$. It
@@ -215,22 +218,22 @@ grows even more slowly than TD with increasing dimension, as shown in Table \ref
 \end{table}
 
 It has been shown that the effectiveness of TD and HC as index set choices depends strongly on the regularity
-of the output space\cite{hctd}.  TD tends to be most effective for infinitely-continuous response surfaces,
+of the responce \cite{hctd}.  TD tends to be most effective for infinitely-continuous response surfaces,
 while HC is more effective for surfaces with limited smoothness or discontinuities.
 
 \subsection{Anisotropy}
 While using TD or HC to construct the polynomial index set combats the curse of dimensionality present in TP,
 it is not eliminated and continues to be an issue for problems of large dimensionality.  Another method that can
 be applied to mitigate this issue is index set anisotropy, or the unequal treatment of various dimensions.
-In this strategy, weighting factors $\alpha=[\alpha_1,\ldots,\alpha_n,\ldots,\alpha_N]$ are applied in each
+In this strategy, weighting factors $\alpha=(\alpha_1,\ldots,\alpha_n,\ldots,\alpha_N)$ are applied in each
 dimension to allow additional polynomials in some dimensions and less in others.  This change adjusts the TD
 and HC construction rules as follows, where $|\alpha|_1$ is the one-norm of $\alpha$.
 \begin{equation}
-  \tilde\Lambda_\text{TD}(L)=\Big\{\bar p=[p_1,\cdots,p_N]:\sum_{n=1}^N \alpha_n p_n \leq \qty|\vec\alpha|_1 L
+  \tilde\Lambda_\text{TD}(L)=\Big\{\bar p=(p_1,\cdots,p_N):\sum_{n=1}^N \alpha_n p_n \leq \qty|\vec\alpha|_1 L
 \Big\},
 \end{equation}
 \begin{equation}
-  \tilde\Lambda_\text{HC}(L)=\Big\{\bar p=[p_1,\cdots,p_N]:\prod_{n=1}^N \qty(p_n+1)^{\alpha_n} \leq
+  \tilde\Lambda_\text{HC}(L)=\Big\{\bar p=(p_1,\cdots,p_N):\prod_{n=1}^N \qty(p_n+1)^{\alpha_n} \leq
   \qty(L+1)^{\qty|\vec\alpha|_1} \Big\}.
 \end{equation}
 As it is desirable to obtain the isotropic case from a reduction of the anisotropic cases, we define the
@@ -267,7 +270,7 @@ analyst, it may be enough to use heuristics to assign importance arbitrarily.  O
 uncertainty quantification solve can be used to roughly determine sensitivity coefficients (such as Pearson
 coefficients), and the inverse of those can then be applied as anisotropy weights.  Sobol coefficients
 obtained from first- or second-order HDMR, a proposed development for this work, could also serve as a basis for these weights.
-As will be shown, a good choice of anisotropy weight can greatly speed up convergence; however, a
+A good choice of anisotropy weight can greatly speed up convergence; however, a
 poor choice can slow convergence considerably, as computational resources are used to resolve low-importance
 dimensions.
 
@@ -279,7 +282,7 @@ corresponding to the polynomial expansion polynomials for numerical integration.
 the form
 \begin{align}
   \int_a^b f(x)\rho(x) &= \sum_{\ell=1}^\infty w_\ell f(x_\ell),\\
-  &\approx \sum_{\ell=1}^i{\hat L} w_\ell f(x_\ell),
+  &\approx \sum_{\ell=1}^{\hat L} w_\ell f(x_\ell),
 \end{align}
 where $w_\ell,x_\ell$ are corresponding points and weights belonging to the quadrature set, truncated at order
 $\hat L$.  At this point, this $\hat L$ should not be confused with the polynomial expansion truncation order $L$.  We
@@ -326,12 +329,12 @@ Using orthogonal properties of the polynomials, this reduces as $\hat L\to\infty
 \begin{equation}
   u_k\approx \sum_{\ell=1}^{\hat L} w_\ell u_k \Phi_k(Y_\ell)^2.
 \end{equation}
-Thus, the integral, to the same approximation that the gPC expansion itself is approximated, the quadrature is
-approximating an integral of order $2k$, and the quadrature order itself should be order 
+Thus, the integral, to the same error introduced by truncating the  gPC expansion, the quadrature is
+approximating an integral of order $2k$. As a result, the quadrature order should be order 
 \begin{equation}
   p=\frac{2k+1}{2}=k+\frac{1}{2}<k+1,
 \end{equation}
-so we can conservatively use $k+1$ as the quadrature order.  In the case of the largest polynomials with order
+so we can conservatively use $p=k+1$.  In the case of the largest polynomials with order
 $k=L$, the quadrature size $\hat L$ is the same as $L+1$.  It is worth noting that if $u(Y)$ is effectively of
 much higher-order polynomial than $L$, this equality for quadrature order does not hold true; however, it also
 means that gPC of order $L$ will be a poor approximation.
@@ -341,7 +344,7 @@ quadrature set, we can make use of Smolyak-like sparse quadratures to reduce the
 evaluations necessary for the TD and HC polynomial index set construction strategies.
 
 \subsection{Smolyak Sparse Grids}
-Smolyak sparse grids\cite{smolyak} are an attempt to discover the smallest necessary quadrature set to
+Smolyak sparse grids \cite{smolyak} are an attempt to discover the smallest necessary quadrature set to
 integrate a multidimensional integral with varying orders of predetermined quadrature sets.  In our case, the
 polynomial index sets determine the quadrature orders each one needs in each dimension to be integrated
 accurately.  For example, the polynomial index set point (2,1,3) requires three points in $Y_1$, two in $Y_2$,
@@ -364,8 +367,8 @@ quadrature sets.  Returning momentarily to a one-dimensional problem, we introdu
 \end{equation}
 A Smolyak sparse grid is then defined and applied to the desired integral in Eq. \ref{eq:polycoeff},
 \begin{equation}
-  S^{(\vec{\hat L})}_{\Lambda,N}[u(Y)\Phi_k(Y)] = \sum_{k\in\Lambda(L)} (\Delta_{k_1}^{(\hat L_1)} \otimes \cdots \otimes
-  \Delta_{k_N}^{(\hat L_N)}[u(Y)\Phi_k(Y)].
+  S^{(\vec{\hat L})}_{\Lambda,N}[u(Y)\Phi_k(Y)] = \sum_{k\in\Lambda(L)} \left(\Delta_{k_1}^{(\hat L_1)} \otimes \cdots \otimes
+  \Delta_{k_N}^{(\hat L_N)}\right)[u(Y)\Phi_k(Y)].
 \end{equation}
 Equivalently, and in a more algorithm-friendly approach,
 \begin{equation}

@@ -12,16 +12,13 @@ degree work.
 %----------------------------------------------------------------------------------------
 %	SECTION 1
 %----------------------------------------------------------------------------------------
-\section{DRAFT NOTES}
-\begin{itemize}
-  \item I'm still updating the colors and contents of the results plots.  They'll be ready by January.
-\end{itemize}
-
 \section{Adaptive Sparse Grid}
 
-There is a method proposed by \cite{Gerstner} and used in \cite{Ayres} whereby the polynomial index set to be
-used in constructing the sparse grid quadrature is constructed adaptively.  We have demonstrated its
-effectiveness in a preliminary manner in this work, but further improvements and demonstrations are critical
+We have demonstrated in a preliminary manner the effectiveness of a method proposed by \cite{Gerstner} and used in
+\cite{Ayres} where the polynomial index set to be
+used in constructing the sparse grid quadrature is constructed adaptively.
+%effectiveness in a preliminary manner in this work, but 
+We observed opportunity for further improvements critical
 in exploring this method's potential.  The algorithm proceeds generally
 as follows:
 \begin{itemize}
@@ -37,9 +34,19 @@ as follows:
 This adaptive algorithm has the strength of determining the appropriate anisotropy to apply when generating a
 polynomial index set.  For anisotropic cases, or cases where the static index set construction rules are not
 ideal, the adaptive index set could potentially provide a method to avoid wasted calculations and emphasize
-high-impact polynomials in the expansion.
+high-impact polynomials in the expansion.  Fig. \ref{fig:asg_step} shows an example process for a
+two-dimensional input space. In this example, the axis represent orders of included polynomials, the blue
+squares indicate index set polynomials already included, and the green circle indicates the next most
+impactful candidate for inclusion.  In this example, it is evident polynomials in $y_1$ have an overall
+greater impact on the response variance than $y_1$.
 
-PLACEHOLDER: VISUAL EXAMPLE OF 2D ADAPTIVE PROGRESSION
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{asc_block}
+  \rule{35em}{0.5pt}
+  \caption{Adaptive Sparse Grid Steps}
+  \label{fig:asg_step}
+\end{figure}
 
 There are, however, some weak points in this algorithm.  First, the algorithm in literature has no predictive method
 to determine the next polynomial index to include in the set; instead, it evaluates each potential index and
@@ -48,8 +55,8 @@ that are not used in the final product.  In addition to including this algorithm
 method for predicting high-impact points based on the impact of their predecessors in the set.  Results shown
 in this work are a first step in that direction.
 
-Second, there are certain types of models for which the adaptive algorithm will stall, converge too early, or
-otherwise generally fail.  For instance, if the partial derivative of the model with respect to any of the
+Second, there are certain types of models for which the adaptive algorithm will stall or converge too early.
+For instance, if the partial derivative of the model with respect to any of the
 input dimensions is zero when evaluated at the mean point (but nonzero elsewhere), the algorithm will falsely
 converge prematurely, as adding additional polynomial orders to the input in question will not change the
 value of the model at the mean point.  For example, consider a model
@@ -78,8 +85,8 @@ dimensions, it does not reduce the input cardinality of the problem.  An additio
 \cite{Ayres} uses an adaptively-constructed HDMR representation to alleviate the curse of dimensionality for
 the adaptive SCgPC method.
 
-In Chapter \ref{ch:methods}, we identify the static HDMR expansion, whereby subsets of the input domain can be
-joined together to approximate the full model.  We replicate the essential expansion here:
+In the HDMR expansion, subsets of the input domain can be
+joined together to approximate the full model,
 \begin{align}
   u(Y) = u_0 &+ \sum_{n=1}^N u_{Y_n} \nonumber\\
   &+ \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} u_{Y_{n_1},Y_{n_2}} \nonumber \\
@@ -96,8 +103,8 @@ for a model $f(a,b,c)$, the full HDMR expansion is
     &+ f_{ab} + f_{ac} + f+{bc} \label{eq:exhdmr2}\\
     &+ f_{abc}. \label{eq:exhdmr3}
 \end{align}
-Truncating, a first-order HDMR expansion includes just the terms in Eq. \ref{eq:exhdmr1}, and a second-order
-expansion additionally includes all the terms in Eq. \ref{eq:exhdmr2}.  However, it is entirely possible and
+Truncating, a first-order HDMR expansion includes just the terms in Eq.\ref{eq:exhdmr1}, and a second-order
+expansion additionally includes all the terms in Eq.\ref{eq:exhdmr2}.  However, it is entirely possible and
 often likely that
 some subsets have larger impact than others, and some might be ignored altogether without significantly
 impacting the overall expansion.  Adaptive HDMR (AHDMR) is an algorithm that considers the potential impacts
@@ -109,9 +116,10 @@ potential impact of adding new subsets to the HDMR expansion. The AHDMR algorith
   \item While not converged:
   \begin{itemize}
     \item Using existing subset sensitivities, predict the importance of future subsets
-    \item Consider the impact of adding polynomial indices to existing subset PCE representations.
-    \item Choose between expanding existing subsets or adding new subsets based on impact.
-    \item If the relative contribution of the new HDMR expectation is less than tolerance, convergence is reached.
+    \item Consider the impact of adding polynomial indices to existing subset PCE representations
+    \item Choose between expanding existing subsets or adding new subsets based on impact
+    \item If the relative contribution of the new HDMR expectation is less than tolerance, convergence is
+      reached.
   \end{itemize}
 \end{itemize}
 All the surrogate models for each subtype in the expansion are constructed using adaptive SCgPC expansions.

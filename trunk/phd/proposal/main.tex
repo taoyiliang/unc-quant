@@ -96,7 +96,7 @@
 \begin{center}
 
 \textsc{\LARGE \univname}\\[1.5cm] % University name
-\textsc{\Large Doctoral Thesis}\\[0.5cm] % Thesis type
+\textsc{\Large Doctoral Proposal}\\[0.5cm] % Thesis type
 
 \HRule \\[0.4cm] % Horizontal line
 {\huge \bfseries \ttitle}\\[0.4cm] % Thesis title
@@ -196,22 +196,22 @@ complexity of the numerical models.  Traditionally, uncertainty quantification h
 random sampling methods like Monte Carlo.
 For some models, the input parametric space and corresponding
 quantity-of-interest output space is sufficiently explored with a few low-cost computational calculations.
-For other models, computation is costly and takes many random samples to obtain a
+For other models, it is computationally costly to obtain a
 good understanding of the output space.  
 
 To combat the costliness of random sampling, 
 this research explores the possibilities of advanced methods in
 stochastic collocation for generalized polynomial chaos (SCgPC) as an alternative to traditional uncertainty
 quantification techniques such as Monte Carlo (MC) and Latin Hypercube sampling (LHS) methods.  In this
-proposal we explore the behavior of traditional isotropic tensor product (TP) SCgPC, then expand to consider
+proposal we explore the behavior of traditional isotropic tensor product (TP) SCgPC, as well as
 truncated polynomial spaces using total degree (TD) and hyperbolic cross (HC) construction strategies.  Next,
 we consider applying anisotropy to the polynomial space construction, and analyze methods whereby the level of
 anisotropy can be approximated.  
-We analyze these methods on a series of models, including two analytic models, some simple projectile physics, and
+We analyze these methods on a series of models, including two analytic models and
 a nontrivial neutron diffusion transport model.  For this analysis, we demonstrate the application of the
 algorithms discussed in \raven, a production-level uncertainty quantification framework.
 
-Finally, we propose several improvements to the algorithms discussed.  First, we propose developing Sobol
+We propose several improvements to the algorithms discussed.  First, we propose developing Sobol
 decomposition, or the high-dimensional model representation (HDMR) method, wherein the uncertainty space is
 treated as the superposition of constituent subspaces.  
 Second, we propose developing adaptive algorithms for the intelligent
@@ -320,7 +320,7 @@ nuclear fuel performance.
 
 % Include the chapters of the thesis as separate files from the Chapters folder
 % Uncomment the lines as you write the chapters
-
+\nocite{*}
 \input{Chapters/intro}
 \input{Chapters/models} 
 \input{Chapters/methods}
