@@ -498,13 +498,283 @@ Special property of gPC:
 \end{align*}
 \end{frame}
 
-\subsection{Physics Models}
-\subsubsection{Tensor Polynomials}
-\subsubsection{Attenuation}
-\subsubsection{Neutron Diffusion}
+\begin{frame}{Generalized Polynomial Chaos}{Adaptive Index Sets}%\vspace{-20pt}
+  Adaptive Index Set construction using ANOVA
+  \begin{align*}
+    \text{Impact Parameter }\eta_k &=
+    \frac{c_k^2}{\text{var}\left\{G[u](Y)\right\}},\hspace{10pt}0\leq\eta_k\leq 1\\
+    \text{Est. Impact Parameter }\tilde\eta_k &= \prod_{n=1,k_n>0}^N \eta_{(k_1,\cdots,k_n-1,\cdots,k_N)}
+  \end{align*}
+  Example,
+  \begin{equation*}
+    \tilde\eta_{(2,1,3)}=\eta_{(1,1,3)}\cdot\eta_{(2,0,3)}\cdot\eta_{(2,1,2)}
+  \end{equation*}
+\end{frame}
 
-\begin{frame}{Methods}{todo}
-  todo
+\begin{frame}{Generalized Polynomial Chaos}{Adaptive Index Sets}%\vspace{-20pt}
+  Adaptive Index Set Algorithm
+  \begin{itemize}
+    \item Calculate mean (zeroth-order) polynomial expansion
+    \item While not converged:
+      \begin{itemize}
+        \item Collect list of indices whose predecessors are in $\Lambda$
+        \item Using existing impacts, predict impact of each potential index
+        \item If total of impacts is less than tolerance, convergence is reached
+        \item Otherwise, add highest-impact index and construct new expansion
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Generalized Polynomial Chaos}{Adaptive Index Sets}%\vspace{-20pt}
+ \begin{figure}[h!]
+   \centering
+   \includegraphics[width=0.8\textwidth]{../../graphics/asc_block}
+ \end{figure}
+\end{frame}
+
+\subsection{Physics Models}
+\begin{frame}{Physical Models}{}%\vspace{-20pt}
+  Efficiency of gPC compared to Monte Carlo depends on
+  \begin{itemize}
+    \item Regularity of response surface
+    \item Dimensionality of input space
+  \end{itemize}
+  Demonstrate using three models
+  \begin{itemize}
+    \item Tensor Polynomial
+    \item Attenuation
+    \item Neutron Diffusion
+  \end{itemize}
+\end{frame}
+
+\subsubsection{Tensor Polynomials}
+\begin{frame}{Physical Models}{Tensor Polynomial}%\vspace{-20pt}
+  From Ayres and Eaton, 2015
+  \begin{equation*}
+    u(Y) = \prod_{n=1}^N (y_n+1), \hspace{10pt}y_n\sim\mathcal{U}[-1,1]
+  \end{equation*}
+  Features:
+  \begin{itemize}
+    \item Analytic mean, variance
+    \item Regularity
+    \item Exact in finite polynomial space
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Tensor Polynomials}{Results}%\vspace{-20pt}
+  \begin{columns}
+  \begin{column}{0.5\textwidth}
+    \begin{figure}[h!]
+      \centering
+      \includegraphics[width=\textwidth]{../../graphics/tenspoly_varconv_5}
+    \end{figure}
+  \end{column}
+  \begin{column}{0.5\textwidth}
+    \begin{figure}[h!]
+      \centering
+      \includegraphics[width=\textwidth]{../../graphics/tenspoly_varconv_10}
+    \end{figure}
+  \end{column}
+  \end{columns}
+\end{frame}
+
+\subsubsection{Attenuation}
+\begin{frame}{Physical Models}{Attenuation}%\vspace{-20pt}
+  Exit strength of beam incident on discrete absorbing material
+  \begin{equation*}
+    u(Y) = \prod_{n=1}^N e^{-y_n/N}, \hspace{10pt}y_n\sim\mathcal{U}[0,1]
+  \end{equation*}
+  Features:
+  \begin{itemize}
+    \item Analytic mean, variance
+    \item Regularity
+    \item Inexact in finite polynomial space
+    \item Taylor expansion is tensor high-order polynomials
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Attenuation}{Results}%\vspace{-20pt}
+  \begin{columns}
+  \begin{column}{0.5\textwidth}
+    \begin{figure}[h!]
+      \centering
+      \includegraphics[width=\textwidth]{../../graphics/attn_varconv_5}
+    \end{figure}
+  \end{column}
+  \begin{column}{0.5\textwidth}
+    \begin{figure}[h!]
+      \centering
+      \includegraphics[width=\textwidth]{../../graphics/attn_varconv_10}
+    \end{figure}
+  \end{column}
+  \end{columns}
+\end{frame}
+
+
+\subsubsection{Neutron Diffusion}
+\begin{frame}{Physical Models}{Neutron Diffusion}%\vspace{-20pt}
+  Quarter-core 2-group steady state reactor benchmark, 165x165 cm 
+  \footnotesize
+  \begin{equation*}
+    -\grad\cdot\qty( D_1(\bar x)\grad\phi_1(\bar x))+\qty(\xs{a}{1}(\bar x)+\xs{s}{1\to2}(\bar x))\phi_1(\bar x)
+    = \frac{1}{k(\phi)}\sum_{g'=1}^2\nu_{g'}\xs{f}{g'}(\bar x)\phi_{g'}(\bar x),
+  \end{equation*}
+  \begin{equation*}
+    -\grad \cdot\qty(D_2(\bar x)\grad \phi_2(\bar x))+\xs{a}{2}(\bar x)\phi_2(\bar x) = \xs{s}{1\to 2}(\bar
+    x)\phi_1(\bar x)
+  \end{equation*}
+  QoI: $k(\phi)$
+\end{frame}
+
+\begin{frame}{Neutron Diffusion}{Geometry}%\vspace{-20pt}
+  \begin{columns}
+  \begin{column}{0.5\textwidth}
+    \begin{figure}[h!]
+      \centering
+      \includegraphics[width=0.5\textwidth]{../../graphics/core}
+    \end{figure}
+  \end{column}
+  \begin{column}{0.5\textwidth}
+    Vacuum, Reflective boundaries
+  \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Neutron Diffusion}{BCs}%\vspace{-20pt}
+  Boundary Conditions
+  \begin{equation}
+    \frac{\phi_g}{4}-\frac{D_g}{2}\eval{\pdv{\phi_g}{x_1}}_{\partial \Omega_\text{top}}=0,\hspace{5pt} g=1,2,
+  \end{equation}
+  \begin{equation}
+    \frac{\phi_g}{4}-\frac{D_g}{2}\eval{\pdv{\phi_g}{x_2}}_{\partial \Omega_\text{right}}=0,\hspace{5pt} g=1,2,
+  \end{equation}
+  \begin{equation}
+    -D_g\eval{\pdv{\phi_g}{x_1}}_{\partial \Omega_\text{bottom}}=0,\hspace{5pt} g=1,2,
+  \end{equation}
+  \begin{equation}
+    -D_g\eval{\pdv{\phi_g}{x_2}}_{\partial \Omega_\text{left}}=0,\hspace{5pt} g=1,2.
+  \end{equation}
+\end{frame}
+
+\begin{frame}{Neutron Diffusion}{Input Space}%\vspace{-20pt}
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{c c | c c c c}
+      Region & Group & $D_g$ & $\Sigma_{a,g}$ & $\nu\Sigma_{f,g}$ & $\Sigma_s^{1,2}$ \\ \hline
+      1 & 1 & 1.255 & 8.252e-3 & 4.602e-3 & 2.533e-2 \\
+       & 2 & 2.11e-1 & 1.003e-1 & 1.091e-1 & \\ \hline
+       2 & 1 & 1.268 & 7.181e-3 & 4.609e-3 & 2.767e-2 \\
+        & 2 & 1.902e-1 & 7.047e-2 & 8.675e-2 & \\ \hline
+        3 & 1 & 1.259 & 8.002e-3 & 4.663e-3 & 2.617e-2 \\
+         & 2 & 2.091e-1 & 8.344e-2 & 1.021e-1 & \\ \hline
+         4 & 1 & 1.259 & 8.002e-3 & 4.663e-3 & 2.617e-2 \\
+          & 2 & 2.091e-1 & 7.3324e-2 & 1.021e-1 & \\ \hline
+          5 & 1 & 1.257 & 6.034e-4 & 0 & 4.754e-2 \\
+           & 2 & 1.592e-1 & 1.911e-2 & 0 &
+         \end{tabular}
+         %\caption{Reference Material Properties for Benchmark Core}
+         %\label{tab:coremats}
+       \end{table}
+\end{frame}
+
+\begin{frame}{Neutron Diffusion}{Reference Solution}%\vspace{-20pt}
+  $k$=1.00007605445
+  \begin{columns}
+  \begin{column}{0.5\textwidth}
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{../../graphics/g1_50_flux}
+  \end{figure}
+  \end{column}
+  \begin{column}{0.5\textwidth}
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{../../graphics/g2_50_flux}
+  \end{figure}
+  \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Neutron Diffusion}{Uncertainty}\vspace{-20pt}
+  5\% Uncertainty in Parameters:
+  \begin{columns}
+  \begin{column}{0.5\textwidth}
+    $N$=3, $N$=5
+    \begin{itemize}
+      \item $\nu\Sigma^{(1)}_{2,f}$
+      \item $\nu\Sigma^{(4)}_{2,f}$
+      \item $D^{(5)}_2$ \vspace{20pt}
+      \item $\Sigma^{(1)}_{2,c}$
+      \item $\Sigma^{(4)}_{2,c}$
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.5\textwidth}
+    $N$=10
+    \begin{itemize}
+      \item $\Sigma^{(1)}_{2,c}$, $\nu\Sigma^{(1)}_{2,f}$
+      \item $\Sigma^{(2)}_{2,c}$, $\nu\Sigma^{(2)}_{2,f}$
+      \item $\Sigma^{(3)}_{2,c}$, $\nu\Sigma^{(3)}_{2,f}$
+      \item $\Sigma^{(4)}_{2,c}$, $\nu\Sigma^{(4)}_{2,f}$, $\nu\Sigma^{(4)}_{1\to2}$
+      \item $D^{(5)}_2$ \vspace{20pt}
+    \end{itemize}
+  \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Neutron Diffusion}{Results}%\vspace{-20pt}
+  $N$=3
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../../graphics/2D2G_varconv_3}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Neutron Diffusion}{Results}%\vspace{-20pt}
+  $N$=5
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../../graphics/2D2G_varconv_5}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Neutron Diffusion}{Results}%\vspace{-20pt}
+  $N$=10
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../../graphics/2D2G_varconv_10}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Neutron Diffusion}{Results}\vspace{-20pt}
+  \begin{columns}
+  \begin{column}{0.3\textwidth}
+    \begin{figure}[h!]
+      \centering
+      \includegraphics[width=\textwidth]{../../graphics/2D2G_varconv_3}
+    \end{figure}
+  \end{column}
+  \begin{column}{0.3\textwidth}
+    \begin{figure}[h!]
+      \centering
+      \includegraphics[width=\textwidth]{../../graphics/2D2G_varconv_5}
+    \end{figure}
+  \end{column}
+  \begin{column}{0.3\textwidth}
+    \begin{figure}[h!]
+      \centering
+      \includegraphics[width=\textwidth]{../../graphics/2D2G_varconv_10}
+    \end{figure}
+  \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Results}{Summary}\vspace{-20pt}
+  Preliminary Conclusions\vspace{20pt}
+  \begin{itemize}
+    \item SC for gPC suffers greatly from curse of dimensionality\vspace{10pt}
+    \item Adaptive SC can help\vspace{10pt}
+    \item For 5 or less dimensions, performs well for regular responses
+  \end{itemize}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -512,15 +782,156 @@ Special property of gPC:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Proposal}
 
-\subsection{Adaptive Sparse Grid}
 \subsection{HDMR}
-\subsection{Adaptive HDMR}
-\subsection{Mammoth}
-\subsubsection{RattleS$_\text{N}$ake}
-\subsubsection{Bison}
+\begin{frame}{Proposal}{HDMR}\vspace{-20pt}
+  ANOVA method to decompose input space
+  \begin{equation*}
+  \tilde H[u](Y) = u_0 + \sum_{i=1}^N u_i + \sum_{i_1=1}^N\sum_{i_2=1}^{i_1-1}u_{ij}+\cdots +
+      c_{i_1,\ldots,i_N},
+  \end{equation*}
+  \begin{align*}
+    u_0 \equiv& \int dy_1\cdots\int dy_N u(Y), \\
+    u_i \equiv& \int dy_1\cdots\int dy_{i-1}\int dy_{i+1}\cdots\int dy_N u(Y) - u_0
+  \end{align*}
+\end{frame}
 
-\begin{frame}{Proposal}{todo}
-  todo
+\begin{frame}{Proposal}{HDMR}\vspace{-20pt}
+  Sobol' sensitivity coefficients
+  \begin{equation*}
+    \mathcal{S}_i = \frac{\text{var}\left\{u_i\right\}}{\text{var}\left\{\tilde H[u](Y)\right\}}
+  \end{equation*}
+  \begin{equation*}
+    \text{var}\left\{u(Y)\right\}= \sum_{i=1}^N \mathcal{S}_i + \sum_{i_1=1}^N\sum_{i_2=1}^{i_1-1}
+    \mathcal{S}_{ij}+\cdots+\mathcal{S}_{i_1,\ldots,i_N}
+  \end{equation*}
+\end{frame}
+
+\begin{frame}{Proposal}{HDMR}%\vspace{-20pt}
+  Problem: Costly integrals (even low-level expansion)\\
+  Solution: Cut-HDMR, reference point $\hat Y=(\hat y_1,\ldots,\hat y_N)$\\
+  Let $u(y_i) \equiv u(\hat y_1,\ldots,\hat y_{i-1},\hspace{5pt}y_i\hspace{5pt},\hat y_{i+1},\ldots,\hat y_N)$
+  \begin{equation*}
+  H[u](Y) = h_0 + \sum_{i=1}^N h_i + \sum_{i_1=1}^N\sum_{i_2=1}^{i_1-1}h_{ij}+\cdots +
+      h_{i_1,\ldots,i_N},
+  \end{equation*}
+  \begin{align*}
+    h_0 \equiv& u(\hat Y), \\
+    h_i \equiv& u(y_i) - u_0, \\
+    h_{ij} \equiv& u(y_i,y_j) -u_i - u_j - u_0
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Proposal}{HDMR}\vspace{-20pt}
+  Problem with Cut-HDMR: Terms not orthogonal
+  \begin{equation*}
+    \mathcal{S}_i \neq \frac{\text{var}\left\{h_i\right\}}{\text{var}\left\{H[u](Y)\right\}}\equiv\xi_{ij} 
+  \end{equation*}
+  \begin{equation*}
+    \text{var}\left\{u(Y)\right\}\neq \sum_{i=1}^N \xi_i + \sum_{i_1=1}^N\sum_{i_2=1}^{i_1-1}
+         \xi_{ij}+\cdots+\xi_{i_1,\ldots,i_N}
+  \end{equation*}
+  However, no integrals!
+\end{frame}
+
+\begin{frame}{Proposal}{HDMR}\vspace{-20pt}
+  Next step: HDMR terms are SCgPC
+  \begin{equation*}
+  H[u](Y) = h_0 + \sum_{i=1}^N h_i + \sum_{i_1=1}^N\sum_{i_2=1}^{i_1-1}h_{ij}+\cdots +
+      h_{i_1,\ldots,i_N},
+  \end{equation*}
+  \begin{align*}
+    h_0 \equiv& u(\hat Y), \\
+    h_i \equiv& G[u](y_i) - u_0, \\
+    h_{ij} \equiv& G[u](y_i,y_j) -u_i - u_j - u_0
+  \end{align*}
+  Benefit: most terms low dimension, regular
+\end{frame}
+
+\subsection{Adaptive HDMR}
+\begin{frame}{Proposal}{Adaptive HDMR}\vspace{-20pt}
+  Better than HDMR: Adaptive HDMR with Adaptive SCgPC\\
+  Choose terms based on impact parameters $\xi$, $\eta$
+\begin{itemize}
+  \item Evaluate the reference (all mean) case.
+  \item Construct all HDMR first-order SCgPC models.
+  \item While not converged:
+  \begin{itemize}
+    \item Using existing subset impacts, predict importance of future subsets
+    \item Consider impact of adding polynomials to existing subset gPCs
+    \item Choose: expand existing subsets or add new subsets
+    \item If contribution of new HDMR expectation less than tolerance, convergence
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Proposal}{Adaptive HDMR}\vspace{-20pt}
+  Example, $N=3$
+\begin{table}[h!]\footnotesize
+\centering
+\begin{tabular}{c c c c c c c c c c c c c c c c c}
+    $H[u](Y)$ &$=$ &$h_0$ $+$ &$h_1$ $+$ &$h_2$ $+$ &$h_3$ $+$ &$h_{12}$ $+$ &$h_{13}$ $+$ &$h_{23}$ $+$
+    &$h_{123}$ \\\hline
+              &    & 0        & 1        & 1        & 1        &             &             &             & \\     
+SCgPC Order:  &    & 0        & 2        & 1        & 1        &             &             &             & \\     
+              &    & 0        & 2        & 1        & 1        & 1           &             &             & \\     
+              &    & 0        & 2        & 2        & 1        & 1           &             &             & \\     
+              &    & 0        & 2        & 2        & 2        & 1           &             &             & \\     
+              &    & 0        & 2        & 2        & 2        & 1           & 1           &             &      
+\end{tabular}
+\end{table}
+%  \begin{align*}
+%    H[u](Y) = &h_0 + & h_1 + & h_2 + & h_3 + & h_{12} + & h_{13} + & h_{23} + & h_{123} \\
+%\text{Poly Order: } & 0 & 1 & 1    & 1    &         &         &         &  \\
+%                    & 0 & 1 & 2    & 1    &         &         &         &  \\
+%                    & 0 & 1 & 2    & 1    & 1       &         &         &  \\
+%                    & 0 & 1 & 2    & 1    & 1       & 1       &         & 
+%  \end{align*}
+\end{frame}
+
+\subsection{Mammoth}
+\begin{frame}{Proposal}{Mammoth}\vspace{-20pt}
+  \begin{columns}
+  \begin{column}{0.7\linewidth}
+  Mammoth: MOOSE framework MultiApp
+  \end{column}
+  \begin{column}{0.3\linewidth}
+    \begin{figure}[h!]
+      \centering
+      \includegraphics[width=\textwidth]{../../graphics/moose_multiphysics}
+    \end{figure}
+  \end{column}
+  \end{columns}
+  \begin{itemize}
+    \item RattleS$_\text{N}$ake: Neutron Transport code
+      \begin{itemize}
+        \item Provides power distributions
+        \item Tens of thousands of inputs
+      \end{itemize}
+    \item Bison: Fuel Performance code
+      \begin{itemize}
+        \item Analyzes fuel: stress, temperature, displacement
+        \item Dozens of inputs
+      \end{itemize}
+  \end{itemize}
+  \vspace{10pt}
+  Goal: Demonstrate Adaptive HDMR with Adaptive SCgPC
+\end{frame}
+
+\begin{frame}{Proposal}{Special Thanks}\vspace{-20pt}
+  Dept. Nuclear Engineering, UNM
+  \begin{itemize}
+    \item Dr. Anil Prinja, Adviser and Chair
+    \item Aaron Olsen, Peer
+  \end{itemize}
+  RAVEN team, Idaho National Laboratory
+  \begin{itemize}
+    \item Dr. Cristian Rabiti, Manager
+    \item Andrea Alfonsi, Mentor
+    \item Daniel Maljovec, Peer
+  \end{itemize}
+  %\vspace{30pt}
+  \centering
+  Research performed under LDRD grant through Idaho National Laboratory
 \end{frame}
 
 \end{document}
