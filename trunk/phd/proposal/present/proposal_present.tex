@@ -77,6 +77,8 @@
 \define@key{beamertoc}{subsectionsonly}[]{\beamer@toc@subsectionstyle{show/only}\beamer@toc@subsubsectionstyle{show/shaded/hide}}
 \makeatother
 
+\setbeamercovered{invisible}
+
 \begin{document}
 \AtBeginSection[]{\begin{frame}{Outline}\vspace{-20pt}
   \tableofcontents[currentsection,hideothersubsections]%,subsectionsonly]
@@ -116,7 +118,7 @@
 \subsection{Terminology}
 % describe uq in general
 % introduce terminology
-\begin{frame}{Background}{Terminology}
+\begin{frame}{Background}{Terminology}\vspace{-20pt}
   \begin{itemize}
   \item Model - Mathematical representation
   \item Simulation/Code - Algorithms to Solve Model
@@ -126,17 +128,18 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Background}{UQ}
+\begin{frame}{Background}{UQ}\vspace{-20pt}
   Understanding Simulations
+  \pause
   \begin{itemize}
     \item Verification - Is the code consistent?
       \begin{itemize}
         \item Spatial, Temporal Convergence
-      \end{itemize}
+      \end{itemize}\vspace{10pt}
     \item Validation - Does it match experiment?
       \begin{itemize}
         \item Fitting, Extrapolation
-      \end{itemize}
+      \end{itemize}\vspace{10pt}
     \item Uncertainty Quantification - Behavior of Response
       \begin{itemize}
         \item Response Surface Characterization
@@ -374,6 +377,7 @@
 
 \subsubsection{Sparse Grid Quadrature}
 \begin{frame}{Generalized Polynomial Chaos}{Sparse Grid Quadrature}%\vspace{-20pt}
+  \pause
   Necessary to find coefficients $c_k$,
   \begin{equation*}
     G[u](Y) = \sum_{k\in\Lambda(L)} c_k \Phi_k(Y).
@@ -495,6 +499,7 @@ Comparison, $N=2$, $L=4$
 
 \subsubsection{Adaptive Sparse Grid}
 \begin{frame}{Generalized Polynomial Chaos}{Adaptive Index Sets}%\vspace{-20pt}
+  \pause
 Special property of gPC:
 \begin{equation*}
   G[u](Y) = \sum_{k\in\Lambda}c_k\Phi_k(Y),
@@ -543,12 +548,13 @@ Special property of gPC:
 \end{frame}
 
 \subsection{Physics Models}
-\begin{frame}{Physical Models}{}%\vspace{-20pt}
+\begin{frame}{Physical Models}{}\vspace{-20pt}
+  \pause
   Efficiency of gPC compared to Monte Carlo depends on
   \begin{itemize}
     \item Regularity of response surface
     \item Dimensionality of input space
-  \end{itemize}
+  \end{itemize}\vspace{20pt}
   Demonstrate using three models
   \begin{itemize}
     \item Tensor Polynomial
@@ -622,8 +628,8 @@ Special property of gPC:
 
 
 \subsubsection{Neutron Diffusion}
-\begin{frame}{Physical Models}{Neutron Diffusion}%\vspace{-20pt}
-  Quarter-core 2-group steady state reactor benchmark, 165x165 cm 
+\begin{frame}{Physical Models}{Neutron Diffusion}\vspace{-20pt}
+  Quarter-core 2-group steady state reactor benchmark \\165x165 cm domain 
   \footnotesize
   \begin{equation*}
     -\grad\cdot\qty( D_1(\bar x)\grad\phi_1(\bar x))+\qty(\xs{a}{1}(\bar x)+\xs{s}{1\to2}(\bar x))\phi_1(\bar x)
@@ -928,6 +934,7 @@ SCgPC Order:  &    & 0        & 2        & 1        & 1        &             &  
 \end{frame}
 
 \begin{frame}{Proposal}{Special Thanks}\vspace{-20pt}
+  \pause
   Dept. Nuclear Engineering, UNM
   \begin{itemize}
     \item Dr. Anil Prinja, Adviser and Chair
