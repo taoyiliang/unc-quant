@@ -196,12 +196,12 @@
     \item Intrusive
        \begin{itemize}
          \item Interacts with Simulation Algorithms
-         \item Examples: Stochastic Galerkin, Adjoint-Based
+         \item Example: Adjoint-Based
        \end{itemize}
     \item Non-Intrusive
       \begin{itemize}
         \item Agnostic of Code
-        \item Example: Monte Carlo, Stochastic Collocation
+        \item Example: Monte Carlo
       \end{itemize}
   \end{itemize}\vspace{10pt}
   For RAVEN, need non-intrusive algorithms
@@ -803,7 +803,7 @@ Special property of gPC:
   ANOVA method to decompose input space
   \begin{equation*}
   \tilde H[u](Y) = u_0 + \sum_{i=1}^N u_i + \sum_{i_1=1}^N\sum_{i_2=1}^{i_1-1}u_{ij}+\cdots +
-      c_{i_1,\ldots,i_N},
+      u_{i_1,\ldots,i_N},
   \end{equation*}
   \begin{align*}
     u_0 \equiv& \int dy_1\cdots\int dy_N u(Y), \\
@@ -832,8 +832,8 @@ Special property of gPC:
   \end{equation*}
   \begin{align*}
     h_0 \equiv& u(\hat Y), \\
-    h_i \equiv& u(y_i) - u_0, \\
-    h_{ij} \equiv& u(y_i,y_j) -u_i - u_j - u_0
+    h_i \equiv& u(y_i) - h_0, \\
+    h_{ij} \equiv& u(y_i,y_j) -h_i - h_j - h_0
   \end{align*}
 \end{frame}
 
@@ -857,8 +857,8 @@ Special property of gPC:
   \end{equation*}
   \begin{align*}
     h_0 \equiv& u(\hat Y), \\
-    h_i \equiv& G[u](y_i) - u_0, \\
-    h_{ij} \equiv& G[u](y_i,y_j) -u_i - u_j - u_0
+    h_i \equiv& G[u](y_i) - h_0, \\
+    h_{ij} \equiv& G[u](y_i,y_j) -h_i - h_j - h_0
   \end{align*}
   Benefit: most terms low dimension, regular
 \end{frame}
@@ -889,10 +889,10 @@ Special property of gPC:
     &$h_{123}$ \\\hline
               &    & 0        & 1        & 1        & 1        &             &             &             & \\     
 SCgPC Order:  &    & 0        & 2        & 1        & 1        &             &             &             & \\     
-              &    & 0        & 2        & 1        & 1        & 1           &             &             & \\     
-              &    & 0        & 2        & 2        & 1        & 1           &             &             & \\     
-              &    & 0        & 2        & 2        & 2        & 1           &             &             & \\     
-              &    & 0        & 2        & 2        & 2        & 1           & 1           &             &      
+              &    & 0        & 2        & 1        & 1        & (1,1)       &             &             & \\     
+              &    & 0        & 2        & 2        & 1        & (1,1)       &             &             & \\     
+              &    & 0        & 2        & 2        & 1        & (1,2)       &             &             & \\     
+              &    & 0        & 2        & 2        & 2        & (1,2)       &             &             &      
 \end{tabular}
 \end{table}
 %  \begin{align*}
@@ -942,11 +942,11 @@ SCgPC Order:  &    & 0        & 2        & 1        & 1        &             &  
   \end{itemize}
   RAVEN team, Idaho National Laboratory
   \begin{itemize}
-    \item Dr. Cristian Rabiti, Manager
+    \item Dr. Cristian Rabiti, Manager and Mentor
     \item Andrea Alfonsi, Mentor
     \item Daniel Maljovec, Peer
   \end{itemize}
-  %\vspace{30pt}
+  \vspace{10pt}
   \centering
   Research performed under LDRD grant through Idaho National Laboratory
 \end{frame}
