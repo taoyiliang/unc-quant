@@ -42,6 +42,16 @@ void InputOutput::write2File(std::string outfile, Epetra_Vector& soln, TwoDMesh 
     my_output_file << mesh.cells[icell].pos[0]<<","<<mesh.cells[icell].pos[1] <<" | " <<  soln[gid1]<<"  , "<<soln[gid2]<<std::endl;
   }
 
+  //also make a csv
+  std::string csvname=outfile.substr(0,outfile.find_last_of('.'))+".csv";
+  std::ofstream csv_file;
+  csv_file.precision(10);
+  csv_file<<std::scientific;
+  csv_file.open (csvname.c_str());
+
+  csv_file << "Xdim,Ydim,k"<<std::endl;
+  csv_file << mesh.nX<<","<<mesh.nY<<","<<k<<std::endl;
+
   return;
   
 }
