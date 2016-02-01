@@ -42,9 +42,10 @@ def addPlot(title,lbl,ref=None,r=1,slnfig=None):
   #for e in errs:
   #  print e
   errs=errs[errs[:,0].argsort()]
-#  print '\n\n'
-  #for e in errs:
-  #  print e
+  #  print '\n\n'
+  print 'case:',title,lbl
+  for e in errs:
+    print '  ',e
   errs=zip(*errs)
   plt.loglog(errs[0],errs[1],'-x',label=lbl)
 

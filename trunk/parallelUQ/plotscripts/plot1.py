@@ -50,8 +50,9 @@ def addPlot(title,inFile,lbl,ref=None,r=1,slnfig=None):
   #  print e
   errs=errs[errs[:,0].argsort()]
 #  print '\n\n'
+  #print 'case:',title,lbl
   #for e in errs:
-  #  print e
+  #  print '  ',e
   errs=zip(*errs)
   plt.loglog(errs[0],errs[1],color+marker,label=lbl)
 
