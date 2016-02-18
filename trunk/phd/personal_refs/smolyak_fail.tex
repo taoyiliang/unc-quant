@@ -1,0 +1,170 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{graphicx}%
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{cite}
+
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{physics}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
+\newcommand{\xs}[2]{\ensuremath{\Sigma_{#1}^{(#2)}}}
+\newcommand{\intO}{\ensuremath{\int\limits_{4\pi}}}
+\newcommand{\intnp}{\ensuremath{\int\limits_{-1}^1}}
+\newcommand{\intab}[1]{\ensuremath{\int\limits_{a_{#1}}^{b_#1}}}
+\newcommand{\intz}{\ensuremath{\int\limits_0^1}}
+\newcommand{\intf}{\ensuremath{\int\limits_{-\infty}^\infty}}
+\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+\newcommand{\LargerCdot}{\raisebox{-0.25ex}{\scalebox{1.2}{$\cdot$}}}
+
+\textwidth6.6in
+\textheight9in
+
+
+\setlength{\topmargin}{0.3in} \addtolength{\topmargin}{-\headheight}
+\addtolength{\topmargin}{-\headsep}
+
+\setlength{\oddsidemargin}{0in}
+
+\oddsidemargin  0.0in \evensidemargin 0.0in \parindent0em
+
+%\pagestyle{fancy}\lhead{MATH 579 (UQ for PDEs)} \rhead{02/24/2014}
+%\chead{Project Proposal} \lfoot{} \rfoot{\bf \thepage} \cfoot{}
+
+
+\begin{document}
+
+\title{Failure Case for the Smolyak Sparse Quadrature for gPC Expansion}
+
+\author[]{Paul Talbot\thanks{talbotp@unm.edu}}
+\date{}
+\renewcommand\Authands{ and }
+\maketitle
+\section{Introduction}
+Let $(\Omega,\mathcal{F},rho)$ be a complete $N$-variate probability space.
+We consider the algorithms for expanding a quantity of interest $u(Y)$ as a function of uncertain independent
+input parameters $Y = (y_1,\cdots,y_n,\cdots,y_N)$ in a generalized polynomial chaos expansion using
+orthonormal Gaussian polynomials $\phi_i^{(n)}(y_n)$.  These Gaussian polynomials are orthonormal with respect
+to their corresponding individual monovariate probability space $(\Omega_n,\mathcal{F}_n,\rho_n)$.  The
+expansion is given by
+\begin{equation}\label{eq:gpc}
+  u(Y)\approx \tilde u(Y) = \sum_{k\in\Lambda} c_k \Phi_k(Y),
+\end{equation}
+where $k$ is a multivariate index, $\Lambda$ is a set of $N$-variate indices corresponding to polynomial
+orders, and $\Phi_k$ are a set of orthonormal multidimensional polynomials given by
+\begin{equation}
+  \Phi_k(Y) = \prod_{n=1}^N \phi_{k_n}(y_n).
+\end{equation}
+We assume $\Lambda$ can be constructed adaptively.  The admissability condition for new indices $k$ into
+$\Lambda$ is
+\begin{equation}
+  k-e_j \in \Lambda \forall 1\leq j\leq N\,
+\end{equation}
+where $e_j$ is a unit vector in the direction of $j$.
+
+The scalar coefficients $c_k$ in Eq. \ref{eq:gpc} can be obtained via the orthonormality of $\Phi_k$ as
+\begin{equation}\label{eq:coeffs}
+  c_k = \int_\Omega \rho(Y) u(Y) \Phi_k(Y) dY \equiv \mathcal{I}\big(u\cdot\Phi_k\big).
+\end{equation}
+We approximate the integral using Smolyak-like sparse quadrature. Using the notation for a single-dimension
+quadrature operation
+\begin{equation}
+  \int \rho(x)f(x)dx = \mathcal{I}(f) \approx \sum_{\ell=1}^L w_\ell f(x_\ell) \equiv q^{L}(f),
+\end{equation}
+the sparse quadrature is given by
+\begin{equation}
+  \mathcal{I}\big(u\cdot\Phi\big)\approx\mathcal{S}[u\cdot\Phi]\equiv \sum_{\hat k\in\Lambda} s_{\hat k} \bigotimes_{n=1}^N
+  q^{L_n}\big(u(Y)\Phi_k(Y)\big).
+\end{equation}
+The quadrature coefficient $s_{\hat k}$ is given by
+\begin{equation}
+  s_{\hat k} = \sum_{j\in\{0,1\}^N,i+j\in\Lambda} (-1)^{|j|_1}, \hspace{10pt} |j|_1 = \sum_{n=1}^N j_n. 
+\end{equation}
+
+We demonstrate here that for a particular index set $\Lambda$, the Smolyak algorithm does not accurately
+integrate the quadrature coefficients.
+
+\section{Case}
+For demonstration, we consider the quantity of interest
+\begin{equation}
+  u(x,y) = x^2 y^2,
+\end{equation}
+with $x$ and $y$ uniformly distributed from -1 to 1.  In this case, we use orthonormalized Legendre
+polynomials for the expansions polynoials $\phi$.
+
+For expansion polynomials, we consider as an example the following polynomial set,
+\begin{table}[H]
+  \centering
+  \begin{tabular}{c c c c c c c c c}
+    (8,0) &       &       &      &       &       &       &       &      \\
+    (7,0) &       &       &      &       &       &       &       &      \\
+    (6,0) &       &       &      &       &       &       &       &      \\
+    (5,0) &       &       &      &       &       &       &       &      \\
+    (4,0) &       &       &      &       &       &       &       &      \\
+    (3,0) & (3,1) &       &      &       &       &       &       &      \\
+    (2,0) & (2,1) & (2,2) &      &       &       &       &       &      \\
+    (1,0) & (1,1) & (1,2) &(1,3) &       &       &       &       &      \\
+    (0,0) & (0,1) & (0,2) &(0,3) & (0,4) & (0,5) & (0,6) & (0,7) & (0,8) 
+  \end{tabular}
+\end{table}
+Because it includes the index set point (2,2), we expect this expansion to exactly represent the original
+quantity of interest.
+
+\section{Analytic}
+First, we demonstrate the correct, analytic performance of the gPC expansion.  The polynomial coefficients
+$c_k$ are given by Eq. \ref{eq:coeffs}.  Each coefficient integrates to zero with the exception of the
+following:
+\begin{align}
+  c_{(0,0)} &= \frac{1}{9},\\
+  c_{(0,2)} = c_{(2,0)} &= \frac{2}{9\sqrt{5}},\\
+  c_{(2,2)} &= \frac{4}{45}.
+\end{align}
+Reconstructing the original model from the expansion, as expected we recover the original model exactly.
+
+\section{Smolyak}
+In order to be sufficient in a general sense, we desire the Smolyak sparse quadrature algorithm to perform
+as accurately as the analytic case for this polynomial quantity of interest case.  We begin by evaluating the
+values of the quadrature coefficients $s_{\hat k}$.  These are all zero with the exception of the following:
+\begin{align}
+  s_{(0,3)} = s_{(3,0)} &= -1, \\
+  s_{(0,8)} = s_{(8,0)} &=  1, \\
+  s_{(1,2)} = s_{(2,1)} &= -1, \\
+  s_{(1,3)} = s_{(3,1)} &=  1, \\
+  s_{(2,2)} = s_{(2,2)} &=  1.
+\end{align}
+Using the quadrature order rule $L=k_n+1$, we will need points and weights for Legendre quadrature orders 1,
+2, 3, 4 and 9.  The points and weights are listed here for convenience.
+\begin{table}[H]
+  \centering
+  \begin{tabular}{c c c}
+    Quadrature Order & Points & Weights \\ \hline
+    1 & 0 & 2 \\ \hline
+    2 & $\pm$ 0.5773502691896257 & 1\\ \hline
+    3 & $\pm$ 0.7745966692414834 & 0.5555555555555556 \\
+      & 0                        & 0.8888888888888888 \\ \hline
+    4 & $\pm$ 0.8611363115940526 & 0.3478548451374538 \\
+      & $\pm$ 0.3399810435848563 & 0.6521451548625461 \\ \hline
+    9 & $\pm$ 0.9681602395076261 & 0.0812743883615744 \\
+      & $\pm$ 0.8360311073266358 & 0.1806481606948574 \\
+      & $\pm$ 0.6133714327005904 & 0.2606106964029354 \\
+      & $\pm$ 0.3242534234038089 & 0.3123470770400029 \\
+      & 0                        & 0.3302393550012598
+  \end{tabular}
+\end{table}
+There are nine distinct tensor quadratures necessary to construct the Smolyak-like quadrature set, four of
+which are duplicated because of symmetry.  This results in the following Smolyak-like quadrature set:
+\begin{table}[H]
+  \centering
+  \begin{tabular}{c c c}
+    Tensor & Points & Weights \\
+
+\end{document}
