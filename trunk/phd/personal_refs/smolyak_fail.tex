@@ -165,6 +165,44 @@ which are duplicated because of symmetry.  This results in the following Smolyak
 \begin{table}[H]
   \centering
   \begin{tabular}{c c c}
-    Tensor & Points & Weights \\
+    Tensor & Points & Weights \\ \hline
+    (1)$\cross$(4) = (4)$\cross$(1)  & (0, $\pm$ 0.8611363115940526) &  \\
+                                     & (0, $\pm$ 0.3399810435848563) & \\ \hline
+    (1)$\cross$(9) = (9)$\cross$(1)  & (0, $\pm$  0.9681602395076261) & \\
+                                     & (0, $\pm$ 0.8360311073266358) & \\
+                                     & (0, $\pm$ 0.6133714327005904) & \\
+                                     & (0, $\pm$ 0.3242534234038089) & \\
+                                     & (0, 0) & \\ \hline
+    (2)$\cross$(3) = (3)$\cross$(2)  & ($\pm$ 0.5773502691896257, $\pm$ 0.7745966692414834) & \\
+                                     & ($\pm$ 0.5773502691896257,0) & \\
+    (2)$\cross$(4) = (4)$\cross$(2)  & ($\pm$ 0.5773502691896257, $\pm$ 0.8611363115940526) & \\
+                                     & ($\pm$ 0.5773502691896257, $\pm$ 0.3399810435848563) & \\
+    (3)$\cross$(3) = (3)$\cross$(3)  & ($\pm$ 0.7745966692414834, $\pm$ 0.7745966692414834) & \\
+                                     & ($\pm$ 0, $\pm$ 0.7745966692414834) & \\
+                                     & ($\pm$ $\pm$ 0.7745966692414834, 0) & \\
+                                     & (0, 0) & \\
+  \end{tabular}
+\end{table}
 
+We use this quadrature to evaluate Eq. \ref{eq:coeffs}.  Because $u(x=0,y) = u(x,y=0) = 0$, quadrature points containing a zero value for either $x$ or $y$ will not be shown here.  We also truncate the points to four digits here, but retain them all throughout the calculations.  We first consider the coefficient for $(2,2)$:
+\begin{table}[H]
+  \centering
+  \begin{tabular}{c c c|c|c|c}
+  Point & Weight& $s_{\hat k}$ & $u(x_\ell,y_\ell)$ & $\phi^{(1)}_2(x_\ell)\phi^{(2)}_2(y_\ell)$ &
+       $u(x_\ell,y_\ell) \cdot \phi^{(1)}_2(x_\ell)\phi^{(2)}_2(y_\ell) \cdot s_{\hat k}\cdot$ weight \\ \hline
+  (-0.5774, -0.7746) & & -1 & & & \\
+  (-0.5774,  0.7746) & & -1 & & & \\
+  ( 0.5774, -0.7746) & & -1 & & & \\
+  ( 0.5774,  0.7746) & & -1 & & & \\
+  (-0.7746, -0.5774) & & -1 & & & \\
+  (-0.7746,  0.5774) & & -1 & & & \\
+  ( 0.7746, -0.5774) & & -1 & & & \\
+  ( 0.7746,  0.5774) & & -1 & & & \\
+  (-0.5774, -0.8611) & &  1 & & & \\
+  (-0.5774, -0.3400) & &  1 & & & \\
+  (-0.5774, -0.3400) & &  1 & & & \\
+  (-0.5774,  0.3400) & &  1 & & & \\
+
+  \end{tabular}
+\end{table}
 \end{document}
