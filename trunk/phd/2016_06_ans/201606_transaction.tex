@@ -38,26 +38,38 @@ prinja@unm.edu \and cristian.rabiti@inl.gov}
 
 \begin{document} \section{Introduction} Advanced methods in  uncertainty quantification for numerical models
 in computational physics \cite{SCLagrange,textbook} continue to gain acceptance in nuclear
-modeling \cite{Ayres,ayres2}.  Previously, we demonstrated the efficiency of sparse-grid stochasatic
+modeling \cite{Ayres,ayres2}.  Previously, the efficiency of sparse-grid stochasatic
 collocation in comparison with Monte Carlo for uncertainty quantification through convergence studies
-\cite{ans2014}.  We consider an adaptive method for anisotropic sparse grid collocation and its convergence
-compared to previous efforts.
+was demonstrated \cite{ans2014}.  An adaptive method for anisotropic sparse grid collocation and its convergence
+compared to previous efforts is considered.
 
-The physical system we consider is a two-dimensional quarter-core reactor, consisting of 5 materials
-distributed in 121 regions (see Fig. \ref{geom}).  We solve the two-group neutron diffusion criticality
-approximation \begin{align} -\grad\cdot\qty( D_1(\bar x)\grad\phi_1(\bar x))+&\qty(\xs{a}{1}(\bar
-  x)+\xs{s}{1\to2}(\bar x))\phi_1(\bar x) \nonumber\\ &= \frac{1}{k(\phi)}\sum_{g'=1}^2\nu_{g'}\xs{f}{g'}(\bar
-  x)\phi_{g'}(\bar x), \end{align} \begin{equation} -\grad \cdot\qty(D_2(\bar x)\grad \phi_2(\bar
-  x))+\xs{a}{2}(\bar x)\phi_2(\bar x) = \xs{s}{1\to 2}(\bar x)\phi_1(\bar x).  \end{equation} We apply vacuum
-boundaries on the top and right, and reflecting boundaries on the bottom and left.  The criticality eigenvalue
-and quantity of interest $k(\phi)$ is given by \begin{equation}
+The physical system in consideration is a two-dimensional quarter-core reactor, consisting of 5 materials
+distributed in 121 regions (see Fig. \ref{geom}).  The two-group neutron diffusion criticality
+approximation is solved,
+\begin{align} 
+  -\grad\cdot\qty( D_1(\bar x)\grad\phi_1(\bar x))+&\qty(\xs{a}{1}(\bar x)+\xs{s}{1\to2}(\bar x))\phi_1(\bar x) \nonumber\\ 
+  &= \frac{1}{k(\phi)}\sum_{g'=1}^2\nu_{g'}\xs{f}{g'}(\bar x)\phi_{g'}(\bar x), 
+\end{align}
+\begin{equation}
+  -\grad \cdot\qty(D_2(\bar x)\grad \phi_2(\bar x))+\xs{a}{2}(\bar x)\phi_2(\bar x) = \xs{s}{1\to 2}(\bar x)\phi_1(\bar x).  
+\end{equation}
+Vacuum boundaries are applied on the top and right, and reflecting boundaries on the bottom and left.  The criticality eigenvalue
+and quantity of interest $k(\phi)$ is given by
+\begin{equation}
   k(\phi)=\sum_{g=1}^2\iint\limits_D\frac{\nu\xs{f}{g}\phi_g(\bar x)}{\qty(-\nabla\cdot
-    D_g\nabla+\Sigma_r^{(g)})\phi_g(\bar x)}~d\bar x.  \end{equation} The material properties are shown in
-  Table \ref{tab:coremats}, and the domain is $[0,200\text{ cm}]^2$.  The reference value
-  $k$=1.00007605445.  \begin{figure}[H] \centering \includegraphics[width=0.5\linewidth]{../graphics/core}
-    \caption{Core Geometry} \label{geom} \end{figure} 
+            D_g\nabla+\Sigma_r^{(g)})\phi_g(\bar x)}~d\bar x.  
+\end{equation}
+The material properties are shown in Table \ref{tab:coremats}, and the domain is 
+$[0,200\text{ cm}]^2$.  The reference value $k$=1.000076.  
+\begin{figure}[H] 
+  \centering 
+  \includegraphics[width=0.9\linewidth]{../graphics/core}
+  \caption{Core Geometry} 
+  \label{geom} 
+\end{figure} 
   \begin{table}[h] 
     \centering 
+    \caption{Ref. Material Properties for Benchmark Core} 
     \begin{tabular}{c c | c c cc} 
       Mat. & $g$ & $D_g$ & $\Sigma_{a,g}$ & $\nu\Sigma_{f,g}$ & $\Sigma_s^{1,2}$ \\ \hline 
       1 & 1 & 1.255 &8.252e-3 & 4.602e-3 & 2.533e-2 \\ 
@@ -71,26 +83,27 @@ and quantity of interest $k(\phi)$ is given by \begin{equation}
       5 & 1 & 1.257 & 6.034e-4 & 0 & 4.754e-2 \\ 
         & 2 & 1.592e-1 & 1.911e-2 & 0 & 
       \end{tabular} 
-      \caption{Reference Material Properties for Benchmark Core} 
       \label{tab:coremats} 
     \end{table}
 
 The material cross sections, neutron multiplication factors, and diffusion coefficients are potential
-uncertain input parameters.  We introduce uniformly-distributed uncertainty within 5\% of the reference
-values.  The uncertain distributions make up the uncertainty space $\Gamma\subset\mathbb{R}^N,$ where $N$ is
-the number of uncertain parameters.
-We consider the input parameter uncertainties to be independently distributed.
+sources of uncertainty.  Uniformly-distributed uncertainty within 5\% of the reference
+values is introduced for material properties.  The distribtion of the uncertain parameters  make up 
+the uncertainty space
+$\Gamma\subset\mathbb{R}^N,$ where $N$ is the number of uncertain parameters.
+The input parameter uncertainties are independently distributed.
 
 \section{Methods}
 %\subsection{Deterministic Space}
-We solve our system of equations by imposing a mesh grid on the physical domain using the local and global
-particle-conserving finite volume method.  We solve the system of equations nonlinearly with the criticality
+The system of equations is solved by imposing a mesh grid on the physical domain using the local and global
+particle-conserving finite volume method.  They are solved nonlinearly with the criticality
 eigenvalue, using Jacobian-free Newton-Krylov methods.  We use the GMRES algorithm in the \texttt{trilinos}
-solver package.% from Sandia National Laboratory \cite{Trilinos-Overview}.  
+solver package in a finite-volume code developed by the author.
+% from Sandia National Laboratory \cite{Trilinos-Overview}.  
 
 Developing an adaptive algorithm for uncertainty quantification builds on the sparse grid formulation used 
 previously \cite{ans2014} and
-analysis of variance \cite{Ayres}.  We represent the $k$-eigenvalue as a function of input parameters as
+analysis of variance \cite{Ayres}.  The $k$-eigenvalue are represented as a function of input parameters as
 $u(Y)$.  The generalized polynomial chaos expansion is given by
 \begin{equation}\label{approx}
   u(Y)\approx u_{h}(Y)=\sum_{k=0}^\eta c_k\Phi_k(Y),
@@ -105,19 +118,15 @@ where $u_h(Y)$ is the
 spatially-discretized PDE solution, and $\phi_{k_n}(y_n)$ are Askey polynomials of order $k_n$ that are
 orthonormal with respect to the probability distribution function $\rho_n(y_n)$ over the probability space
 $\Omega$.
-Using orthonormality, we obtain an expression for the expansion coefficients $c_k$ as
+Using orthonormality, an expression is obtained for the expansion coefficients $c_k$ as
 \begin{equation}
   c_k = \langle u(Y)\Phi(Y)\rangle = \int_\Omega u(Y)\Phi(Y)\rho(Y) dY.
 \end{equation}
-Because $Y$ are uniformly distributed, we use Gauss-Legendre quadrature to obtain
-collocation points and weights to evaluate $c_k$.  %The order of the quadrature is obtained based on polynomial expansion orders
-%from a polynomial index set $\Lambda(L)$.  
-%For a single uncertain parameter ($N=1$) and a fourth-order polynomial
-%approximation ($L=4$), $\Lambda$ includes all polynomial orders from 0 to 4 $\qty(\Lambda=[0,1,2,3,4])$.  Each
-%index point $p\in\Lambda$ corresponds to a polynomial expansion moment of order $p$.
+Because $Y$ are uniformly distributed, Gauss-Legendre quadratures are used to obtain
+collocation points and weights to evaluate $c_k$.
 
-Previously we identified static methods to determine the index set $\Lambda$ \cite{ans2014}.  We propose an
-adaptive method based on analysis of variance to construct the index set, following a pattern similar to the
+Previously static methods were identified to determine the index set $\Lambda$ \cite{ans2014}.  An
+adaptive method is proposed based on analysis of variance to construct the index set, following a pattern similar to the
 algorithm in \cite{Ayres}.  A property of the gPC expansion is the method of calculating variance, namely
 \begin{equation}
   \sigma^2 = \expv{u_h(Y)^2} - \expv{u_h(Y)}^2 = \sum_{k\in\Lambda}c_k^2 - c_0^2.
@@ -132,19 +141,20 @@ set, which is dependent on the existing polynomials.  The admissibility conditio
 \begin{equation}
   k-e_j\in\Lambda \text{  for } 1\leq j\leq N, k_j>1,
 \end{equation}
-where $e_j$ is a unit vector in the direction $j$ and $k_j$ is the $j$-th entry in $k$.  The estimated partial variance for a prospective polynomial 
+where $e_j$ is a unit vector in the direction $j$ and $k_j$ is the $j$-th entry in $k$.  
+The estimated partial variance for a prospective polynomial 
 is the product of immediate subset polynomials,
 \begin{equation}
   \tilde \eta_k = \prod_{j=1,k_j>0}^N \eta_{k_j-e_j}.
 \end{equation}
 The adaptive algorithm chooses the prospective polynomial with the largest estimated partial variance to add
 to the index set, and the algorithm continues until estimated remaining variance is less than tolerance.
-%%%%OLD%%%%%%
 
 \section{Results}\label{results}
 %\subsection{Stochastic Convergence} We vary the number of uncertain inputs including
 \begin{table}[H] 
   \centering 
+  \caption{Uncertain Input Parameters} 
   \begin{tabular}{c|c|c} 
     Material & Property & Distribution \\ \hline 
     Material 1 & $\nu\Sigma_{f,2}$ & $\mathcal{U}(0.1036,0.1146)$ \\ 
@@ -153,14 +163,13 @@ to the index set, and the algorithm continues until estimated remaining variance
     Material 4 & $\Sigma_{c,2}$ & $\mathcal{U}(0.03935,0.04349)$  \\ 
     Material 5 & $D_2$ & $\mathcal{U}(0.1512,0.1672)$
   \end{tabular} 
-  \caption{Uncertain Input Parameters} 
   \label{params} 
 \end{table}
 
 The uncertainty quantification algorithm is implemented in \texttt{raven} \cite{raven}, and analysis here is performed
-using this framework.  The uncertain inputs are listed in Table \ref{params}.  We note that while $\Sigma_a$
-was used in the benchmark, we explicitly use $\Sigma_c$ as an input and derive $\Sigma_a$.
-We obtain the error in the moments $r$ of the quantity of interest $k(Y)=u(Y)$, given by
+using this framework.  The uncertain inputs are listed in Table \ref{params}.  Note that while $\Sigma_a$
+was used in the benchmark, $\Sigma_c$ is used explicitly as an input and $\Sigma_a$ is derived.
+The error in the moments $r$ of the quantity of interest $k(Y)=u(Y)$ are given by
 \begin{equation}
   \epsilon_h^{(r)}=\frac{|\expv{u_h^{(r)}}-\expv{u_\text{ref}^{(r)}}|}{\expv{u_\text{ref}^{(r)}}},
 \end{equation}
@@ -200,7 +209,7 @@ Interestingly, the adaptive algorithm converges slightly less efficiently than t
 still performing better than the isotropic case.  Because the adaptive case has to determine the importance of
 each input dimension, it occasionally predicts inaccurately and wastes computation solves compared to the more
 ideal anisotropic case.  However, in circumstances when an ideal anisotropy is not understood a priori, the
-adaptive algorithm may be nearly as efficient at representing the original model.  Given the potential loss of
+adaptive algorithm may be optimally efficient in representing the original model.  Given the potential loss of
 efficiency when using a poorly-chosen anisotropic weighting, the adaptive algorithm may be an effective choice
 for initial uncertainty quantification in problems with a low-dimensionality input space.
 
