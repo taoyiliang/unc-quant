@@ -9,6 +9,8 @@
 \usepackage{color}
 \usepackage{cite}
 
+\usepackage{longtable}
+
 %\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{authblk}
@@ -50,7 +52,7 @@
 \renewcommand\Authands{ and }
 \maketitle
 \section{Introduction}
-Let $(\Omega,\mathcal{F},rho)$ be a complete $N$-variate probability space.
+Let $(\Omega,\mathcal{F},\rho)$ be a complete $N$-variate probability space.
 We consider the algorithms for expanding a quantity of interest $u(Y)$ as a function of uncertain independent
 input parameters $Y = (y_1,\cdots,y_n,\cdots,y_N)$ in a generalized polynomial chaos expansion using
 orthonormal Gaussian polynomials $\phi_i^{(n)}(y_n)$.  These Gaussian polynomials are orthonormal with respect
@@ -90,8 +92,8 @@ The quadrature coefficient $s_{\hat k}$ is given by
   s_{\hat k} = \sum_{j\in\{0,1\}^N,i+j\in\Lambda} (-1)^{|j|_1}, \hspace{10pt} |j|_1 = \sum_{n=1}^N j_n. 
 \end{equation}
 
-We demonstrate here that for a particular index set $\Lambda$, the Smolyak algorithm does not accurately
-integrate the quadrature coefficients.
+We demonstrate here that for a particular simple response $u(Y)$ and index set $\Lambda$, the Smolyak algorithm does not accurately
+integrate all the quadrature coefficients.
 
 \section{Case}
 For demonstration, we consider the quantity of interest
@@ -117,13 +119,13 @@ For expansion polynomials, we consider as an example the following polynomial se
   \end{tabular}
 \end{table}
 Because it includes the index set point (2,2), we expect this expansion to exactly represent the original
-quantity of interest.
+quantity of interest when coefficients $c_k$ are calculated correctly.
 
 \section{Analytic}
 First, we demonstrate the correct, analytic performance of the gPC expansion.  The polynomial coefficients
 $c_k$ are given by Eq. \ref{eq:coeffs}.  Each coefficient integrates to zero with the exception of the
 following:
-\begin{align}
+\begin{align}\label{eq:analytic coeffs}
   c_{(0,0)} &= \frac{1}{9},\\
   c_{(0,2)} = c_{(2,0)} &= \frac{2}{9\sqrt{5}},\\
   c_{(2,2)} &= \frac{4}{45}.
@@ -134,7 +136,7 @@ Reconstructing the original model from the expansion, as expected we recover the
 In order to be sufficient in a general sense, we desire the Smolyak sparse quadrature algorithm to perform
 as accurately as the analytic case for this polynomial quantity of interest case.  We begin by evaluating the
 values of the quadrature coefficients $s_{\hat k}$.  These are all zero with the exception of the following:
-\begin{align}
+\begin{align}\label{eq:smolyak coeffs}
   s_{(0,3)} = s_{(3,0)} &= -1, \\
   s_{(0,8)} = s_{(8,0)} &=  1, \\
   s_{(1,2)} = s_{(2,1)} &= -1, \\
@@ -164,45 +166,192 @@ There are nine distinct tensor quadratures necessary to construct the Smolyak-li
 which are duplicated because of symmetry.  This results in the following Smolyak-like quadrature set:
 \begin{table}[H]
   \centering
-  \begin{tabular}{c c c}
-    Tensor & Points & Weights \\ \hline
-    (1)$\cross$(4) = (4)$\cross$(1)  & (0, $\pm$ 0.8611363115940526) &  \\
-                                     & (0, $\pm$ 0.3399810435848563) & \\ \hline
-    (1)$\cross$(9) = (9)$\cross$(1)  & (0, $\pm$  0.9681602395076261) & \\
-                                     & (0, $\pm$ 0.8360311073266358) & \\
-                                     & (0, $\pm$ 0.6133714327005904) & \\
-                                     & (0, $\pm$ 0.3242534234038089) & \\
-                                     & (0, 0) & \\ \hline
-    (2)$\cross$(3) = (3)$\cross$(2)  & ($\pm$ 0.5773502691896257, $\pm$ 0.7745966692414834) & \\
-                                     & ($\pm$ 0.5773502691896257,0) & \\
-    (2)$\cross$(4) = (4)$\cross$(2)  & ($\pm$ 0.5773502691896257, $\pm$ 0.8611363115940526) & \\
-                                     & ($\pm$ 0.5773502691896257, $\pm$ 0.3399810435848563) & \\
-    (3)$\cross$(3) = (3)$\cross$(3)  & ($\pm$ 0.7745966692414834, $\pm$ 0.7745966692414834) & \\
-                                     & ($\pm$ 0, $\pm$ 0.7745966692414834) & \\
-                                     & ($\pm$ $\pm$ 0.7745966692414834, 0) & \\
-                                     & (0, 0) & \\
+  \begin{tabular}{c c}
+    Tensor & Points \\ \hline
+    (1)$\cross$(4) = (4)$\cross$(1)  & (0, $\pm$ 0.8611363115940526)   \\
+                                     & (0, $\pm$ 0.3399810435848563)  \\ \hline
+    (1)$\cross$(9) = (9)$\cross$(1)  & (0, $\pm$  0.9681602395076261)  \\
+                                     & (0, $\pm$ 0.8360311073266358)  \\
+                                     & (0, $\pm$ 0.6133714327005904)  \\
+                                     & (0, $\pm$ 0.3242534234038089)  \\
+                                     & (0, 0)  \\ \hline
+    (2)$\cross$(3) = (3)$\cross$(2)  & ($\pm$ 0.5773502691896257, $\pm$ 0.7745966692414834)  \\
+                                     & ($\pm$ 0.5773502691896257,0)  \\
+    (2)$\cross$(4) = (4)$\cross$(2)  & ($\pm$ 0.5773502691896257, $\pm$ 0.8611363115940526)  \\
+                                     & ($\pm$ 0.5773502691896257, $\pm$ 0.3399810435848563)  \\
+    (3)$\cross$(3) = (3)$\cross$(3)  & ($\pm$ 0.7745966692414834, $\pm$ 0.7745966692414834)  \\
+                                     & ($\pm$ 0, $\pm$ 0.7745966692414834)  \\
+                                     & ($\pm$ $\pm$ 0.7745966692414834, 0)  \\
+                                     & (0, 0)  \\
   \end{tabular}
 \end{table}
+The weights for each ordered set are the product of the weights for each individual point within the set.
 
-We use this quadrature to evaluate Eq. \ref{eq:coeffs}.  Because $u(x=0,y) = u(x,y=0) = 0$, quadrature points containing a zero value for either $x$ or $y$ will not be shown here.  We also truncate the points to four digits here, but retain them all throughout the calculations.  We first consider the coefficient for $(2,2)$:
-\begin{table}[H]
-  \centering
-  \begin{tabular}{c c c|c|c|c}
-  Point & Weight& $s_{\hat k}$ & $u(x_\ell,y_\ell)$ & $\phi^{(1)}_2(x_\ell)\phi^{(2)}_2(y_\ell)$ &
-       $u(x_\ell,y_\ell) \cdot \phi^{(1)}_2(x_\ell)\phi^{(2)}_2(y_\ell) \cdot s_{\hat k}\cdot$ weight \\ \hline
-  (-0.5774, -0.7746) & & -1 & & & \\
-  (-0.5774,  0.7746) & & -1 & & & \\
-  ( 0.5774, -0.7746) & & -1 & & & \\
-  ( 0.5774,  0.7746) & & -1 & & & \\
-  (-0.7746, -0.5774) & & -1 & & & \\
-  (-0.7746,  0.5774) & & -1 & & & \\
-  ( 0.7746, -0.5774) & & -1 & & & \\
-  ( 0.7746,  0.5774) & & -1 & & & \\
-  (-0.5774, -0.8611) & &  1 & & & \\
-  (-0.5774, -0.3400) & &  1 & & & \\
-  (-0.5774, -0.3400) & &  1 & & & \\
-  (-0.5774,  0.3400) & &  1 & & & \\
+We use this quadrature to evaluate Eq. \ref{eq:coeffs}.
+We truncate the values to four digits in tables below, but retain machine precision throughout the calculations.  
+In the calculation tables below, the first two columns are the
+ordered set $(x,y)$ that make up a realization of the input space.  The third and fourth columns are the quadrature
+weights corresponding to each individual point in the ordered set.  The fifth column is the Smolyak quadrature
+coefficient shown in Eq. \ref{eq:smolyak coeffs}.  The sixth column is the evaluation of the quantity of
+interest for the provided realization of $x$ and $y$.  The seventh and eighth columns are the orthonormal Legendre
+polynomials evaluated at their respective realization (quadrature points).  Finally, the last column is a product comprising
+a single term in the quadrature summation.
+\newpage
+\subsection{$c_k$, $k=(2,2)$}
+We first consider the coefficient for $k=(2,2)$ in Table \ref{tab:2 2}.  
+\begin{longtable}{c c|c c|c|c|c c|c}
+Points ($x$) & ($y$) & Weights $w_x$ & $w_y$ & $s_k$ & $u(x,y)$ & $\phi_{k_1}(x)$ & $\phi_{k_2}(y)$ &
+     $u(x,y)\cdot\Phi_k(x,y)\cdot w_xw_y\cdot s_k$\\ \hline
+0.0000 & -0.8611 & 2.0000 & 0.3479 & -1 & 0.0000 & -1.1180 & 1.3692 & 0.0000 \\
+0.0000 & -0.3400 & 2.0000 & 0.6521 & -1 & 0.0000 & -1.1180 & -0.7303 & 0.0000 \\
+0.0000 & 0.3400 & 2.0000 & 0.6521 & -1 & 0.0000 & -1.1180 & -0.7303 & 0.0000 \\
+0.0000 & 0.8611 & 2.0000 & 0.3479 & -1 & 0.0000 & -1.1180 & 1.3692 & 0.0000 \\
+-0.8611 & 0.0000 & 0.3479 & 2.0000 & -1 & 0.0000 & 1.3692 & -1.1180 & 0.0000 \\
+-0.3400 & 0.0000 & 0.6521 & 2.0000 & -1 & 0.0000 & -0.7303 & -1.1180 & 0.0000 \\
+0.3400 & 0.0000 & 0.6521 & 2.0000 & -1 & 0.0000 & -0.7303 & -1.1180 & 0.0000 \\
+0.8611 & 0.0000 & 0.3479 & 2.0000 & -1 & 0.0000 & 1.3692 & -1.1180 & 0.0000 \\
+0.0000 & -0.9682 & 2.0000 & 0.0813 & 1 & 0.0000 & -1.1180 & 2.0259 & 0.0000 \\
+0.0000 & -0.8360 & 2.0000 & 0.1806 & 1 & 0.0000 & -1.1180 & 1.2263 & 0.0000 \\
+0.0000 & -0.6134 & 2.0000 & 0.2606 & 1 & 0.0000 & -1.1180 & 0.1439 & 0.0000 \\
+0.0000 & -0.3243 & 2.0000 & 0.3123 & 1 & 0.0000 & -1.1180 & -0.7654 & 0.0000 \\
+0.0000 & 0.0000 & 2.0000 & 0.3302 & 1 & 0.0000 & -1.1180 & -1.1180 & 0.0000 \\
+0.0000 & 0.3243 & 2.0000 & 0.3123 & 1 & 0.0000 & -1.1180 & -0.7654 & 0.0000 \\
+0.0000 & 0.6134 & 2.0000 & 0.2606 & 1 & 0.0000 & -1.1180 & 0.1439 & 0.0000 \\
+0.0000 & 0.8360 & 2.0000 & 0.1806 & 1 & 0.0000 & -1.1180 & 1.2263 & 0.0000 \\
+0.0000 & 0.9682 & 2.0000 & 0.0813 & 1 & 0.0000 & -1.1180 & 2.0259 & 0.0000 \\
+-0.9682 & 0.0000 & 0.0813 & 2.0000 & 1 & 0.0000 & 2.0259 & -1.1180 & 0.0000 \\
+-0.8360 & 0.0000 & 0.1806 & 2.0000 & 1 & 0.0000 & 1.2263 & -1.1180 & 0.0000 \\
+-0.6134 & 0.0000 & 0.2606 & 2.0000 & 1 & 0.0000 & 0.1439 & -1.1180 & 0.0000 \\
+-0.3243 & 0.0000 & 0.3123 & 2.0000 & 1 & 0.0000 & -0.7654 & -1.1180 & 0.0000 \\
+0.0000 & 0.0000 & 0.3302 & 2.0000 & 1 & 0.0000 & -1.1180 & -1.1180 & 0.0000 \\
+0.3243 & 0.0000 & 0.3123 & 2.0000 & 1 & 0.0000 & -0.7654 & -1.1180 & 0.0000 \\
+0.6134 & 0.0000 & 0.2606 & 2.0000 & 1 & 0.0000 & 0.1439 & -1.1180 & 0.0000 \\
+0.8360 & 0.0000 & 0.1806 & 2.0000 & 1 & 0.0000 & 1.2263 & -1.1180 & 0.0000 \\
+0.9682 & 0.0000 & 0.0813 & 2.0000 & 1 & 0.0000 & 2.0259 & -1.1180 & 0.0000 \\
+-0.5774 & 0.7746 & 1.0000 & 0.5556 & -1 & 0.2000 & 0.0000 & 0.8944 & 0.0000 \\
+-0.5774 & 0.0000 & 1.0000 & 0.8889 & -1 & 0.0000 & 0.0000 & -1.1180 & 0.0000 \\
+-0.5774 & -0.7746 & 1.0000 & 0.5556 & -1 & 0.2000 & 0.0000 & 0.8944 & 0.0000 \\
+0.5774 & 0.7746 & 1.0000 & 0.5556 & -1 & 0.2000 & 0.0000 & 0.8944 & 0.0000 \\
+0.5774 & 0.0000 & 1.0000 & 0.8889 & -1 & 0.0000 & 0.0000 & -1.1180 & 0.0000 \\
+0.5774 & -0.7746 & 1.0000 & 0.5556 & -1 & 0.2000 & 0.0000 & 0.8944 & 0.0000 \\
+0.7746 & -0.5774 & 0.5556 & 1.0000 & -1 & 0.2000 & 0.8944 & 0.0000 & 0.0000 \\
+0.0000 & -0.5774 & 0.8889 & 1.0000 & -1 & 0.0000 & -1.1180 & 0.0000 & 0.0000 \\
+-0.7746 & -0.5774 & 0.5556 & 1.0000 & -1 & 0.2000 & 0.8944 & 0.0000 & 0.0000 \\
+0.7746 & 0.5774 & 0.5556 & 1.0000 & -1 & 0.2000 & 0.8944 & 0.0000 & 0.0000 \\
+0.0000 & 0.5774 & 0.8889 & 1.0000 & -1 & 0.0000 & -1.1180 & 0.0000 & 0.0000 \\
+-0.7746 & 0.5774 & 0.5556 & 1.0000 & -1 & 0.2000 & 0.8944 & 0.0000 & 0.0000 \\
+-0.5774 & -0.8611 & 1.0000 & 0.3479 & 1 & 0.2472 & 0.0000 & 1.3692 & 0.0000 \\
+-0.5774 & -0.3400 & 1.0000 & 0.6521 & 1 & 0.0385 & 0.0000 & -0.7303 & 0.0000 \\
+-0.5774 & 0.3400 & 1.0000 & 0.6521 & 1 & 0.0385 & 0.0000 & -0.7303 & 0.0000 \\
+-0.5774 & 0.8611 & 1.0000 & 0.3479 & 1 & 0.2472 & 0.0000 & 1.3692 & 0.0000 \\
+0.5774 & -0.8611 & 1.0000 & 0.3479 & 1 & 0.2472 & 0.0000 & 1.3692 & 0.0000 \\
+0.5774 & -0.3400 & 1.0000 & 0.6521 & 1 & 0.0385 & 0.0000 & -0.7303 & 0.0000 \\
+0.5774 & 0.3400 & 1.0000 & 0.6521 & 1 & 0.0385 & 0.0000 & -0.7303 & 0.0000 \\
+0.5774 & 0.8611 & 1.0000 & 0.3479 & 1 & 0.2472 & 0.0000 & 1.3692 & 0.0000 \\
+-0.8611 & -0.5774 & 0.3479 & 1.0000 & 1 & 0.2472 & 1.3692 & 0.0000 & 0.0000 \\
+-0.3400 & -0.5774 & 0.6521 & 1.0000 & 1 & 0.0385 & -0.7303 & 0.0000 & 0.0000 \\
+0.3400 & -0.5774 & 0.6521 & 1.0000 & 1 & 0.0385 & -0.7303 & 0.0000 & 0.0000 \\
+0.8611 & -0.5774 & 0.3479 & 1.0000 & 1 & 0.2472 & 1.3692 & 0.0000 & 0.0000 \\
+-0.8611 & 0.5774 & 0.3479 & 1.0000 & 1 & 0.2472 & 1.3692 & 0.0000 & 0.0000 \\
+-0.3400 & 0.5774 & 0.6521 & 1.0000 & 1 & 0.0385 & -0.7303 & 0.0000 & 0.0000 \\
+0.3400 & 0.5774 & 0.6521 & 1.0000 & 1 & 0.0385 & -0.7303 & 0.0000 & 0.0000 \\
+0.8611 & 0.5774 & 0.3479 & 1.0000 & 1 & 0.2472 & 1.3692 & 0.0000 & 0.0000 \\
+-0.7746 & -0.7746 & 0.5556 & 0.5556 & 1 & 0.3600 & 0.8944 & 0.8944 & 0.0889 \\
+-0.7746 & 0.0000 & 0.8889 & 0.8889 & 1 & 0.0000 & 0.8944 & -1.1180 & 0.0000 \\
+-0.7746 & 0.7746 & 0.5556 & 0.5556 & 1 & 0.3600 & 0.8944 & 0.8944 & 0.0889 \\
+0.0000 & -0.7746 & 0.5556 & 0.5556 & 1 & 0.0000 & -1.1180 & 0.8944 & 0.0000 \\
+0.0000 & 0.0000 & 0.8889 & 0.8889 & 1 & 0.0000 & -1.1180 & -1.1180 & 0.0000 \\
+0.0000 & 0.7746 & 0.5556 & 0.5556 & 1 & 0.0000 & -1.1180 & 0.8944 & 0.0000 \\
+0.7746 & -0.7746 & 0.5556 & 0.5556 & 1 & 0.3600 & 0.8944 & 0.8944 & 0.0889 \\
+0.7746 & 0.0000 & 0.8889 & 0.8889 & 1 & 0.0000 & 0.8944 & -1.1180 & 0.0000 \\
+0.7746 & 0.7746 & 0.5556 & 0.5556 & 1 & 0.3600 & 0.8944 & 0.8944 & 0.0889 \\
+\caption{Numeric Integration of $c_k$, $k=(2,2)$}
+\label{tab:2 2}
+\end{longtable}
+Dividing the sum of the last column by $2^N=4$ yields a machine-precision accurate result for the analytic value
+of $c_{(2,2)}$ shown in Eq. \ref{eq:analytic coeffs}, 0.0888888888888883.  This demonstrates that the Smolyak
+quadrature is suitable for performing the numerical integral.
 
-  \end{tabular}
-\end{table}
+
+\newpage
+\subsection{$c_k$, $k=(6,0)$}
+We now consider the coefficient for $k=(6,0)$ in Table \ref{tab:6 0}.  
+\begin{longtable}{c c|c c|c|c|c c|c}
+Points ($x$) & ($y$) & Weights $w_x$ & $w_y$ & $s_k$ & $u(x,y)$ & $\phi_{k_1}(x)$ & $\phi_{k_2}(y)$ &
+     $u(x,y)\cdot\Phi_k(x,y)\cdot w_xw_y\cdot s_k$\\ \hline
+-0.8611 & 0.0000 & 0.3479 & 2.0000 & -1.0000 & 0.0000 & -1.3878 & 1.0000 & 0.0000 \\
+-0.3400 & 0.0000 & 0.6521 & 2.0000 & -1.0000 & 0.0000 & 0.7402 & 1.0000 & 0.0000 \\
+0.3400 & 0.0000 & 0.6521 & 2.0000 & -1.0000 & 0.0000 & 0.7402 & 1.0000 & 0.0000 \\
+0.8611 & 0.0000 & 0.3479 & 2.0000 & -1.0000 & 0.0000 & -1.3878 & 1.0000 & 0.0000 \\
+0.0000 & -0.9682 & 2.0000 & 0.0813 & 1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+0.0000 & -0.8360 & 2.0000 & 0.1806 & 1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+0.0000 & -0.6134 & 2.0000 & 0.2606 & 1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+0.0000 & -0.3243 & 2.0000 & 0.3123 & 1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+0.0000 & 0.0000 & 2.0000 & 0.3302 & 1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+0.0000 & 0.3243 & 2.0000 & 0.3123 & 1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+0.0000 & 0.6134 & 2.0000 & 0.2606 & 1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+0.0000 & 0.8360 & 2.0000 & 0.1806 & 1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+0.0000 & 0.9682 & 2.0000 & 0.0813 & 1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+-0.9682 & 0.0000 & 0.0813 & 2.0000 & 1.0000 & 0.0000 & 1.5548 & 1.0000 & 0.0000 \\
+-0.8360 & 0.0000 & 0.1806 & 2.0000 & 1.0000 & 0.0000 & -1.4919 & 1.0000 & 0.0000 \\
+-0.6134 & 0.0000 & 0.2606 & 2.0000 & 1.0000 & 0.0000 & 0.4999 & 1.0000 & 0.0000 \\
+-0.3243 & 0.0000 & 0.3123 & 2.0000 & 1.0000 & 0.0000 & 0.6368 & 1.0000 & 0.0000 \\
+0.0000 & 0.0000 & 0.3302 & 2.0000 & 1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+0.3243 & 0.0000 & 0.3123 & 2.0000 & 1.0000 & 0.0000 & 0.6368 & 1.0000 & 0.0000 \\
+0.6134 & 0.0000 & 0.2606 & 2.0000 & 1.0000 & 0.0000 & 0.4999 & 1.0000 & 0.0000 \\
+0.8360 & 0.0000 & 0.1806 & 2.0000 & 1.0000 & 0.0000 & -1.4919 & 1.0000 & 0.0000 \\
+0.9682 & 0.0000 & 0.0813 & 2.0000 & 1.0000 & 0.0000 & 1.5548 & 1.0000 & 0.0000 \\
+-0.5774 & 0.7746 & 1.0000 & 0.5556 & -1.0000 & 0.2000 & 0.8012 & 1.0000 & -0.0890 \\
+-0.5774 & 0.0000 & 1.0000 & 0.8889 & -1.0000 & 0.0000 & 0.8012 & 1.0000 & 0.0000 \\
+-0.5774 & -0.7746 & 1.0000 & 0.5556 & -1.0000 & 0.2000 & 0.8012 & 1.0000 & -0.0890 \\
+0.5774 & 0.7746 & 1.0000 & 0.5556 & -1.0000 & 0.2000 & 0.8012 & 1.0000 & -0.0890 \\
+0.5774 & 0.0000 & 1.0000 & 0.8889 & -1.0000 & 0.0000 & 0.8012 & 1.0000 & 0.0000 \\
+0.5774 & -0.7746 & 1.0000 & 0.5556 & -1.0000 & 0.2000 & 0.8012 & 1.0000 & -0.0890 \\
+0.7746 & -0.5774 & 0.5556 & 1.0000 & -1.0000 & 0.2000 & -1.2403 & 1.0000 & 0.1378 \\
+0.0000 & -0.5774 & 0.8889 & 1.0000 & -1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+-0.7746 & -0.5774 & 0.5556 & 1.0000 & -1.0000 & 0.2000 & -1.2403 & 1.0000 & 0.1378 \\
+0.7746 & 0.5774 & 0.5556 & 1.0000 & -1.0000 & 0.2000 & -1.2403 & 1.0000 & 0.1378 \\
+0.0000 & 0.5774 & 0.8889 & 1.0000 & -1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+-0.7746 & 0.5774 & 0.5556 & 1.0000 & -1.0000 & 0.2000 & -1.2403 & 1.0000 & 0.1378 \\
+-0.5774 & -0.8611 & 1.0000 & 0.3479 & 1.0000 & 0.2472 & 0.8012 & 1.0000 & 0.0689 \\
+-0.5774 & -0.3400 & 1.0000 & 0.6521 & 1.0000 & 0.0385 & 0.8012 & 1.0000 & 0.0201 \\
+-0.5774 & 0.3400 & 1.0000 & 0.6521 & 1.0000 & 0.0385 & 0.8012 & 1.0000 & 0.0201 \\
+-0.5774 & 0.8611 & 1.0000 & 0.3479 & 1.0000 & 0.2472 & 0.8012 & 1.0000 & 0.0689 \\
+0.5774 & -0.8611 & 1.0000 & 0.3479 & 1.0000 & 0.2472 & 0.8012 & 1.0000 & 0.0689 \\
+0.5774 & -0.3400 & 1.0000 & 0.6521 & 1.0000 & 0.0385 & 0.8012 & 1.0000 & 0.0201 \\
+0.5774 & 0.3400 & 1.0000 & 0.6521 & 1.0000 & 0.0385 & 0.8012 & 1.0000 & 0.0201 \\
+0.5774 & 0.8611 & 1.0000 & 0.3479 & 1.0000 & 0.2472 & 0.8012 & 1.0000 & 0.0689 \\
+-0.8611 & -0.5774 & 0.3479 & 1.0000 & 1.0000 & 0.2472 & -1.3878 & 1.0000 & -0.1193 \\
+-0.3400 & -0.5774 & 0.6521 & 1.0000 & 1.0000 & 0.0385 & 0.7402 & 1.0000 & 0.0186 \\
+0.3400 & -0.5774 & 0.6521 & 1.0000 & 1.0000 & 0.0385 & 0.7402 & 1.0000 & 0.0186 \\
+0.8611 & -0.5774 & 0.3479 & 1.0000 & 1.0000 & 0.2472 & -1.3878 & 1.0000 & -0.1193 \\
+-0.8611 & 0.5774 & 0.3479 & 1.0000 & 1.0000 & 0.2472 & -1.3878 & 1.0000 & -0.1193 \\
+-0.3400 & 0.5774 & 0.6521 & 1.0000 & 1.0000 & 0.0385 & 0.7402 & 1.0000 & 0.0186 \\
+0.3400 & 0.5774 & 0.6521 & 1.0000 & 1.0000 & 0.0385 & 0.7402 & 1.0000 & 0.0186 \\
+0.8611 & 0.5774 & 0.3479 & 1.0000 & 1.0000 & 0.2472 & -1.3878 & 1.0000 & -0.1193 \\
+-0.7746 & -0.7746 & 0.5556 & 0.5556 & 1.0000 & 0.3600 & -1.2403 & 1.0000 & -0.1378 \\
+-0.7746 & 0.0000 & 0.8889 & 0.8889 & 1.0000 & 0.0000 & -1.2403 & 1.0000 & 0.0000 \\
+-0.7746 & 0.7746 & 0.5556 & 0.5556 & 1.0000 & 0.3600 & -1.2403 & 1.0000 & -0.1378 \\
+0.0000 & -0.7746 & 0.5556 & 0.5556 & 1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+0.0000 & 0.0000 & 0.8889 & 0.8889 & 1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+0.0000 & 0.7746 & 0.5556 & 0.5556 & 1.0000 & 0.0000 & -1.1267 & 1.0000 & 0.0000 \\
+0.7746 & -0.7746 & 0.5556 & 0.5556 & 1.0000 & 0.3600 & -1.2403 & 1.0000 & -0.1378 \\
+0.7746 & 0.0000 & 0.8889 & 0.8889 & 1.0000 & 0.0000 & -1.2403 & 1.0000 & 0.0000 \\
+0.7746 & 0.7746 & 0.5556 & 0.5556 & 1.0000 & 0.3600 & -1.2403 & 1.0000 & -0.1378 \\
+\caption{Numeric Integration of $c_k$, $k=(6,0)$}
+\label{tab:6 0}
+\end{longtable}
+Dividing the sum of the last column by $2^N=4$ yields the value -0.1007265118224860, but the analytic value
+for this polynomial coefficient is zero.  This demonstrates that Smoyak sparse grid quadrature as outlined
+above is not suitable for performing the numeric integral.
+
+\section{Conclusion}
+Having outlined an implementation of gPC expansion and Smolyak sparse quadrature algorithms, along with a
+particular response function, we have demonstrated cases where the Smolyak quadrature both does and does not
+work well.  Because there are numerical integrals the Smolyak algorithm cannot perform well, it seems
+unsuitable for general integration of polynomial expansion coefficients in arbitrary polynomial sets for gPC
+expansions.\\
+
+It is my hope that I have erred at some point, and that the Smolyak algorithm is more suitable than shown
+here.
 \end{document}
