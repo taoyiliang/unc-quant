@@ -1,204 +1,262 @@
 % Chapter Template
 
-\chapter{Simulation Physics} % Main chapter title
+\chapter{Models} % Main chapter title
 
-\label{ch:models} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+\label{Chapter2} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
-\lhead{Chapter 2. \emph{Simulation Physics}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
+\lhead{Chapter 2. \emph{Models}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
 
 %----------------------------------------------------------------------------------------
-%	SECTION 1
+%	SECTION: INTRO
 %----------------------------------------------------------------------------------------
 
-\section{Simulations Used}
-To demonstrate the efficacy of the various uncertainty quantification methods we use in this work, we employ
-several independent simulations (hereafter referred to as ``codes'') of increasing complexity.  These codes
-range from simple polynomial evaluations to nonlinear multistage
-iterative solvers representing complex codes.  We describe each briefly here.
+\section{Introduction to Models}
+In this section we present the models used in demonstrating the uncertainty quantification (UQ) methods in this
+work.  We use the term \emph{model} to describe any code with uncertain inputs and a set of at least one
+response quantity of interest.
+We include a variety of models with the intent to demonstrate the strengths and weaknesses of each UQ
+method.
 
+Firstly, we include several analytic models.  These are models who have an exact, derivable value for
+statistical moments or sensitivities.  They are simpler in mechanics than full engineering-scale problems, and
+offer a way to benchmark the performance of the UQ methods.
 
-\section{Polynomial Evaluations}
-In order to benchmark the simplest cases, we make use of simple polynomial expressions of the form
+Secondly, we include an engineering-scale multiphysics application.  There are no analytic response values in
+this model, only a nominal case with no uncertainty included in the input space.  Demonstration of the
+performance of UQ methods on this model will highlight the practical application of each method.
+
+We describe each model in turn.  Throughout the models, we will describe them using the syntax
 \begin{equation}
-  u(Y) = \prod_{n=1}^N (y_n+1),
+  u(Y) = Q,
 \end{equation}
-where $u(Y)$ is the quantity of interest and $Y=(y_1,y_2,\ldots,y_N)$ is the vector of uncertain inputs.
-The input variables $Y$ can be distributed arbitrarily; we distribute them uniformly from -1 to 1.  This
-results in an isotropic hypercube domain extending from -1 to 1 in all dimensions.  
-Because this model is a sum of polynomials, SCgPC can represent it exactly.  Because it is highly regular, we
-also expect SCgPC to be efficient.
+where $u(Y)$ is the model as a function of $N$ uncertain inputs $Y=(y_1,\ldots,y_N)$ and $Q$ is a
+single-valued response quantity of interest.
 
 
+%----------------------------------------------------------------------------------------
+%	SECTION: TENSOR POLY
+%----------------------------------------------------------------------------------------
 
+\section{Tensor Monomials}\label{mod:first tensor poly}
+The simplest model we make use of is a first-order tensor polynomial (tensor monomial) combination \ref{Ayres}.
+The mathematical expression is
+\begin{equation}
+  u(Y) = \prod_{n=1}^N (y_n+1).
+\end{equation}
+For example, for $N=3$ we have
+\begin{equation}
+  u(Y) = y_1y_2y_3 + y_1y_2 + y_1y_3 + y_2y_3 + y_1 + y_2 + y_3 + 1.
+\end{equation}
+For this model we distribute the uncertain inputs in several ways: uniformly on [-1,1], uniformly on
+[0,1], and normally on [$\mu,\sigma$]. A summary of analytic statistics is given in Table \ref{tab:tensormono moments}.
+%TODO derivations in appendix?
 
-
-\section{Attenuation}
-To demonstrate the convergence rates of various methods, we make use of an attenuation problem that
-is equivalent to the penetration of neutral particles in a one-dimensional purely-absorbing medium.  For this
-problem we set the physical domain to $x\in[0,1]$, with the material occupying all of the domain space.  If $m$
-particles are incident on a material with length $dx$, the resulting change in the number of particles $dm$
-due to absorption is
-\begin{equation}
-  dm = -y m dx,
-\end{equation}
-where $y$ is the absorption cross section (probability of absorption per unit length) of the neutral particles
-in the material.  The solution for the fraction of particles still present after passing through the material
-for any position $x$ is
-\begin{equation}
-  m(x) = e^{-yx}.
-\end{equation}
-The fraction of particles retained after passing through a segment of the domain is similarly
-\begin{equation}
-  m(x+\Delta_x) = e^{-y\Delta_x}.
-\end{equation}
-To expand the number of input parameters to the problem, we subdivide the material into $N$ independent
-materials indexed by $n$, each with absorption cross section $y_n$ and length $h=\frac{1}{N}$.  We introduce uncertainty
-by allowing each absorption cross section to vary uniformly between 0 and 1, resulting in a hypercubic
-uncertainty domain.  We establish our quantity of interest as the percent of incident particles at the left
-domain ($m(0)$) that remain after passing completely through the material ($m(L)$).  Introducing the
-uncertain material properties as parameters for the quantity of interest, we define
-\begin{equation}
-  u(Y) = m(L,Y),\hspace{15pt}Y\equiv(y_1,\ldots,y_N).
-\end{equation}
-This subdivided domain model can be considered as distinct attenuation problems, where the fraction of
-particles passing through one material are the full number incident on the next material.  Thus, the solution
-is a product of the solutions to the one-dimension ODE,
-\begin{align}
-  u(Y) &= m_1(h,y_2)\cdot m_2(h,y_2)\cdot\ldots\cdot m_N(h,y_N),\\
-    &= \prod_{n=1}^N e^{-h y_n},\\
-    &= \prod_{n=1}^N e^{-y_n/N}.
-\end{align}
-
-The benefit of this model is a simple analytic solution, which makes analytic benchmarks straightforward to
-compute.  In
-addition, because of the exponential form, SCgPC will converge on a solution, but not replicate it exactly as
-in the polynomial case.  This allows accurate comparison between MC, SCgPC methods, and HDMR methods in a
-highly regular analytic case.
-
-%\section{Projectile}
-%For a nonlinear case without an analytic solution, we consider the path traveled by a projectile near the
-%surface of the Earth, considering drag on the projectile from stagnant air.  
-%The physical domain for this problem extends from $x=0,y=0$ as far as necessary for the projectile to reach
-%its apex and return to $y=0$.
-%The equations governing travel in both vertical position $x$ and horizontal position $y$
-%are given by
-%\begin{equation}
-%  y(t) = \frac{v_T}{g}(v\sin\theta+v_T)\left(1-\exp\left[\frac{-gt}{v_T}\right]\right)-v_T t,
-%\end{equation}
-%\begin{equation}
-%  x(t) = \frac{vv_T\cos\theta}{g}\left(1-\exp\left[\frac{-gt}{v_T}\right]\right),
-%\end{equation}
-%where $t$ is time, $g$ is acceleration due to gravity, $v$ is scalar velocity, $\theta$ the angle between the
-%velocity vector and the horizontal ground (x-axis), $v_T=\frac{mg}{D}$ is terminal velocity, $D=\frac{\rho CA}{2}$ is
-%the acceleration due to drag, $C$ is the drag coefficient, and $A=\pi r^2$
-%is the surface area of the projectile in the direction of travel.  The projectile is assumed to present an
-%identical surface area in both $x$ and $y$ directions.  The quantity of interest is the range, or the total
-%distance in $x$ traveled by the ball before reaching a height of $y=0$.  The uncertain input variables are
-%distributed uniformly as described in Table \ref{tab:proj dist}.
-%
-%\begin{table}[h]
-%\centering
-%\begin{tabular}{c | l | c c | c}
-%  Variable & Name & Mean & Range ($\pm$) & Units \\\hline
-%  $y_i$ & Initial Height & 1 & 1 & m\\
-%  $v$ & Initial Velocity & 35.5 & 2.5 & m/s\\
-%  $\theta$ & Initial Angle & 45 & 10 & degrees\\
-%  $g$ & Accel. Gravity & 9.79888 & 0.0349 & m/s/s\\
-%  $m$ & Projectile Mass & 0.145 & 0.0725 & kg\\
-%  $r$ & Projectile Radius & 0.0336 & 0.00336 & m\\
-%  $C$ & Drag Coefficient & 0.5 & 0.5 & \\
-%  $\rho$ & Air Density & 1.2 & 0.1 & kg/m$^3$ \\
-%\end{tabular}
-%\caption{Projectile Problem Distributions}
-%\label{tab:proj dist}
-%\end{table}
-%
-%This simulation has the benefit of an analytic solution when $C=0$ and eight distinct input parameters of
-%varying importance.  This is especially useful in considering anisotropic treatment of the input space.  The
-%regularity of the response is not well known, as there is no analytic solution to this case; however, we
-%expect the range to be less regular than the quantity of interest in the previous two cases.
-%
-
-
-
-
-\section{Neutron Diffusion}
-For a nonlinear system with complicated physics, we consider a two-group, two-dimensional neutron diffusion
-criticality calculation.  The physical domain for this problem extends along $x\in[0,165\text{ cm}]$ and
-$y\in[0,165\text{ cm}]$.
-We make use of the diffusion approximation for neutron transport, which when restricted to two energy groups provides us
-with a coupled set of elliptic PDEs to solve:
-\begin{equation}
--\grad\cdot\qty( D_1(\bar x)\grad\phi_1(\bar x))+\qty(\xs{a}{1}(\bar x)+\xs{s}{1\to2}(\bar x))\phi_1(\bar x) = \frac{1}{k(\phi)}\sum_{g'=1}^2\nu_{g'}\xs{f}{g'}(\bar x)\phi_{g'}(\bar x),
-\end{equation}
-\begin{equation}
--\grad \cdot\qty(D_2(\bar x)\grad \phi_2(\bar x))+\xs{a}{2}(\bar x)\phi_2(\bar x) = \xs{s}{1\to 2}(\bar x)\phi_1(\bar x),
-\end{equation}
-where we use the following parametric coefficients: 
-the absorption cross section $\Sigma_{g,a}=\Sigma_{g,c}+\Sigma_{g,f}$; 
-the capture and fission cross sections $\Sigma_{g,c}$ and $\Sigma_{g,f}$; 
-the energy-group scattering cross section $\Sigma_s^{(g'\to g)}$; 
-the diffusion coefficient $D_g$ which depends on the scattering cross section of the medium;
-and the fission multiplication factor $\nu_g$, the ratio of new neutrons per fission-producing neutron.  The
-solution to this PDE is the neutron scalar flux $\phi_g(\bar x)$.  We apply no-traction conditions on the
-vacuum boundaries and zero-derivative current on the reflecting boundaries for both energy groups:
-\begin{equation}
-\frac{\phi_g}{4}-\frac{D_g}{2}\eval{\pdv{\phi_g}{x_1}}_{\partial \Omega_\text{top}}=0,\hspace{5pt} g=1,2,
-\end{equation}
-\begin{equation}
-\frac{\phi_g}{4}-\frac{D_g}{2}\eval{\pdv{\phi_g}{x_2}}_{\partial \Omega_\text{right}}=0,\hspace{5pt} g=1,2,
-\end{equation}
-\begin{equation}
--D_g\eval{\pdv{\phi_g}{x_1}}_{\partial \Omega_\text{bottom}}=0,\hspace{5pt} g=1,2,
-\end{equation}
-\begin{equation}
--D_g\eval{\pdv{\phi_g}{x_2}}_{\partial \Omega_\text{left}}=0,\hspace{5pt} g=1,2.
-\end{equation}
-\\
-The criticality eigenvalue and quantity of interest $k(\phi)$ is given by
-\begin{equation}
-k(\phi)=\sum_{g=1}^2\iint\limits_D\frac{\nu\xs{f}{g}\phi_g(\bar x)}{\qty(-\nabla\cdot D_g\nabla+\Sigma_r^{(g)})\phi_g(\bar x)}~d\bar x.
-\end{equation}
-We address solving $\phi_1,\phi_2,$ and $k$ nonlinearly and simultaneously using FEM and Jacobian-free
-Newton-Krylov iterations.  
-The material properties are shown in Table \ref{tab:coremats}, and the domain $\Omega=[0,200\text{ cm}]^2$.
-The reference flux solutions are plotted in Fig. \ref{benchflux}, and for the reference problem
-$k$=1.00007605445 with a relative iterative convergence of 1 pcm.  \begin{figure}[H]
-\centering
-  \includegraphics[width=0.4\linewidth]{core}
-  \caption{Core Geometry}
-  \label{geom}
-\end{figure}
-\begin{table}[h]
-\centering
-\begin{tabular}{c c | c c c c}
-Region & Group & $D_g$ & $\Sigma_{a,g}$ & $\nu\Sigma_{f,g}$ & $\Sigma_s^{1,2}$ \\ \hline
-1 & 1 & 1.255 & 8.252e-3 & 4.602e-3 & 2.533e-2 \\
- & 2 & 2.11e-1 & 1.003e-1 & 1.091e-1 & \\ \hline
-2 & 1 & 1.268 & 7.181e-3 & 4.609e-3 & 2.767e-2 \\
- & 2 & 1.902e-1 & 7.047e-2 & 8.675e-2 & \\ \hline
-3 & 1 & 1.259 & 8.002e-3 & 4.663e-3 & 2.617e-2 \\
- & 2 & 2.091e-1 & 8.344e-2 & 1.021e-1 & \\ \hline
-4 & 1 & 1.259 & 8.002e-3 & 4.663e-3 & 2.617e-2 \\
- & 2 & 2.091e-1 & 7.3324e-2 & 1.021e-1 & \\ \hline
-5 & 1 & 1.257 & 6.034e-4 & 0 & 4.754e-2 \\
- & 2 & 1.592e-1 & 1.911e-2 & 0 & 
-\end{tabular}
-\caption{Reference Material Properties for Benchmark Core}
-\label{tab:coremats}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{c|c|c}
+    Distribution & Mean & Variance \\\hline
+    $\mathcal{U}[-1,1]$ & 1 & $\qty(\frac{4}{3})^N - 1$ \\
+    $\mathcal{U}[0,1]$ & $\qty(\frac{3}{4})^N$ & $\qty(\frac{7}{3})^N - \qty(\frac{3}{4})^{2N}$ \\
+    $\mathcal{N}[\mu,\sigma]$ & $\prod_{n=1}^N (\mu_{y_n}+1)$ & $\prod_{n=1}^N[(\mu_{y_n}+1)^2+\sigma_{y_n}^2]
+    - \prod_{n=1}^N (\mu_{y_n}+1)^2$
+  \end{tabular}
+  \caption{Analytic Expressions for Tensor Monomial Case}
+  \label{tab:tensormono moments}
 \end{table}
-\begin{figure}[H]
-\centering
-  \begin{subfigure}[b]{0.45 \textwidth}
-   \includegraphics[width=\textwidth]{g1_50_flux}
-   \caption{$\phi$, Group 1}
-   \label{g1}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.45 \textwidth}
-   \includegraphics[width=\textwidth]{g2_50_flux}
-   \caption{$\phi$, Group 2}
-   \label{g2}
-  \end{subfigure}
-  \caption{Reference Flux Profiles}
-  \label{benchflux}
+
+
+%----------------------------------------------------------------------------------------
+%	SECTION: Sudret
+%----------------------------------------------------------------------------------------
+\section{Sudret polynomial}\label{mod:sudret}
+The Sudret polynomial \cite{sudret} is another tensor-like polynomial, and is a test case traditionally used to
+identify convergence on sensitivity parameters.  The mathematical expression is
+\begin{equation}
+  u(Y) = \frac{1}{2^N}\prod_{n=1}^N (3y_n^2+1).
+\end{equation}
+The variables are distributed uniformly on [0,1].  The statistical moments and sensitivities are given in
+Table \ref{tab:sudret}, where $\mathcal{S}_n$ is the global Sobol sensitivity of $u(Y)$ to perturbations in
+$y_n$.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{c c}
+    Statistic & Expression \\\hline
+    Mean & 1 \\
+    Variance & $\qty(\frac{6}{5})^N - 1$ \\
+    $\mathcal{S}_n$ & $\frac{5^{-n}}{(6/5)^N-1}$
+  \end{tabular}
+  \caption{Analytic Expressions for Sudret Case}
+  \label{tab:sudret}
+\end{table}
+
+
+%----------------------------------------------------------------------------------------
+%	SECTION: ATTENUATION
+%----------------------------------------------------------------------------------------
+\section{Attenuation}\label{mod:attenuation}
+This model represents an idealized single-dimension system where an beam of particles impinges on a
+purely-absorbing material with total scaled length of 1.  The response of interest is the fraction of
+particles exiting the opposite side of the material.  The material is divided into $N$ segments, each of which
+has a distinct uncertain absorption cross section $y_n$.  The solution takes the form
+\begin{equation}
+  u(Y) = \prod_{n=1}^N \exp(-y_n/N).
+\end{equation}
+Because negative cross sections have dubious physical meaning, we restrict the distribution cases to uniform
+on [0,1] as well as normally-distributed on [$\mu,\sigma$].  A summary of analytic statistics is given in
+Table \ref{tab:attenuation moments}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{c|c|c}
+    Distribution & Mean & Variance \\\hline
+    $\mathcal{U}[0,1]$ & $\qty[N\qty(1-e^{-1/N})]^N$ & $\qty[\frac{N}{2}\qty(1-e^{-2/N})]^N -
+                       \qty[N\qty(1-e^{-1/N})]^{2N}$ \\
+    $\mathcal{N}[\mu,\sigma]$ & $\prod_{n=1}^N \exp\qty[\frac{\sigma_{y_n}^2}{2N^2}-\frac{\mu_{y_n}}{N}]$
+    & $\prod_{n=1}^N \exp\qty[\frac{2\sigma_{y_n}^2}{N^2} - \frac{2\mu_{y_n}}{N}]$
+  \end{tabular}
+  \caption{Analytic Expressions for Attenuation Case}
+  \label{tab:attenuation moments}
+\end{table}
+
+This model has some interesting properties to demonstrate performance of polynomial-based UQ methods.  First,
+because the solution is a product of exponential functions, it cannot be exactly represented by a finite
+number of polynomials.  Second, the Taylor development of the exponential function includes all increasing
+polynomial orders.  The product of several exponential functions is effectively a tensor combination of
+polynomials for each dimension.
+
+%----------------------------------------------------------------------------------------
+%	SECTION: Gaussian Peak
+%----------------------------------------------------------------------------------------
+\section{Gaussian Peak}\label{mod:gausspeak}
+Similar to the attenuation model, the Gaussian peak \cite{sfugenz} instead uses square arguments to the
+exponential function.  A tuning parameter $a$ can be used to change the peakedness of the
+function.  Increased peakedness leads to more difficult polynomial representation.  
+A location parameter $\mu$ can be used to change the location of the peak.
+The mathematical expression is
+\begin{equation}
+  u(Y) = \exp\qty(-\sum_{n=1}^N a^2\qty(y_n-\mu)^2).
+\end{equation}
+We allow each $y_n$ to vary uniformly on [0,1].
+A summary of analytic statistics is given in Table \ref{tab:gausspeak moments}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{c|c}
+    Statistic & Expression \\ \hline
+    Mean & $\qty(\frac{\sqrt{\pi}}{2a}\qty(\erf(a\mu)+\erf(a-a\mu)))^N$ \\
+    Variance & $\qty(\frac{\sqrt{\pi/2}}{2a}\qty(\erf(a\mu\sqrt{2})-\erf(a\sqrt{2}(1-\mu))))^N - \qty(\frac{\sqrt{\pi}}{2a}\qty(\erf(a\mu)+\erf(a-a\mu)))^{2N}$
+  \end{tabular}
+  \caption{Analytic Expressions for Gaussian Peak Case}
+  \label{tab:gausspeak moments}
+\end{table}
+This case offers particular challenge because of its Taylor development, which only includes even powers of
+the uncertain parameters.  This suggests added difficulty in successive representation, especially for an
+adaptive algorithm.
+
+
+%----------------------------------------------------------------------------------------
+%	SECTION: Ishigami
+%----------------------------------------------------------------------------------------
+\section{Ishigami Function}\label{mod:ishigami}
+The Ishigami function \cite{ishigami} is a commonly-used function in performing sensitivity analysis.  It is
+given by
+\begin{equation}
+  u(Y) = \sin{y_1} + a\sin^2{y_2} + b y_3^4\sin(y_1).
+\end{equation}
+In our case, we will use $a=7$ and $b=0.1$ as in \cite{ishigami2}.  In particular interest for this model are
+its strong nonlinearity and lack of independence for $y_3$, as it only appears in conjunction with $y_1$.  The
+analytic statistics of interest for this model are in Table \ref{tab:ishigami moments}, where $D_n$ is the
+partial variance contributed by $y_n$ and Sobol sensitivities $\mathcal{S}_n$ are obtained by dividing $D_n$
+by the total variance.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{c|c|c}
+  Statistic & Expression & Approx. Value \\\hline
+  Mean & $\frac{7}{2}$ & 3.5 \\
+  Variance & $\frac{a^2}{8} + \frac{b\pi^4}{5} + \frac{b^2\pi^8}{18} + \frac{1}{2}$ & 13.84459 \\
+  $D_1$ & $\frac{b\pi^4}{5} + \frac{b^2\pi^8}{50} + \frac{1}{2} $ &  4.34589 \\
+  $D_2$ & $\frac{a^2}{8}$ & 6.125 \\
+  $D_{1,3}$ & $\frac{8b^2\pi^8}{225}$ & 3.3737 \\
+  $D_3,D_{1,2},D_{2,3},D_{1,2,3}$ & 0 & 0
+  \end{tabular}
+  \caption{Analytic Expressions for Ishigami Case}
+  \label{tab:ishigami moments}
+\end{table}
+
+%----------------------------------------------------------------------------------------
+%	SECTION: Pin Cell
+%----------------------------------------------------------------------------------------
+\section{Pin Cell}\label{mod:pincell}
+This model is a coupled multiphysics engineering-scale model.  It simulates fuel behavior through the depletion of fissile material
+in a single two-dimensional slice of a fuel rod.  The problem domain contains the fuel, gap, clad, and
+moderator, and represents a symmetric quarter pin.  The depletion steps are carried out through a year-long
+burn cycle.
+The coupled multiphysics are neutronics, handled by \rattlesnake{}, and fuel performance, handled by
+\bison{}.  
+
+The mesh is shown in Fig. \ref{fig:pincell mesh}.  TODO BETTER FIGURE.  The mesh contains 20 bands of fuel
+blocks, the gap, the clad, and the moderator.  TODO Use colors to describe locations.  TODO dimensions.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.7\linewidth]{pincell_mesh_png}
 \end{figure}
+
+The neutronics is calculated using 8 energy groups and takes as uncertain inputs 671 material cross
+sections, including fission, capture, scattering, and neutron multiplication factor  Each cross section is
+perturbed by 10\% of its original value, distributed normally.  The scattering cross
+sections for each material in each group are not perturbed individually; rather, a scattering scaling factor
+for each group is determined, and the scattering cross sections are all scaled by that factor.  The fission
+and capture cross sections are perturbed individually.  The critical output of the neutronics calculation is
+power shapes for use in the fuel performance code, as well as the $k$-eigenvalue for the rod.
+
+The fuel performance code models mechanics such as heat conduction in the fuel, clad, and gap, clad stresses, grain radius
+growth, and fuel expansion through the depletion steps of the fuel. The code takes power shapes
+from the neutronics code as input and produces several key characteristics, such as peak clad temperature, maximum
+fuel centerline temperature, and maximum clad stress.
+
+The uncertain input space is highly correlated, so a Karhunen-Loeve (KL) component analysis is performed as
+the first step in a two-part reduction \cite{physor2016}. The
+covariance matrix is obtained via cross section construction in \texttt{scale}\cite{scale} using random sampling.  
+Table \ref{tab:pcarank} gives the first several eigenvalues in the KL expansion.  Surrogate (or
+\emph{latent}) dimensions identified by the KL expansion will be used as input variables for demonstration of
+the various UQ methods.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{c|c}
+Index & Eigenvalue \\ \hline
+1 & 0.974489839965 \\
+2 & 0.0183147250746 \\
+3 & 0.00271597405394 \\
+4 & 0.00260939137165 \\
+5 & 0.000486257522596 \\
+6 & 0.000431957645049 \\
+7 & 0.000253683187786 \\
+8 & 0.000228044411204 \\
+9 & 0.000124030638175 \\
+10 & 7.14328494102e-05 \\
+11 & 6.30833696364e-05 \\
+12 & 3.87071149672e-05 \\
+13 & 3.51066363934e-05 \\
+14 & 2.48699823434e-05 \\
+15 & 1.98915286765e-05 \\
+16 & 1.35985387253e-05 \\
+17 & 1.128896325e-05 \\
+18 & 9.59426898684e-06 \\
+19 & 8.11612567548e-06 \\
+20 & 7.16508951777e-06 \\
+21 & 6.53366817241e-06 \\
+22 & 4.50006575957e-06 \\
+23 & 4.19287192651e-06 \\
+24 & 3.7671309151e-06 \\
+25 & 2.61683536224e-06 \\
+26 & 2.22099981728e-06 \\
+27 & 1.6360971709e-06 \\
+28 & 1.13245742809e-06 \\
+29 & 9.92282537141e-07
+\end{tabular}
+\caption{KL Expansion Eigenvalues for Pin Cell Problem}
+\label{tab:pcarank}
+\end{table}

@@ -56,7 +56,11 @@ Q = U.copy()
 Q[0:] *= ss
 Q[1:] *= ss
 Q[2:] *= ss
+print ''
+print 'S',S
+print ''
 print 'Q',Q
+print ''
 
 #sanity test
 ys=[0,0,0]

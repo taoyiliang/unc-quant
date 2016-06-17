@@ -31,6 +31,7 @@ that some of the input parameters are correlated in their probabilistic distribu
 decouple them into uncorrelated variables.  Throughout this work we will assume the input parameters 
 are uncorrelated.
 
+%Monte Carlo
 One traditional method for exploring the uncertain input space is through random sampling, such as in analog Monte
 Carlo sampling.  In this method, a point in the input space is chosen at random based on probability.  This
 point represents values for the input parameters to the solver.  The solver is executed with these inputs, and
@@ -50,6 +51,7 @@ of two, it is necessary to take at least four times as many samples.  If a solve
 inexpensive, running additional solutions is not a large concern; however, for lengthy and expensive solvers,
 it may not be practical to obtain sufficient realizations to obtain a clear response.
 
+% expensive solvers need low-sample UQ
 In this work, we will assume solvers are computationally expensive, requiring many hours per solve, and that
 computational resource availability requires as few solves as possible.  As such, we consider several methodologies 
 for quantifying the uncertainty in expensive solver
@@ -59,8 +61,8 @@ degree of regularity, and their analyticity provides for straightforward benchma
 increasing complexity, we investigate the behavior of the UQ methods.
 
 Finally, we apply the methods to an engineering-scale solver that
-models the neutronics of nuclear fuel.  This will
-demonstrate the ``real life'' application of the uncertainty quantification methods, where the regularity and
+models the neutronics and performance of nuclear fuel.  This will
+demonstrate the practical application of the uncertainty quantification methods, where the regularity and
 other properties of the model are not well understood.
 
 The first uncertainty quantification method we consider
@@ -117,18 +119,21 @@ quantification methods discussed in this proposal.
 %outline chapters
 The remainder of this work will proceed as follows:
 \begin{itemize}
-  \item Chapter 2: We mathematically describe the analytic problems solved by the simulations we will be running,
-    along with their properties and inferences about the algorithms developed.
+  \item Chapter 2: We describe the analytic test problems and engineering-scale problem solved by the simulations 
+    we will be running, along with their properties and inferences about the algorithms developed.
     We discuss potential approaches to model solving and applications of the models.
-  \item Chapter 3: We describe methods for uncertainty quantification, including Monte Carlo
-    and generalized Polynomial Chaos.
-  \item Chapter 4: We analyze results obtained for SCgPC methods, and contrast them with traditional
-    Monte Carlo convergence on statistical moments.
-  \item Chapter 5: We describe implementation of HDMR, and adaptive methods for both SCgPC and HDMR.  We discuss the
+  \item Chapter 3: We describe methods for uncertainty quantification, including Monte Carlo (MC),
+    stochastic collocation for generalized Polynomial Chaos (SCgPC), and high-dimension model reduction (HDMR).
+  \item Chapter 4: We analyze results obtained for the static UQ methods on analytic models, and contrast 
+    them with traditional Monte Carlo convergence on statistical moments.
+  \item Chapter 5: We describe implementation of adaptive methods for both SCgPC and HDMR.  We discuss the
     strengths, weaknesses, and options for these adaptive methods.
   \item Chapter 6: We evaluate results for the adaptive methods in comparison with static methods and Monte
-    Carlo.  We again consider the strengths and weaknesses of the adaptive methods. 
-  \item Chapter 7: We draw conclusions from the evaluations performed, and offer some suggestions for
-    applicability as well as future development.
+    Carlo for the analytic models.  We again consider the strengths and weaknesses of the adaptive methods in 
+    light of the results. 
+  \item Chapter 7: We perform analysis on the engineering-scale multiphysics coupled problem, and analyze
+    results.
+  \item Chapter 8: We draw conclusions from the evaluations performed, and offer some suggestions for
+    applicability as well as future development for the UQ methods demonstrated.
 \end{itemize}
 %----------------------------------------------------------------------------------------
