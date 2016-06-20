@@ -1,0 +1,58 @@
+% Chapter Template
+
+\chapter{Future Work} % Main chapter title
+
+\label{Chapter9} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+
+\lhead{Chapter 9. \emph{Future Work}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
+
+%----------------------------------------------------------------------------------------
+%	SECTION: INTRO
+%----------------------------------------------------------------------------------------
+
+\section{Introduction}
+The results in this work lead to several interesting areas of improvement.  We discuss some of these briefly
+here.
+
+\section{Impact Inertia in Adaptive Samplers}
+One weakness demonstrated in the adaptive sampling techniques is the phenomenon of purely-even or purely-odd
+polynomial representations.  This is seen clearly in the Ishigami \ref{mod:ishigami} and Gauss Peak
+\ref{mod:gausspeak} models.  Consider the Taylor development of a sine function,
+\begin{equation}\label{eq:sine}
+  \sin x = x - \frac{x^3}{6} + \frac{x^5}{120} + \mathcal{O}(x^7),
+\end{equation}
+and for a square exponential,
+\begin{equation}\label{eq:sine}
+  e^{-x^2} = 1 - x^2 + \frac{x^4}{2} - \frac{x^6}{6} + \frac{x^8}{24} + \mathcal{O}(x^10).
+\end{equation}
+Unique to both of these functions is ``skipping'' certain polynomial orders (evens for sine, odds for square
+exponential).
+
+In a single-dimension example, the current impact estimation expression is
+\begin{equation}
+  \tilde{\eta_k}= \eta_{k-1}.
+\end{equation}
+
+Because adaptive sampling currently relies on the previous-order polynomial to estimate the
+importance of the current polynomial, it can be misled into thinking there is no additional information to
+gather if certain polynomials are not present in the expansion.
+
+For example, if the adaptive sampler finds the impacts of a one-dimensional problem to be 0.4 for $x$, it will
+try $x^2$.  If the model is an odd function, it will find the impact for $x^2$ is actually zero.  As a result,
+it will be very unlikely to try $x^3$, despite the fact that $x^3$ has significant real impact.
+
+One resolution to this method is to apply some sort of \emph{impact inertia} to the estimation of impact
+values; that is, in addition to considering the previous polynomial impact when estimating current polynomial
+impact, several previous polynomials might be considered.  This kind of inertia is likely problem-dependent in
+its effectiveness, and would be best controlled through an optional user input.  Some research would be
+required to determine what default level of inertia is recommended.  The new impact estimation expression
+would be something like the following:
+
+\begin{equation}
+  \tilde{\eta_k}= \frac{1}{\alpha}\sum_{n=1}^k \frac{1}{g(n)}\eta_{k-n},
+\end{equation}
+where $\alpha$ is a balancing parameter and $g(n)$ is a penalty function that grows as $k-n$ increases.
+
+\section{Cross-Communication in Adaptive HDMR}
+Todo, basically if I want the next step in (x,y), that next step shouldn't be a polynomial containing 0 in
+either x or y.
