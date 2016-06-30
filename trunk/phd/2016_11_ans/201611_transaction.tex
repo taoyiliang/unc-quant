@@ -28,12 +28,13 @@
 %\rfoot{\bf \thepage} \cfoot{}
 \title{Time-Dependent Sensitivity Analysis of OECD Benchmark using BISON and RAVEN}
 
-\author{Paul W. Talbot$^{*}$, 
-        CongJian Wang$^{\dagger}$, 
-        Cristian Rabiti$^{\dagger}$,
+\author{Paul W. Talbot$^{*\dagger}$, 
         Kyle Gamble$^{\dagger}$,
+        Cristian Rabiti$^{\dagger}$,
+        CongJian Wang$^{\dagger}$, 
+        Andrea Alfonsi$^{\dagger}$, 
+        Joshua Cogliati$^{\dagger}$, 
         Anil K. Prinja$^{*}$}
-        %TODO rest of raven team, bison team?
 \institute{
   $^*$Department of Nuclear Engineering,
   University of New Mexico,
@@ -42,7 +43,7 @@
   $^\dagger$Nuclear Engineering Methods Development,
   Idaho National Laboratory,
   Idaho Falls, ID, 83415}
-  \email{talbotp@unm.edu }%\and prinja@unm.edu \and cristian.rabiti@inl.gov}
+  \email{paul.talbot@inl.gov }%\and prinja@unm.edu \and cristian.rabiti@inl.gov}
 %\date{}
 
 
@@ -51,16 +52,20 @@
 Developments in uncertainty quantification in nuclear simulations have decreased the computational cost
 required to perform accurate sensitivity analysis \cite{cristiansmeared,ans2014,ans2016sum,physor2016}.
 Implementation of these methods in the RAVEN \cite{raven} framework allows additionally for time-dependent
-sensitivity analysis of uncertain input variables.  By demonstration we consider an OECD benchmark case (TODO
-cite benchmark).  We propagate uncertainties in the input parameters using RAVEN operating on the BISON
+sensitivity analysis of uncertain input variables.  By demonstration we consider an OECD benchmark case
+\cite{OECDbench}.  We propagate uncertainties in the input parameters using RAVEN operating on the BISON
 \cite{bison} fuels performance code.  We then consider the time-evolution of the sensitivity of several output
 responses to the uncertain input parameters.  We perform sensitivity analysis  using time-based stochastic 
 collocation for generalized polynomial chaos (SCgPC) and high-dimension model reduction (HDMR) \cite{Ayres}.
 
 \section{Methods}
-TODO Describe OECD benchmark.
+The details of the OECD benchmark and its parameter uncertainties are described in \cite{OECDbench}.
+Uncertain parameters include fuel properties, boundary conditions, and geometries.  We
+treat each of the uncertain inputs as independent parameters and consider here four responses: maximum
+centerline fuel temperature during the simulation, maximum creep strain experienced by the clad, fission gas
+release percent, and clad elongation.
 
-For propagation of uncertainty we make use of the high-dimension model reduction (HDMR) expansion,
+For propagation of uncertainty we make use of the high-dimension model reduction (HDMR) expansion \cite{hdmr},
 \begin{equation}\label{eq:hdmr}
   u(Y) = u_0 + \sum_{n=1}^N u_1 + \sum_{n_1=1}^N\sum_{n_2=1}^{n_1-1} u_{n_1,n_2} + \cdots,
 \end{equation}
@@ -69,9 +74,11 @@ input space, and the components $u_i$ are defined as
 \begin{equation}
   u_0 \equiv \int\cdots\int u(Y) dY,
 \end{equation}
+\vspace{-10pt}
 \begin{equation}
   u_1 \equiv \int\cdots\int u(Y) dy_2\cdots dy_N,
 \end{equation}
+\vspace{-10pt}
 \begin{equation}
   u_{1,2} \equiv \int\cdots\int u(Y) dy_3\cdots dy_N,
 \end{equation}
@@ -82,51 +89,53 @@ expansion,
 \end{equation}
 where $\Phi_k$ are multidimensional polynomials of order $k=(k_1,\ldots,k_N)$ and $\Lambda$ is a combination
 of multi-indices corresponding to polynomial orders.  Scalar coefficients $c_k$ are approximated using
-sparse-grid collation numerical integration cite{smolyak}.
+sparse-grid collation numerical integration \cite{smolyak}.
+
+Sobol' sensitivity indices are obtained from the HDMR expansion as
+\begin{equation}
+  \mathcal{S}_i = \frac{\text{var}[u_i]}{\text{var}[u(Y)]}.
+\end{equation}
 
 \section{Results}\label{results}
-In Figures \ref{fig:pct}-\ref{fig:elong}, the evolution of sensitivities of the various responses are shown
+In Figures \ref{fig:centerline}-\ref{fig:elong}, the evolution of sensitivities of various responses are shown
 with respect to increasing burnup.  In addition, the power history used in the simulation is overlayed to
 provide insight in time-based changes.  In each case, only the most significant uncertain inputs are shown
 for clarity.
 
-For both the max clad surface temperature and max fuel centerline temperature, one parameter (inlet
-temperature and fuel conductivity respectively) dominates variance over most of the history; however, system
-power is more impactful near gradients in the power profile.
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\linewidth]{./sens_max_clad_surf_temp}
-  \caption{Max Clad Surface Temperature}
-  \label{fig:pct}
-\end{figure}
-\begin{figure}[H]
+For max fuel centerline temperature,
+fuel conductivity  dominates variance over most of the history; however, system
+power has more impact near gradients in the power profile.
+\begin{figure}
   \centering
   \includegraphics[width=\linewidth]{./sens_max_centerline_temp}
   \caption{Max Fuel Centerline Temperature}
   \label{fig:centerline}
 \end{figure}
+
 As expected, the clad creep rate is the most sensitive parameter for clad creep strain; however, it is
 interesting to note the rise and fall of the gap thickness as an important parameter in the middle of the
 burnup range.
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=\linewidth]{./sens_max_clad_creep_strain}
   \caption{Max Clad Creep Strain}
   \label{fig:strain}
 \end{figure}
+
 Early in life the fission gas release is dependent on several parameters, which gives way to only the fuel
 conductivity and system power later.
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=\linewidth]{./sens_fgr_percent}
   \caption{Fission Gas Release (Percent)}
   \label{fig:fgr}
 \end{figure}
+
 The sensitivities in the variance of clad elongation have three distinct sections.  At the beginning, clad
 elongation is perturbed most by clad conductivity, inlet temperature, and system power, with growing influence
 from fuel density.  These are somewhat suddenly replaced by gap thickness, which then slowly trades places
 with clad creep rate over the remainder of the life cycle.
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=\linewidth]{./sens_clad_elongation}
   \caption{Clad Elongation}
@@ -136,7 +145,7 @@ with clad creep rate over the remainder of the life cycle.
 
 \section{Discussion}
 We have demonstrated how HDMR and SCgPC can be used in RAVEN to perform time-dependent uncertainty propagation
-analysis in codes modeling transient behavior.  Reviewing the time-evolution of Sobol sensitivities provides
+analysis in codes modeling transient behavior.  Reviewing the time-evolution of Sobol' sensitivities provides
 new methods in understanding the impact of uncertain input parameters as changes occur during the transient
 simulation.  At small additional cost to static uncertainty propagation, transient analysis has valuable
 insights to offer.
