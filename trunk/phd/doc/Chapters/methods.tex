@@ -617,7 +617,102 @@ expansion unless lower-order polynomials contribute as well.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{High-Dimension Model Representation (HDMR)}
 While using SCgPC is one method for creating a reduced-order model for a simulation code $u(Y)$, another
-useful model reduction is HDMR\cite{hdmr}, or Sobol decomposition.  In particular, we consider Cut-HDMR in this work.  
+useful model reduction is HDMR\cite{hdmr}, sometimes known as Sobol decomposition because the expansion is
+conducive to easily determining Sobol sensitivity coefficients.  HDMR is an ANalysis Of VAriance (ANOVA)
+method.
+
+In general, the HDMR expansion involves the sum of several terms, each of which only depends on a subset of
+the full input space.  The subsets are developed by integrating out the undesired dimensions.  Letting $H(Y)$
+represent the untruncated HDMR expansion of $u(Y)$,
+\begin{equation}
+  u(Y) = H(Y) = h_0 + \sum_{n=1}^N h_n + \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} h_{n_1,n_2} + \cdots +
+  h_{1,2,\ldots,N},
+\end{equation}
+where the expectation value $h_0$ is given by
+\begin{align}\label{eq:hdmr 0}
+  h_0 &\equiv \int_{\Omega_1} \rho_1(y_1)\ldots\int_{\Omega_N} \rho_N(y_N) u(y_1,\ldots,y_N)\ dy_1\ldots\ dy_N, \\
+    &= \int_\Omega \rho(Y) u(Y) dY,
+\end{align}
+where $\Omega$ denotes the uncertainty space spanned by $Y$ and $\rho(Y)$ is the multidimensional probability distribution
+function of $Y$. The first-order expansion terms $h_n$ are integrated as
+\begin{equation}\label{eq:hdmr 1}
+  h_n(y_n) \equiv \int_{\hat\Omega_n} \hat\rho_n(\hat Y_n) u(Y)\ d\hat Y_n - h_0,
+\end{equation}
+where we use ``hat'' notation to refer to all elements except the one listed; for example,
+\begin{equation}
+  \hat Y_n \equiv (y_1,\cdots,y_{n-1},y_{n+1},\cdots,y_N),
+\end{equation}
+\begin{equation}
+  \hat Y_{m,n} \equiv (y_1,\cdots,y_{m-1},y_{m+1},\cdots,y_{n-1},y_{n+1},\cdots,y_N).
+\end{equation}
+Second and higher-order HDMR expansion terms are defined as
+\begin{equation}\label{eq:hdmr 2}
+  h_{n_1,n_2}(y_{n_1},y_{n_2})) \equiv \int_{\hat\Omega_{n_1,n_2}} \hat\rho_{n_1,n_2}(\hat Y_{n_1,n_2}) u(Y)\
+      d\hat Y_{n_1,n_2} - h_{n_1} - h_{n_2} - h_0,
+\end{equation}
+and so on.
+
+There are many useful properties of this generic HDMR expansion.  First, each term represents the contribution
+of that subset to the original response; that is, $h_1$ provides the contributions to the response solely
+from variable $y_1$.  Further, the total contribution of a variable is the sum of all subsets for whom
+variable is part of the subspace.  For example, the total contribution of $y_1$ to the response is the sum of
+contributions from $h_1,(h_1,h_2),\cdots,(h_1,h_2,h_3)$, etc.
+
+Second, the individual terms in the HDMR expansion are orthogonal with respect to the probability weight over
+the input space; that is,
+\begin{equation}
+  \int_\Omega h_a h_b dY = 0 \hspace{10pt}\forall\hspace{5pt} a\neq b.
+\end{equation}
+Because of this, the second statistical moment of the HDMR expansion with respect to any subset dimension is
+the equivalent to the second statistical moment of the associated subset,
+\begin{equation}
+  \int_{\Omega_n} H(Y)^2 dy_n = \int_{\Omega_n} h_n^2 dy_n.
+\end{equation}
+This in turn yields Sobol sensitivity coefficients.  Sobol sensitivity coefficients measure the impact on the
+variance of a response as the result of changes in the variance of an input (or combination of inputs).  For
+the HDMR expansion,
+\begin{equation}
+  \mathcal{S}_n \equiv \frac{\text{var}\qty[h_n]}{\text{var}\qty[H(Y)]},
+\end{equation}
+\begin{equation}
+  \mathcal{S}_{m,n} \equiv \frac{\text{var}\qty[h_{m,n}]}{\text{var}\qty[H(Y)]},
+\end{equation}
+and so on.
+
+\subsection{Cut-HDMR}
+The primary challenge in implementing HDMR for arbitrary responses is the integrals in Eq. \ref{eq:hdmr 0},
+\ref{eq:hdmr 1}, and \ref{eq:hdmr 2}.  These integrals are higher-dimension than those required for
+generalized polynomial chaos expansions.  At first glance HDMR seems to offer no benefits over gPC.  However,
+we make use of an approximation for HDMR called \emph{cut-HDMR} \cite{cutHDMR} that makes a simplifying assumption.
+In cut-HDMR, we assume the integral of a function over a dimension can be approximated by evaluating the
+function at a set of reference values $\bar Y = (\bar y_1,\bar y_2,\cdots,\bar y_N)$.  The reference value in this case
+is a single point in the input space, often the mean of the input multidimensional probability distribution.  The
+reference point, as well as planes and hyperplanes passing through the reference point, make up the
+\emph{cuts} that give this method its name.  The cut-HDMR expansion $T(Y)$ is expressed as
+\begin{equation}\label{eq:cuthdmr}
+  u(Y) = T(Y) = t_r + \sum_{n=1}^N t_n + \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1}
+  t_{n_1,n_2}+\cdots+t_{1,2,\ldots,N}.
+\end{equation}
+Eq. \ref{eq:cuthdmr} is identical in form to the traditional ANOVA HDMR expansion, but the subset components
+are defined differently,
+\begin{equation}
+  t_r \equiv u(\bar Y),
+\end{equation}
+\begin{equation}
+  t_n(y_n) \equiv u(y_n,\hat\bar Y_n) - t_r,
+\end{equation}
+\begin{equation}
+  t_{m,n}(y_m,y_n) \equiv u(y_m,y_n,\hat\bar Y_{m,n}) - t_r,
+\end{equation}
+and so on. Note that $\hat\bar Y_n$ denotes the reference values for all parameters except $y_n$:
+\begin{equation}
+  \hat\bar Y_n = (\bar y_1,\cdots,\bar y_{n-1},\bar y_{n+1},\cdots,\bar y_N
+\end{equation}
+TODO working here.
+
+
+-----OLD-----
+In particular, we consider Cut-HDMR in this work.  
 In this methodology, the representation of $u(Y)$ is built up from the contributions of subsets of the input
 space.  We consider a reference point realization of $Y$ (nominally the mean of each distribution) $Y^{(0)} =
 [Y_1^{(0)},\ldots,Y_N^{(0)}]$ and introduce the notation
@@ -628,7 +723,7 @@ and
 \begin{equation}
   u(Y_n)\hold{\hat Y_n} \equiv u(\hat Y_n^{(0)},Y_n).
 \end{equation}
-In words, this notation describes holding all the input variables except $Y_n$ constant and only allowing
+In other words, this notation describes holding all the input variables except $Y_n$ constant and only allowing
 $Y_n$ to vary.  Similarly for higher dimensions,
 \begin{align}
   u(Y_m,Y_n)\hold{\hat Y_{m,n}} &\equiv u(\hat Y_{m,n}^{(0)},Y_m,Y_n),\\
