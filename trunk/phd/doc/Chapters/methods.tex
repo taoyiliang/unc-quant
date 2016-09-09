@@ -510,7 +510,7 @@ or
   Q^{(\Lambda(L))} = \bigotimes_{k\in\Lambda}Q^{(k)}.
 \end{equation}
 Smolyak sparse grids consolidate this tensor form by adding together the points from tensor products of subset
-quadrature sets.  Returning momentarily to a one-dimensional problem, we introduce the notation
+quadrature sets.  Returning momentarily to a one-dimensional problem, we introduce the notation \cite{sparse1}
 \begin{equation}
   \Delta_k^{(\hat L)}[f(x)] \equiv \qty(q_k^{(\hat L)} - q_{k-1}^{(\hat L)})[f(x)],
 \end{equation}
@@ -539,6 +539,8 @@ The values for $u_k$ can then be calculated as
 \end{align}
 With this numerical method to determine coefficients, we have a complete method for performing SCgPC
 analysis in an algorithmic manner.
+
+TODO expand to include the matlab algorithm from Motamed's class
 
 
 \section{Adaptive Sparse Grid}

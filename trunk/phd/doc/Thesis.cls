@@ -181,7 +181,7 @@
 %	defined as \examname above so you cite it as \examname
 %----------------------------------------------------------------------------------------
 
-\thesistitle{Advanced Methods in Stochastic Collocation for Polynomial Chaos in RAVEN} % Your thesis title - this is used in the title and abstract
+\thesistitle{Advanced Stochastic Collocation Methods for Polynomial Chaos in RAVEN} % Your thesis title - this is used in the title and abstract
 %-------------------------------------------------  
 \supervisor{Dr. Anil K. \textsc{Prinja}} % You supervisor's name - this is used in the title page
 %-------------------------------------------------   
