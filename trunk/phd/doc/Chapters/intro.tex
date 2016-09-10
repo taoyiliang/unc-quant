@@ -1,0 +1,135 @@
+% Chapter 1
+
+\chapter{Introduction} % Main chapter title
+
+\label{ch:intro} % For referencing the chapter elsewhere, use \ref{Chapter1} 
+
+\lhead{1. \emph{Introduction}} % This is for the header on each page - perhaps a shortened title
+
+%----------------------------------------------------------------------------------------
+
+%\section{Welcome and Thank You}
+
+%problem description
+In simulation modeling, we attempt to capture the behavior of a physical system by describing it in a series
+of equations, often partial differential equations.  These equations may be time-dependent, and capture
+physics of interest for understanding the system.  A \emph{solver} is then written that can solve the series
+of equations and determine quantities of interest (QoI).  A traditional solver accepts a set of inputs and
+produces a set of single-valued outputs.  For instance, a solver might solve equations related to the
+attenuation of a beam of photons through a material, and the QoI might be the strength of the beam exiting the
+material.  A single run of the solver usually results in a single value, or realization, of the quantity of
+interest.
+
+This single realization might be misleading, however.  In most systems there is some degree of uncertainty in
+the input parameters to the solver.  Some of these uncertainties may be epistemic, or systematic uncertainty
+originating with inexact measurements or measurable unknowns.  Other uncertainties might be aleatoric,
+intrinsic uncertainty in the system itself, such as probabilistic interactions or random motion.  Taken
+together, the input parameter uncertainties exist within a multidimensional probabilistic space.  While some
+points in that space may be more likely than others, the possible range of values for the QoI is only
+understood when the uncertain input space is considered as a whole.  We note here that while it is possible
+that some of the input parameters are correlated in their probabilistic distribution, it is also possible to
+decouple them into uncorrelated variables.  Throughout this work we will assume the input parameters 
+are uncorrelated.
+
+%Monte Carlo
+One traditional method for exploring the uncertain input space is through random sampling, such as in analog Monte
+Carlo sampling.  In this method, a point in the input space is chosen at random based on probability.  This
+point represents values for the input parameters to the solver.  The solver is executed with these inputs, and
+the QoIs are collected.  Then, another point in the input space is chosen at random.  This process continues
+until the properties of the QoIs, or \emph{response}, are well understood.
+
+There are some beneficial properties to random sampling approaches like Monte Carlo.  
+Significantly, they are unintrusive:
+ there is no need to modify the solver in order to use these methods.  This allows a framework of
+algorithms to be developed which know only the input space and QoI of a solver, but need no further knowledge
+about its operation.  Unintrusive methods are desirable because the uncertainty quantification algorithms can
+be developed and maintained separately from the solver.
+
+Monte Carlo and similar sampling strategies are relatively slow to converge on the response surface.  For
+example, with Monte Carlo sampling, in order to reduce the standard error of the mean of the response by a factor
+of two, it is necessary to take at least four times as many samples.  If a solver is sufficiently computationally
+inexpensive, running additional solutions is not a large concern; however, for lengthy and expensive solvers,
+it may not be practical to obtain sufficient realizations to obtain a clear response.
+
+% expensive solvers need low-sample UQ
+In this work, we will assume solvers are computationally expensive, requiring many hours per solve, and that
+computational resource availability requires as few solves as possible.  As such, we consider several methodologies 
+for quantifying the uncertainty in expensive solver
+calculations.  In order to demonstrate clearly the function of these methods, we apply them first on
+several simpler problems, such as polynomial evaluations and analytic attenuation.  These models have a high
+degree of regularity, and their analyticity provides for straightforward benchmarking.  Through gradual
+increasing complexity, we investigate the behavior of the UQ methods.
+
+Finally, we apply the methods to an engineering-scale solver that
+models the neutronics and performance of nuclear fuel.  This will
+demonstrate the practical application of the uncertainty quantification methods, where the regularity and
+other properties of the model are not well understood.
+
+The first uncertainty quantification method we consider
+is traditional analog Monte Carlo (MC) analysis, wherein random sampling of the input space generates a view of
+the response.  MC is used as a benchmark methodology; if other methods converge on moments of the quantities
+of interest more quickly and consistently than MC, we consider them ``better'' for our purposes.
+
+The second method we consider is stochastic collocation for generalized polynomial
+chaos (SCgPC)\cite{sparseSC,sparse1,sparse2,xiu}, whereby deterministic collocation points 
+are used to develop a polynomial-interpolated reduced-order model
+of the response as a function of the inputs.  This method algorithmically expands the solver as the sum of
+orthogonal multidimensional polynomials with scalar coefficients.  The scalar coefficients are obtained by
+numerical integration using multidimensional collocation (quadrature) points.  The chief distinction between
+SCgPC and Monte Carlo methods is that SCgPC is deterministic, in that the realizations required from the
+solver are predetermined instead of randomly sampled.  There are two major classes of deterministic
+uncertainty quantification methods: intrusive and unintrusive.  Like Monte Carlo, SCgPC is unintrusive
+and performs well without any need to access the operation of the solver.  This behavior is desirable for
+construction black-box approach algorithms for uncertainty quantification.  Other intrusive methods such as
+stochastic Galerkin exist \cite{galerkin}, but require solver modification to operate.  This makes them
+solver-dependent and undesirable for an independent uncertainty quantification framework.
+
+The other methods we present here expand on
+SCgPC.  First, we introduce non-tensor-product methods for determining the set of polynomial bases to
+use in the expansion.  Because a tensor product grows exponentially with increasing cardinality of the input
+space, we combat this curse of dimensionality using the 
+alternative polynomial set construction methods\cite{hctd}.
+These bases will then be used to construct Smolyak-like sparse grids \cite{smolyak} to provide collocation
+points that in turn calculate the coefficients in the polynomial expansion.  Second, we consider
+anisotropic sparse grids,
+allowing higher-order polynomials for particular input parameters.  We also consider methods for
+obtaining weights that determine the level of anisotropic preference to give parameters, and explore the effects of a
+variety of anisotropic choices.
+
+The second method group we consider is high-dimension model representation (HDMR), which correlates with Sobol
+decomposition \cite{hdmr}.  This method is useful both for developing sensitivities of the quantity of interest to subsets
+of the input space, as well as constructing a reduced-order model itself.  We demonstrate the strength of HDMR
+as a method to inform anisotropic sensitivity weights for SCgPC.
+
+Finally, we consider adaptive algorithms to construct both SCgPC and HDMR expansions using second-moment
+convergence criteria.  We analyze these for potential efficiencies and shortcomings.  We also propose future
+work to further improve the adaptive methods.
+
+We implement all these methods in Idaho National Laboratory's \raven{}\cite{raven}
+uncertainty quantification framework. \raven{} is a Python-written framework that non-intrusively provides
+tools for analysts to quantify the uncertainty in their simulations with minimal development.  To demonstrate
+the application of the method developed, we use a complex non-linear multiphysics system solver simulating
+the operation of a fuel pin within a nuclear reactor core, including both neutronics and fuel performance
+physics kernals.  For this solver, we use the coupled \rattlesnake{}\cite{rattlesnake} and 
+\bison{} \cite{bison,mammoth} production codes.
+Both of these codes are developed and maintained within the \moose{}\cite{moose} environment.  The
+multiphysics nonlinear system provides a challenge with unknown response properties for the uncertainty
+quantification methods discussed in this proposal.
+
+%outline chapters
+The remainder of this work will proceed as follows:
+\begin{itemize}
+  \item Chapter 2: We describe the analytic test problems and engineering-scale problem solved by the simulations 
+    we will be running, along with their properties and inferences about the algorithms developed.
+    We discuss potential approaches to model solving and applications of the models.
+  \item Chapter 3: We describe methods for uncertainty quantification, including Monte Carlo (MC),
+    stochastic collocation for generalized Polynomial Chaos (SCgPC), and high-dimension model reduction
+    (HDMR).  We additionally describe adaptive methods for SCgPC and HDMR.
+  \item Chapter 4: We analyze results obtained for the various UQ methods on analytic models, and contrast 
+    them with traditional Monte Carlo convergence on statistical moments.
+  \item Chapter 5: We perform analysis on the engineering-scale multiphysics coupled problem, and analyze
+    results.
+  \item Chapter 6: We draw conclusions from the evaluations performed, and offer some suggestions for
+    applicability as well as future development for the UQ methods demonstrated.
+\end{itemize}
+%----------------------------------------------------------------------------------------

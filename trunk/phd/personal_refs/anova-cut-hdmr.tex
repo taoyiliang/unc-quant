@@ -1,0 +1,306 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{graphicx}%
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{cite}
+
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{physics}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
+\newcommand{\xs}[2]{\ensuremath{\Sigma_{#1}^{(#2)}}}
+\newcommand{\intO}{\ensuremath{\int\limits_{4\pi}}}
+\newcommand{\intz}{\ensuremath{\int\limits_0^1}}
+\newcommand{\intf}{\ensuremath{\int\limits_{-\infty}^\infty}}
+\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+\newcommand{\mlsum}[2]{\ensuremath{\sum_{\tiny\begin{array}{c}#1\end{array}}^{#2}}}
+\textwidth6.6in
+\textheight9in
+
+
+\setlength{\topmargin}{0.3in} \addtolength{\topmargin}{-\headheight}
+\addtolength{\topmargin}{-\headsep}
+
+\setlength{\oddsidemargin}{0in}
+
+\oddsidemargin  0.0in \evensidemargin 0.0in \parindent0em
+
+%\pagestyle{fancy}\lhead{MATH 579 (UQ for PDEs)} \rhead{02/24/2014}
+%\chead{Project Proposal} \lfoot{} \rfoot{\bf \thepage} \cfoot{}
+
+
+\begin{document}
+
+\title{ANOVA, Cut-HDMR, and gPC}
+
+\author[]{Paul Talbot\thanks{talbotp@unm.edu}}
+%\date{}
+\renewcommand\Authands{ and }
+\maketitle
+
+\section{Generalized Polynomial Chaos}
+Here we reiterate the generalized polynomial chaos expansion (gPC) of a model in terms of orthonormal
+polynomials.  Given a quantity of interest (or model) $u(Y)$ as a function of a length $N$ set of random 
+input parameters $Y$, the gPC formulation $G(Y)$ is as follows:
+\begin{equation}
+  u(Y)\approx \sum_{k\in\Lambda} c_k \Phi_k(Y),
+\end{equation}
+where $k$ is a multi-index denoting polynomial orders, $\Lambda$ is a collection of multi-indices denoting the
+collection of polynomials used in the expansion, $c_k$ is a scalar coefficient for a particular product of
+polynomials, and $\Phi_k(Y)$ is a multidimensional polynomial given by the product of monodimensional
+polynomials $\phi_{k_n}(y_n)$
+\begin{equation}
+  \Phi_k(Y) = \prod_{n=1}^N \phi_{k_n}(y_n).
+\end{equation}
+We require $\{\phi\}$ to be orthonormal to each other and be functions only of their argument and $\phi_0(y_n) = 1$.  As a result,
+the first two moments of $G(Y)$ are obtained by
+\begin{equation}
+  \expv{G(Y)} = c_{\varnothing},
+\end{equation}
+\begin{equation}
+  \expv{G(Y)^2} = \sum_{k\in\Lambda}^N c_k^2,
+\end{equation}
+where by $c_\varnothing$ we mean $c_k$ with $k_n=0$ $\forall$ $1\leq n\leq N$.
+
+\section{ANOVA}
+Analysis of Variance (ANOVA) is a technique whereby the partial contributions to the variance of a function
+can be readily obtained.  It uses integrals over subspaces to isolate the affect of each input dimension on
+the expression as a whole.  The ANOVA expansion $H(Y)$ for $u(Y)$ is
+\begin{equation}
+  u(Y) = H(Y) = h_0 + \sum_{n=1}^N h_n + \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} h_{n_1,n_2} + \cdots +
+  h_{1,2,\ldots,N},
+\end{equation}
+\begin{align}
+  h_0 &\equiv \int_{\Omega_1} \rho_1(y_1)\ldots\int_{\Omega_N} \rho_N(y_N) u(y_1,\ldots,y_N)\ dy_1\ldots\ dy_N, \\
+    &= \int_\Omega \rho(Y) u(Y) dY,
+\end{align}
+where $\Omega$ denotes the uncertainty space spanned by $Y$ and $rho(Y)$ is the multidimensional probability distribution
+function of $Y$,
+\begin{equation}
+  h_n(y_n) \equiv \int_{\hat\Omega_n} \hat\rho_n(\hat Y_n) u(Y)\ d\hat Y_n - h_0,
+\end{equation}
+where we use ``hat'' notation to refer to all elements except the one listed; for example,
+\begin{equation}
+  \hat Y_n \equiv (y_1,\cdots,y_{n-1},y_{n+1},\cdots,y_N),
+\end{equation}
+\begin{equation}
+  \hat Y_{m,n} \equiv (y_1,\cdots,y_{m-1},y_{m+1},\cdots,y_{n-1},y_{n+1},\cdots,y_N);
+\end{equation}
+\begin{equation}
+  h_{n_1,n_2}(y_{n_1},y_{n_2})) \equiv \int_{\hat\Omega_{n_1,n_2}} \hat\rho_{n_1,n_2}(\hat Y_{n_1,n_2}) u(Y)\
+      d\hat Y_{n_1,n_2} - h_{n_1} - h_{n_2} - h_0,
+\end{equation}
+and so on.
+
+One benefit of the ANOVA expansion is that each constituent term is orthogonal.  As a result, the first two
+moments are calculated trivially,
+\begin{equation}
+  \expv{H(Y)} = \int_\Omega \rho(Y) H(Y)\ dY = h_0,
+\end{equation}
+\begin{equation}
+  \expv{H(Y)^2} = \int_\Omega \rho(Y) H(Y)^2\ dY = h_0^2 + \sum_{n=1}^N h_n^2 + \cdots + h_{1,2,\ldots,N}^2.
+\end{equation}
+
+\section{Cut-HDMR}
+One downside to the ANOVA expression is the computational cost of evaluating high-dimensional integrals.  An
+approximation to full ANOVA is to use reference values $\tilde y_n$ instead of evaluating full integrals.
+This approach is referred to as cut-HDMR or anchored ANOVA in literature.  It makes the fundamental
+approximation
+\begin{equation}
+  \int f(x) dx \approx f(\bar x),
+\end{equation}
+where we use ``bar'' notation to indicate the expected value of $x$.  This linear approximation significantly
+simplifies the ANOVA expansion, giving the cut-HDMR expansion $T(Y)$
+\begin{equation}
+  u(Y) = T(Y) = t_r + \sum_{n=1}^N t_n + \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} t_{n_1,n_2} + \cdots +
+  t_{1,2,\ldots,N},
+\end{equation}
+\begin{equation}
+  t_r \equiv u(\bar Y),
+\end{equation}
+\begin{equation}
+  t_n(y_n) \equiv u(y_n,\bar{\hat{ Y_n}}) - t_r,
+\end{equation}
+and so on.  This approximation deviates significantly from ANOVA for non-linear problems, but because of the
+increasing-order interaction sum, returns the original function if all terms are kept.  While the cut-HDMR
+expansion is easy to calculate, the components are not orthogonal, and obtaining first and second moments is
+much more intensive.
+
+\section{Obtaining ANOVA from cut-HDMR}
+It is possible to reconstruct ANOVA terms by applying ANOVA to the cut-HDMR expansion of a function.  In this
+way, a set of orthogonal terms are constructed that provide moments easily.  It is worth noting that these
+ANOVA terms are the partial contributions to the cut-HDMR expansion, not to the original model, so the
+resulting expression will only be accurate as a representation of the original model in proportion to how
+accurate the cut-HDMR expansion is.
+\begin{equation}
+  u(Y) \approx H[T](Y) = h_0 + \sum_{n=1}^N h_n + \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} h_{n_1,n_2} + \cdots +
+  h_{1,2,\ldots,N},
+\end{equation}
+\begin{equation}
+  h_0 = \int_\Omega \rho(Y) T(Y) dY,
+\end{equation}
+\begin{equation}
+  h_n(y_n) \equiv \int_{\hat\Omega_n} \hat\rho_n(\hat Y_n) T(Y)\ d\hat Y_n - h_0,
+\end{equation}
+and so on.
+
+\section{gPC in cut-HDMR}
+One way to further increase the simplicity of the cut-HDMR expansion is to represent each term as a gPC.  In
+this manner, each term would be comprised of orthonormal polynomials with simple analytic integrations, which
+in turn make the ingerals necessary for ANOVA of cut-HDMR easy to perform to machine precision in a computer
+algorithm.  Using gPC in cut-HDMR,
+\begin{equation}
+  u(Y) \approx T(Y) = t_r + \sum_{n=1}^N t_n + \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} t_{n_1,n_2} + \cdots +
+  t_{1,2,\ldots,N},
+\end{equation}
+\begin{equation}
+  t_r = u(\bar Y),
+\end{equation}
+\begin{equation}
+  t_n(y_n) = G(y_n) - t_r,
+\end{equation}
+\begin{equation}
+  t_{m,n}(y_m,y_n) = G(y_m,y_n) - t_m - t_n - t_r,
+\end{equation}
+and so on.
+
+\section{ANOVA of cut-HDMR using gPC}
+Combining all three of these methods, we make use of the strong points of each at relatively low cost to
+accuracy.  The errors introduced in this method are as a result of polynomial truncation of gPC and high-order
+interactivity terms in the cut-HDMR expansion, assuming the ANOVA expansion is done it its entirety.  The
+error introduced by polynomial truncation of gPC should be small, as most of the terms in the truncated cut-HDMR
+expansion are of low dimensionality, where gPC expansions perform ideally with respect to computations
+necessary.  Similarly, experience has demonstrated that second- or third-order truncation of cut-HDMR
+expansions is sufficient to capture the essence of most physical models.  As a result, for much less
+computation cost than would be traditionally required to perform ANOVA on a function, we obtain very similar
+results.  To demonstrate, we consider an unspecified function $f(x,y,z)$ and its ANOVA representation of its
+cut-HDMR representation using gPC.  We truncate to second-order cut-HDMR and second-order polynomial
+interactions.  For simplicity, the distribution of each input variable is independent and uniform over [0,1].
+\begin{equation}
+  T(x,y,z) = t_r + t_x + t_y + t_z + t_{xy} + t_{xz} + t_{yz},
+\end{equation}
+\begin{equation}
+  t_r = f(\bar x, \bar y, \bar z),
+\end{equation}
+\begin{equation}
+  t_x = f(x, \bar y, \bar z) - t_r = G(x) - t_r,
+\end{equation}
+\begin{equation}
+  t_y = f(\bar x, y, \bar z) - t_r = G(y) - t_r,
+\end{equation}
+\begin{equation}
+  t_z = f(\bar x, \bar y, z) - t_r = G(z) - t_r,
+\end{equation}
+\begin{equation}
+  t_{xy} = f(x, y, \bar z) - t_x - t_y - t_r = G(x,y) - t_x - t_y - t_r,
+\end{equation}
+\begin{equation}
+  t_{xz} = f(x, \bar y, z) - t_x - t_z - t_r = G(x,z) - t_x - t_z - t_r,
+\end{equation}
+\begin{equation}
+  t_{yz} = f(\bar x, y, z) - t_y - t_z - t_r = G(y,z) - t_y - t_z - t_r.
+\end{equation}
+Substituting and collecting terms,
+\begin{equation}
+  T(x,y,z) = t_r - G(x) - G(y) - G(z) + G(x,y) + G(x,z) + G(y,z).
+\end{equation}
+The ANOVA terms can then be calculated.
+\begin{equation}
+  H[T](x,y,z) = h_0 + h_x + h_y + h_z + h_{xy} + h_{xz} + h_{yz} + h_{xyz}.
+\end{equation}
+
+\subsection{Zeroth order interaction term}
+\begin{align}
+  h_0 &= \intz\intz\intz T(x,y,z)\ dx\ dy\ dz, \\
+    &= t_r + \intz t_x\ dx + \intz t_y\ dy + \intz t_z\ dz +\intz\intz t_{xy}\ dx\ dy +\intz\intz t_{xz}\ dx\
+      dz +\intz\intz t_{yz}\ dy\ dz, \\
+    &= t_r - \intz G(x)\ dx - \intz G(y)\ dy - \intz G(z)\ dz + \intz G(x,y)\ dx\ dy + \intz G(x,z)\ dx\ dz +
+      \intz G(y,z)\ dy\ dz.
+\end{align}
+\begin{equation}
+  \intz G(x)\ dx = \intz \sum_{k\in\Lambda} c_k\Phi_k(x)\ dx = c^{(x)}_\varnothing,
+\end{equation}
+and similarly for $y,z$;
+\begin{equation}
+  \intz\intz G(x,y)\ dx\ dy = \intz\intz \sum_{k\in\Lambda} c_k\Phi_k(x,y)\ dx\ dy = c^{(xy)}_\varnothing,
+\end{equation}
+and similarly for $xz,yz$;
+\begin{equation}
+  h_0 = t_r - c^{(x)}_\varnothing - c^{(y)}_\varnothing - c^{(z)}_\varnothing + c^{(xy)}_\varnothing +
+        c^{(xz)}_\varnothing + c^{(yz)}_\varnothing.
+\end{equation}
+
+\subsection{First order interaction terms}
+\begin{align}
+  h_x &= \intz\intz T(x,y,z)\ dy\ dz - h_0, \\
+  &= t_r - G(x) - \intz G(y)\ dy - \intz G(z)\ dz + \intz G(x,y)\ dy + \intz G(x,z)\ dz + \intz\intz G(y,z)\
+  dy\ dz - h_0.
+\end{align}
+\begin{align}
+  \intz G(x,y)\ dy &= \intz \sum_{k\in\Lambda} c_k\Phi_k(x,y)\ dx, \\
+    &= \left\{\begin{array}{lr}
+          0, & k_y \geq 1,\\
+          c_{(k_x,0)}\phi_{k_x}(x), & k_y = 0,
+       \end{array} \right\} \\
+      &= \mlsum{k\in\Lambda\\k_y=0}{} c_k\phi_{k_x}(x),
+\end{align}
+and similarly for $xz$;
+\begin{align}
+  h_x &= t_r - G(x) - c^{(y)}_\varnothing - c^{(z)}_\varnothing + \mlsum{k\in\Lambda\\k_y=0}{} c^{(xy)}_k\phi_{k_x}(x) +
+  \mlsum{k\in\Lambda\\k_z=0}{} c^{(xz)}_k\phi_{k_x}(x) + c^{(yz)}_\varnothing - h_0,\\
+  &= c^{(x)}_\varnothing - G(x) + \mlsum{k\in\Lambda\\k_y=0}{} c^{(xy)}_k\phi_{k_x}(x) +
+  \mlsum{k\in\Lambda\\k_z=0}{} c^{(xz)}_k\phi_{k_x}(x) - c^{(xy)}_\varnothing -
+        c^{(xz)}_\varnothing, \\
+  &= -\mlsum{k\in\Lambda\\k_x>0}{} c^{(x)}_k\Phi_k(x) + \mlsum{k\in\Lambda\\k_x>0\\k_y=0}{} c^{(xy)}_k\phi_{k_x}(x) +
+  \mlsum{k\in\Lambda\\k_x>0\\k_z=0}{} c^{(xz)}_k\phi_{k_x}(x).
+\end{align}
+Because of the problem symmetry, the procedure and resulting form for $h_y$ and $h_z$ will be identical as $h_x$.
+%\newcommand{\mlsum}[2]{\ensuremath{\sum_{\tiny\begin{array}{c}#1\end{array}}^{#2}}}
+
+\subsection{Second order interaction terms}
+\begin{align}
+  h_{xy} &= \intz T(x,y,z)\ dz - h_x - h_y - h_0,\\
+    &= t_r - G(x) - G(y) - c^{(z)}_\varnothing + G(x,y) + \mlsum{k\in\Lambda\\k_z=0}{} c^{(xz)}_k\phi_{k_x}(x)
+    + \mlsum{k\in\Lambda\\k_z=0}{} c^{(yz)}_k\phi_{k_y}(y) - h_x - h_y - h_0, \\
+  &= \mlsum{k\in\Lambda\\k_x>0\\k_y>0}{} c_k \Phi_k(x,y).
+\end{align}
+Because of the problem symmetry, the procedure and resulting form for $h_{xz}$ and $h_{yz}$ will be identical
+as $h_{xy}$.
+
+\subsection{Moments}
+It can be confirmed that each term in the ANOVA expansion is orthogonal, including the ANOVA expansion of the
+cut-HDMR expansion of $f(x,y,z)$.  As such, the first moment is the independent term,
+\begin{equation}
+  \expv{H[T](x,y,z)} = h_0,
+\end{equation}
+and the second moment is the integral over the sum of the square of the terms,
+\begin{equation}
+  \expv{H[T](x,y,z)^2} = h_0^2 + \intz\intz\intz h_x^2 + h_y^2 + h_z^2 + h_{xy}^2 + h_{xz}^2 + h_{yz}^2\ dx\
+  dy\ dz.
+\end{equation}
+Because of the orthonormal properties of the basis polynomials,
+\begin{equation}
+  \intz\intz\intz \sum_{\ell}\sum_k\Phi_\ell(x,y,z)\Phi_k(x,y,z)\ dx\ dy\ dz = \delta_{\ell,k},
+\end{equation}
+(where $\delta_{i,j}$ is the Dirac delta function) the only surviving terms in the second moment are the
+squares of the surviving coefficients.  For example,
+\begin{equation}
+  \intz h_x^2\ dx = \mlsum{k\in\Lambda\\k_x>0}{}\left(c_k^{(x)}\right)^2 +
+    \mlsum{k\in\Lambda\\k_x>0\\k_y=0}{} \left(c_k^{(xy)}\right)^2 + \mlsum{k\in\Lambda\\k_x>0\\k_z=0}{}
+    \left(c_k^{(xz)}\right)^2,
+\end{equation}
+\begin{equation}
+  \intz h_{xy}^2\ dx\ dy = \mlsum{k\in\Lambda\\k_x>0\\ky>0}{}\left(c_k^{(xy)}\right)^2.
+\end{equation}
+Because the terms in the expectation value and variance are only scalar values, they are efficient to
+computationally evaluate with a high degree of accuracy.
+\end{document}

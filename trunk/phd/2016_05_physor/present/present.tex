@@ -1,0 +1,410 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Antibes}
+  \usecolortheme{beaver}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage[compatibility=false]{caption}
+\usepackage{subcaption}
+\usepackage{physics}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\tiny,
+  frame=single,
+  backgroundcolor=\color{cbbkng},
+  language={},
+  emphstyle={\color{red}},
+  showstringspaces=false,
+  keywordstyle=\bfseries}
+
+
+\definecolor{cbbkng}{RGB}{227,233,252}
+
+%\usepackage{multimedia}
+%\usepackage{movie9}
+
+
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
+\newcommand{\xs}[2]{\ensuremath{\Sigma_{#1}^{(#2)}}}
+\newcommand{\intO}{\ensuremath{\int\limits_{4\pi}}}
+\newcommand{\intz}{\ensuremath{\int\limits_0^1}}
+\newcommand{\intf}{\ensuremath{\int\limits_{-\infty}^\infty}}
+\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+
+\title[Multistep Input Reduction]
+{Multistep Input Reduction for High Dimensional Uncertainty Quantification}
+
+%\subtitle
+%{A Term Project}
+
+\author[Talbot] % (optional, use only with lots of authors)
+{Paul W. Talbot\inst{1}, CongJian Wang\inst{2}, \\ Cristian Rabiti\inst{2}, Anil K. Prinja\inst{1}}
+
+
+\institute[University of New Mexico] % (optional, but mostly needed)
+{
+  \inst{1}%
+  University of New Mexico\\
+  \inst{2}
+  Idaho National Laboratory
+}
+
+\date[PHYSOR 2016] % (optional, should be abbreviation of conference name)
+{PHYSOR 2016, Sun Valley, Idaho}
+
+
+\subject{Multistep Uncertainty Quantification}
+
+\pgfdeclareimage[height=0.75cm]{university-logo}{../../graphics/INL}
+\logo{\pgfuseimage{university-logo}}
+
+\addtobeamertemplate{navigation symbols}{}{
+  \usebeamerfont{footline}%
+  \usebeamercolor[fg]{footline}%
+  \hspace{1em}%
+  \insertframenumber/\inserttotalframenumber
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Outline}{Discussion Points}\vspace{-20pt}
+  \tableofcontents%[pausesections]
+  % You might wish to add the option [pausesections]
+\end{frame}
+
+%                                                  %
+%                 INTRODUCTION                     %
+%                                                  %
+\section{Introduction}
+% UQ is useful in reactor physics
+\begin{frame}{Introduction}{Uncertainty Quantification}
+\end{frame}
+
+\begin{frame}{Introduction}{Uncertainty Quantification}
+  %benefits, uses of UQ
+  \vfill
+  How well do we know what we know?
+  \vfill
+  \vspace{10pt}
+  \begin{itemize}
+    \item Quantity of Interest Distribution
+  \vfill
+    \item Failure Probabilities
+  \vfill
+    \item Accurate Margins
+  \end{itemize}
+  \vfill
+\end{frame}
+% UQ methods: MC and Collocation, pros and cons
+\begin{frame}{Introduction}{Uncertainty Quantification Methods}
+  \vfill
+  Monte Carlo, Latin Hypercube
+  \vfill
+  \begin{itemize}
+    \item (Mostly) Agnostic of Dimensionality
+  \vfill
+    \item Very slow in converging $\left(\frac{c}{\sqrt{N}}\right)$
+  \end{itemize}
+  \vfill
+  Grid-based Polynomial Expansions
+  \vfill
+  \begin{itemize}
+    \item Fast convergence for low (<50) dimensions
+  \vfill
+    \item Very slow convergence for high (>1000) dimensions
+  \end{itemize}
+  \vfill
+\end{frame}
+% Reactor physics problems are intrinsically high-dimensional
+\begin{frame}{Introduction}{Uncertainty Quantification in Reactor Physics}
+  \vfill
+  Specific to Reactor Physics
+  \vfill
+  \begin{itemize}
+    \item Large input spaces (tens of thousands)
+  \vfill
+    \item Computationally-intensive models
+  \vfill
+    \item Long solve times
+  \end{itemize}
+  \vfill
+  Want few samples to characterize high-dimensional input space
+  \vfill
+\end{frame}
+% Reactor physics input spaces tend to be highly correlated
+\begin{frame}{Introduction}{Uncertainty Quantification in Reactor Physics}
+  \vfill
+  Nature of input space
+  \vfill
+  \begin{itemize}
+    \item Mostly cross sections
+  \vfill
+    \item Significant correlation between tabulation points, energies\dots
+  \vfill
+    \item Many cross sections have relatively low impact
+  \end{itemize}
+  \vfill
+  We can leverage these properties
+  \vfill
+\end{frame}
+% Need to reduce size of input space for most efficiency
+% Two approaches: input-input correlation, input-output correlation
+
+
+%                                                  %
+%                   METHODS                        %
+%                                                  %
+\section{Methods}
+\subsection{PCA}
+\begin{frame}{Methods}{Principle Component Analysis}
+\end{frame}
+
+% PCA
+\begin{frame}{Methods}{Principle Component Analysis}
+  \vfill
+  Correlated input variables orthogonalized
+  \vfill
+  \begin{itemize}
+    \item Start with many correlated ``manifest'' input dimensions
+  \vfill
+    \item Use linear PCA to pick characteristic ``latent'' dimensions
+  \vfill
+    \item Eliminate dimensions with sufficiently small impact
+  \end{itemize}
+  \vfill
+  \begin{equation}
+    M \approx Q L \nonumber
+  \end{equation}
+  \begin{itemize}
+    \item $M$ is the manifest set of input variables ($Nx1$),
+    \item $Q$ is the PCA reduction matrix ($NxM$),
+    \item $L$ is the reduced latent variables($Mx1$)
+    \item $M \leq N$
+  \end{itemize}
+  \vfill
+\end{frame}
+
+\begin{frame}{Results}{RAVEN: PCA Reduction}
+\vfill
+  Decomposition Eigenvalues
+  \lstinputlisting[firstline=0,lastline=19]{./pca_rank.xml}
+\vfill
+\end{frame}
+
+\begin{frame}{Methods}{Principle Component Analysis}
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.7\textwidth]{graphics/PCA_1_2}
+      \caption{PCA Reduction}
+  \end{figure}
+\end{frame}
+
+% Sensitivity
+\subsection{Sensitivity}
+\begin{frame}{Methods}{Sensitivity-Based Reduction}
+\end{frame}
+
+\begin{frame}{Methods}{Sensitivity-Based Reduction}
+  \vfill
+  Eliminating low-impact inputs
+  \vfill
+  \begin{itemize}
+    \item Calculate global sensitivity indices
+  \vfill
+    \item Remove inputs of low impact
+  \end{itemize}
+  \vfill
+  Calculation is often costly (Linear regression)
+  \begin{equation}
+    L \approx P R, \nonumber
+  \end{equation}
+  \vfill
+  \begin{itemize}
+    \item $L$ is the set of (once-reduced) input variables ($Mx1$),
+  \vfill
+    \item $P$ is the sensitivity reduction matrix ($MxK$),
+  \vfill
+    \item $R$ is the twice-reduced variables($Kx1$)
+  \vfill
+    \item $K \leq M$
+  \end{itemize}
+  \vfill
+\end{frame}
+
+\begin{frame}{Results}{RAVEN: Sensitivity Reduction}
+\vfill
+  Sensitivity Coefficients
+  \lstinputlisting[firstline=0,lastline=19]{./sobol_stats.xml}
+\vfill
+\end{frame}
+
+\begin{frame}{Methods}{Sensitivity-Based Reduction}
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.7\textwidth]{graphics/variance_contribs_example.png}
+      \caption{Sensitivity Reduction}
+  \end{figure}
+\end{frame}
+
+
+
+
+% Together (work flow)
+\begin{frame}{Methods}{Combined Reduction}
+  \vfill
+  Combine PCA and Sensitivity Reduction
+  \begin{equation}
+    M \approx P Q R \nonumber
+  \end{equation}
+  \[|R| < |L| < |M|\]
+  \vfill
+  Reduction can be several orders of magnitude
+  \vfill
+\end{frame}
+
+%                                                  %
+%                   RESULTS                        %
+%                                                  %
+\section{Results}
+\begin{frame}{Results}{Demonstration Case}
+\end{frame}
+
+\begin{frame}{Results}{Demonstration Case}
+  \vfill
+  Demonstration Case
+  \vfill
+  \begin{itemize}
+    \item 308 correlated uncertain input variables
+  \vfill
+    \item Originally cross sections from SCALE 44-group library
+  \vfill
+    \item Simulation is simple polynomial of input variables
+  \end{itemize}
+  \vfill
+\end{frame}
+
+\begin{frame}{Results}{Demonstration Procedure}
+  \vfill
+  \begin{enumerate}
+    \item Use Monte Carlo to establish benchmark (308)
+  \vfill
+    \item Perform PCA reduction
+  \vfill
+    \item Use Monte Carlo to sample PCA-reduced space (50)
+  \vfill
+    \item Perform Sensitivity Analysis
+  \vfill
+    \item Use Monte Carlo to sample various sensitivity reductions
+  \end{enumerate}
+  \vfill
+\end{frame}
+
+
+
+\begin{frame}{Results}{Demonstration Twice-Reduced Mean}
+  \begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+      \includegraphics[width=\textwidth]{graphics/mean}
+      \caption{Mean Values}
+      \label{twice 9v mean val}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+      \includegraphics[width=\textwidth]{graphics/mean_err}
+      \caption{Mean Errors}
+      \label{twice 9v mean err}
+    \end{subfigure}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Results}{Demonstration Twice-Reduced Variance}
+  \begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+      \includegraphics[width=\textwidth]{graphics/var}
+      \caption{Variance Values}
+      \label{twice 9v variance val}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+      \includegraphics[width=\textwidth]{graphics/var_err}
+      \caption{Variance Errors}
+      \label{twice 9v variance err}
+    \end{subfigure}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Results}{Automated Sensitivity}
+\vfill
+What if we could automate reduction?
+\vfill
+\end{frame}
+
+\begin{frame}{Results}{Automated Sensitivity: Adaptive Sobol}
+  \vfill
+  Sobol decomposition:
+  \begin{align*}
+    f(x,y,z) =& f_0 \\
+             &+ f_1(x) + f_2(y) + f_3(z)\\
+             &+ f_{1,2}(x,y) + f_{1,3}(x,z) + f_{2,3}(y,z) \\
+             &+ f_{1,2,3}(x,y,z),
+  \end{align*}
+  where $f_1(x)=\int\int f(x,y,z)\ dy\ dz - f_0$, etc.
+  \vfill
+  Adaptive Sobol: construction based on sensitivities
+  \vfill
+\end{frame}
+
+\begin{frame}{Results}{Demonstration: Adaptive Sobol}
+  \begin{figure}[h]
+    \includegraphics[width=0.8\textwidth]{graphics/mc_vs_sc_var_adsob}
+    \caption{Reduction Comparisons}
+    \label{adsob}
+  \end{figure}
+\end{frame}
+% Demonstration case: 308 variable model
+%  - PCA reduction
+%  - Sensitivity reduction
+%  - Combined
+%  - Adaptive Sobol: doing the sensitivity reduction for you
+%  - Plots
+
+
+\begin{frame}{Questions?}{Thank you for attending!}
+  \vfill
+  \small
+  This project was funded through LDRD at Idaho National Laboratory.
+  \vfill
+\end{frame}
+
+\end{document}
+
+
+
+
+
+
+\begin{frame}{Uncertainty Quantification}{Results: pdf}
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.7\textwidth]{../../graphics/projectlePDF}
+      \caption{Probability Distributions}
+  \end{figure}
+\end{frame}
