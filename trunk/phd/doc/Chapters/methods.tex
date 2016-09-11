@@ -14,7 +14,7 @@
 In this chapter we describe various common uncertainty quantification methods and their applications. We begin
 by discussing the principles of input spaces and responses, and define terminology used in this work.  Next we
 discuss uncertainty quantification at a high level, and describe several common uncertainty quantification
-tools.  Finally, we explore generalized polynomial chaos expansion, stochastic collocation, and high-density
+tools.  Finally, we explore generalized polynomial chaos expansion, stochastic collocation, and high-dimension
 model reduction as advanced uncertainty quantification techniques.
 
 % inputs and outputs
@@ -24,32 +24,45 @@ properties, tuning parameters, and so forth.  The outputs are quantities of inte
 scalar values.  The outputs are used to inform decision-making processes.  In general, we allow $u(Y)$ to be
 the model $u$ as a function of the input space $Y = (y_1,\ldots,y_n,\ldots,y_N)$ where $y_n$ is a single input
 parameter to the model, $n$ is an index spanning the number of inputs, and $N$ is the total number of inputs.
-We signify the output response quantity as $Q$, and assume it to be a scalar integrated quantity.  Our generic 
-model takes the form
+Uncertain input parameters can include any of the inputs to the simulation.
+We signify the output response quantity as $Q$, and assume it to be a scalar integrated quantity.  In the event
+the output is a vector or field quantity, each element can be considered as a distinct scalar response.
+Our generic model takes the form
 \begin{equation}
   u(Y) = Q.
 \end{equation}
 
 % uncertain inputs
-Essential to using simulation models is understanding the possibility of important uncertainties existing in
+Essential to using simulation models is understanding the possibility that significant uncertainties existing in
 the inputs.  These could be aleatoric uncertainties due to intrinsic randomness in the inputs, or epistemic
-uncertainties due to model imperfections or lack of knowledge.  Each of these uncertainties has some
+uncertainties due to model imperfections or lack of knowledge.  
+For example, quantum behaviors or Brownian motion often provide non-deterministic sources of aleatoric uncertainty.
+Further, the simulation itself might be solved through non-deterministic methods such as Monte Carlo sampling,
+in which case the random seed acts as an uncertain input.  Examples of epistemic uncertainties include initial
+or boundary conditions that can only be controlled to some finite level, such as manufacturing tolerances,
+temperature and pressure, and so forth.
+Each of these aleatoric and epistemic uncertainties has some
 distribution defining the likelihood of an input to have a particular value.  These distributions might be
 assumed or constructed from experiment; for our work, we will assume given distributions are accurate.  The
-input likelihood distribution is the probability distribution function (PDF) $\rho_n(y_n)$.  We require
+input likelihood distribution is the probability distribution function (PDF) $\rho_n(y_n)$.  
+An integral over any portion of the input space of the PDF provides the probability that the input's value
+is within that portion.
+We require
 \begin{equation}
   \int_a^b \rho_n(y_n) d\ y_n = 1,
 \end{equation}
-where $a$ and $b$ are the minimum and maximum values $y_n$ can take (possibly infinite).
+where $a$ and $b$ are the minimum and maximum values $y_n$ can take (possibly infinite).  In other words, the
+probability of finding the input between $a$ and $b$ is 100\%; similarly, we can say the value of the input
+almost surely lies between $a$ and $b$.
 
 % multidimensional
 When there are more than one uncertain input, the combination of distributions for these inputs span an
-uncertainty space $\Omega$. TODO make sure this terminology is right.  The dimensionality of $\Omega$ is $N$,
+uncertainty space $\Omega$. The dimensionality of $\Omega$ is $N$,
 the number of uncertain input variables.  The probability of any point in the input space occurring is given
 by the join-probability distribution $\rho(Y)$, still enforcing
 \begin{equation} \label{eq:joint pdf}
   \int_{a_1}^{b_1}\cdots\int_{a_N}^{b_N} \rho(Y) dy_1\cdots dy_N = 1.
-\end{equation}.
+\end{equation}
 For clarity, we define multidimensional integral operator
 \begin{equation}
   \int_\Omega (\cdot)dY\equiv \int_{a_1}^{b_1}\cdots\int_{a_N}^{b_N} (\cdot) dy_1\cdots dy_N,
@@ -62,18 +75,83 @@ so that Eq. \ref{eq:joint pdf} can be written
 % correlation
 We note the possibility that multiple inputs may be correlated with each other.  When inputs are not
 independent, the joint probability distribution is not the product of each individual probability distribution
-distribution.  Using principle component analysis (sometimes known as Karhunen-Loeve expansion
-\cite{karhunen}), however, a surrogate orthogonal input space can be
-constructed.  As a result, we only consider independent variables in this work.
+distribution.  When this is the case, each distribution cannot be sampled independently, and this
+creates complications for many of the sampling strategies presented here.  However,
+using principle component analysis (sometimes known as Karhunen-Loeve expansion
+\cite{karhunen}), a surrogate orthogonal input space can be
+constructed.  This surrogate space is functionally identical to the original for our purposes.
+As a result, we only consider independent variables in this work, as any dependent variables can
+be decoupled through this process.
 
 
 
 \section{Uncertainty Quantification}
 % introduction
 The purpose of uncertainty quantification is to propagate the uncertainties present in the input space of a
-problem through the model and comprehend their effects on the output responses.  Often response uncertainty is
-quantified in terms of moments.  Second-order uncertainty quantification seeks for the mean and variance of
-the perturbed response.  In general, the mean of a model is the first moment,
+problem through the model and comprehend their effects on the output responses.  In traditional simulations, a
+single value for each input variable results in a single value for the response.  When performing uncertainty
+quantification, a range of values for each input results in a range of response values.  To quantify the
+distribution of the output response, often statistical moments are used, including the mean, variance,
+skewness, and kurtosis.
+\subsection{Statistical Moments}
+The mean provides the expected value of the response, or generally the most probable
+value for the response.  The variance establishes the spread of the response, or the distance response values
+have from the mean on average.  The standard deviation of the response is given by the square root of the
+variance, and provides a useful metric to determine the probability of finding a response value within a
+range.  For instance, Chebyshev's inequality \cite{chebyshevineq} says $1-1/k^2$ of a distribution's values
+are within $k$ standard deviations from the mean.  This is true whenever the mean and variance can be
+defined.  Table
+\ref{tab:cheby stdev} shows the minimum percent of the response covered by expanding the range by multiples of the
+standard deviation.
+Some distributions are much more restrictive than Chebyshev's inequality requires.  For instance, we 
+show a similar table for a normal Gaussin distribution in Table \ref{tab:norm stdev}.  Fig. \ref{fig:stdev pct}
+shows the same information graphically.
+\begin{table}[htb]
+  \centering
+  \begin{tabular}{c c}
+  Number of Std. Dev. & Percent of Values \\ \hline
+  1 & 0 \\
+  $\sqrt{2}$ & 50 \\
+  2 & 75 \\
+  3 & 88.89 \\
+  4 & 93.75 \\
+  5 & 96 \\
+  10 & 99
+  \end{tabular}
+  \caption{Percentage of Values within $k$ standard deviations for general distributions}
+  \label{tab:cheby stdev}
+\end{table}
+\begin{table}[htb]
+  \centering
+  \begin{tabular}{c c}
+  Number of Std. Dev. & Percent of Values \\ \hline
+  1 & 68.3 \\
+  2 & 95.45 \\
+  3 & 99.73 \\
+  4 & 99.994 \\
+  \end{tabular}
+  \caption{Percentage of Values within $k$ standard deviations for Gaussian normal}
+  \label{tab:norm stdev}
+\end{table}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{stdev_pct}
+  \caption{Standard Deviations of Normal Gaussian Distribution}
+  \label{fig:stdev pct}
+\end{figure}
+Higher order moments, skewness and kurtosis, describe the asymmetry and "tailedness"
+of the response distribution respectively.  The more asymmetric the distribution, the
+higher the skewness is.  For example, a Gaussian normal distribution has zero skewness,
+and skewness is introduced to a Beta distribution by allowing $\alpha\neq\beta$.
+Kurtosis is more complicated in its interpretation, but in general kurtosis provides an idea
+of how much of the variance is contributed by extreme deviations from the mean.  The kurtosis
+of a Guassian normal distribution is 3.  This leads to the definition of excess kurtosis,
+which is 3 less than the traditional kurtosis.
+
+While both the skewness and kurtosis provide insight as to the distribution of reponses,
+most uncertainty quantification is centered on second-order metrics.
+Second-order uncertainty quantification seeks for the mean and variance of
+the perturbed response.  Mathematically, the mean of a model is the first moment,
 \begin{equation}
   \text{mean} = \expv{u(Y)} = \int_\Omega \rho(Y) u(Y) dY,
 \end{equation}
@@ -81,17 +159,52 @@ and the variance is the second moment less the square of the first,
 \begin{equation}
   \text{variance} = \expv{u(Y)^2} - \expv{u(Y)}^2 = \int_\Omega \rho(Y) u(Y)^2 dY - \text{mean}^2.
 \end{equation}
-
-%sensitivity analysis
+ 
 Another use for uncertainty quantification is understanding the sensitivity of the output responses to the
 uncertain inputs; that is, determining how responses change as a function of changes in the input space.  At
 the most primitive level, linear sensitivity of a response mean to an input is the derivative of the response
 with respect to the input.  Sensitivities can be both local to a region in the input space as well as global
 to the entire problem.
 
+In addition, there are two chief methods to define sensitivity.  One of the most typical sensitivities
+is mean to mean; that is, the rate of change in the value of the reponse as a function of changes in the
+input.  This metric is most useful what attempting to maximize or minimize a response value by changing
+input parametrs.  The second method is variance to variance, or the rate of change in the variance of the
+response as a function of changes in the variance of an input.  This is useful when trying to mitigate the
+spread of possible response values.  If there is a possibility of a response having an undesirable value,
+knowing the variance-variance sensitivity helps in identifying which inputs need to have their variance
+reduced to prevent the undesirable value from occuring.
+
+\subsection{After Uncertainty Quantification}
+Once the response distribution is well-understood through statistical moments and sensitivities, 
+further analysis
+and decisions can be made.  For example, one post-uncertainty quantification analysis is limit
+surface definition and failure probability.  In this analysis, a criteria is given that determines
+a ``success'' and ``failure'' condition for a response.  For instance, in the simulation of a
+material undergoing stress during heating, a failure condition could be whether the material
+buckles during the simulation.  The limit surface search seeks to determine what portion of the
+input space leads to failures, and what portion to successes, and define the hypersurfaces dividing
+successes and failures.  After a limit surface search, optimization can be performed, which gives
+some criteria for ideal operation and searches the success space for optimal inputs.  For example,
+if alloy compositions are the inputs for the stress and heat material mentioned earlier, optimization
+can help find the least expensive alloy that won't buckle in the conditions given by the simulation.
+
+Another post-uncertainty quantification calculation is to make use of sensitivity information to determine
+the inputs that could benefit from reduced variance to reduce the variance of the response in turn.
+If some inputs have minimal impact on variance in the output, they don't need the same level of care
+in manufacturing as other inputs.  For example, consider the construction of a commercial nuclear power
+reactor.  If the material properties and geometry of the reflector have a much smaller impact on the operation
+variance than the fuel content and geometry of the fuel pellets, the most naieve cost-effective way to control
+variance are to decrease margins in fuel manufacturing instead of reflector construction.  While this example
+seems readily evident, often engineering intuition can be surprised by uncertainty quantification and
+sensitiviy analysis.
+
+\subsection{Uncertainty Quantification Techniques}
 There are several common tools used for uncertainty quantification when analytic analysis is not possible.
 These include stochastic methods such as Monte Carlo sampling, deterministic methods such as Grid sampling,
-and mixed methods such as Latin Hypercube sampling (LHS).
+and mixed methods such as Latin Hypercube sampling (LHS).  After describing these, we also consider advanced
+uncertainty quantification techniques: generalized polynomial chaos expansion and high-dimension
+model reduction.
 
 \subsection{Monte Carlo}
 The Monte Carlo method \cite{mc} has been used formally since the 1930s as a tool to explore possible outcomes
