@@ -24,9 +24,9 @@ HCx,HCy = ROMpdf('HC_h5_N5.ROMpdf.pk')
 MCy = normalize(MCy)
 TDy = normalize(TDy)
 
-plt.plot(MCx,MCy,label='MC')
-plt.plot(TDx,TDy,label=r'TD, $L=4$')
-plt.plot(HCx,HCy,label=r'HC, $L=8$')
+plt.plot(MCx,MCy,'b-',label='MC',lw=5)
+plt.plot(TDx,TDy,'g-',label=r'TD, $L=4$',lw=1)
+plt.plot(HCx,HCy,'r-',label=r'HC, $L=8$',lw=1)
 
 plt.title(r'PDF of $k, N=5$')
 plt.xlabel(r'Value of $k$')

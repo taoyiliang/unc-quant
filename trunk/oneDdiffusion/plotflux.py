@@ -15,7 +15,7 @@ for line in inFile:
     continue
   if line[:1]=='k':
     ent=line[:-1].split(',')
-    k=float(ent[1])
+    k=1.0+float(ent[1].split('+')[1])
     print ent[0],'=',ent[1]
     continue
   temp=line.split('|')[0]

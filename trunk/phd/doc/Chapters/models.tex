@@ -13,7 +13,9 @@
 \section{Introduction to Models}
 In this section we present the models used in demonstrating the uncertainty quantification (UQ) methods in this
 work.  We use the term \emph{model} to describe any code with uncertain inputs and a set of at least one
-response quantity of interest.
+response quantity of interest.  Because the efficiency of polynomial chaos expansion methods is strongly dependent on the continuity
+of the response, we demonstrate a variety of models with varying levels of continuity.
+
 We include a variety of models with the intent to demonstrate the strengths and weaknesses of each UQ
 method.
 
@@ -30,8 +32,15 @@ We describe each model in turn.  Throughout the models, we will describe them us
   u(Y) = Q,
 \end{equation}
 where $u(Y)$ is the model as a function of $N$ uncertain inputs $Y=(y_1,\ldots,y_N)$ and $Q$ is a
-single-valued response quantity of interest.
+single-valued response quantity of interest.  $Q$ may also be a vector of single-valued quantities of interest and the methods
+described apply equally well; for our purposes, we only consider single-valued responses.
 
+Another factor that impacts the performance of polynomial chaos expansion methods is the dimensionality of the input space.  Despite 
+many methods to curtail the curse of dimensionality described in Chapter \ref{Chapter3}, collocation for polynomial chaos expansion
+is fundamentally a grid-based method.  Because of this, the efficiency of polynomial chaos methods will degrade quickly as
+dimension increases.  To demonstrate how the efficiency of the various methods we use in this work, we select models that are
+easily extensible to multiple dimensions and high-order polynomials.  As a result, most of the models are tensor products of
+polynomials.
 
 %----------------------------------------------------------------------------------------
 %	SECTION: TENSOR POLY
@@ -39,7 +48,9 @@ single-valued response quantity of interest.
 
 \section{Tensor Monomials}\label{mod:first tensor poly}
 The simplest model we make use of is a first-order tensor polynomial (tensor monomial) combination \ref{Ayres}.
-The mathematical expression is
+Each term in this polynomial expression is at most linear in any dimension.  This provides a simple calculation
+of the statistical moments, and no second-order polynomials are required to exactly reproduce this model.
+The mathematical expression for tensor monomials is
 \begin{equation}
   u(Y) = \prod_{n=1}^N (y_n+1).
 \end{equation}
@@ -47,7 +58,7 @@ For example, for $N=3$ we have
 \begin{equation}
   u(Y) = y_1y_2y_3 + y_1y_2 + y_1y_3 + y_2y_3 + y_1 + y_2 + y_3 + 1.
 \end{equation}
-For this model we distribute the uncertain inputs in several ways: uniformly on [-1,1], uniformly on
+For this model we distribute the uncertain inputs in several ways because of its simplicity: uniformly on [-1,1], uniformly on
 [0,1], and normally on [$\mu,\sigma$]. A summary of analytic statistics is given in Table \ref{tab:tensormono moments}.
 %TODO derivations in appendix?
 
@@ -63,14 +74,18 @@ For this model we distribute the uncertain inputs in several ways: uniformly on 
   \caption{Analytic Expressions for Tensor Monomial Case}
   \label{tab:tensormono moments}
 \end{table}
-
+For purposes of demonstration, we pick several increasing orders of dimensionality: three input variables, five variables, and 
+ten variables.
 
 %----------------------------------------------------------------------------------------
 %	SECTION: Sudret
 %----------------------------------------------------------------------------------------
 \section{Sudret Polynomial}\label{mod:sudret}
 The polynomial used by Sudret in his work \cite{sudret} is another tensor-like polynomial, and is a test case traditionally used to
-identify convergence on sensitivity parameters.  The mathematical expression is
+identify convergence on sensitivity parameters.  It is similar to tensor monomials because it is constructed by the tensor
+product of simple polynomials; in this case, Sudret used second-order polynomials.  As a result, only zeroth or second-order
+polynomials exist in the expression.  Statistical moments are also quite straightforward for this model.
+The mathematical expression for Sudret polynomials is
 \begin{equation}
   u(Y) = \frac{1}{2^N}\prod_{n=1}^N (3y_n^2+1).
 \end{equation}
@@ -89,12 +104,20 @@ $y_n$.
   \caption{Analytic Expressions for Sudret Case}
   \label{tab:sudret}
 \end{table}
-
+Because of its similarity to tensor polynomials, the cases we show are three inputs and five inputs.
 
 %----------------------------------------------------------------------------------------
 %	SECTION: ATTENUATION
 %----------------------------------------------------------------------------------------
 \section{Attenuation}\label{mod:attenuation}
+While this model is also a tensor product and analytic, it also is the solution to a physical problem.
+Consider a one-dimensional problem that consists of a material with unit length and vacuum to the left and
+right of the material.  We consider a beam of neutral particles that have a probability of interacting
+with the material, or passing through it.  This beam enters the material on the left and exits on the right.
+The quantity of interest is the percent of particles that pass through the material without interacting
+anywhere along its length.  The boundary conditions for this problem are a constant flux on the left boundary,
+and a vacuum boundary on the right boundary.
+
 This model represents an idealized single-dimension system where an beam of particles impinges on a
 purely-absorbing material with total scaled length of 1.  The response of interest is the fraction of
 particles exiting the opposite side of the material.  The material is divided into $N$ segments, each of which

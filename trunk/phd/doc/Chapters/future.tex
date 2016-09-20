@@ -56,3 +56,8 @@ where $\alpha$ is a balancing parameter and $g(n)$ is a penalty function that gr
 \section{Cross-Communication in Adaptive HDMR}
 Todo, basically if I want the next step in (x,y), that next step shouldn't be a polynomial containing 0 in
 either x or y.
+
+\section{Adaptive Quadrature Order}
+Todo, basically we use $m+1$ as a quadrature rule; this allows the order of error in the quadrature integration to be the same as
+that of the polynomial truncation.  This is often quite inaccurate, though, so some system where a rule like $2m$ is used for
+low-order polynomials, then transition into $m+1$ after a couple orders, might be good.  Obviously a user could set this threshold.
