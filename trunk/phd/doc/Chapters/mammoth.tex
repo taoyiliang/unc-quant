@@ -2,24 +2,54 @@
 
 \chapter{Engineering Demonstration} % Main chapter title
 
-\label{Chapter7} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+\label{Chapter5} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
-\lhead{Chapter 7. \emph{Engineering Demonstration}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
+\lhead{Chapter 5. \emph{Engineering Demonstration}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
 
 %----------------------------------------------------------------------------------------
 %	SECTION: INTRO
 %----------------------------------------------------------------------------------------
 
-\section{Todo}
+\section{Introduction}
+While analytic models provide insight to the operation of stochastic collocation for generalized polynomial chaos and high-density
+model reduction methods, we are chiefly interested in applying these methods to engineering applications that lead to
+decision making in real-world activities.  To this end, we selected multiphysics simulation code \mammoth{}, a \moose{}-based
+\emph{MultiApp} that couples neutronics code \rattlesnake{}, fuel performance code \bison{}, and thermal hydraulics code
+\texttt{relap-7}.  \mammoth{} solves these three sets of physics nonlinearly using picard iterations to feed back values until
+convergence is achieved.
+
+\section{Problem}
+The model we selected is a two-dimensional slice of a pressurized water reactor fuel pin, including the fuel, gap, clad, and
+moderator.  The fuel is separated into 23 axial rings, each with the same material properties but independent input uncertainty.
+The response value of interest is the neutronics multiplication factor $k$-effective.  TODO how many groups, etc.
+The uncertain inputs are group-, burnup-, and temperature-dependent cross sections, as well as TODO three \bison{} inputs.
+The macroscopic cross sections are calculated using \texttt{scale} (TODO cite) along with a covariance matrix which provides
+the correlation between cross sections.  Karhunen-Loevre (TODO cite) is used to de-couple the resulting 671 inputs and
+reduce them to 10 representative independent inputs.
+
+The simulation only considers neutronics (\rattlesnake{}) and fuel performance (\bison{}), so the thermal hydraulics is neglected.
+The feedback from \rattlesnake{} to \bison{} is the power shape, and the feedback from \bison{} to \rattlesnake{} is the
+temperature, which in turn affects the cross sections.  For performance, the number of picard iterations between the separate apps
+is limited to 6 per time step.  TODO time steps, other input parameters, input file in appendix?, commit of MAMMOTH used
+
+\section{Limitations}
+During the collection of data, it was discovered that the performance of \bison{} can fluctuate depending on
+the way is is parallelized.  There were instances where \bison{} would fail to converge, but report an unconverged
+temperature as a converged solution.  As a result, there is artifical numerical error that is difficult to track or
+account for.  Regardless, we demonstrate the performance of various methods on this model, as this behavior indicates
+true simulation behavior.
+
+\section{Results}
+
 todo.
 
-Notes:
-
-Run times
-
-For Picard 6 and SN (3 azimuthal, 3 polar Gauss Chebyshev):
-
-MPI 24: 11m 29.452s = 689.452 sec =  16546.848 single equivalent (0.424 efficient)
-MPI 12: 19m 41.703s = 1181.703 sec = 14180.436 single equivalent (0.495 efficient)
-MPI  6: 27m 50.373s = 1670.373 sec = 10022.238 single equivalent (0.701 efficient)
-MPI  1: 117m 0.756s = 7020.756 sec =  7020.756 single equivalent (1.000 efficient)
+%Notes:
+%
+%Run times
+%
+%For Picard 6 and SN (3 azimuthal, 3 polar Gauss Chebyshev):
+%
+%MPI 24: 11m 29.452s = 689.452 sec =  16546.848 single equivalent (0.424 efficient)
+%MPI 12: 19m 41.703s = 1181.703 sec = 14180.436 single equivalent (0.495 efficient)
+%MPI  6: 27m 50.373s = 1670.373 sec = 10022.238 single equivalent (0.701 efficient)
+%MPI  1: 117m 0.756s = 7020.756 sec =  7020.756 single equivalent (1.000 efficient)

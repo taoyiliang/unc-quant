@@ -2,13 +2,65 @@
 
 \chapter{Conclusions} % Main chapter title
 
-\label{Chapter8} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+\label{Chapter7} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
-\lhead{Chapter 8. \emph{Conclusions}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
+\lhead{Chapter 7. \emph{Conclusions}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
 
 %----------------------------------------------------------------------------------------
 %	SECTION: INTRO
 %----------------------------------------------------------------------------------------
 
-\section{Todo}
-todo.
+\section{Introduction}
+In this work we have explored advanced uncertainty quantification methods and their application to a variety of models.
+In addition to implementing existing algorithms, new predictive methods for adaptive algorithms have been introduced
+and demonstrated.  We have compared convergence performance to traditional analog Monte Carlo, and observed cases both
+when collocation-based methods are desirable and when Monte Carlo is preferable.  We have also demonstrated performance
+of these methods on a multiphyics engineering problem, as well as in time-dependent analysis of and OECD benchmark.  Here we
+summarize the obsesrved results and generalize them, as well as discuss limitations discovered during this work.
+
+\section{Performance Determination}
+As seen in several analytic models as well as engineering performance models, the convergence rate of both stochastic collocation
+for generalized polynomial chaos as well as high-density model reduction (using stochastic collocation for subsets) depend primarily
+on two factors. 
+First, despite many tools to combat the curse of dimensionality, grid-based collocation methods still degrade
+significantly as the size of the input space increases.  For any more than approximately 10 independent inputs, collocation-based
+methods perform little better than Monte Carlo until many thousands of samples are taken.  Second, SCgPC and HDMR perform much
+better for models with a high level of continuity than discontinuous models.  As seen in the Sobol G-Function, the collocation
+methods have great difficulty representing the absolute value function.  
+However, for models with high levels of continuity and low dimensionality, collocation methods prove very effective in comparison
+to traditional Monte Carlo methods.
+
+Between different collocation-based methods, we also see several trends.  First, static HDMR methods never outperform their
+corresponding SCgPC methods; that is, second-order polynomial expansions in SCgPC always match or outperform HDMR methods
+that are limited to second-order polynomials.  This is expected because HDMR at any truncation is a subset of the SCgPC
+expansion.  However, the static HDMR method is still valuable, as even in larger input dimensionality problems some solution
+can be obtained with few runs.  For example, for first-order Sobol using first-order polynomials, only three times the input
+dimensionality samples are required to obtain a solution.  For very costly models, it may not be possible to use SCgPC without
+HDMR.
+
+Second, we observe for all continuous functions, the total degree polynomial construction method significantly outperforms
+the hyperbolic cross method, as expected by its design.  Since polynomial expansion methods struggle to perform well for
+discontinuous models anyway, total degree is a good method to use if the response is expected to be smooth.
+
+Finally, we note that in general the adaptive methods seldom completely outperform all the other collocation methods.  Because the
+prediction algorithm is imperfect, there will always be a static choice of polynomials that is more effecient.  However, if
+the nature of the response in polynomial representation is not well-known, the adaptive algorithms can be effective tools in
+exploring the response polynomial space.
+
+\section{Limitations Discovered}
+One limitation that has not yet been discussed is the reliablity of model algorithms.  Because many engineering codes are
+complicated and involve a great number of opttions to assure particular realizations can be solved, they are also often
+somewhat fragile.  Changes in the input space can require changes in other solution options, such as preconditioning tools,
+spatial and temportal step sizes, and so on.  The changes required are often not predictable, and if not applied, can result
+in regular failure to converge a solution.  Traditional Monte Carlo methods overcome this issue by rejecting failed points and
+chosing a new sample.  This introduces some bias, but hopefully a small amount relative to the overall sample size.  For
+collocation-based methods, however, re-sampling is not a valid option, and failure to converge results in a failure of the method.
+In the process of searching for a suitable engineering demonstration model, many problems were considering using a variety of
+codes; however, after extensive collaboration, it was determined many of these codes accepted as much as a 10\% failure rate
+in random perturbations of the input space.  This failure rate almost surely renders the collocation-based methods
+unusable.  Thus, in addition to considering the dimnsionality of the input space and regularity of the response, the
+robustness of the algorithms used to solve the model responses must be considered before applying stochastic collocation for
+generalized polynomial chaos expansion or high-density model reductions methods.
+
+\section{Final Comments}
+Needed?
