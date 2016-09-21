@@ -60,7 +60,13 @@ For example, for $N=3$ we have
 \end{equation}
 For this model we distribute the uncertain inputs in several ways because of its simplicity: uniformly on [-1,1], uniformly on
 [0,1], and normally on [$\mu,\sigma$]. A summary of analytic statistics is given in Table \ref{tab:tensormono moments}.
-%TODO derivations in appendix?
+The two-dimensional representation of this function is given in Figure \ref{fig: tensor monomials}.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monom}
+  \caption{Tensor Monomials}
+  \label{fig: tensor monomials}
+\end{figure}
 
 \begin{table}[H]
   \centering
@@ -89,7 +95,16 @@ The mathematical expression for Sudret polynomials is
 \begin{equation}
   u(Y) = \frac{1}{2^N}\prod_{n=1}^N (3y_n^2+1).
 \end{equation}
-The variables are distributed uniformly on [0,1].  The statistical moments and sensitivities are given in
+The two-dimensional representation of this function is given in Figure \ref{fig: sudret}.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sudret}
+  \caption{Sudret Polynomial}
+  \label{fig: sudret}
+\end{figure}
+The variables are distributed uniformly on [0,1].
+
+The statistical moments and sensitivities are given in
 Table \ref{tab:sudret}, where $\mathcal{S}_n$ is the global Sobol sensitivity of $u(Y)$ to perturbations in
 $y_n$.
 
@@ -125,6 +140,13 @@ has a distinct uncertain absorption cross section $y_n$.  The solution takes the
 \begin{equation}
   u(Y) = \prod_{n=1}^N \exp(-y_n/N).
 \end{equation}
+The two-dimensional representation of this function is given in Figure \ref{fig: attenuation}.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/attenuate}
+  \caption{Attenuation Model}
+  \label{fig: attenuation}
+\end{figure}
 Because negative cross sections have dubious physical meaning, we restrict the distribution cases to uniform
 on [0,1] as well as normally-distributed on [$\mu,\sigma$].  A summary of analytic statistics is given in
 Table \ref{tab:attenuation moments}.
@@ -161,6 +183,13 @@ The mathematical expression is
   u(Y) = \exp\qty(-\sum_{n=1}^N a^2\qty(y_n-\mu)^2).
 \end{equation}
 We allow each $y_n$ to vary uniformly on [0,1].
+The two-dimensional representation of this function is given in Figure \ref{fig: gauss peak}.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/gaussian}
+  \caption{Gaussian Peak \cite{sfu}}
+  \label{fig: gauss peak}
+\end{figure}
 A summary of analytic statistics is given in Table \ref{tab:gausspeak moments}.
 
 \begin{table}[H]
@@ -187,7 +216,16 @@ given by
 \begin{equation}
   u(Y) = \sin{y_1} + a\sin^2{y_2} + b y_3^4\sin(y_1).
 \end{equation}
-In our case, we will use $a=7$ and $b=0.1$ as in \cite{ishigami2}.  In particular interest for this model are
+In our case, we will use $a=7$ and $b=0.1$ as in \cite{ishigami2}. 
+The graphical representation of this function is given in Figure \ref{fig: ishigami}, with the three axes
+as the three inputs and the color map as the function values ranging from 0 to approximately 5.88.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/ishigami}
+  \caption{Ishigami Model}
+  \label{fig: ishigami}
+\end{figure}
+In particular interest for this model are
 its strong nonlinearity and lack of independence for $y_3$, as it only appears in conjunction with $y_1$.  The
 analytic statistics of interest for this model are in Table \ref{tab:ishigami moments}, where $D_n$ is the
 partial variance contributed by $y_n$ and Sobol sensitivities $\mathcal{S}_n$ are obtained by dividing $D_n$
@@ -213,14 +251,42 @@ by the total variance.
 %	SECTION: Sobol G-Function
 %----------------------------------------------------------------------------------------
 \section{Sobol G-Function}\label{mod:gfunc}
+The so-called ``g-function'' introduced by Saltelli and Sobol \cite{gfunc} is a discontinuous 
+function used most commonly as a test for sensitivity coefficients.  The function is often used as an integrand 
+for numerical estimation methods \cite{gfuncM}.  
+The function is given by
+\begin{equation}
+  u(Y) = \prod_{n=1}^N \frac{\abs{4y_n-2}-a_n}{1+a_n},
+\end{equation}
+where
+\begin{equation}
+  a_n = \frac{n-2}{2}.
+\end{equation}
+The two-dimensional representation of this function is given in Figure \ref{fig: g func}.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/gfunc}
+  \caption{Sobol G-Function \cite{sfu}}
+  \label{fig: g func}
+\end{figure}
 
+
+There are some implementations \cite{gfuncM} that force $a_n \geq 0$, which allows for a simple
+understanding of the sensitivity coefficients: 
+\begin{itemize}
+  \item $a_n=0$: $y_n$ is very important
+  \item $a_n=1$: $y_n$ is relatively important,
+  \item $a_n=9$: $y_n$ is non-important,
+  \item $a_n=99$: $y_n$ is non-significant.
+\end{itemize}
+However, for our purposes, we set no limit to the value of $a_n$, as our interest is primarily in the moments
+instead of the sensitivity coefficients.
+
+We select this model because it offers the challenge of a function
+without a continuous first derivative.  We expect the polynomial representations to perform poorly
+in this instance, and more so as dimensionality increases.
 %----------------------------------------------------------------------------------------
 %	SECTION: Anisotropic
-%----------------------------------------------------------------------------------------
-\section{Anisotropic Polynomial}\label{mod:aniso}
-
-%----------------------------------------------------------------------------------------
-%	SECTION: Pin Cell
 %----------------------------------------------------------------------------------------
 \section{Pin Cell}\label{mod:pincell}
 This model is a coupled multiphysics engineering-scale model.  It simulates fuel behavior through the depletion of fissile material
