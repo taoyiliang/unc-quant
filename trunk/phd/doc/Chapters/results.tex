@@ -34,23 +34,26 @@ These errorbars estimate where the value of the statistic is with a probability 
 this error improves as additional samples are taken.
 
 Convergence figures are
-log-log error graphs with the number of computational solves on the x-axis and error with the analytical
-solution on the y-axis.  The distinct lines demonstrate series of results obtained for each UQ method.  Each
+log-log error graphs with the number of computational solves on the x-axis and error with respect to the analytical
+solution on the y-axis.  The distinct lines demonstrate series of results obtained for each UQ method.  
+The series we show here are analog traditional Monte Carlo (mc); static 
+stochastic collocation for generalized polynomial chaos expansion using the hyperbolic
+cross index set (hc), total degree index set (td), and (where possible) tensor product index set (tp); adaptive stochastic
+collocation for polynomial
+chaos method (adaptSC); and adaptive Sobol decomposition with polynomial chaos subsets (adaptSobol).
+Each
 series obtains additional values by increasing the refinement of the method.  For Monte Carlo, additional
-samples are added.  For static SCgPC, higher-order polynomials are used in the representative expansion.  For
+random samples are added.  For static SCgPC, higher-order polynomials are used in the representative expansion.  For
 adaptive methods, additional solves are allowed to adaptively include additional polynomials and/or dimension
 subsets.
 
-The measure of success for a method is less dependent on the absolute value of the error shown.  Instead, the
+The measure of success for a method is less dependent on the absolute value of the error shown.  While this is
+useful, we are more concerned with how increasing refinement reduces error.  The
 rate of convergence as refinement increases determines the desirability of the method for that model.  We
 expect the rate of convergence to depend on two factors: the dimensionality of the uncertain space for the
-model, and the continuity of the response measured.  We consider the convergence of both the mean and the
-standard deviation for each model.
-
-The series considered include analog Monte Carlo (mc), Tensor Product polynomial expansion construction method
-(tp), Total Degree polynomial expansion construction method (td), Hyperbolic Cross polynomial expansion
-construction method (hc), adaptive sparse grid collocation for generalized polynomial chaos expansion
-(adaptSC), and adaptive HDMR or adaptive Sobol decomposition (adaptSobol).
+model, and the continuity of the response measured.  The value of the error, on the other hand, will additionally
+depend on how well a particular choice of polynomials matches the analytic polynomial representation of the model.
+We consider the convergence of both the mean and the standard deviation for each model.
 
 We additionally note that results from \raven{} computations were written to file using 10 digits of accuracy.
 As a result, any apparent convergence past this level of accuracy is coincidental or the result of
@@ -59,7 +62,9 @@ machine-exact values, and we consider a relative difference of $10^{-10}$ to be 
 \section{Tensor Monomials}
 This model is described in section \ref{mod:first tensor poly}.  As this polynomial contains only combinations of
 first-order polynomials, we expect the Tensor Product index set construction method (TP) to be very efficient
-in absolute error magnitude.  Because the model has infinite continuity, we expect all collocation-based
+in absolute error magnitude.  
+As such, it will be difficult to see the convergence rate for the tensor product method.
+Because the model has infinite continuity, we expect all collocation-based
 methods to be quite efficient.  The values and errors of the mean and standard deviation are given in Figures
 \ref{fig:tensormono mean values 5} through \ref{fig:tensormono var errors 5} for 5 uncertain inputs, and the same
 for 10 dimensions is given in Figures \ref{fig:tensormono mean values 10} through \ref{fig:tensormono var
@@ -69,9 +74,17 @@ observed past the initial sampling point.
 \subsection{3 Inputs}
 The strength of collocation methods is clear for this small-dimensionality problem of three uncertain inputs.
 The convergence on the
-mean and standard deviation is swift for all the methods.  Both adaptive methods converge at nearly identical
+mean and standard deviation is swift for all the methods.  The convergence of the mean is instant for all methods, since
+the linear nature of the problem means only the zeroth-order polynomial term is required to exactly reproduce the mean.
+More convergence behavior can be seen for the standard deviation.
+Because hyperbolic cross polynomials emphasize single-variable polynomials over cross terms, it is the slowest to reach
+effectively zero error.  Similarly, the total degree quickly obtains most of the polynomials in the exact expansion,
+but takes a few levels to include the term that has all the input variables in it.  Because first-order tensor product
+polynomials is exactly the model itself, it converges instantly.
+Both adaptive methods converge at nearly identical
 rates; this is not surprising, as for small dimension problems the adaptive search follows a very similar
-path.
+path.  The adaptive SCgPC method reaches convergence somewhat slower because it naturally tends to explore
+higher-order polynomials before extending to low-order polynomials with more cross terms.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_3_mean_vals}
@@ -103,7 +116,12 @@ path.
 
 \subsection{5 Inputs}
 While the convergence on the mean is still direct for the five-dimensional input problem, we begin to see
-degradation in the convergence of collocation-based methods.  Total Degree outperforms adaptive methods, as
+degradation in the convergence of collocation-based methods.  
+As with the three variable case, the mean is trivial and obtained with the zeroth-order polynomial.  Exponential
+convergence can be seen for the adaptive Sobol, total degree, and hyperbolic cross methods, while the adaptive SCgPC
+is still exploring higher-order polynomials as more likely candidates for inclusion in the expansion and hasn't
+seen the same rapid convergence curve yet.
+Total Degree outperforms adaptive methods, as
 the search algorithms struggle to find the optimal tensors of low-order polynomials required.  Hyperbolic
 Cross is outperformed by Total Degree, as expected for a problem with this level of regularity.
 \begin{figure}[H]
@@ -135,7 +153,7 @@ Cross is outperformed by Total Degree, as expected for a problem with this level
 \subsection{10 Inputs}
 As we increase to ten inputs, we see significant degradation of all the collocation methods in converging on
 the standard deviation.  While it appears there is exponential convergence, the curvature is quite large, and
-little better than linear convergence is observed for up to 1000 computational solves.  One reason the
+only somewhat better than linear convergence is observed for up to 1000 computational solves.  One reason the
 adaptive methods do not perform more admirably for this case is the equal-weight importance of all the input
 terms as well as the polynomial terms; the high-dimensional space takes considerable numbers of runs to
 explore thoroughly, and this model contains some of the most difficult polynomials to find adaptively: those including
@@ -168,9 +186,22 @@ all of the inputs.
 
 
 \section{Sudret Polynomial}
-This model is described in section \ref{mod:sudret}.
+This model is described in section \ref{mod:sudret}.  The Sudret polynomial model is a near neighbor to the
+tensor monomials model; however, it includes only even-ordered polynomials, which provides more of a challenge
+to the adaptive methods.  Because the model is still a tensor product, the tensor product collocation method 
+converges most directly in all dimensionality cases.
 
 \subsection{3 Inputs}
+As with the tensor monomials, we see a good rate of convergence for many of the polynomial methods.  With
+this model, the mean is not trivially given by the zeroth-order polynomial, and so some convergence is seen
+in obtaining the expected value.  The total degree and adaptive sobol methods converge at a similar rate for
+the mean, while the hyperbolic cross demonstrates its poor convergence for highly regular systems with
+nonlinear cross-term effects.  Quickest to converge (aside from the tensor product case) is the adaptive
+SCgPC, because its search method allows it to discover the second-order polynomials quickly.
+
+Similar behavior is seen for the standard deviation, with the exception of the adaptive Sobol algorithm, which
+is not as effective as the adaptive SCgPC at finding the second-order polynomials for inclusion in the expansion.
+The tensor product still converges very rapidly, and total degree shows a good rate of convergence.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/sudret_3_mean_vals}
@@ -198,6 +229,14 @@ This model is described in section \ref{mod:sudret}.
 \end{figure}
 
 \subsection{5 Inputs}
+In the five-input case for the Sudret polynomials, we see slower convergence for all methods, as expected
+for collocation-based methods.  For the mean, the adaptive sobol shows the most rapid rate of convergence,
+but generally each method is showing some level of exponential convergence.  For the standard deviation,
+however, the radius of curvature for the convergence is quite large, and the adaptive Sobol method seems
+to be searching fairly ineffectively for the most crucial polynomials in the expansion.  This is likely
+because all the first-order effects are missing in the expansion, leading the algorithm to be blinded as
+to the most effective route forward.  We discuss this limitation and approches to correcting it in 
+Chapter \ref{Chapter9}.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/sudret_5_mean_vals}
@@ -226,7 +265,12 @@ This model is described in section \ref{mod:sudret}.
 
 
 \section{Attenuation}
-This model is described in section \ref{mod:attenuation}.
+This model is described in section \ref{mod:attenuation}.  Similar to the tensor monomial model and Sudret
+polynomial model, the attenuation model can be expanded as the infinite sum of ever-increasing polynomials,
+making it tensor product in shape.  However, unlike the previous two models, the magnitude of the contribution
+from the higher-order polynomials decreases swiftly, making lower-order polynomials more characteristic of the
+model in general.  Because this model is still a tensor model and the response is infinitely continuous,
+we expect to see a similar trend in the most effective methods for polynomial expansion.
 
 \subsection{2 Inputs}
 \begin{figure}[H]
