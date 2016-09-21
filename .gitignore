@@ -1,3 +1,5 @@
+*.DS_Store
+
 # C extensions
 *.so
 
@@ -51,6 +53,11 @@ nosetests.xml
 *.outp
 *.patch
 *.txt
+*.nav
+*.snm
+*.toc
+*.bbl
+*.blg
 .depend
 
 #vi
