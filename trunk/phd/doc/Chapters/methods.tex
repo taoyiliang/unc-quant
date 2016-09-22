@@ -656,7 +656,7 @@ analysis in an algorithmic manner.
 TODO expand to include the matlab algorithm from Motamed's class
 
 
-\section{Adaptive Sparse Grid}
+\section{Adaptive Sparse Grid}\label{sec:adaptive sparse grid}
 One method for improving SCgPC is to construct the polynomial index set adaptively.  This effectively
 constructs anisotropic index sets based on properties of the expansion as it is constructed, instead of in a
 predetermined way.  This method is presented in \cite{Gerstner} and used in \cite{Ayres}.  The algorithm
@@ -675,7 +675,25 @@ This adaptive algorithm has the strength of determining the appropriate anisotro
 polynomial index set.  For strongly  anisotropic cases, or cases where the static index set construction rules are not
 ideal, the adaptive index set could potentially provide a method to avoid wasted calculations and emphasize
 high-impact polynomials in the expansion.
-TODO visual example
+
+Figures \ref{fig:asg step} and \ref{fig:asg block} show a single
+step and the progression of multiple steps, respectively, for a demonstrative two-dimensional model.  In each, 
+the algorithm progresses from the upper
+left diagram to the lower right.  The blue squares indicate polynomials already included, and the green circle
+shows the next selected polynomial to include.  It can be seen how the algorithm is including more polynomials
+along the $x$-axis variable than the $y$-axis variable because $x$ has a higher impact on the response.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{asc_step}
+  \caption{Adaptive Sparse Grid Step}
+  \label{fig:asg step}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{asc_block}
+  \caption{Adaptive Sparse Grid Progression}
+  \label{fig:asg block}
+\end{figure}
 
 There are, however, some weak points in this algorithm.  First, the current algorithm has no predictive method
 to determine the next polynomial index to include in the set; instead, it evaluates each potential index and
@@ -687,13 +705,13 @@ In order to predict the most valuable polynomial to add to the expansion during 
 identify a metric for value.  Because our interest is in second-order statistics, and the variance of the
 polynomial expansions is the sum of the polynomial expansion coefficients, we consider the \emph{impact}
 $\eta_k$ of a polynomial to be the square of its polynomial expansion coefficient,
-\begin{equation}
+\begin{equation}\label{eq: act poly impact}
   \eta_k = u_k^2.
 \end{equation}
 To estimate the impact of a polynomial whose coefficient is not yet calculated, we consider the average of the
 preceeding polynomials.  That is, for a polynomial $k=(3,2,4)$ we average the impacts of $(2,2,4)$, $(3,1,4)$,
 and $(3,1,3)$,
-\begin{equation}
+\begin{equation}\label{eq: poly impact}
   \tilde \eta_k = \frac{1}{N-j}\sum_{n=1}^N \eta_{k-e_n},
 \end{equation}
 where $\tilde \eta_k$ is the estimated impact of polynomial $k$, $e_n$ is a unit vector in dimension $n$, and
@@ -1096,4 +1114,133 @@ computationally with a high degree of accuracy and with little effort to impleme
 
 
 \section{Adaptive HDMR}
-As discussed in the adaptive stochastic collocation for generalized polynomial chaos method in section 
+As discussed in the adaptive stochastic collocation for generalized polynomial chaos method in section
+\ref{sec:adaptive sparse grid}, it is not only possible but likely that different input variables have
+different levels of impact on a response.  When constructing an HDMR expansion, it is computationally wasteful
+to construct subsets that contain inputs that have little impact on the response.  Often, however, an analyst
+cannot know a priori to which inputs a response is most sensitive.  This is especially true when working with
+abstract inputs such as those provided through a Karhunen-Leove expansion \cite{karhunen}.  As a result, as
+with the adaptive sparse grid for generalized polynomial chaos expansions, it would be convenient to have an
+algorithmic adaptive HDMR construction strategy.  Such an algorithm has been proposed by Gerstner and Griebel
+\cite{Gerstner} and demonstrated by Ayres and Eaton \cite{Ayres}.  We extend their methodology here to include
+predictive algorithms for choosing forward directions.  Additionally, we consider an intermingled adaptive
+approach of adaptive HDMR construction with adaptive sparse grid generalized polynomial chaos expansions for
+subsets.  The algorithm proceeds as follows:
+\begin{enumerate}
+  \item Begin by constructing all the first-order HDMR subsets up to first-order polynomial expansions.
+  \item While not converged:
+    \begin{enumerate}
+      \item Iterate through each existing HDMR subset and determine the estimated impact of adding the
+        next-favored polynomial for that subset.
+      \item Determine the Sobol sensitivity coefficient for each subset using cut-HDMR to ANOVA algorithms.
+      \item Predict the expected impact of adding each new eligible subset to the HDMR expansion.
+      \item Compare the product of a polynomial impact times its Sobol sensitivity versus the expected impact
+        of the eligible subsets.
+      \item Perform the most likely impactful method (adding a new subset or adding a polynomial to an
+        existing subset)
+      \item Use the estimated impact of eligible HDMR subsets and eligible polynomials for each subset to
+        estimate remaining variance
+      \item Use previous iterations to approximate the convergence of the algorithm
+      \item Combine estimated remaining variance with approximated convergence to determine convergence
+      \item If convergence and estimated remaining variance are less than tolerance, convergence is reached.
+      \item Otherwise, continue the algorithm.
+    \end{enumerate}
+\end{enumerate}
+This process is diagrammed in Figure \ref{fig:ahdmr}.  Note that this diagram assumes there is a sample
+submission process in a larger uncertainty quantification framework such as \raven{}, which handles
+computation resources in an efficient manner.  In the flow chart, green indicates initialization, purple
+indicates the expansion of the high-density model reduction
+expansion, blue is the evaluation of the model and expansion of existing HDMR subsets, yellow is the
+convergence process, and red indicates successful exit.  Note that an exit has been added for reaching some
+user-defined maximum number of runs; this is useful for allowing the algorithm to perform a search using a
+finite amount of computational resources.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{diagram-AHDMR}
+  \caption{Adaptive HDMR with Adaptive Sparse Grid Flow Chart}
+  \label{fig:ahdmr}
+\end{figure}
+
+
+Recall from section \ref{sec:adaptive sparse grid} that the impact of a polynomial within a subset generalized
+polynomial chaos expansion is given by Eq. \ref{eq: poly impact},
+\begin{equation}
+  \tilde \eta_k = \frac{1}{N-j}\sum_{n=1}^N \eta_{k-e_n},
+\end{equation}
+where we omit a superscript $(y_n)$ to indicate the subset for which this polynomial is part of the generalized
+polynomial chaos expansion.  As we discuss below on page~\pageref{sec: one poly per subset}, we restrict each 
+polynomial to be eligible for addition to only one HDMR subset apiece, making the distinction unnecessary.  
+The Sobol sensitivities provide the (current) impact of an existing subset,
+\begin{equation}
+  S_\beta = \frac{\text{var}\qty[h_\beta]}{\text{var}\qty[T(Y)]},
+\end{equation}
+computing $h$ as described in section \ref{sec:cut to anova}, and introducing subset descriptor $\beta$ which
+can be any number and combination of input variables $y_n$ such that $\beta\subset Y$, or equivalently
+$\beta\subset (y_1,\cdots,y_N)$.  The estimated global impact $\tilde\xi_k$ of a
+polynomial $k$ within a
+subset $t_\beta$ is the product of its (estimated) local and (current) subset sensitivities,
+\begin{equation}
+  \tilde \xi_k = \tilde\eta_k\cdot S_\beta.
+\end{equation}
+Analogously, the actual global impact $\xi_k$ of a polynomial $k$ within a subset $t_\beta$ is the
+product of its local and subset sensitivities,
+\begin{equation}
+  \xi_k = \eta_k\cdot S_\beta,
+\end{equation}
+with $\eta_k$ given in Eq. \ref{eq: act poly impact}.
+The estimated impact $\tilde S_\beta$ of adding a new subset to the HDMR expansion is the average of its
+dependent subsets' Sobol sensitivities,
+\begin{equation}
+  \tilde S_\beta = \frac{1}{m}\hspace{-10pt} \mlsum{\gamma\subset\beta\\1+\dim(\gamma)=m}{}\hspace{-10pt} S_\gamma,
+\end{equation}
+where $m$ is the dimensionality of $\beta$,
+\begin{equation}
+  m = \dim(\beta),
+\end{equation}
+and by $\dim(\beta)$ we denote the dimensionality of $\beta$.  For example,
+\begin{equation}
+  \tilde S_{y_1,y_2} = \frac{1}{2}\qty(S_{y_1}+S_{y_2}).
+\end{equation}
+
+The use of predictive measures to choose a path of exploration is an addition from previous efforts to couple
+polynomial chaos expansions with high-density model reduction.  Previously, such as in \cite{Gerstner}, the
+algorithm evaluates all potential candidates then keeps the most impactful one.  While this is more guaranteed
+to find the most effective path, it also is much more computationally expensive.  Even if the adaptive
+algorithm guesses incorrectly, it can do so many times before matching the expense of the non-predictive
+algorithm.
+
+Whenever an iteration is taken in the algorithm, it is important to-calculate all the sensitivities and
+impacts, both estimated and actual, for each subset and polynomial.  Because of the efficiencies of both the
+generalized polynomial chaos expansion and high-density model reduction expansion, this is quite
+computationally efficient.  Whenever a new element is added to the global expansion, it changes the total
+variance, and so adjusts all the impact parameters.
+
+When the algorithm determines a new subset should be added to the expansion, traditionally we would initialize
+the subset as we would a typical adaptive sparse grid expansion, with a single first-order polynomial in each
+direction making up the polynomial index set.  However, this is a poor choice for this algorithm.  Because the
+subset has selected a new subset, the impact of the new subset will be zero unless it adds at least a
+polynomial that is first order in all the inputs that are part of the subset.  As such, for this combined
+adaptive algorithm we initialize each subset with a tensor combination of linear polynomials instead of the
+traditional collection of non-interactive first-order polynomials only.
+
+\phantomsection \label{sec: one poly per subset}
+We note that the same polynomial may appear in several different subset terms and have a
+different impact in each.  To simplify this problem, we restrict eligible polynomials in each subset to
+include all nonzero orders for inputs on which the subset relies.  For example, the polynomial $k=(1,0,0)$ in
+a three-dimensional problem is potentially eligible for subset $t_1$ but not for $t_{1,2}$.
+
+If a subset is
+selected to add a polynomial in the adaptive algorithm and the selected polynomial depends on a polynomial with 
+lower effective
+dimensionality, that lower-order polynomial is added to the lower-dimensional subset at the same time the
+selected polynomial is added to the selected subset.  For example, consider an adaptive cut-HDMR expansion $T(x,y)$ of a
+two-dimensional model $u(x,y)$ consists of three subsets $t_x$, $t_y$, and $t_{x,y}$.  Let the adaptive
+polynomial set for $t_x$ be $\Lambda_x = ( (0,0),(1,0) )$, and for $t_y$ be $\Lambda_y = ( (0,0),(0,1) )$, and for
+$t_{x,y}$ be $\Lambda_{x,y} =( (0,0),(0,1)(1,0),(1,1))$.  Further, let the adaptive cut-HDMR algorithm have
+selected the polynomial $k=(1,2)$ to add to subset $t_{x,y}$.  Traditionally, this would require $k=(0,2)$ to
+be present first.  However, because $(0,2)$ belongs to subset $t_y$, the adaptive algorithm step adds $(1,2)$
+to $t_{x,y}$ and $(0,2)$ to $t_y$ simultaneously.  This is most likely to occur when there are strong
+interaction effects that overshadow single-input effects.
+
+There are several further improvements that can be made to this combined adaptive algorithm, which we discuss
+in section \ref{ch:future}.
