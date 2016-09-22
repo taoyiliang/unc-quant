@@ -1,0 +1,52 @@
+% Chapter Template
+
+\chapter{Time-Dependent Analysis} % Main chapter title
+
+\label{ChapterTime} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+
+\lhead{Chapter X. \emph{Time-Dependent Analysis}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+
+\section{Introduction}
+
+Up to now in this work we have restricted ourselves to models with a set of single-valued responses.  One of the strengths
+of the \raven{} framework is its innate ability to extend reduced-order models (such as the stochastic 
+collocation for generalized polynomial chaos and high-density model reduction expansions) to
+include time-dependent analysis.  \raven{} does this by taking snapshots in time and interpolating between them to evaluate
+the reduced-order model at any time.  As part of this work we added the algorithms necessary to do this snapshot-based
+time-dependent analysis for both the stochastic collocation for generalized polynomial chaos and the high-density model
+reduction methods. Conveniently, no additional quadrature points are required to perform transient instead of static
+uncertainty quantification using SCgPC or HDMR methods.  It should be noted, however, that adaptive SCgPC and adaptive
+HDMR are not well-suited to time-dependent analysis because of the plethora of responses; effectively, there is a
+full set of responses for each snapshot in time, making it difficult for the adaptive algorithms to determine the
+ideal polynomials to add.
+
+To demonstrate performance of this feature, we need a time-dependent response with transient behavior.
+Because none of the analytical models nor the \mammoth{} pincell problem have notable transient behavior, we consider
+a \bison{} simulation of an OECD benchmak (TODO citations) where the performance of light-water reactor fuel 
+through several power transients is
+analyzed.
+
+\section{Problem Description}
+TODO problem description
+
+The responses of interest for this model are the axial maximum fuel centerline temperature, the maximum cladding temperature,
+fission gas released, elongation of the cladding, and stress on the cladding.
+
+Of particular interest in this problem is analysis of sensitivity coefficients as they devolop in time.  As the
+simulation progresses, there is a shift in the dominant physics behind response values.  For example, one of the more
+dramatic physics transitions occurs as the fuel expands enough to make contact with the cladding.
+
+\section{Results}
+TODO results
+
+\section{Conclusion}
+Time-dependent sensitivity analysis provides means to better understand uncertainty propogation throughout a transient simulation.
+As physics shift throughout the simulation, so too does the sensitivity of the response to the input parameters.  If this same
+simulation were performed using only static analysis on time-averaged responses, the ability to make clear decisions would be
+reduced because of the lack of time-dependent information.  The addition of time-dependent analysis is quite beneficial to 
+analysts considering time-dependent simulations.
+
