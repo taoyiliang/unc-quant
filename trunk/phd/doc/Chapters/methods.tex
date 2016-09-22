@@ -1149,9 +1149,10 @@ subsets.  The algorithm proceeds as follows:
 This process is diagrammed in Figure \ref{fig:ahdmr}.  Note that this diagram assumes there is a sample
 submission process in a larger uncertainty quantification framework such as \raven{}, which handles
 computation resources in an efficient manner.  In the flow chart, green indicates initialization, purple
-indicates the expansion of the high-density model reduction
-expansion, blue is the evaluation of the model and expansion of existing HDMR subsets, yellow is the
-convergence process, and red indicates successful exit.  Note that an exit has been added for reaching some
+is the high-density model reduction portion, purple is the stochastic collocation for generalized polynomial
+chaos algorithms, yellow is the
+convergence process, and red indicates successful exit.  Note that a path to the exit has been added for 
+reaching some
 user-defined maximum number of runs; this is useful for allowing the algorithm to perform a search using a
 finite amount of computational resources.
 \begin{figure}[H]
@@ -1202,7 +1203,56 @@ and by $\dim(\beta)$ we denote the dimensionality of $\beta$.  For example,
   \tilde S_{y_1,y_2} = \frac{1}{2}\qty(S_{y_1}+S_{y_2}).
 \end{equation}
 
-The use of predictive measures to choose a path of exploration is an addition from previous efforts to couple
+The philosophy behind combining polynomial impact parameters and Sobol sensitivity parameters is to provide a
+means to allow the adaptive algorithm to optimize computational resources.  In effect, taking the product of
+the polynomial impact with the Sobol sensitivity provides a local-to-global contribution,
+\begin{equation}
+  \frac{\text{local contribution}}{\text{local variance}} \cdot \frac{\text{local variance}}{\text{global
+        variance}} = \frac{\text{local contribution}}{\text{global variance}}.
+\end{equation}
+Comparing polynomials within a subset is simple, and involves inquiring the truth of a statement like the
+following:
+\begin{equation}
+  \tilde\eta_{k_1} \hspace{5pt}\stackrel{?}>\hspace{5pt} \tilde\eta_{k_2}.
+\end{equation}
+Comparing polynomials from different subsets requires only weighting them by their subset Sobol sensitivities,
+\begin{equation}
+  \tilde\eta_{k_1}S_{\beta_1} \hspace{5pt}\stackrel{?}>\hspace{5pt} \tilde\eta_{k_2}S_{\beta_2}.
+\end{equation}
+Comparing polynomials to subsets is somewhat more ambiguous,
+\begin{equation}
+  \tilde\eta_{k_1}S_{\beta_1} \hspace{5pt}\stackrel{?}>\hspace{5pt} \tilde S_{\beta_3}.
+\end{equation}
+Three cases can occur in comparing subsets to polynomials:
+\begin{itemize}
+  \item If $S_{\beta_1} = \tilde S_{\beta_3}$, because $\tilde\itea_{k_1}$ must be equal to or less than one,
+    the algorithm will choose to add the new subset.
+  \item If $S_{\beta_1} < \tilde S_{\beta_3}$, it is more reasonable to add a new subset before attempting to 
+    improve the resolution of the existing subset.
+  \item If $S_{\beta_1} > \tilde S_{\beta_3}$, the determination is left up to the polynomial's sensitivity.
+    If the polynomial is expected to have a low impact on the Sobol sensitivity coefficient of its subset, the
+    algorithm will likely choose to add a new subset.  If, however, the Sobol sensitivity coefficient is
+    poorly converged, the algorithm will prefer to resolve it before trusting the estimate of the new subset's
+    impact.
+\end{itemize}
+
+Because the predictive algorithm is somewhat arbitrary, we additionally offer a method to provide analysts a
+tool to guide the adaptive algorithm.  By introducing a preferential factor $\alpha\in[0,2]$, the user can
+push the algorithm to prefer either new subsets over polynomials or vice versa.
+\begin{equation}
+  \qty(\tilde\eta_{k_1})^\alpha S_{\beta_1}^{2-\alpha} \hspace{5pt}\stackrel{?}>\hspace{5pt} 
+         \qty(\tilde S_{\beta_3})^{2-\alpha}.
+\end{equation}
+If $\alpha$ is zero, the polynomial impact is entirely ignored, and algorithm progression depends entirely on
+the Sobol sensitivity data.  This means that even if a Sobol sensitivity coefficient is entirely resolves, as
+long as it is the largest coefficient, additional polynomials will be added to it.  If $\alpha$ instead is 2,
+the Sobol sensitivity information is ignored and only polynomial impacts are considered.  In this case, no new
+subsets will ever be added.  The default algorithm is restored with $\alpha=1$.  While we recommend strongly
+against $alpha=0$ and $alpha=2$, there is a range of values that can provide some manual control to either
+prefer resolving polynomials ($\alpha<1$) or prefer adding new subsets ($\alpha > 1$).
+
+The use of predictive measures to algorithmically choose a path of polynomial exploration is an addition from 
+previous efforts to couple
 polynomial chaos expansions with high-density model reduction.  Previously, such as in \cite{Gerstner}, the
 algorithm evaluates all potential candidates then keeps the most impactful one.  While this is more guaranteed
 to find the most effective path, it also is much more computationally expensive.  Even if the adaptive
