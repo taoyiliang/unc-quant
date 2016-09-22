@@ -2,9 +2,9 @@
 
 \chapter{Future Work} % Main chapter title
 
-\label{Chapter9} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+\label{ch:future} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
-\lhead{Chapter 9. \emph{Future Work}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
+\lhead{Chapter 8. \emph{Future Work}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
 
 %----------------------------------------------------------------------------------------
 %	SECTION: INTRO
@@ -61,3 +61,8 @@ either x or y.
 Todo, basically we use $m+1$ as a quadrature rule; this allows the order of error in the quadrature integration to be the same as
 that of the polynomial truncation.  This is often quite inaccurate, though, so some system where a rule like $2m$ is used for
 low-order polynomials, then transition into $m+1$ after a couple orders, might be good.  Obviously a user could set this threshold.
+
+\section{Global Sparse Grid}
+Todo, basically we currently use a different sparse grid for each subset in the HDMR expansion, but smolyak
+sparse grids being what they are, would it make more sense to have a single global grid that integrates each
+term instead of localized grids?

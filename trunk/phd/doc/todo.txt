@@ -1,0 +1,7 @@
+
+
+
+ - replace int_Omega everywhere with intom, intomn, or intomx
+ - spell check everywhere
+ - check references for ?? and consistency
+ - normalize derivative dxdy to \ dx\ dy
