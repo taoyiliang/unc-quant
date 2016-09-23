@@ -218,7 +218,7 @@ given by
 \end{equation}
 In our case, we will use $a=7$ and $b=0.1$ as in \cite{ishigami2}. 
 The graphical representation of this function is given in Figure \ref{fig: ishigami}, with the three axes
-as the three inputs and the color map as the function values ranging from 0 to approximately 5.88.
+as the three inputs and the color map as the function values ranging approximately from -10.74 to 17.74.
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/ishigami}
@@ -288,7 +288,12 @@ in this instance, and more so as dimensionality increases.
 %----------------------------------------------------------------------------------------
 %	SECTION: Anisotropic
 %----------------------------------------------------------------------------------------
+\section{OECD Benchmark}
+TODO move from time-dep chapter to here?
+
 \section{Pin Cell}\label{mod:pincell}
+TODO move this to mammoth results chapter?
+
 This model is a coupled multiphysics engineering-scale model.  It simulates fuel behavior through the depletion of fissile material
 in a single two-dimensional slice of a fuel rod.  The problem domain contains the fuel, gap, clad, and
 moderator, and represents a symmetric quarter pin.  The depletion steps are carried out through a year-long
@@ -322,6 +327,8 @@ covariance matrix is obtained via cross section construction in \texttt{scale}\c
 Table \ref{tab:pcarank} gives the first several eigenvalues in the KL expansion.  Surrogate (or
 \emph{latent}) dimensions identified by the KL expansion will be used as input variables for demonstration of
 the various UQ methods.
+
+TODO update this for importanceRank
 
 \begin{table}[H]
   \centering
