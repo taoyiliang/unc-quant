@@ -5,3 +5,4 @@
  - spell check everywhere
  - check references for ?? and consistency
  - normalize derivative dxdy to \ dx\ dy
+ - cite papers I published while doing this work??
