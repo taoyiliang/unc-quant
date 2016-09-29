@@ -1,0 +1,476 @@
+% Chapter Template
+
+\chapter{Results: High-Density Model Reduction} % Main chapter title
+
+\label{ch:results hdmr} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+
+\lhead{Chapter 5. \emph{Results: High-Density Model Reduction}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
+
+%----------------------------------------------------------------------------------------
+%	SECTION: INTRO
+%----------------------------------------------------------------------------------------
+
+TODO change the analysis to only consider HDMR, and add more static Sobol analysis!
+\section{Introduction}
+In this chapter we present results obtained using stochastic collocation for generalized polynomial chaos
+expansions (SCgPC) and high-dimension model reduction (HDMR) uncertainty quantification methods.  In each case
+we also include Monte Carlo as a comparison benchmark.
+
+Our primary objective in expanding the usability of collocation-based methods is to reduce the number of
+computational model solves necessary to obtain reasonable second-order statistics for the model.  For each
+analytic model described in Chapter \ref{Chapter3}, we present value figures and convergence figures.  
+
+Value figures show the values of the mean or standard deviation obtained, along with the benchmark analytic
+value as a dotted line.  The Monte Carlo samples are taken at a few select points.  Error bars are provided
+for the Monte Carlo method and are estimated using the population variance,
+\begin{equation}
+  \epsilon_{95} = \frac{1.96\bar\sigma_N}{\sqrt{N}},
+\end{equation}
+\begin{equation}
+  \bar\sigma_N^2 = \frac{N}{N-1}\sigma^2_N = \frac{N}{N-1}\qty(\frac{1}{N}\sum_{i=1}^M u(Y_i)^2 - \bar
+  u(Y)^2_N),
+\end{equation}
+where $Y_i$ are a set of $M$ independent identically-distributed realizations taken from the input space.
+These errorbars estimate where the value of the statistic is with a probability near 0.95.  The estimate of
+this error improves as additional samples are taken.
+
+Convergence figures are
+log-log error graphs with the number of computational solves on the x-axis and error with respect to the analytical
+solution on the y-axis.  The distinct lines demonstrate series of results obtained for each UQ method.  
+The series we show here are analog traditional Monte Carlo (mc); static 
+stochastic collocation for generalized polynomial chaos expansion using the hyperbolic
+cross index set (hc), total degree index set (td), and (where possible) tensor product index set (tp); adaptive stochastic
+collocation for polynomial
+chaos method (adaptSC); and adaptive Sobol decomposition with polynomial chaos subsets (adaptSobol).
+Each
+series obtains additional values by increasing the refinement of the method.  For Monte Carlo, additional
+random samples are added.  For static SCgPC, higher-order polynomials are used in the representative expansion.  For
+adaptive methods, additional solves are allowed to adaptively include additional polynomials and/or dimension
+subsets.
+
+The measure of success for a method is less dependent on the absolute value of the error shown.  While this is
+useful, we are more concerned with how increasing refinement reduces error.  The
+rate of convergence as refinement increases determines the desirability of the method for that model.  We
+expect the rate of convergence to depend on two factors: the dimensionality of the uncertain space for the
+model, and the continuity of the response measured.  The value of the error, on the other hand, will additionally
+depend on how well a particular choice of polynomials matches the analytic polynomial representation of the model.
+We consider the convergence of both the mean and the standard deviation for each model.
+
+We additionally note that results from \raven{} computations were written to file using 10 digits of accuracy.
+As a result, any apparent convergence past this level of accuracy is coincidental or the result of
+machine-exact values, and we consider a relative difference of $10^{-10}$ to be converged.
+
+\section{Tensor Monomials}
+This model is described in section \ref{mod:first tensor poly}.  As this polynomial contains only combinations of
+first-order polynomials, we expect the Tensor Product index set construction method (TP) to be very efficient
+in absolute error magnitude.  
+As such, it will be difficult to see the convergence rate for the tensor product method.
+Because the model has infinite continuity, we expect all collocation-based
+methods to be quite efficient.  The values and errors of the mean and standard deviation are given in Figures
+\ref{fig:tensormono mean values 5} through \ref{fig:tensormono var errors 5} for 5 uncertain inputs, and the same
+for 10 dimensions is given in Figures \ref{fig:tensormono mean values 10} through \ref{fig:tensormono var
+errors 10}.  Note that TP exactly reproduces the original model with expansion order 1, so no convergence is
+observed past the initial sampling point.
+
+\subsection{3 Inputs}
+The strength of collocation methods is clear for this small-dimensionality problem of three uncertain inputs.
+The convergence on the
+mean and standard deviation is swift for all the methods.  The convergence of the mean is instant for all methods, since
+the linear nature of the problem means only the zeroth-order polynomial term is required to exactly reproduce the mean.
+More convergence behavior can be seen for the standard deviation.
+Because hyperbolic cross polynomials emphasize single-variable polynomials over cross terms, it is the slowest to reach
+effectively zero error.  Similarly, the total degree quickly obtains most of the polynomials in the exact expansion,
+but takes a few levels to include the term that has all the input variables in it.  Because first-order tensor product
+polynomials is exactly the model itself, it converges instantly.
+Both adaptive methods converge at nearly identical
+rates; this is not surprising, as for small dimension problems the adaptive search follows a very similar
+path.  The adaptive SCgPC method reaches convergence somewhat slower because it naturally tends to explore
+higher-order polynomials before extending to low-order polynomials with more cross terms.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_3_mean_vals}
+  \caption{Tensor Monomial, $N=3$, Mean Values}
+  \label{fig:tensormono mean values 3}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_3_var_vals}
+  \caption{Tensor Monomial, $N=3$, Std. Dev. Values}
+  \label{fig:tensormono var values 3}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_3_mean_errs}
+  \caption{Tensor Monomial, $N=3$, Mean Convergence}
+  \label{fig:tensormono mean errors 3}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_3_variance_errs}
+  \caption{Tensor Monomial, $N=3$, Std. Dev. Convergence}
+  \label{fig:tensormono var errors 3}
+\end{figure}
+
+
+
+
+\subsection{5 Inputs}
+While the convergence on the mean is still direct for the five-dimensional input problem, we begin to see
+degradation in the convergence of collocation-based methods.  
+As with the three variable case, the mean is trivial and obtained with the zeroth-order polynomial.  Exponential
+convergence can be seen for the adaptive Sobol, total degree, and hyperbolic cross methods, while the adaptive SCgPC
+is still exploring higher-order polynomials as more likely candidates for inclusion in the expansion and hasn't
+seen the same rapid convergence curve yet.
+Total Degree outperforms adaptive methods, as
+the search algorithms struggle to find the optimal tensors of low-order polynomials required.  Hyperbolic
+Cross is outperformed by Total Degree, as expected for a problem with this level of regularity.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_5_mean_vals}
+  \caption{Tensor Monomial, $N=5$, Mean Values}
+  \label{fig:tensormono mean values 5}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_5_var_vals}
+  \caption{Tensor Monomial, $N=5$, Std. Dev. Values}
+  \label{fig:tensormono var values 5}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_5_mean_errs}
+  \caption{Tensor Monomial, $N=5$, Mean Convergence}
+  \label{fig:tensormono mean errors 5}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_5_variance_errs}
+  \caption{Tensor Monomial, $N=5$, Std. Dev. Convergence}
+  \label{fig:tensormono var errors 5}
+\end{figure}
+
+\subsection{10 Inputs}
+As we increase to ten inputs, we see significant degradation of all the collocation methods in converging on
+the standard deviation.  While it appears there is exponential convergence, the curvature is quite large, and
+only somewhat better than linear convergence is observed for up to 1000 computational solves.  One reason the
+adaptive methods do not perform more admirably for this case is the equal-weight importance of all the input
+terms as well as the polynomial terms; the high-dimensional space takes considerable numbers of runs to
+explore thoroughly, and this model contains some of the most difficult polynomials to find adaptively: those including
+all of the inputs. 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_10_mean_vals}
+  \caption{Tensor Monomial, $N=10$, Mean Values}
+  \label{fig:tensormono mean values 10}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_10_var_vals}
+  \caption{Tensor Monomial, $N=10$, Std. Dev. Values}
+  \label{fig:tensormono var values 10}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_10_mean_errs}
+  \caption{Tensor Monomial, $N=10$, Mean Convergence}
+  \label{fig:tensormono mean errors 10}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_10_variance_errs}
+  \caption{Tensor Monomial, $N=10$, Std. Dev. Convergence}
+  \label{fig:tensormono var errors 10}
+\end{figure}
+
+
+\section{Sudret Polynomial}
+This model is described in section \ref{mod:sudret}.  The Sudret polynomial model is a near neighbor to the
+tensor monomials model; however, it includes only even-ordered polynomials, which provides more of a challenge
+to the adaptive methods.  Because the model is still a tensor product, the tensor product collocation method 
+converges most directly in all dimensionality cases.
+
+\subsection{3 Inputs}
+As with the tensor monomials, we see a good rate of convergence for many of the polynomial methods.  With
+this model, the mean is not trivially given by the zeroth-order polynomial, and so some convergence is seen
+in obtaining the expected value.  The total degree and adaptive sobol methods converge at a similar rate for
+the mean, while the hyperbolic cross demonstrates its poor convergence for highly regular systems with
+nonlinear cross-term effects.  Quickest to converge (aside from the tensor product case) is the adaptive
+SCgPC, because its search method allows it to discover the second-order polynomials quickly.
+
+Similar behavior is seen for the standard deviation, with the exception of the adaptive Sobol algorithm, which
+is not as effective as the adaptive SCgPC at finding the second-order polynomials for inclusion in the expansion.
+The tensor product still converges very rapidly, and total degree shows a good rate of convergence.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sudret_3_mean_vals}
+  \caption{Sudret Polynomial, $N=3$, Mean Values}
+  \label{fig:sudretpoly mean values 3}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sudret_3_var_vals}
+  \caption{Sudret Polynomial, $N=3$, Std. Dev. Values}
+  \label{fig:sudretpoly var values 3}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sudret_3_mean_errs}
+  \caption{Sudret Polynomial, $N=3$, Mean Convergence}
+  \label{fig:sudretpoly mean errors 3}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sudret_3_variance_errs}
+  \caption{Sudret Polynomial, $N=3$, Std. Dev. Convergence}
+  \label{fig:sudretpoly var errors 3}
+\end{figure}
+
+\subsection{5 Inputs}
+In the five-input case for the Sudret polynomials, we see slower convergence for all methods, as expected
+for collocation-based methods.  For the mean, the adaptive sobol shows the most rapid rate of convergence,
+but generally each method is showing some level of exponential convergence.  For the standard deviation,
+however, the radius of curvature for the convergence is quite large, and the adaptive Sobol method seems
+to be searching fairly ineffectively for the most crucial polynomials in the expansion.  This is likely
+because all the first-order effects are missing in the expansion, leading the algorithm to be blinded as
+to the most effective route forward.  We discuss this limitation and approches to correcting it in 
+Chapter \ref{Chapter9}.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sudret_5_mean_vals}
+  \caption{Sudret Polynomial, $N=5$, Mean Values}
+  \label{fig:sudretpoly mean values 5}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sudret_5_var_vals}
+  \caption{Sudret Polynomial, $N=5$, Std. Dev. Values}
+  \label{fig:sudretpoly var values 5}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sudret_5_mean_errs}
+  \caption{Sudret Polynomial, $N=5$, Mean Convergence}
+  \label{fig:sudretpoly mean errors 5}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sudret_5_variance_errs}
+  \caption{Sudret Polynomial, $N=5$, Std. Dev. Convergence}
+  \label{fig:sudretpoly var errors 5}
+\end{figure}
+
+
+\section{Attenuation}
+This model is described in section \ref{mod:attenuation}.  Similar to the tensor monomial model and Sudret
+polynomial model, the attenuation model can be expanded as the infinite sum of ever-increasing polynomials,
+making it tensor product in shape.  However, unlike the previous two models, the magnitude of the contribution
+from the higher-order polynomials decreases swiftly, making lower-order polynomials more characteristic of the
+model in general.  Because this model is still a tensor model and the response is infinitely continuous,
+we expect to see a similar trend in the most effective methods for polynomial expansion.
+
+\subsection{2 Inputs}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_2_mean_vals}
+  \caption{Attenuation, $N=2$, Mean Values}
+  \label{fig:attenuate mean values 2}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_2_var_vals}
+  \caption{Attenuation, $N=2$, Std. Dev. Values}
+  \label{fig:attenuate var values 2}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_2_mean_errs}
+  \caption{Attenuation, $N=2$, Mean Convergence}
+  \label{fig:attenuate mean errors 2}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_2_variance_errs}
+  \caption{Attenuation, $N=2$, Std. Dev. Convergence}
+  \label{fig:attenuate var errors 2}
+\end{figure}
+
+
+\subsection{4 Inputs}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_4_mean_vals}
+  \caption{Attenuation, $N=4$, Mean Values}
+  \label{fig:attenuate mean values 4}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_4_var_vals}
+  \caption{Attenuation, $N=4$, Std. Dev. Values}
+  \label{fig:attenuate var values 4}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_4_mean_errs}
+  \caption{Attenuation, $N=4$, Mean Convergence}
+  \label{fig:attenuate mean errors 4}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_4_variance_errs}
+  \caption{Attenuation, $N=4$, Std. Dev. Convergence}
+  \label{fig:attenuate var errors 4}
+\end{figure}
+
+\subsection{6 Inputs}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_6_mean_vals}
+  \caption{Attenuation, $N=6$, Mean Values}
+  \label{fig:attenuate mean values 6}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_6_var_vals}
+  \caption{Attenuation, $N=6$, Std. Dev. Values}
+  \label{fig:attenuate var values 6}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_6_mean_errs}
+  \caption{Attenuation, $N=6$, Mean Convergence}
+  \label{fig:attenuate mean errors 6}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_6_variance_errs}
+  \caption{Attenuation, $N=6$, Std. Dev. Convergence}
+  \label{fig:attenuate var errors 6}
+\end{figure}
+
+
+\section{Gauss Peak}
+This model is described in section \ref{mod:gausspeak}.
+\subsection{3 Inputs}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sfu_gauss_peak_3_mean_vals}
+  \caption{Gauss Peak, $N=3$, Mean Values}
+  \label{fig:gauss peak mean values 3}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sfu_gauss_peak_3_var_vals}
+  \caption{Gauss Peak, $N=3$, Std. Dev. Values}
+  \label{fig:gauss peak var values 3}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sfu_gauss_peak_3_mean_errs}
+  \caption{Gauss Peak, $N=3$, Mean Convergence}
+  \label{fig:gauss peak mean errors 3}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sfu_gauss_peak_3_variance_errs}
+  \caption{Gauss Peak, $N=3$, Std. Dev. Convergence}
+  \label{fig:gauss peak var errors 3}
+\end{figure}
+
+\subsection{5 Inputs}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sfu_gauss_peak_5_mean_vals}
+  \caption{Gauss Peak, $N=5$, Mean Values}
+  \label{fig:gauss peak mean values 5}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sfu_gauss_peak_5_var_vals}
+  \caption{Gauss Peak, $N=5$, Std. Dev. Values}
+  \label{fig:gauss peak var values 5}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sfu_gauss_peak_5_mean_errs}
+  \caption{Gauss Peak, $N=5$, Mean Convergence}
+  \label{fig:gauss peak mean errors 5}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sfu_gauss_peak_5_variance_errs}
+  \caption{Gauss Peak, $N=5$, Std. Dev. Convergence}
+  \label{fig:gauss peak var errors 5}
+\end{figure}
+
+
+
+
+\section{Ishigami}
+This model is described in section \ref{mod:ishigami}.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/ishigami_3_mean_vals}
+  \caption{Ishigami, $N=3$, Mean Values}
+  \label{fig:ishigami mean values 3}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/ishigami_3_var_vals}
+  \caption{Ishigami, $N=3$, Std. Dev. Values}
+  \label{fig:ishigami var values 3}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/ishigami_3_mean_errs}
+  \caption{Ishigami, $N=3$, Mean Convergence}
+  \label{fig:ishigami mean errors 3}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/ishigami_3_variance_errs}
+  \caption{Ishigami, $N=3$, Std. Dev. Convergence}
+  \label{fig:ishigami var errors 3}
+\end{figure}
+
+
+\section{Sobol G-Function}
+This model is described in section \ref{mod:gfunc}.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sobolG_3_mean_vals}
+  \caption{Sobol G-Function, $N=3$, Mean Values}
+  \label{fig:sobolG mean values 3}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sobolG_3_var_vals}
+  \caption{Sobol G-Function, $N=3$, Std. Dev. Values}
+  \label{fig:sobolG var values 3}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sobolG_3_mean_errs}
+  \caption{Sobol G-Function, $N=3$, Mean Convergence}
+  \label{fig:sobolG mean errors 3}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sobolG_3_variance_errs}
+  \caption{Sobol G-Function, $N=3$, Std. Dev. Convergence}
+  \label{fig:sobolG var errors 3}
+\end{figure}
+
+\section{Conclusions}
+todo
