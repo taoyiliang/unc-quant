@@ -9,3 +9,14 @@
  - make sure I say "std dev" and not variance when it applies
  - make sure I mention Monte Carlo bands are 1 std dev somewhere
  - RAVEN flowcharts and stuff in introduction
+
+
+
+ - REDO cases:
+  - Collect nohdmr plots
+  - Add sobol1, 2, and 3 series
+    - merge run.py, comment out cases, then run the sobol ones (done for all cases, need running)
+
+Done:
+  Tensor Mono 3, 5, 10
+  Sudret 3, 5
