@@ -3,6 +3,7 @@
 
  - replace int_Omega everywhere with intom, intomn, or intomx
  - spell check everywhere
+ - go through methods and make sure it's updated for split scgpc and hdmr
  - check references for ?? and consistency with author names
  - normalize derivative dxdy to \ dx\ dy
  - cite papers I published while doing this work??

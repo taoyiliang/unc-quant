@@ -72,12 +72,12 @@ true simulation behavior.
 \section{Results}
 Figures \ref{fig:mammoth mean} and \ref{fig:mammoth var} show the values obtained for the mean and variance of
 this model for a selection of uncertainty quantification methods, including
-traditional Monte Carlo (\texttt{mc}),
+traditional Monte Carlo,
 static stochastic collocation for generalized polynomial chaos expansion using the total degree polynomial
-construction indices (\texttt{td}), 
-first- and second-order static Sobol decomposition (or HDMR) (\texttt{sobol}),
-and adaptive Sobol decomposition using both adaptive cut-HDMR and adaptive generalized polynomial chaos
-(\texttt{adaptSobol}).  For additional clarity, we provide graphs centered more especially on the non-Monte
+construction indices, 
+first- and second-order static high-density model reduction (HDMR)
+and adaptive HDMR using both adaptive cut-HDMR and adaptive generalized polynomial chaos.
+ For additional clarity, we provide graphs centered more especially on the non-Monte
 Carlo data in Figures \ref{fig:mammoth mean zoom} and \ref{fig:mammoth var zoom}.  Because the number of Monte
 Carlo runs necessary to obtain a well-resolved benchmark is prohibitive, we do not present any error
 convergence plots for this model.
@@ -86,7 +86,7 @@ Table \ref{tab:mammoth
 runs} summarizes the number of calculations required for each collocation method.  Entries marked with a
 $\dagger$ indicate results that were not obtained because of \mammoth{} simulations that failed to converge.
 Entries marked with a $*$ indicate results that were not attempted because of the number of samples required.
-We note that in Table \ref{tab:mammoth} for first-order static Sobol method successive runs have the same
+We note that in Table \ref{tab:mammoth} for first-order static HDMR method successive runs have the same
 number of evaluations required despite constructing higher-order polynomials.  This is because we enforced a
 floor function for quadrature, requiring a minimum number of quadrature points for a polynomial despite its
 low order.  This
@@ -99,16 +99,16 @@ poor integration.
     Total Degree & 1 & 47 \\
     Total Degree & 2 & 1105 \\
     Total Degree$^*$ & 3 & 17389 \\ \hline
-    Sobol (1) & 1 & 47 \\
-    Sobol (1) & 2 & 47 \\
-    Sobol (1) & 3 & 93 \\
-    Sobol (1) & 4 & 93 \\
-    Sobol (1) & 5 & 139\\ \hline
-    Sobol (2) & 1 & 47 \\
-    Sobol (2) & 2 & 1105 \\
-    Sobol (2)$^\dagger$ & 3 & 3221 \\
-    Sobol (2)$^\dagger$ & 4 & 7361 \\
-    Sobol (2)$^*$ & 5 & 13571 \\
+    HDMR (1) & 1 & 47 \\
+    HDMR (1) & 2 & 47 \\
+    HDMR (1) & 3 & 93 \\
+    HDMR (1) & 4 & 93 \\
+    HDMR (1) & 5 & 139\\ \hline
+    HDMR (2) & 1 & 47 \\
+    HDMR (2) & 2 & 1105 \\
+    HDMR (2)$^\dagger$ & 3 & 3221 \\
+    HDMR (2)$^\dagger$ & 4 & 7361 \\
+    HDMR (2)$^*$ & 5 & 13571 \\
   \end{tabular}
   \caption{Evaluations Required for 23 Input Pin Cell Model}
   \label{tab:mammoth}
@@ -119,7 +119,7 @@ estimated Monte Carlo value single-standard deviation band with only first-order
 high degree of linearity in the response.  In both the mean and the standard deviation, there appears to be
 some convergence towards increasing the magnitude from the first-order expansions, but without a near-analytic
 benchmark it is difficult to be certain if this is convergence to the true solution.  TODO more comments on
-this?  Comment on how Sobol2 matches TD, and how that suggests linearity in the second-order interactions.
+this?  Comment on how HDMR2 matches TD, and how that suggests linearity in the second-order interactions.
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.7\linewidth]{mammoth/MAMMOTH_pincell_mean_vals}

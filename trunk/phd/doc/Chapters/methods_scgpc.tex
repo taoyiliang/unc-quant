@@ -11,39 +11,46 @@
 %----------------------------------------------------------------------------------------
 
 \section{Introduction}
-In this chapter we describe various common uncertainty quantification methods and their applications. We begin
+In this chapter we describe several common and novel uncertainty quantification methods and their applications.
+We begin
 by discussing the principles of input spaces and responses, and define terminology used in this work.  Next we
 discuss uncertainty quantification at a high level, and describe several common uncertainty quantification
-tools.  Finally, we explore generalized polynomial chaos expansion and stochastic collocation, an advanced
+tools.  Finally, we explore Stochastic Collocation for generalized Polynomial Chaos (SCgPC), an advanced
 uncertainty quantification technique.
 
 % inputs and outputs
 Many simulation models are algorithms constructed to solve partial differential equations, often in two or
-three dimensions and possibly time.  The inputs to these models include boundary conditions, material
-properties, tuning parameters, and so forth.  The outputs are quantities of interest, either data fields or
-scalar values.  The outputs are used to inform decision-making processes.  For example, a neutronics
+three spatial dimensions and possibly time.  The inputs to these models include boundary conditions, material
+properties, tuning parameters, and so forth.  The outputs are responses, either data fields or
+scalar values.  The responses are used to inform decision-making processes.  For example, a neutronics
 simulation in nuclear engineering takes materials, geometries, and boundary conditions as inputs, and yields
 neutron flux and the neutron multiplication factor $k$ as responses.  Similarly, a fuels performance code
 takes materials, geometries, and power shapes as inputs and yields stresses, strains, and temperature profiles
-as outputs.
+as outputs.  Figure \ref{fig:ober} is an example of this workflow \cite{oberkampf}.
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{v_and_v_uq}
+  \caption{Uncertainty Quantification \cite{oberkampf}}
+  \label{fig:ober}
+\end{figure}
 
-In general, we allow $u(Y)$ to be
-the model $u$ as a function of the input space $Y = (y_1,\ldots,y_n,\ldots,y_N)$ where $y_n$ is a single input
+In general, we define $u(Y)$ to be
+a response as a function of the input space $Y = (y_1,\ldots,y_n,\ldots,y_N)$ where $y_n$ is a single
+uncertain input
 parameter to the model, $n$ is an index spanning the number of inputs, and $N$ is the total number of inputs.
 Uncertain input parameters can include any of the inputs to the simulation.
-We signify the output response quantity as $Q$, and assume it to be a scalar integrated quantity.  In the event
+We assume each response to be a scalar, integrated quantity.  In the event
 the output is a vector or field quantity, each element can be considered as a distinct scalar response.
-Our generic model takes the form
-\begin{equation}
-  u(Y) = Q.
-\end{equation}
+\emph{Models} are mathematical equations used to obtain the response $u(Y)$, and \emph{solvers} or
+\emph{simulations} are numerical algorithms used to solve models.
+
 Using our examples above, for neutronics calculations $Y$ might include nuclear cross sections, geometry
 parameters, and sources, while $u(Y)$ could be $k$-effective or the neutron flux at a particular location of
 interest.  For fuels performance calculations, $Y$ might entail thermal conductivity of various parameters,
 geometric construction parameters, moderator inlet temperatures, and so forth.  $u(Y)$ could be peak clad
-temperature, maximum fuel centerline temperature, clad elongation, percent fission gas released, etc.
+temperature, maximum fuel centerline temperature, clad elongation, percent fission gas released, and so on.
 
-% uncertain inputs
+\subsection{Uncertain Inputs}
 Essential to using simulation models is understanding the possibility that significant uncertainties existing in
 the inputs.  These could be aleatoric uncertainties due to intrinsic randomness in the inputs, or epistemic
 uncertainties due to model imperfections or lack of knowledge.  
@@ -53,8 +60,10 @@ in which case the random seed acts as an uncertain input.  Examples of epistemic
 or boundary conditions that can only be controlled to some finite level, such as manufacturing tolerances,
 temperature and pressure, and so forth.
 Each of these aleatoric and epistemic uncertainties has some
-distribution defining the likelihood of an input to have a particular value.  These distributions might be
-assumed or constructed from experiment; for our work, we will assume given distributions are accurate.  The
+distribution defining the likelihood of an input to have a particular value.  Sometimes these distributions
+are known; often, they can only be approximated.  These distributions might be
+assumed or constructed from experiment; for our work, we will assume distributions are given, and that the given 
+distributions are accurate.  The
 input likelihood distribution is the probability distribution function (PDF) $\rho_n(y_n)$.  
 An integral over any portion of the input space of the PDF provides the probability that the input's value
 is within that portion.
@@ -64,13 +73,16 @@ We require
 \end{equation}
 where $a$ and $b$ are the minimum and maximum values $y_n$ can take (possibly infinite).  In other words, the
 probability of finding the input between $a$ and $b$ is 100\%; similarly, we can say the value of the input
-almost surely lies between $a$ and $b$.
+lies between $a$ and $b$ almost surely.
 
+\subsection{Multidimensional Input Spaces}
 % multidimensional
 When there are more than one uncertain input, the combination of distributions for these inputs span an
-uncertainty space $\Omega$. The dimensionality of $\Omega$ is $N$,
-the number of uncertain input variables.  The probability of any point in the input space occurring is given
-by an integral of the join-probability distribution $\rho(Y)$, still enforcing
+uncertainty space $\Omega$. $\Omega$ is a part of the probability space $(\Omega,\sigma,\rho)$, where $\Omega$
+is the set of all possible outcomes, $\sigma$ is the set of events $\omega$, and $\rho$ is the probability function for
+the space.  The dimensionality of $\Omega$ is $N$,
+the number of uncertain input variables.  The probability of any event in the input space occurring is given
+by an integral of the joint-probability distribution $\rho(Y)$, still enforcing
 \begin{equation} \label{eq:joint pdf}
   \int_{a_1}^{b_1}\cdots\int_{a_N}^{b_N} \rho(Y) dy_1\cdots dy_N = 1.
 \end{equation}
@@ -82,48 +94,31 @@ so that Eq. \ref{eq:joint pdf} can be written
 \begin{equation}
   \int_\Omega \rho(Y) dY = 1.
 \end{equation}
-The function $u(Y)$ maps realizations $\omega$ from the input space $\Omega$ to a real-valued response $Q$.
+The function $u(Y)$ maps realizations ($\omega$) from the input space $\Omega$ to a real-valued response.
 That is, for each input variable $y_n$, a realization is taken by selecting a single value from the
 distribution of $y_n$, which gives a single input value $y_n(\omega)$.  Taking a single realization of each of
-the distributed input parameters yields a full input realization $Y(\omega)$, which can be used as inputs for
-$u(Y)$ to obtain a realization of the response $u(Y(\omega))=Q(\omega)$.  To simplify notation, in general the
-dependency of a realization on $\omega$ will be omitted and implicit in equations.
+the distributed input parameters yields a full input realization $Y(\omega)=(y_1(\omega),\cdots,y_N(\omega))$,
+which can be used as inputs for
+$u(Y)$ to obtain a realization of the response $u(Y(\omega))$.  To simplify notation, in general the
+dependency of a realization on $\omega$ will be omitted and referred to as \emph{sampling} or \emph{taking a
+realization}.
 
 % correlation
-\subsection{Correlation and the Karhunen-Loevre expansion}
+\subsection{Correlation and the Karhunen-Loevre expansion}\label{sec:kl}
 We note the possibility that multiple inputs may be correlated with each other.  When inputs are not
 independent, the joint probability distribution is not the product of each individual probability distribution
 distribution.  When this is the case, each distribution cannot be sampled independently, and this
-creates complications for many of the sampling strategies presented here.  For example, in simulating a
-projectile traveling under the influence of gravity, the initial release velocity magnitude $|v|$ along with the horizontal
-$v_x$ and vertical $v_y$ components of that velocity might all be inputs to a projectile model.  However, because there is
-a relationship between the horizontal and vertical velocity components and the magnitude of the total
-velocity, one cannot perturb the horizontal, vertical, and total velocity independently; they are correlated
-through the equations
-\begin{equation}
-  v_x = |v|\cos{\theta},
-\end{equation}
-\begin{equation}
-  v_y = |v|\sin{\theta},
-\end{equation}
-where $\theta$ is the angle between horizontal and the initial trajectory of the projectile.
+creates complications for many of the sampling strategies presented in this work.  
 
 Using input space mapping, however, a surrogate orthogonal input space can be
-constructed.  This surrogate space is functionally identical to the original for our purposes.  For example, a
-transformation matrix can be constructed that represents coupled $(v_x, v_y, v_z)$ with independent variables
-$(\ell_1,\ell_2,\ell_3)$.  For this trivial case, the transformation matrix is TODO.
-\begin{equation}
-  todo
-\end{equation}
-This transformation allows us to sample realizations using the independent variables $(\ell_1,\ell_2,\ell_3)$
-and then provide the model $u(v_x,v_y,|v|)$ with the coupled parameter values it expects.  While the example
-here is quite simple, there are mathematical approaches to decoupling input parameters through surrogate
-spaces.  In particular, using principle component analysis (sometimes known as Karhunen-Loeve expansion
-\cite{karhunen}), the covariance matrix for the distributed input parameters can be used to construct a multidimensional
-standard Gaussian normal distribution, whose components are all orthogonal. TODO more here!
+constructed.  This surrogate space is functionally identical to the original for our purposes.
+There are mathematical approaches to decoupling input parameters through surrogate
+spaces.  In particular, using principle component analysis (or Karhunen-Loeve expansion
+\cite{karhunen} for discrete inputs), the covariance matrix for the distributed input parameters
+can be used to construct a multidimensional
+standard Gaussian normal distribution, whose components are all orthogonal.
 As a result, we only consider independent variables in this work, as dependent variables can
 be decoupled through this surrogate mapping process.
-
 
 
 \section{Uncertainty Quantification}
@@ -239,6 +234,24 @@ variance than the fuel content and geometry of the fuel pellets, the most naieve
 variance are to decrease margins in fuel manufacturing instead of reflector construction.  While this example
 seems readily evident, often engineering intuition can be surprised by uncertainty quantification and
 sensitiviy analysis.
+
+\subsection{Analytic Uncertainty Quantification}
+For some models, there exists analytic techniques for propagation of uncertainty.  One of these is the
+so-called \emph{sandwich formula}, often referred to as \emph{standard propagation of error} \cite{sandwich}.
+Assuming independent input parameters (see section \ref{sec:KL}), the standard deviation $\sigma_u$ of $u(Y)$
+is given as
+\begin{equation}
+  \sigma^2_u = \sum_{n=1}^N \qty(\pdv{u(Y)}{y_n})^2\sigma_{y_n}^2,
+\end{equation}
+where $\sigma_{y_n}$ is the standard deviation of uncertain input $y_n$.  This approximation is limited to the
+linear characteristics of the gradient of $u(Y)$, and so is useful especially when the standard deviation of
+the inputs are small compared to the partial derivatives \cite{sandwich2}.
+
+For models with gradients that are simple to calculate accurately (and sufficiently small input
+uncertainties), this formula is very effective at propagating error.  However, computing or estimating such
+gradients accurately for complex models is prohibitive, and leads to numerical approaches to uncertainty
+quantification, as we discuss in this thesis.
+
 
 \subsection{Uncertainty Quantification Techniques}
 There are several common tools used for uncertainty quantification when analytic analysis is not possible.
@@ -543,8 +556,8 @@ sets are Tables \ref{tab:aniTD} (TD) and \ref{tab:aniHC} (HC).
 There are many methods by which anisotropy weights can be assigned.  Often, if a problem is well-known to an 
 analyst, it may be enough to use heuristics to assign importance arbitrarily.  Otherwise, a smaller
 uncertainty quantification solve can be used to roughly determine sensitivity coefficients (such as Pearson
-coefficients), and the inverse of those can then be applied as anisotropy weights.  Sobol coefficients
-obtained from first- or second-order HDMR, a proposed development for this work, could also serve as a basis for these weights.
+coefficients), and the inverse of those can then be applied as anisotropy weights.  Sobol sensitivity coefficients
+ could also serve as a basis for these weights.
 A good choice of anisotropy weight can greatly speed up convergence; however, a
 poor choice can slow convergence considerably, as computational resources are used to resolve low-importance
 dimensions.

@@ -141,27 +141,28 @@
 %	Your institution may give you a different text to place here
 %----------------------------------------------------------------------------------------
 
-%\Declaration{
+\Declaration{
 %
-%\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
+\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
 %
-%I, \authornames, declare that this thesis titled, '\ttitle' and the work presented in it are my own. I confirm that:
-%
-%\begin{itemize} 
-%\item[\tiny{$\blacksquare$}] This work was done wholly or mainly while in candidature for a research degree at this University.
-%\item[\tiny{$\blacksquare$}] Where any part of this thesis has previously been submitted for a degree or any other qualification at this University or any other institution, this has been clearly stated.
-%\item[\tiny{$\blacksquare$}] Where I have consulted the published work of others, this is always clearly attributed.
-%\item[\tiny{$\blacksquare$}] Where I have quoted from the work of others, the source is always given. With the exception of such  quotations, this thesis is entirely my own work.
-%\item[\tiny{$\blacksquare$}] I have acknowledged all main sources of help.
-%\item[\tiny{$\blacksquare$}] Where the thesis is based on work done by myself jointly with others, I have made clear exactly what was done by others and what I have contributed myself.\\
-%\end{itemize}
-% 
-%Signed:\\
-%\rule[1em]{25em}{0.5pt} % This prints a line for the signature
-% 
-%Date:\\
-%\rule[1em]{25em}{0.5pt} % This prints a line to write the date
-%}
+TODO find the UNM version of this.
+I, \authornames, declare that this thesis titled, '\ttitle' and the work presented in it are my own. I confirm that:
+
+\begin{itemize} 
+\item[\tiny{$\blacksquare$}] This work was done wholly or mainly while in candidature for a research degree at this University.
+\item[\tiny{$\blacksquare$}] Where any part of this thesis has previously been submitted for a degree or any other qualification at this University or any other institution, this has been clearly stated.
+\item[\tiny{$\blacksquare$}] Where I have consulted the published work of others, this is always clearly attributed.
+\item[\tiny{$\blacksquare$}] Where I have quoted from the work of others, the source is always given. With the exception of such  quotations, this thesis is entirely my own work.
+\item[\tiny{$\blacksquare$}] I have acknowledged all main sources of help.
+\item[\tiny{$\blacksquare$}] Where the thesis is based on work done by myself jointly with others, I have made clear exactly what was done by others and what I have contributed myself.\\
+\end{itemize}
+ 
+Signed:\\
+\rule[1em]{25em}{0.5pt} % This prints a line for the signature
+ 
+Date:\\
+\rule[1em]{25em}{0.5pt} % This prints a line to write the date
+}
 
 \clearpage % Start a new page
 
@@ -201,26 +202,29 @@ The difficulty of quantifying input uncertainty impact in such systems has grown
 complexity of the numerical models.  Traditionally, uncertainty quantification has been approached using
 random sampling methods like Monte Carlo.
 For some models, the input parametric space and corresponding
-quantity-of-interest output space is sufficiently explored with a few low-cost computational calculations.
+quantity-of-interest output space is sufficiently explored with a few low-cost calculations.
 For other models, it is computationally costly to obtain a
 good understanding of the output space.  
 
-To combat the costliness of random sampling, 
+To combat the expense of random sampling, 
 this research explores the possibilities of advanced methods in
-stochastic collocation for generalized polynomial chaos (SCgPC) as an alternative to traditional uncertainty
-quantification techniques such as Monte Carlo (MC) and Latin Hypercube sampling (LHS) methods.  In this
-proposal we explore the behavior of traditional SCgPC construction strategies, as well as
-truncated polynomial spaces using total degree (TD) and hyperbolic cross (HC) construction strategies.  We
-also consider applying anisotropy to the polynomial space, and analyze methods whereby the level of
+Stochastic Collocation for generalized Polynomial Chaos (SCgPC) as an alternative to traditional uncertainty
+quantification techniques such as Monte Carlo (MC) and Latin Hypercube Sampling (LHS) methods.  In this
+thesis we explore the behavior of traditional SCgPC construction strategies as well as
+truncated polynomial spaces using Total Degree (TD) and Hyperbolic Cross (HC) construction strategies.  While
+an infinite number of polynomials can exactly represent any mathematical model, of necessity we limit (or
+truncate) the number of polynomials for practical application.  We
+also consider applying anisotropy (unequal treatment of different dimensions) to the polynomial space, 
+and analyze methods whereby the optimal level of
 anisotropy can be approximated.  We review and develop potential adaptive polynomial construction
-strategies.  Finally, we add high-dimension model reduction (HDMR) expansions, using SCgPC representations for
-the constituent terms, and consider adaptive methods to construct them.
-We analyze these methods on a series of models of increasing complexity.  We primarily use analytic methods of
-various means, and finally demonstrate on an engineering-scale neutron transport problem.
+strategies.  Finally, we add High-Dimensional Model Reduction (HDMR) expansions, using SCgPC representations for
+the subspace terms, and consider adaptive methods to construct them.
+We analyze these methods on a series of models of increasing complexity.  We use a series of analytic methods of
+various levels of complexity, then demonstrate performance on two engineering-scale problems: a single-physics
+nuclear reactor neutronics problem, and a multiphysics fuel cell problem coupling fuels performance and
+neutronics.  Lastly, we demonstrate sensitivity analysis for a time-dependent fuels performance problem.
 For this analysis, we demonstrate the application of the
-algorithms discussed above in \raven, a production-level uncertainty quantification framework.
-
-Finally, we propose additional work in enhancing the current implementations of SCgPC and HDMR.
+algorithms in \raven, a production-level uncertainty quantification framework.
 }
 
 \clearpage % Start a new page
@@ -229,13 +233,13 @@ Finally, we propose additional work in enhancing the current implementations of 
 %	ACKNOWLEDGEMENTS
 %----------------------------------------------------------------------------------------
 
-%\setstretch{1.3} % Reset the line-spacing to 1.3 for body text (if it has changed)
+\setstretch{1.3} % Reset the line-spacing to 1.3 for body text (if it has changed)
 %
-%\acknowledgements{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
+\acknowledgements{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
 %
-%The acknowledgements and the people to thank go here, don't forget to include your project advisor\ldots
-%}
-%\clearpage % Start a new page
+TODO acknowledge
+}
+\clearpage % Start a new page
 
 %----------------------------------------------------------------------------------------
 %	LIST OF CONTENTS/FIGURES/TABLES PAGES
@@ -256,16 +260,22 @@ Finally, we propose additional work in enhancing the current implementations of 
 %	ABBREVIATIONS
 %----------------------------------------------------------------------------------------
 
-%\clearpage % Start a new page
+\clearpage % Start a new page
 %
-%\setstretch{1.5} % Set the line spacing to 1.5, this makes the following tables easier to read
+\setstretch{1.5} % Set the line spacing to 1.5, this makes the following tables easier to read
 %
-%\lhead{\emph{Abbreviations}} % Set the left side page header to "Abbreviations"
-%\listofsymbols{ll} % Include a list of Abbreviations (a table of two columns)
-%{
-%\textbf{LAH} & \textbf{L}ist \textbf{A}bbreviations \textbf{H}ere \\
-%%\textbf{Acronym} & \textbf{W}hat (it) \textbf{S}tands \textbf{F}or \\
-%}
+\lhead{\emph{Abbreviations}} % Set the left side page header to "Abbreviations"
+\listofsymbols{ll} % Include a list of Abbreviations (a table of two columns)
+{
+  ANOVA & ANalysis Of VAriance \\
+  HDMR & High-Dimensional Model Representation \\
+  KL & Karhunen-Loevre Expansion \\
+  LHS & Latin Hypercube Sampling \\
+  MC & Monte Carlo (sampling strategy) \\
+  PDF & Probability Distribution Function \\
+  SCgPC & Stochastic Collocation for generalized Polynomial Chaos expansions \\
+  UQ & Uncertainty Quantification
+}
 %
 %%----------------------------------------------------------------------------------------
 %%	PHYSICAL CONSTANTS/OTHER DEFINITIONS
@@ -285,33 +295,47 @@ Finally, we propose additional work in enhancing the current implementations of 
 %%	SYMBOLS
 %%----------------------------------------------------------------------------------------
 %
-%\clearpage % Start a new page
-%
-%\lhead{\emph{Symbols}} % Set the left side page header to "Symbols"
-%
-%\listofnomenclature{lll} % Include a list of Symbols (a three column table)
-%{
-%$a$ & distance & m \\
-%$P$ & power & W (Js$^{-1}$) \\
-%% Symbol & Name & Unit \\
-%
-%& & \\ % Gap to separate the Roman symbols from the Greek
-%
-%$\omega$ & angular frequency & rads$^{-1}$ \\
-%% Symbol & Name & Unit \\
-%}
+\clearpage % Start a new page
+
+\lhead{\emph{Symbols}} % Set the left side page header to "Symbols"
+
+\listofnomenclature{lll} % Include a list of Symbols (a three column table)
+{
+ Symbol & Name & Space\\
+ $N$ & Dimensionality of input space & $\mathbb{N}^1$ \\
+ $Y$ & Multidimensional uncertain input vector & $\mathbb{R}^N$ \\
+ $y_n$ & Single uncertain input & $\mathbb{R}^1$ \\
+ $\Omega$ & Multidimensional uncertainty input space & $\mathcal{R}^{N}$ \\
+ $\Omega_{y_n}$ & Single variable uncertainty input space & $\mathcal{R}^{1}$ \\
+ $u(Y)$ & Response functional & $\mathbb{R}^1$ \\
+ $k$ & Multidimensional index for polynomials & $\mathbb{N}^N$ \\
+ $k_n$ & Single index for polynomials & $\mathbb{N}^1$ \\
+ $L$ & Limiting order for SCgPC expansion & $\mathbb{N}^1$ \\
+ $|\Lambda|$ & Number of polynomials in SCgPC expansion & $\mathbb{N}^1$ \\
+ $\Lambda$ & Collection of $k$ corresponding to polynomial orders & $\mathbb{N}^{|\Lambda|\cross N}$ \\
+ $\expv{u(Y)}$ & Expectation value of $u(Y)$ & $\mathbb{R}^1$\\
+ $\mathcal{S_n}$ & Sobol sensitivity coefficient for input $n$ & $\mathbb{R}^1$\\
+ $\eta_k$ & Impact of polynomial $k$ on response  & $\mathbb{R}^1$\\ 
+ $\xi$ & Impact of HDMR subset on response  & $\mathbb{R}^1$\\ 
+ $\phi_{k_n}(y_n)$ & Orthonormal polynomial of order $k_n$ &  \\
+ $\Phi_{k}(Y)$ & Multidimensional orthonormal polynomial of orders $k$ &  \\
+ $S[u(Y)]$ & Smolyak sparse grid numerical integral of $u(Y)$ & \\
+ $G(Y)$ & SCgPC expansion of $u(Y)$ & \\
+ $H(Y)$ & ANOVA HDMR expansion of $u(Y)$ & \\
+ $T(Y)$ & Cut-HDMR expansion of $u(Y)$ & \\
+}
 %
 %%----------------------------------------------------------------------------------------
 %%	DEDICATION
 %%----------------------------------------------------------------------------------------
 %
-%\setstretch{1.3} % Return the line spacing back to 1.3
+\setstretch{1.3} % Return the line spacing back to 1.3
 %
-%\pagestyle{empty} % Page style needs to be empty for this page
+\pagestyle{empty} % Page style needs to be empty for this page
 %
-%\dedicatory{For/Dedicated to/To my\ldots} % Dedication text
+\dedicatory{TODO Dedication} % Dedication text
 %
-%\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
+\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
 
 %----------------------------------------------------------------------------------------
 %	THESIS CONTENT - CHAPTERS

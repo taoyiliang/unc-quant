@@ -10,7 +10,7 @@
 %	SECTION: INTRO
 %----------------------------------------------------------------------------------------
 
-TODO change the analysis to only consider HDMR, and add more static Sobol analysis!
+TODO change the analysis to only consider HDMR, and add more static HDMR analysis!
 \section{Introduction}
 In this chapter we present results obtained using stochastic collocation for generalized polynomial chaos
 expansions (SCgPC) and high-dimension model reduction (HDMR) uncertainty quantification methods.  In each case
@@ -34,14 +34,17 @@ where $Y_i$ are a set of $M$ independent identically-distributed realizations ta
 These errorbars estimate where the value of the statistic is with a probability near 0.95.  The estimate of
 this error improves as additional samples are taken.
 
+
 Convergence figures are
 log-log error graphs with the number of computational solves on the x-axis and error with respect to the analytical
 solution on the y-axis.  The distinct lines demonstrate series of results obtained for each UQ method.  
-The series we show here are analog traditional Monte Carlo (mc); static 
+The series we show here are analog traditional Monte Carlo; static 
 stochastic collocation for generalized polynomial chaos expansion using the hyperbolic
-cross index set (hc), total degree index set (td), and (where possible) tensor product index set (tp); adaptive stochastic
-collocation for polynomial
-chaos method (adaptSC); and adaptive Sobol decomposition with polynomial chaos subsets (adaptSobol).
+cross index set (SC:HC), total degree index set (SC:TD), and (where possible) tensor product index set (SC:TP);
+adaptive stochastic collocation for polynomial chaos method (SC:adapt); 
+static high-density model reduction truncated at first- (HDMR 1), second- (HDMR 2), and third-order (HDMR 3)
+HDMR interaction subset levels;
+and adaptive HDMR decomposition with polynomial chaos subsets (HDMR adapt).
 Each
 series obtains additional values by increasing the refinement of the method.  For Monte Carlo, additional
 random samples are added.  For static SCgPC, higher-order polynomials are used in the representative expansion.  For
@@ -119,7 +122,7 @@ higher-order polynomials before extending to low-order polynomials with more cro
 While the convergence on the mean is still direct for the five-dimensional input problem, we begin to see
 degradation in the convergence of collocation-based methods.  
 As with the three variable case, the mean is trivial and obtained with the zeroth-order polynomial.  Exponential
-convergence can be seen for the adaptive Sobol, total degree, and hyperbolic cross methods, while the adaptive SCgPC
+convergence can be seen for the adaptive HDMR, total degree, and hyperbolic cross methods, while the adaptive SCgPC
 is still exploring higher-order polynomials as more likely candidates for inclusion in the expansion and hasn't
 seen the same rapid convergence curve yet.
 Total Degree outperforms adaptive methods, as
@@ -195,12 +198,12 @@ converges most directly in all dimensionality cases.
 \subsection{3 Inputs}
 As with the tensor monomials, we see a good rate of convergence for many of the polynomial methods.  With
 this model, the mean is not trivially given by the zeroth-order polynomial, and so some convergence is seen
-in obtaining the expected value.  The total degree and adaptive sobol methods converge at a similar rate for
+in obtaining the expected value.  The total degree and adaptive HDMR methods converge at a similar rate for
 the mean, while the hyperbolic cross demonstrates its poor convergence for highly regular systems with
 nonlinear cross-term effects.  Quickest to converge (aside from the tensor product case) is the adaptive
 SCgPC, because its search method allows it to discover the second-order polynomials quickly.
 
-Similar behavior is seen for the standard deviation, with the exception of the adaptive Sobol algorithm, which
+Similar behavior is seen for the standard deviation, with the exception of the adaptive HDMR algorithm, which
 is not as effective as the adaptive SCgPC at finding the second-order polynomials for inclusion in the expansion.
 The tensor product still converges very rapidly, and total degree shows a good rate of convergence.
 \begin{figure}[H]
@@ -231,9 +234,9 @@ The tensor product still converges very rapidly, and total degree shows a good r
 
 \subsection{5 Inputs}
 In the five-input case for the Sudret polynomials, we see slower convergence for all methods, as expected
-for collocation-based methods.  For the mean, the adaptive sobol shows the most rapid rate of convergence,
+for collocation-based methods.  For the mean, the adaptive HDMR shows the most rapid rate of convergence,
 but generally each method is showing some level of exponential convergence.  For the standard deviation,
-however, the radius of curvature for the convergence is quite large, and the adaptive Sobol method seems
+however, the radius of curvature for the convergence is quite large, and the adaptive HDMR method seems
 to be searching fairly ineffectively for the most crucial polynomials in the expansion.  This is likely
 because all the first-order effects are missing in the expansion, leading the algorithm to be blinded as
 to the most effective route forward.  We discuss this limitation and approches to correcting it in 
