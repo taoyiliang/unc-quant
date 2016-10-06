@@ -46,7 +46,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
-\hypersetup{urlcolor=blue, colorlinks=true} % Colors hyperlinks in blue - change to black if annoying
+\hypersetup{urlcolor=black, colorlinks=true} % Colors hyperlinks in blue - change to black if annoying
 \title{\ttitle} % Defines the thesis title - don't touch this
 
 \begin{document}
@@ -237,7 +237,18 @@ algorithms in \raven, a production-level uncertainty quantification framework.
 %
 \acknowledgements{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
 %
-TODO acknowledge
+TODO finish acknowledge
+Adviser Anil Prinja, along with other UNM committee members etc
+
+The \raven{} team: Cristian Rabiti, Andrea Alfonsi, Joshua Cogliati, Diego Mandelli, CongJian Wang, and Dan
+Maljovec.  These remarkable gentlemen have provided no end of assistance as I learned, used, and contributed
+to their project.  It has been an honor and a phantasmagoric pleasure working on the team.
+
+University of New Mexico colleagues Aaron Olsen, David Dixon, Nick Myers, and Matthew Gonzalez, whose collaboration dried
+out many whiteboard markers but led to many discoveries and much better understanding.
+
+Idaho National Laboratory researchers Sebastian Schunert, for his efforts in helping me use both \mammoth{} and 
+\rattlesnake{}, and Kyle Gamble, for his contributions in using \bison{}.
 }
 \clearpage % Start a new page
 
@@ -314,6 +325,10 @@ TODO acknowledge
  $|\Lambda|$ & Number of polynomials in SCgPC expansion & $\mathbb{N}^1$ \\
  $\Lambda$ & Collection of $k$ corresponding to polynomial orders & $\mathbb{N}^{|\Lambda|\cross N}$ \\
  $\expv{u(Y)}$ & Expectation value of $u(Y)$ & $\mathbb{R}^1$\\
+ $\mu$ & Mean of a distribution & $\mathbb{R}^1$ \\
+ $\sigma$ & Standard Deviation of a distribution & $\mathbb{R}^1$ \\
+ $\gamma_1$ & Skewness of a distribution & $\mathbb{R}^1$ \\
+ $\gamma_2$ & Excess Kurtosis of a distribution & $\mathbb{R}^1$ \\
  $\mathcal{S_n}$ & Sobol sensitivity coefficient for input $n$ & $\mathbb{R}^1$\\
  $\eta_k$ & Impact of polynomial $k$ on response  & $\mathbb{R}^1$\\ 
  $\xi$ & Impact of HDMR subset on response  & $\mathbb{R}^1$\\ 
@@ -349,6 +364,7 @@ TODO acknowledge
 % Uncomment the lines as you write the chapters
 \nocite{*}
 \input{Chapters/intro}         % 1
+\input{Chapters/methods_basic} % 2
 \input{Chapters/methods_scgpc} % 2
 \input{Chapters/results_scgpc} % 3 
 \input{Chapters/methods_hdmr}  % 4
