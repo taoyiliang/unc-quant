@@ -1,0 +1,305 @@
+% Appendix Template
+
+\chapter{Quadratures, Polynomials, and Distributions} % Main appendix title
+
+\label{apx:quads dists} % Change X to a consecutive letter; for referencing this appendix elsewhere, use \ref{AppendixX}
+
+\lhead{Appendix A. \emph{Quadratures, Polynomials, and Distributions}} % Change X to a consecutive letter; this is for the header on each page - perhaps a shortened title
+
+
+
+%\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+%\newcommand{\LargerCdot}{\raisebox{-0.25ex}{\scalebox{1.2}{$\cdot$}}}
+
+\section{Introduction}
+Thanks to the work of Xiu and Karniadakis \cite{xiu}, many distributions have corresponding polynomials and
+integrating quadratures that are ideally suited for generalized Polynomial Chaos (gPC) expansion construction.
+In this appendix, we consider the four continuous distributions with corresponding ideal polynomials and
+quadratures, as well as an arbitrary case for other distributions.  In general, domain transformations must be
+performed to shape a general distribution into a form that matches the quadrature integration scheme; we
+discuss those transformations for each distribution here as well.  For clarity, we define $x$ as the
+variable for standard distributions and domains, while $y$ is the variable for generic distributions and
+domains.  Transformation involves the relationship between $x$ and $y$.
+
+\subsection{General Syntax}
+We use the following syntax when describing polynomials, distributions, normalizations, and quadratures.
+\begin{itemize}
+  \item $x$: Argument of standard distribution with specific domain.
+  \item $y$: Argument of general distribution with generic domain.
+  \item $h(y)$: Generic function with dependence on distributed variable $y$.
+\item $\rho(y)$: Probability measure, or the functional part of the probability distribution.
+\item $A$: Normalization factor, or scalar part of the probability distributions.
+\item $\mu$: Distribution mean.
+\item $\sigma$: Distribution standard deviation.
+\end{itemize}
+Note that because of the definitions above, for each distribution we require
+\begin{equation}
+  A \int\limits_a^b \rho(y) dy = 1,
+\end{equation}
+where $a$ and $b$ are the extreme values of the distribution, and might be infinite.
+We also make use of the two standard functions, the Gamma function (not to be confused with the Gamma
+distribution),
+\begin{equation}
+  \Gamma(x) = \int\limits_0^\infty z^{x-1}\exp(-z) dz,
+\end{equation}
+and the Beta function (not to be confused with the Beta distribution),
+\begin{equation}
+  \text{B}(z_1,z_2) = \int\limits_0^1 t^{z_1-1}(1-t)^{z_2-1} dt.
+\end{equation}
+In each example the quadrature nodes and weights $x_i,w_i$ will use subscripts that relate to the symbol of the
+associated polynomials, for increased clarity.
+
+\section{Uniform Distributions and Legendre Polynomials}
+The uniform distribution is a single value between finite extrema $a$ and $b$ and zero everywhere else so that
+$x\in[a,b]$. The uniform distribution has the following characteristics.
+\begin{equation}
+  \mu = \frac{a+b}{2},
+\end{equation}
+\begin{equation}
+  \sigma = \frac{b-a}{2}
+\end{equation}
+\begin{equation}
+  A = \frac{1}{2\sigma},
+\end{equation}
+\begin{equation}
+  \rho(y)=1,
+\end{equation}
+\begin{equation}
+  1 = \frac{1}{2\sigma}\int_a^b dy.
+\end{equation}
+Legendre polynomials $P_n(x)$ are defined on the range $x\in[-1,1]$ with polynomial order $n\in\mathbb{N}$.  
+They are defined by the contour integral \cite{polys}
+\begin{equation}
+  P_n(x) = \frac{1}{2\pi i}\oint\qty(1-2tx + t^2)^{-1/2}t^{-n-1} dt,
+\end{equation}
+and are made orthonormal as
+\begin{equation}
+  \frac{2n-1}{2}\int\limits_{-1}^1 P_m(x)P_n(x) dx = \delta_{mn}.
+\end{equation}
+Legendre quadrature approximates the following integrals:
+\begin{equation}
+ \int\limits_{-1}^1 h(x)d(x) = \sum_{\ell=1}^\infty w_\ell h(x_\ell)
+\end{equation}
+In order to convert a general uniform distribution to share the domain of Legendre polynomials and quadrature,
+the following conversion is necessary:
+\begin{equation}
+  y = \sigma x+\mu,
+\end{equation}
+\begin{equation}
+  x = \frac{y-\mu}{\sigma}.
+\end{equation}
+As a result, Legendre quadrature integrates arbitrary uniform distributions as
+\begin{equation}
+  \int_a^b h(y)\rho(y)dy =\frac{1}{2} \sum_{\ell=1}^\infty w_\ell h(\sigma x_\ell+\mu).
+\end{equation}
+
+
+\section{Normal Distribution and Hermite Polynomials}
+The normal distribution is a symmetric, bell-shaped distribution with domain $y\in(-\infty,\infty)$.  The
+normal distribution has the following characteristics.
+\begin{equation}
+  \rho(y) = \exp\qty(-\frac{(y-\mu)^2}{2\sigma^2}),
+\end{equation}
+\begin{equation}
+  A = \frac{1}{\sigma\sqrt{2\pi}},
+\end{equation}
+\begin{equation}
+  1 =\frac{1}{\sigma\sqrt{2\pi}} \int_{-\infty}^\infty \exp\qty( -\frac{(y-\mu)^2}{2\sigma^2} )dy.
+\end{equation}
+Hermite polynomials $\text{He}_n(x)$ are defined on the range $x\in(-\infty,\infty)$ with polynomial order
+$n\in\mathbb{N}$.  They can be defined through the contour integral \cite{polys}
+\begin{equation}
+  \text{He}_n(x) = \frac{n!}{2\pi i}\oint \exp(-t^2+2tx)t^{-n-1} dt,
+\end{equation}
+and are made orthonormal as
+\begin{equation}
+  \frac{1}{\sqrt{2\pi} n!}\int\limits_{-\infty}^\infty \text{He}_m(x)\text{He}_n(x) \exp(\frac{-x^2}{2}) dx = \delta_{m,n}.
+\end{equation}
+Hermite quadrature approximates the following integrals:
+\begin{equation}
+  \int\limits_{-\infty}^\infty h(x)\exp(\frac{-x^2}{2})dy = \sum_{h=1}^\infty w_h h(x_h).
+\end{equation}
+In order to convert a general normal distribution to share the domain of Hermite polynomials and quadrature,
+the following conversion is necessary:
+\begin{equation}
+  y = \sigma x+\mu,
+\end{equation}
+\begin{equation}
+  x = \frac{y-\mu}{\sigma},
+\end{equation}
+As a result, Hermite quadrature integrates arbitrary normal distributions as
+\begin{equation}
+  \intf h(y)\rho(y)dy =\frac{1}{\sqrt{2\pi}} \sum_{h=1}^\infty w_h h(\sigma x_h+\mu).
+\end{equation}
+
+
+
+\section{Gamma Distribution and Laguerre Polynomials}
+The Gamma distribution has a finite lower bound $a$ and infinite upper bound so that $y\in[a,\infty)$.
+This distribution also takes as an argument shape factors $\alpha$ and $\beta$.
+The Gamma distribution has the following characteristics:
+\begin{equation}
+  \rho(y) = y^{\alpha-1}e^{-\beta y},
+\end{equation}
+\begin{equation}
+  A = \frac{\beta^\alpha}{\Gamma(\alpha)},
+\end{equation}
+\begin{equation}
+  1 = \frac{\beta^\alpha}{\Gamma(\alpha)}\int_a^\infty (y-a)^{\alpha-1}e^{-\beta (y-a)} dy.
+\end{equation}
+Laguerre polynomials $\mathcal{L}_n(x)^{(\tilde\alpha)}$ are defined on the range $x\in[0,\infty]$ with polynomial order
+$n\in\mathbb{N}$.  An additional argument $\tilde\alpha$ is required to specify the polynomial family.
+Note that we use $\tilde\alpha$ for the polynomial parameter, and $\alpha$ for the distribution parameter.
+Laguerre polynomials can be defined through the contour integral \cite{polys}
+\begin{equation}
+  \mathcal{L}_n^{(\tilde\alpha)}(x) = \frac{1}{2\pi i}\oint\frac{1}{(1-t)^{\tilde\alpha+1)}t^{n+1}} 
+      \exp(-\frac{xt}{1-t}) dt,
+\end{equation}
+and are made orthonormal as
+\begin{equation}
+  \frac{n!}{\Gamma(n+\tilde\alpha+1)}\int\limits_0^\infty x^\alpha e^{-x}
+          \mathcal{L}_m^{(\tilde\alpha)}\mathcal{L}_n^{(\tilde\alpha)} dx = \delta_{mn}.
+\end{equation}
+Laguerre quadrature approximates the following integrals:
+\begin{equation}
+  \int\limits_0^\infty h(x) x^{\tilde\alpha} e^{-x} dx = \sum_{g=1}^\infty w_g h(x_g).
+\end{equation}
+In order to convert a general Gamma distribution to share the domain of Laguerre polynomials and quadrature,
+the following conversion is necessary:
+\begin{equation}
+  y = \frac{x}{\beta}+L,
+\end{equation}
+\begin{equation}
+  x = (y-L)\beta.
+\end{equation}
+As a result,
+\begin{equation}
+  \int_{L}^\infty h(y)\rho(y)dy =\frac{1}{(\alpha-1)!} \sum_{g=1}^\infty w_g h\qty(\frac{x_g}{\beta}+L),
+\end{equation}
+where points and weights are obtained using $\tilde\alpha = \alpha-1$ for Laguerre polynomials and quadrature.
+
+
+
+\section{Beta Distribution and Jacobi Polynomials}
+The Beta distribution is a flexible distribution with finite range $y\in[a,b]$ and shaping parameters $\alpha$
+and $\beta$.  In the event $\alpha=\beta$, the distribution is symmetric.  If $\alpha=\beta=0$, the uniform
+distribution is recovered.  The Beta distribution has the
+following characteristics:
+\begin{equation}
+  \rho(y) = y^{\alpha-1}(1-y)^{\beta-1},
+\end{equation}
+\begin{equation}
+  A =\frac{ \Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)},
+\end{equation}
+\begin{equation}
+  1 = \frac{ \Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\int_a^b y^{\alpha-1}(1-y)^{\beta-1} dy.
+\end{equation}
+Jacobi polynomials $J_n(x)^{(\tilde\alpha,\tilde\beta)}$ are defined on the range $[-1,1]$ with polynomial
+order $n\in\mathbb{N}$.  Two shaping arguments $\tilde\alpha$ and $\tilde\beta$ are used to uniquely define the
+polynomial family.
+Note that we use $\tilde\alpha,\tilde\beta$ for the polynomial parameters, and $\alpha,\beta$ for the
+distribution parameters.
+Jacobi polynomials can be defined through solution of the recurrence relation as
+\begin{equation}
+  J_n^{(\tilde\alpha,\tilde\beta)}(x) = \frac{(-1)^n}{2^n n!}(1-x)^{-\tilde\alpha}(1+x)^{-\tilde\beta}
+  \frac{d^n}{d x^n}\qty[(1-x)^{\tilde\alpha+n}(1+x)^{\tilde\beta+n}],
+\end{equation}
+where both $\tilde\alpha$ and $\tilde\beta$ are greater than -1.  Jacobi polynomials are made orthonormal as
+\begin{equation}
+  \xi(\tilde\alpha,\tilde\beta,n)\int\limits_{-1}^1(1-x)^{\tilde\alpha}(1+x)^{\tilde\beta}
+    J_m^{(\tilde\alpha,\tilde\beta)}(x)J_n^{(\tilde\alpha,\tilde\beta)}(x)dx = \delta_{mn},
+\end{equation}
+where
+\begin{equation}
+  \xi(\tilde\alpha,\tilde\beta,n) = \frac{2n+\tilde\alpha+\tilde\beta+1}{2^{\tilde\alpha+\tilde\beta+1}}
+      \frac{\Gamma(n+\tilde\alpha+1)\Gamma(n+\tilde\beta+1)}{\Gamma(n+\tilde\alpha+\tilde\beta+1)n!}.
+\end{equation}
+Jacobi quadrature approximates the following integrals:
+\begin{equation}
+  \int_{-1}^1 h(x)(1-x)^{\tilde\alpha} (1+x)^{\tilde\beta} dx = \sum_{j=1}^\infty w_j h(x_j)
+\end{equation}
+Transforming general Beta distributions to compatible domain with Jacobi polynomials and quadrature will be
+done in two steps, first to standard Beta distribution (using variable argument $z$) and then to Jacobi quadrature domain.
+To convert to standard Beta:
+\begin{equation}
+  z=\frac{y-a}{b-L},\hspace{10pt}y=(b-a)z+a,\hspace{10pt} dy=(b-a)dz,
+\end{equation}
+\begin{equation}
+  1=\frac{1}{\text{B}(\alpha,\beta)}\int_0^1 z^{\alpha-1}(1-z)^{\beta-1}dz,
+\end{equation}
+To convert to same form as the Jacobi probability weight,
+\begin{equation}
+  z=\frac{1+x}{2},\hspace{10pt}x=2z-1,\hspace{10pt}dz=\frac{1}{2}dx,
+\end{equation}
+so that
+\begin{equation}
+  1=\frac{1}{2^{\alpha+\beta-1}\text{B}(\alpha,\beta)}\int_{-1}^1 (1+x)^{\alpha-1}(1-x)^{\beta-1} dx.
+\end{equation}
+Combining the transformations,
+\begin{equation}
+  y=\frac{b-a}{2}x+\frac{b+a}{2},\hspace{10pt}x=\qty(y-\frac{b+a}{2})\qty(\frac{2}{b-a})
+\end{equation}
+In a potentially confusing twist, the Jacobi polynomial characteristic $\tilde\alpha$ is related to the Beta
+distribution parameter $\beta$, and the Jacobi polynomial characteristic $\tilde\beta$ is related to the Beta
+distribution parameter $\alpha$, as
+\begin{equation}
+  \tilde\alpha = \beta-1,\hspace{15pt}\tilde\beta = \alpha-1.
+\end{equation}
+As a result,
+\begin{equation}
+  \int_a^b h(y)\rho(y)dy = \frac{1}{2^{\tilde\alpha+\tilde\beta-1}\text{B}(\tilde\alpha,\tilde\beta)}
+      \sum_{B=1}^\infty w_B h\qty(\frac{b-a}{2}x_B+\frac{b+a}{2}).
+\end{equation}
+
+
+
+
+\section{Arbitrary Distributions and Legendre Polynomials}
+In general there is not a family of polynomials and quadratures that corresponds nicely for every
+probabilistic distribution.  However, many continuous distributions have a CDF and inverse CDF that map the
+distribution to and from the domain $[0,1]$.  As a result, we can apply Legendre quadrature to the
+converted space.  This does not perfectly preserve the integration properties of Gaussian quadrature, but does
+allow for general distributions to be covered.  We require for arbitrary distributions that
+$y$ is finite, or $-\infty < a \leq y \leq b < \infty$.  In this case, the distribution has the following properties:
+\begin{equation}
+  \rho(y) = \rho(y),
+\end{equation}
+\begin{equation}
+  F(y) = \int_{a}^y \rho(y')dy',
+\end{equation}
+\begin{equation}
+  1 = \int_{a}^b \rho(y)dy. 
+\end{equation}
+We now consider transforming to the domain $[0,1]$ using the CDF.
+Let $u\in[0,1]$, and note $F(y)\in[0,1]$.
+Let
+\begin{equation}
+  du = dF(y) = \rho(y)dy,
+\end{equation}
+then
+\begin{equation}
+  F(y)=u\hspace{10pt}\therefore\hspace{10pt}y=F^{-1}(u),
+\end{equation}
+\begin{equation}
+  dy = \frac{1}{\rho(y)}du,
+\end{equation}
+\begin{align}
+\int_a^b h(y)\rho(y)dy &= \int_0^1 h\qty(F^{-1}(u))\rho\qty(F^{-1}(u))\frac{1}{\rho\qty(F^{-1}(u))}du,\\
+  &=\int_0^1 h\qty(F^{-1}(u))du.
+\end{align}
+\begin{equation}
+x = \frac{u-\mu}{\sigma}\therefore u=\sigma x+\mu,
+\end{equation}
+\begin{equation}
+u = \frac{\hat b-\hat a}{2}x+\frac{\hat b+\hat a}{2},\hspace{10pt}\hat b=1,\hat a=0,
+\end{equation}
+\begin{equation}
+u = \frac{1}{2}(x+1),
+\end{equation}
+\begin{align}
+\int_a^b h(y)\rho(y)dy&= \int_0^1 h\qty(F^{-1}(u))du,\\
+  &=\frac{1}{2}\sum_{\ell=1}^\infty w_\ell h\qty(F^{-1}\qty(\frac{1}{2}(x_\ell+1)))du.
+\end{align}
+In this manner, arbitrary distributions with a continuous CDF and inverse CDF can be expanded using Legendre
+polynomials and integrated using Legendre quadrature.  This work was presented in \cite{xiu}, and we have
+added the transformation algorithms explicitly.

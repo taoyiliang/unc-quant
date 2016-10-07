@@ -279,6 +279,8 @@ Idaho National Laboratory researchers Sebastian Schunert, for his efforts in hel
 \listofsymbols{ll} % Include a list of Abbreviations (a table of two columns)
 {
   ANOVA & ANalysis Of VAriance \\
+  CDF & Cumulative Distribution Function \\
+  gPC & generalize Polynomial Chaos \\
   HDMR & High-Dimensional Model Representation \\
   KL & Karhunen-Loevre Expansion \\
   LHS & Latin Hypercube Sampling \\
@@ -380,18 +382,19 @@ Idaho National Laboratory researchers Sebastian Schunert, for his efforts in hel
 %	THESIS CONTENT - APPENDICES
 %----------------------------------------------------------------------------------------
 
-%\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
+\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
 
-%\appendix % Cue to tell LaTeX that the following 'chapters' are Appendices
+\appendix % Cue to tell LaTeX that the following 'chapters' are Appendices
 
 % Include the appendices of the thesis as separate files from the Appendices folder
 % Uncomment the lines as you write the Appendices
 
-%\input{Appendices/AppendixA}
+\input{Appendices/quads_dists}
+\input{Appendices/cut_anova}
 %\input{Appendices/AppendixB}
 %\input{Appendices/AppendixC}
 
-%\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
+\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
 
 \backmatter
 

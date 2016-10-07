@@ -11,46 +11,50 @@
 %----------------------------------------------------------------------------------------
 
 \section{Introduction}
-Expanding beyond the traditional uncertainty quantification methods of Monte Carlo, Grid, and LHS sampling, there are more
+Expanding beyond the traditional uncertainty quantification methods of MC, Grid, and LHS sampling, there are more
 advanced methods that are very efficient in particular applications.
-Polynomial chaos expansion (PCE) methods, for example, seek to interpolate the simulation code as a combination of
+Generalized polynomial chaos (gPC) expansion methods, for example, interpolate the model as a combination of
 polynomials of varying degree in each dimension of the input space.  There are several advantages to expanding
-in polynomials.  TODO citation!  First, orthonormal polynomials have means and standard deviations that are trivial to calculate
+in polynomials \cite{xiu}.  First, orthonormal polynomials have means and standard deviations that are trivial to calculate
 analytically, even for computer algorithms.  Second, the resulting polynomial expansion is an
-inexpensive surrogate model that can be used in place of the original.  Third, the unknowns in the expansions
+inexpensive surrogate that can be used in place of the original model.  Polynomials are generally inexpensive
+to evaluate, especially in comparison to complex solvers.  Third, the unknowns in the expansions
 are scalar coefficients, which can often be efficiently calculated through numerical integration.
 
 Originally Wiener
-proposed expanding in Hermite polynomials for Gaussian-normal distributed variables \cite{wiener}.  Askey and
+proposed expanding models in Hermite polynomials for Gaussian-normal distributed input variables \cite{wiener}.  Askey and
 Wilson generalized Hermite polynomials to include Jacobi polynomials, including Legendre and Laguerre
-polynomials \cite{Wiener-Askey}.  Xiu and Karniadakis combined these concepts to perform PCE for a range of Gaussian-based
-distributions with corresponding polynomials,
+polynomials \cite{Wiener-Askey}.  Xiu and Karniadakis combined these concepts to perform gPC expansions for a 
+range of Gaussian-based distributions with corresponding polynomials,
 including Legendre polynomials for uniform distributions, Laguerre polynomials for Gamma distributions, and
-Jacobi polynomials for Beta distributions \cite{xiu}.
+Jacobi polynomials for Beta distributions, in addition to Hermite polynomials for normal distributions
+\cite{xiu}.  More information on how to use these distributions and polynomials is contained in Appendix
+\ref{sec:quads dists}.
 
 In each of these cases, a probability-weighted
 integral over the distribution can be cast in a way that the corresponding polynomials are orthogonal over the
 same weight and interval.  These chaos Wiener-Askey polynomials were used by Xiu and Karniadakis to develop
 the generalized polynomial chaos expansion method (gPC), including a transformation for applying the same
 method to arbitrary distributions (as long as they have a known inverse CDF) \cite{xiu}.  Two significant
-methodologies have grown from gPC application.  The first makes use of Lagrange polynomials to expand the
-original function or simulation code, as Lagrange polynomials can be made orthogonal over the same domain as the
-distributions \cite{SCLagrange}; the other uses the Wiener-Askey polynomials \cite{xiu}.  We consider the latter in this work.
+methodologies have branched from gPC applications.  The first makes use of Lagrange polynomials to expand the
+original function or simulation code \cite{SCLagrange}, as Lagrange polynomials can be made orthogonal over the same domain as the
+distributions; the other uses the Wiener-Askey polynomials \cite{xiu}.  We consider the latter in this work.
 
-We consider a simulation code that produces a quantity of interest $u$ as a function $u(Y)$ whose arguments are
-the uncertain, distributed input
+We consider a simulation code that produces a quantity of interest $u(Y)$ whose
+arguments are the uncertain, distributed input
 parameters $Y=(Y_1,\ldots,Y_n,\ldots,Y_N)$.  A particular realization $\omega$ of $Y_n$ is expressed by
 $Y_n(\omega)$, and a single realization of the entire input space results in a solution to the function as
 $u(Y(\omega))$.  We acknowledge obtaining a realization of $u(Y)$ may take considerable computation time and
 effort, and may be solved nonlinearly.  There also may be other input parameters that
-contribute to the solution of $u(Y)$; we neglect these, as our interest is in the uncertainty space; all
-parameters without uncertainty are held at their nominal values.
+contribute to the solution of $u(Y)$ but have no associated uncertainty; we neglect these, as our interest 
+is in the uncertainty space.  All parameters without uncertainty are held at their nominal values.
 In addition, it is possible that the quantity of interest $u(Y)$ is an integrated quantity or some norm of a
 value that is temporally or spatially distributed. We restrict $u(Y(\omega))$ to a single scalar
 output, but the same principles apply to a multidimensional response.  Further, a quantity of interest may be
-time-dependent in a transient simulation.  In this case, the PCE can be constructed at several selected points
+time-dependent in a transient simulation.  In this case, the gPC expansion can be constructed at several selected points
 in time throughout the simulation, which can then be interpolated between.  In effect, the polynomial
-coefficients become time-dependent scalar values.  For now, we consider a static case with no time dependence.
+coefficients become time-dependent scalar values.  This will be discussed and demonstrated in Chapter \ref{ch:timedep}. 
+For now, we consider a static case with no time dependence.
 
 We expand $u(Y)$ in orthonormal multidimensional polynomials $\Phi_k(Y)$, where $k$ is a multi-index tracking
 the polynomial order in each axis of the polynomial Hilbert space, and $\Phi_k(Y)$ is constructed as
