@@ -485,19 +485,25 @@ this arbitrary model.
 There are, however, some weak points in this algorithm.  First, the current algorithm has no predictive method
 to determine the next polynomial index to include in the set in step \ref{item:calc impact} in the adaptive
 algorithm above; instead, it evaluates each prospective polynomial and
-selects the one with the most impact.  This is somewhat inefficient, because many SCgPC representations created
-are not used in the final expansion.  One improvement we make to this algorithm is to predict the impact of
+selects the one with the most impact.  This is somewhat inefficient, because many SCgPC expansion coefficients
+that are calculated are not used in the final expansion.  
+One improvement we make to this algorithm is to predict the impact of
 prospective polynomials based on the impact of predecessors.
 
-In order to predict the most valuable polynomial to add to the expansion during an adaptive search, we first
-identify a metric for value.  Because our interest is in second-order statistics, and the variance of the
+In order to predict the most valuable polynomial to add to an expansion during an adaptive search, we first
+identify a metric by which different polynomials can be compared to determine impact.  Because our interest 
+is in second-order statistics, and the variance of the
 polynomial expansions is the sum of the polynomial expansion coefficients, we consider the \emph{impact}
+parameter
 $\eta_k$ of a polynomial to be the square of its polynomial expansion coefficient,
 \begin{equation}\label{eq: act poly impact}
   \eta_k = u_k^2.
 \end{equation}
+This choice is made because the total variance is the sum of the square of the polynomial expansion
+coefficients; therefore, the impact of the square of each polynomial coefficient is also the impact on
+the variance.
 To estimate the impact of a polynomial whose coefficient is not yet calculated, we consider the average of the
-preceeding polynomials.  That is, for a polynomial $k=(3,2,4)$ we average the impacts of $(2,2,4)$, $(3,1,4)$,
+ proceeding polynomials.  That is, for a polynomial $k=(3,2,4)$ we average the impacts of $(2,2,4)$, $(3,1,4)$,
 and $(3,1,3)$,
 \begin{equation}\label{eq: poly impact}
   \tilde \eta_k = \frac{1}{N-j}\sum_{n=1}^N \eta_{k-e_n},
@@ -506,27 +512,31 @@ where $\tilde \eta_k$ is the estimated impact of polynomial $k$, $e_n$ is a unit
 for every entry where $k-e_n$ would reduce one index to less than 0, it is skipped and $j$ is incremented by
 one.  In this way any polynomial with some missing predecessors is still averaged appropriately with all
 available information.  While occasionally this prediction algorithm may be misled, in general it saves
-significantly over the previous algorithm.
+many evaluations over the previous algorithm.
 
 Another weakness of the adaptive sparse grid algorithm is that 
 there are certain types of models for which the adaptive algorithm will stall, converge too early, or
 similarly fail.  For instance, if the partial derivative of the model with respect to any of the
 input dimensions is zero when evaluated at the mean point (but nonzero elsewhere), the algorithm will falsely
 converge prematurely, as adding additional polynomial orders to the input in question will not change the
-value of the model at the mean point.  For example, consider a model
+value of the model at the mean point.
+
+For example, consider a model
 \begin{equation}
   f(a,b) = a^3b^3,
 \end{equation}
 with both $a$ and $b$ uniformly distributed on [-1,1].  We note the partial derivatives with respect to either
-input variable evaluated at the central point (0,0) are zero.  The first polynomial index set point to
-evaluate is zeroth-order in each dimension, [0,0].  We distinguish input domain points from polynomial index
-set points by using parenthesis for the former and square brackets for the latter. The quadrature point to
-evaluate this polynomial coefficient is (0,0), which, when evaluated, gives $f(0,0)=0$.  The next polynomial
-index set combinations are [1,2] and [2,1].  For [1,2], the quadrature points required are
-(0,$\pm\sqrt{1/3}$).  This evaluates to $f(0,\pm\sqrt{1/3})=0$, as well.  Because of symmetry, we obtain the
-same result of [2,1].  According to our algorithm, because our old value was 0, and the sum of the new
+input variable evaluated at the central point $k=(0,0)$ are zero.  The first polynomial index set point to
+evaluate is zeroth-order quadrature in each dimension, $\hat L_k=(0,0)$.
+The quadrature point to
+evaluate this polynomial coefficient is $Y_\omeaga=(0,0)$, which, when evaluated, gives $f(0,0)=0$.  
+
+The next polynomial
+index set combinations are $k=(0,1)$ and $k=(1,0)$.  For $k=(0,1)$, the quadrature points required are
+$Y_\omega=(0,\pm\sqrt{1/3})$.  This evaluates to $f(0,\pm\sqrt{1/3})=0$, as well.  Because of model symmetry, we obtain the
+same result for $k=(1,0)$.  According to our algorithm, because our old value was 0, and the sum of the new
 contributions is 0, we have converged; however, we know this is false convergence.  While we expect few
-applications for SCgPC to exhibit these zero partial derivatives in the input space, it is a limitation to be
-aware of.  An argument can be made that, since lower-order polynomials correspond to lower-energy modes of the
-modeled physics, it is expected that higher-order polynomials should rarely contribute to an accurate
+applications for SCgPC to exhibit these zero partial derivatives in the input space, it is a limitation to
+consider.  An argument can be made that, since lower-order polynomials correspond to lower-energy modes of the
+modeled physics, it is expected that higher-order polynomials should not often contribute to an accurate
 expansion unless lower-order polynomials contribute as well.
