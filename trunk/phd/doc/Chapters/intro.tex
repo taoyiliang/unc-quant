@@ -141,39 +141,43 @@ Both of these codes are developed in and based on the \moose{} \cite{moose} envi
 
 %outline chapters
 The remainder of this work will proceed as follows:
-
+FIXME TODO
 \begin{itemize}
-  \item Chapter 2: We consider SCgPC as an uncertainty
+  \item Chapter \ref{ch:methods basic}: We begin by defining concepts and ideas used in uncertainty
+    quantification.  We discuss uncertainty spaces, correlated inputs, statistical moments, the purposes of
+    uncertainty quantification, and some common existing uncertainty quantification techniques, including
+    Monte Carlo, Grid, and Latin Hypercube sampling strategies.
+  \item Chapter \ref{ch:methods scgpc}: We consider SCgPC as an uncertainty
     quantification method in comparison to Monte Carlo.  We discuss implementation of several polynomial
     expansion types as well as both isotropic and anisotropic approaches.  We additionally consider an
     adaptive scheme for the polynomial expansion, and offer some improvements on existing efforts in
     adaptivity.
-  \item Chapter 3: We present the performance of SCgPC
+  \item Chapter \ref{ch:results scgpc}: We present the performance of SCgPC
     expansion methods as applied to a variety of analytic models.  We analyze a set of increasingly-complex
     models and contrast collocation methods on models of varying dimensionality.  We draw some conclusions
     based on performance to determine when SCgPC is a viable choice over Monte Carlo sampling.
-  \item Chapter 4: Expanding on SCgPC, we further consider
+  \item Chapter \ref{ch:methods hdmr}: Expanding on SCgPC, we further consider
     HDMR, achieved through Sobol decomposition.  We apply generalized polynomial
     chaos expansions to the subspace terms in the HDMR expansion, and demonstrate
     synergies with the two expansions.  Further, we present a combined adaptive scheme for the two expansion
     methods and offer improvements on existing adaptive methods.
-  \item Chapter 5: We add the performance of HDMR to the previous analyses of analytic
+  \item Chapter \ref{ch:results hdmr}: We add the performance of HDMR to the previous analyses of analytic
     models, and consider the merits and shortcomings of several truncation orders of HDMR 
     eduction.  We also consider the adaptive HDMR method when compared with the SCgPC
     methods.
-  \item Chapter 6: We apply the uncertainty quantification techniques described in this work to a
+  \item Chapter \ref{ch:c5g7}: We apply the uncertainty quantification techniques described in this work to a
     single-physics neutronics benchmark problem.  We consider the efficiencies and limitations of both
     SCgPC and HDMR as uncertainty
     quantification tools for this model, and discuss some findings due to this non-analytic model. 
-  \item Chapter 7: We further apply the advanced uncertainty quantification techniques to a multiphysics
+  \item Chapter \ref{ch:mammoth}: We further apply the advanced uncertainty quantification techniques to a multiphysics
     engineering-scale problem coupling fuels performance to neutronics.  We consider the efficiency of select
     methods discussed, and limitations discovered from these coupled codes.
-  \item Chapter 8: We consider application of low-order HDMR to a time-dependent fuels
+  \item Chapter \ref{ch:timedep}: We consider application of low-order HDMR to a time-dependent fuels
     performance benchmark.  We present the development of Sobol sensitivity coefficients between responses of
     interest and uncertain input parameters over a time-dependent problem.  Further, we demonstrate how these
     sensitivities can yield additional comprehension of the underlying physical models.  We discuss briefly
     the limitations discovered as a result of performing this analysis.
-  \item Chapter 9: We summarize the efforts of this paper and offer conclusions, including the types of models
+  \item Chapter \ref{ch:concl}: We summarize the efforts of this paper and offer conclusions, including the types of models
     for which the uncertainty quantification techniques are efficient, when they can be expected to be
     inefficient, and when they will not work altogether.  We also suggest some future work efforts that are logical
     progressive steps from the work performed here.

@@ -6,17 +6,18 @@
 
 \lhead{Appendix 2. \emph{Recovering ANOVA from cut-HDMR}} % Change X to a consecutive letter; this is for the header on each page - perhaps a shortened title
 
-
 \section{Introduction}\label{sec:cut to anova}
-When using gPC to represent individual cut-HDMR subsets (see \ref{sec:hdmr}, it is simple to recover ANOVA statistics for a
+When using SCgPC to represent individual cut-HDMR subsets (see \ref{sec:gPC cut}), it is simple to recover 
+analytic ANOVA statistics for a
 cut-HDMR expansion, despite the lack of orthogonality in cut-HDMR terms.  This is because the gPC components
 of each subset term are replete with orthogonal relationships.  Note that while the following algorithm will
 obtain ANOVA results for cut-HDMR terms, the statistics gathered are for the cut-HDMR expansion, not for the
-original model.  If the cut-HDMR expansion is truncated as expected, the ANOVA terms will only be as accurate
+original model.  When the cut-HDMR expansion is truncated, the ANOVA terms will only be as accurate
 to the original model as the cut-HDMR expansion itself is.
 
 To reconstruct the ANOVA decomposition of a cut-HDMR expansion, we simply apply ANOVA to the cut-HDMR
-expansion, which will results in significant reduction.  We begin with the cut-HDMR expansion with
+expansion, which results in significant reduction of terms due to gPC orthogonalities.
+We begin at the cut-HDMR expansion with
 subsets determined by generalized polynomial chaos expansions by repeating Eq. \ref{eq:cut and gpc},
 \begin{align}\label{eq:trunchdmr}
   T(Y) \approx t_r &+ \sum_{n=1}^N \qty(\sum_{k'\in\Lambda_n'(L')} t_{n;k'}\Phi_{k'}(Y_n)) \\ \nonumber
@@ -24,14 +25,14 @@ subsets determined by generalized polynomial chaos expansions by repeating Eq. \
 \end{align}
 and recall the definition of ANOVA in Eq. \ref{eq:anova}, \ref{eq:hdmr 0}, \ref{eq:hdmr 1}, and \ref{eq:hdmr 2}.
 For demonstration, note we truncate the cut-HDMR to second-order effects in Eq. \ref{eq:trunchdmr}, but the 
-concepts extend to higher-order truncations trivially.  To further simplify, we consider a three-dimension
-input space for $T(Y) = T(x,y,z)$, which again can be extended trivially to higher dimensions.  Further,
+concepts extend to higher-order truncations.  To further simplify, we consider a three-dimension
+input space for $T(Y) = T(x,y,z)$, which again can be extended to higher dimensions.  Further,
 to simplify some notation, we express the generalized polynomial chaos expansion of a subset with respect
 to an input variable $y_n$ as $G(y_n)$,
 \begin{equation}
   T(y_n,\barhat{Y_n}) \approx G(y_n) = \sum_{k'\in\Lambda_n'(L')} t_{n;k'}\Phi_{k'}(Y_n),
 \end{equation}
-so that
+so that for example
 \begin{equation}
   t_n(y_n) = T(y_n,\barhat{Y_n}) - t_r \approx G(y_n) - t_r.
 \end{equation}
@@ -65,23 +66,23 @@ Substituting and collecting terms,
 \begin{equation}\label{eq:simplehdmr}
   T(x,y,z) \approx t_r - G(x) - G(y) - G(z) + G(x,y) + G(x,z) + G(y,z),
 \end{equation}
-where the approximation depends entirely on the ability of generalized polynomial chaos expansions to
+where the approximation primarily depends on the ability of SCgPC to
 represent each subset space.  In the limit that infinite polynomials are available, the equation becomes
 exact.
 
-Note: for the purposes of derivations in this section only, we implicitly assume all integrations over an input
+For the purposes of derivations in this section, we continue to implicitly assume all integrations over an input
 space $\Omega_n$ are with respect to $\rho_n(y_n)$,
 \begin{equation}
   \intomn f(y_n) dy_n = \int_{a_n}^{b_n} \rho_n(y_n) f(y_n) dy_n,
 \end{equation}
 \begin{equation}
-  \intom f(Y) dY = \int_{a_1}^{b_1}\cdots\int_{a_N}^{b_N} \rho(y_1,\cdots,y_N) f(y_1,\cdots,y_N) dy_1\cdots,dy_N,
+  \intom f(Y) dY = \int_{a_1}^{b_1}\cdots\int_{a_N}^{b_N} \rho(y_1,\cdots,y_N) f(y_1,\cdots,y_N) dy_1\cdots,dy_N.
 \end{equation}
-which simplifies the notation considerably.
 
+We now apply ANOVA to $T(x,y,z)$ as $H[T](x,y,z)$ by considering each ANOVA subset term individually.
 The first term in ANOVA, the expectation value $h_0$, is given as
 \begin{equation}
-  h_0 = \intom \rho(Y) T(Y) dY,
+  h_0 = \intom T(Y) dY,
 \end{equation}
 which expands into the sum of individual integrals
 \begin{align}
@@ -91,11 +92,11 @@ which expands into the sum of individual integrals
 \end{align}
 recalling that by definition
 \begin{equation}
-\int_{\Omega_n} \rho_n(y_n) dy_n = 1.
+\int_{\Omega_n} dy_n = 1.
 \end{equation}
-Also recalling the nature of the orthonormal polynomials families in the generalized polynomial chaos expansions,
+Also recalling the nature of the orthonormal polynomials families in SCgPC,
 \begin{equation}
-  \intomn \phi_{k_n}(y_n) dy_n = \delta_{k_n,0},
+  \intomn \phi_{k_n}(y_n) dy_n = 0 \hspace{10pt}\forall\hspace{10pt} k_n>0,
 \end{equation}
 all nonzero polynomial terms integrate to zero,
 \begin{equation}
@@ -105,14 +106,16 @@ all nonzero polynomial terms integrate to zero,
   \intomx{x,y} G(x,y) dxdy = \intomx{x,y} \sum_{k'\in\Lambda'}c_{k'}\Phi_{k'}(x,y) dxdy = c_\varnothing^{(x,y)},
 \end{equation}
 where we use the parenthetical superscript to denote the subset origin of the scalar coefficients and the
-subscript $\varnothing$ to indicate $k={0,0,0}$.  Because of
-symmetry, the same results are obtained for subsets $(y)$ and $(z)$ as for subset $(x)$, and the same results are obtained for
+subscript $\varnothing$ to indicate $k=\{0\}^{N_s}$, where $N_s$ is the dimensionality of the expansion subset.
+Because of model symmetry, the same process applies for subsets $(y)$ and $(z)$ as for subset $(x)$, 
+and the same process applies for
 subsets $(x,z)$ and $(y,z)$ as for subset $(x,y)$.  As a result, the zeroth-order ANOVA term is
 \begin{equation}
   h_0 = t_r - c_\varnothing^{(x)} - c_\varnothing^{(y)} - c_\varnothing^{(z)} + c_\varnothing^{(x,y)} +
            c_\varnothing^{(x,z)} + c_\varnothing^{(y,z)}, 
 \end{equation}
-or simply the zeroth polynomial order contribution terms from each subset.
+or simply the zeroth polynomial order contribution terms from each subset expansion subset in Eq.
+\ref{eq:simplehdmr}.
 
 For first-order ANOVA terms (first-order interactions), we consider first $h_x$.
 \begin{align}
@@ -120,16 +123,16 @@ For first-order ANOVA terms (first-order interactions), we consider first $h_x$.
   &= t_r - G(x) - \intomx{y} G(y)\ dy - \intomx{z} G(z)\ dz + \intomx{y} G(x,y)\ dy + \intomx{z} G(x,z)\ dz \\ \nonumber
   & \hspace{20pt}+ \intomx{y,z} G(y,z)\ dy\ dz - h_0.
 \end{align}
-For the integrals, for example,
+Performing the integrals, for example
 \begin{align}
   \intomx{y} G(x,y)\ dy &= \intomx{y} \sum_{k\in\Lambda} c_k\Phi_k(x,y)\ dx, \\ \nonumber
     &= \left\{\begin{array}{lr}
           0, & k_y \geq 1,\\
           c_{(k_x,0)}\phi_{k_x}(x), & k_y = 0,
        \end{array} \right\} \\ \nonumber
-      &= \mlsum{k\in\Lambda\\k_y=0}{} c_k\phi_{k_x}(x),
+      &= \mlsum{k\in\Lambda\\k_y=0}{} c_k\phi_{k_x}(x).
 \end{align}
-Performing all integrations and simplifying, we have an expression for $h_x$,
+Evaluating all integrations and simplifying, we have an expression for $h_x$,
 \begin{align}\label{eq:anova hx}
   h_x &= t_r - G(x) - c^{(y)}_\varnothing - c^{(z)}_\varnothing + \mlsum{k\in\Lambda\\k_y=0}{} c^{(xy)}_k\phi_{k_x}(x) +
   \mlsum{k\in\Lambda\\k_z=0}{} c^{(xz)}_k\phi_{k_x}(x) + c^{(yz)}_\varnothing - h_0,\\ \nonumber
@@ -140,10 +143,10 @@ Performing all integrations and simplifying, we have an expression for $h_x$,
   \mlsum{k\in\Lambda\\k_x>0\\k_z=0}{} c^{(xz)}_k\phi_{k_x}(x).
 \end{align}
 Note that all the terms in Eq. \ref{eq:anova hx} are elements from each polynomial set where the only nonzero polynomial
-orders are those with respect to $x$.  Because of the symmetry in the cut-HDMR expansion, the procedure and
-results for $h_y$ and $h_z$ will be identical in form to $h_x$.
+orders are those with respect to $x$.  Because of the model symmetry in the cut-HDMR expansion, the procedure
+for $h_y$ and $h_z$ will be identical to $h_x$.
 
-For second-order ANOVA terms (second-order interactions), we consider first $h_{x,y}$.
+For second-order ANOVA terms (second-order interactions), we consider $h_{x,y}$.
 \begin{align}
   h_{x,y} &= \intomx{z} T(x,y,z)\ dz - h_x - h_y - h_0,\\ \nonumber
     &= t_r - G(x) - G(y) - c^{(z)}_\varnothing + G(x,y) + \mlsum{k\in\Lambda\\k_z=0}{} c^{(xz)}_k\phi_{k_x}(x)
@@ -152,27 +155,36 @@ For second-order ANOVA terms (second-order interactions), we consider first $h_{
   &= \mlsum{k\in\Lambda\\k_x>0\\k_y>0}{} c_k \Phi_k(x,y).
 \end{align}
 As with the first-order case, the second-order case contains only those polynomials whose order is greater than zero in
-all of its dependencies.  Also, symmetry allows the form for both $h_{x,z}$ and $h_{y,z}$ to be the same as $h_{x,y}$.
+all of its dependencies.  Model symmetry dictates the same procedure for both $h_{x,z}$ and $h_{y,z}$ as $h_{x,y}$.
 
-With all of the ANOVA terms calculated, it is possible to obtain moments of the cut-HDMR expansion using them.
-The expected value is trivial, as it is just the zeroth-order ANOVA term
+With all of the ANOVA terms in Eq. \ref{eq:anova} calculated, it is possible to obtain
+moments of the cut-HDMR expansion using them.
+The expected value is simply the zeroth-order ANOVA term.  The only subset gPC polynomials
+that do not integrate to zero are those that are entirely zeroth-order polynomials.
 \begin{equation}
   \expv{H[T](x,y,z)} = h_0.
 \end{equation}
 The second moment is the integral of the sum of the square of the terms, because each ANOVA term is orthogonal
-with respect to the remainder of the terms.
+with respect to the remainder of the ANOVA terms,
 \begin{equation}
   \expv{H[T](x,y,z)^2} = h_0^2 + \intom h_x^2 + h_y^2 + h_z^2 + h_{x,y}^2 + h_{x,z}^2 + h_{y,z}^2 dx dy dz.
 \end{equation}
 Because of the orthonormal properties of the polynomials within each expansion term,
 \begin{equation}
-  \intom \sum_{\ell\in\Lambda_1}\sum_{k\in\Lambda_2} \Phi_\ell(x,y,z)\Phi_k(x,y,z) dx dy dz = \delta_{\ell,k},
+  \intom \sum_{\ell\in\Lambda_1}\sum_{k\in\Lambda_2} \Phi_\ell(x,y,z)\Phi_k(x,y,z)\ dx\ dy\ dz = \delta_{\ell,k},
 \end{equation}
 and because lower-dimensional polynomials are subsets of higher-dimensional polynomials,
 \begin{equation}
   \Phi_{k_x=1}(x) = \Phi_{k_x=1,k_y=0,k_z=0}(x,y,z) = \Phi_{1,0,0}(x,y,z),
 \end{equation}
-the integral of the square of each term is the sum of the squares of each applicable polynomial coefficient.  
+\begin{equation}
+  \Phi_{k_y=1}(y) = \Phi_{k_x=0,k_y=1,k_z=0}(x,y,z) = \Phi_{0,1,0}(x,y,z),
+\end{equation}
+\begin{equation}
+  \Phi_{k_z=1}(y) = \Phi_{k_x=0,k_y=0,k_z=1}(x,y,z) = \Phi_{0,0,1}(x,y,z),
+\end{equation}
+and so on,
+The integral of the square of each term is the sum of the squares of each applicable polynomial coefficient.  
 For $h_x^2$,
 \begin{equation}
   \intomx{x} h_x^2 dx = \mlsum{k\in\Lambda\\k_x>0}{}\left(c_k^{(x)}\right)^2 +
@@ -185,10 +197,10 @@ and by symmetry we obtain $h^2_y$ and $h^2_z$ as well.  For $h_{x,y}^2$,
 \end{equation}
 and similarly for $h_{x,z}^2$ and $h_{y,z}^2$.
 
-Note than implementing cut-HDMR to ANOVA algorithms is more straightforward than the derivation; ultimately, the Sobol
+Note that implementing cut-HDMR to ANOVA algorithms is more straightforward than the derivation; ultimately, the Sobol
 coefficients, which are equivalent to the second moment of each ANOVA subset term, are simply a sum of the
-square of all the coefficients in all the constituent cut-HDMR subset polynomial chaos expansion terms for
-whom the only nonzero polynomials are those that the Sobol coefficient terms is with respect to.  Because the
+square of all the coefficients in all the constituent cut-HDMR subset SCgPC terms for
+whom the only nonzero polynomials are those that the Sobol coefficient term is with respect to.  Because the
 terms in both the expected value and the variance are only scalar values, there are efficient to obtain
 computationally with a high degree of accuracy and with little effort to implement.
 

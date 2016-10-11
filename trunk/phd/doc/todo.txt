@@ -12,3 +12,7 @@
  - make sure I mention Monte Carlo bands are 1 std dev somewhere
  - RAVEN flowcharts and stuff in introduction
  - Check figures for bad MC error bars
+ - Swap double citations [1][2] to commas [1,2]
+ - Check chapter references have right numbers!
+
+ - Results: change "3 outputs" section headers to repeat polynomial type

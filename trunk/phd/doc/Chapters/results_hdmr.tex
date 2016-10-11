@@ -1,94 +1,64 @@
 % Chapter Template
 
-\chapter{Results: High-Density Model Reduction} % Main chapter title
+\chapter{Results for High-Dimension Model Representation} % Main chapter title
 
 \label{ch:results hdmr} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
-\lhead{Chapter 6. \emph{Results: High-Density Model Reduction}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
+\lhead{Chapter 6. \emph{Results: HDMR}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
 
 %----------------------------------------------------------------------------------------
 %	SECTION: INTRO
 %----------------------------------------------------------------------------------------
 
-TODO change the analysis to only consider HDMR, and add more static HDMR analysis!
 \section{Introduction}
-In this chapter we present results obtained using stochastic collocation for generalized polynomial chaos
-expansions (SCgPC) and high-dimension model reduction (HDMR) uncertainty quantification methods.  In each case
-we also include Monte Carlo as a comparison benchmark.
+In this chapter we contrast results obtained using stochastic collocation for generalized polynomial chaos
+expansions (SCgPC) and high-dimension model representation (HDMR) uncertainty quantification methods.  In each case
+we also include Monte Carlo (MC) as a comparison benchmark.
 
-Our primary objective in expanding the usability of collocation-based methods is to reduce the number of
-computational model solves necessary to obtain reasonable second-order statistics for the model.  For each
-analytic model described in Chapter \ref{Chapter3}, we present value figures and convergence figures.  
+As with SCgPC, the objective in introducing HDMR methods is to reduce the number of computational model solves
+necessary to obtain reasonable second-order statistics for models.  The analytic models we use for initial
+demonstration are described in Chapter \ref{ch:results scgpc}, along with the performance of SCgPC methods in
+representing the same.  In this chapter, we add HDMR methods to the analysis, and consider their performance
+in comparison to MC and SCgPC methods.
 
-Value figures show the values of the mean or standard deviation obtained, along with the benchmark analytic
-value as a dotted line.  The Monte Carlo samples are taken at a few select points.  Error bars are provided
-for the Monte Carlo method and are estimated using the population variance,
-\begin{equation}
-  \epsilon_{95} = \frac{1.96\bar\sigma_N}{\sqrt{N}},
-\end{equation}
-\begin{equation}
-  \bar\sigma_N^2 = \frac{N}{N-1}\sigma^2_N = \frac{N}{N-1}\qty(\frac{1}{N}\sum_{i=1}^M u(Y_i)^2 - \bar
-  u(Y)^2_N),
-\end{equation}
-where $Y_i$ are a set of $M$ independent identically-distributed realizations taken from the input space.
-These errorbars estimate where the value of the statistic is with a probability near 0.95.  The estimate of
-this error improves as additional samples are taken.
+We consider three static HDMR cases as well as adaptive HDMR using adaptive SCgPC to expand subset terms.  In
+static HDMR, each series represents an HDMR truncation level.  The HDMR truncation level determines the
+maximum level of interactions allowable in the expansion.  For example, HDMR 1 includes only first-order
+interactions.  We consider first-, second-, and third-order HDMR truncations.  For each of these truncations,
+we use SCgPC expansions of growing polynomial order limit, with polynomials selected by using the total degree
+index set construction method.  Each successive data point in each static series is obtained by increasing the
+limiting total polynomial order $L$ for the subset terms.
 
+As discussed in section \ref{sec:conv gpc hdmr}, we do not expect the convergence rate of the static HDMR
+methods to exceed the convergence rate of their corresponding SCgPC counterparts.  However, there may be some
+static HDMR constructions that require less computational solves than SCgPC methods.  In addition, we expect
+the flexibility of the adaptive HDMR method to allow improved convergence over other methods for some models.
 
-Convergence figures are
-log-log error graphs with the number of computational solves on the x-axis and error with respect to the analytical
-solution on the y-axis.  The distinct lines demonstrate series of results obtained for each UQ method.  
-The series we show here are analog traditional Monte Carlo; static 
-stochastic collocation for generalized polynomial chaos expansion using the hyperbolic
-cross index set (SC:HC), total degree index set (SC:TD), and (where possible) tensor product index set (SC:TP);
-adaptive stochastic collocation for polynomial chaos method (SC:adapt); 
-static high-density model reduction truncated at first- (HDMR 1), second- (HDMR 2), and third-order (HDMR 3)
-HDMR interaction subset levels;
-and adaptive HDMR decomposition with polynomial chaos subsets (HDMR adapt).
-Each
-series obtains additional values by increasing the refinement of the method.  For Monte Carlo, additional
-random samples are added.  For static SCgPC, higher-order polynomials are used in the representative expansion.  For
-adaptive methods, additional solves are allowed to adaptively include additional polynomials and/or dimension
-subsets.
+As in Chapter \ref{ch:results scgpc}, the performance of each method is analyzed using \emph{value figures}
+and \emph{convergence figures} for both the mean and standard deviation of each model's response.  Value
+figures will provide actual values obtained for the moments, while convergence figures show the relative error
+of the values obtained to the analytic benchmark value.  Monte Carlo error bars are calculated as described in
+Chapter \ref{ch:results scgpc}.
 
-The measure of success for a method is less dependent on the absolute value of the error shown.  While this is
-useful, we are more concerned with how increasing refinement reduces error.  The
-rate of convergence as refinement increases determines the desirability of the method for that model.  We
-expect the rate of convergence to depend on two factors: the dimensionality of the uncertain space for the
-model, and the continuity of the response measured.  The value of the error, on the other hand, will additionally
-depend on how well a particular choice of polynomials matches the analytic polynomial representation of the model.
-We consider the convergence of both the mean and the standard deviation for each model.
-
-We additionally note that results from \raven{} computations were written to file using 10 digits of accuracy.
+All computations shown here were performed using the \raven{} \cite{raven} framework.  As noted previously,
+computations were written to file using 10 digits of accuracy.
 As a result, any apparent convergence past this level of accuracy is coincidental or the result of
 machine-exact values, and we consider a relative difference of $10^{-10}$ to be converged.
 
 \section{Tensor Monomials}
-This model is described in section \ref{mod:first tensor poly}.  As this polynomial contains only combinations of
-first-order polynomials, we expect the Tensor Product index set construction method (TP) to be very efficient
-in absolute error magnitude.  
-As such, it will be difficult to see the convergence rate for the tensor product method.
-Because the model has infinite continuity, we expect all collocation-based
-methods to be quite efficient.  The values and errors of the mean and standard deviation are given in Figures
-\ref{fig:tensormono mean values 5} through \ref{fig:tensormono var errors 5} for 5 uncertain inputs, and the same
-for 10 dimensions is given in Figures \ref{fig:tensormono mean values 10} through \ref{fig:tensormono var
-errors 10}.  Note that TP exactly reproduces the original model with expansion order 1, so no convergence is
-observed past the initial sampling point.
+This model is described in section \ref{mod:tensor monom}.  As the tensor product of linear polynomials, it is
+very conducive to SCgPC.  Because all terms are equally important, however, truncating the HDMR expansion of
+this model removes important elements, which makes HDMR less ideal for this model in general.
 
 \subsection{3 Inputs}
-The strength of collocation methods is clear for this small-dimensionality problem of three uncertain inputs.
-The convergence on the
-mean and standard deviation is swift for all the methods.  The convergence of the mean is instant for all methods, since
-the linear nature of the problem means only the zeroth-order polynomial term is required to exactly reproduce the mean.
-More convergence behavior can be seen for the standard deviation.
-Because hyperbolic cross polynomials emphasize single-variable polynomials over cross terms, it is the slowest to reach
-effectively zero error.  Similarly, the total degree quickly obtains most of the polynomials in the exact expansion,
-but takes a few levels to include the term that has all the input variables in it.  Because first-order tensor product
-polynomials is exactly the model itself, it converges instantly.
-Both adaptive methods converge at nearly identical
-rates; this is not surprising, as for small dimension problems the adaptive search follows a very similar
-path.  The adaptive SCgPC method reaches convergence somewhat slower because it naturally tends to explore
-higher-order polynomials before extending to low-order polynomials with more cross terms.
+With only three input parameters, we can clearly see the contribution of the first-order interaction terms,
+second-order interaction terms, and third-order interaction terms from HDMR 1, HDMR 2, and HDMR 3.  As
+expected, with only first-order polynomials HDMR 3 converges exactly; however, HDMR 1 and HDMR 2 neglect
+critical polynomials in the expansion, and so are less suitable methods for this model.  Note also that after
+first-order polynomials, adding additional polynomial orders does not reduce error for the static HDMR
+methods, as no higher-order polynomials exist in the original model.
+The adaptive HDMR method, however, performs admirably for this model, quickly finding the appropriate search
+direction for the response dependencies and converging as rapidly as the adaptive SCgPC method.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_3_mean_vals}
@@ -119,15 +89,13 @@ higher-order polynomials before extending to low-order polynomials with more cro
 
 
 \subsection{5 Inputs}
-While the convergence on the mean is still direct for the five-dimensional input problem, we begin to see
-degradation in the convergence of collocation-based methods.  
-As with the three variable case, the mean is trivial and obtained with the zeroth-order polynomial.  Exponential
-convergence can be seen for the adaptive HDMR, total degree, and hyperbolic cross methods, while the adaptive SCgPC
-is still exploring higher-order polynomials as more likely candidates for inclusion in the expansion and hasn't
-seen the same rapid convergence curve yet.
-Total Degree outperforms adaptive methods, as
-the search algorithms struggle to find the optimal tensors of low-order polynomials required.  Hyperbolic
-Cross is outperformed by Total Degree, as expected for a problem with this level of regularity.
+Increasing the dimensionality serves to enforce those observations already recorded for the three-dimensional
+input space.  HDMR methods perform no better than their SCgPC counterparts, and because of their truncation
+are limited in their ability to converge the statistical moments for this model.  Interestingly, however, the
+adaptive HDMR method outperforms the adaptive SCgPC method in finding the exact solution, because it searches
+both subspaces to add as well as polynomials, and wastes less time searching higher-order polynomials that do
+not exist in the expansion.  In essence, it eliminates portions of the Hilbert spaced spanned by the
+bases polynomials more quickly than the adaptive SCgPC method.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_5_mean_vals}
@@ -155,13 +123,12 @@ Cross is outperformed by Total Degree, as expected for a problem with this level
 \end{figure}
 
 \subsection{10 Inputs}
-As we increase to ten inputs, we see significant degradation of all the collocation methods in converging on
-the standard deviation.  While it appears there is exponential convergence, the curvature is quite large, and
-only somewhat better than linear convergence is observed for up to 1000 computational solves.  One reason the
-adaptive methods do not perform more admirably for this case is the equal-weight importance of all the input
-terms as well as the polynomial terms; the high-dimensional space takes considerable numbers of runs to
-explore thoroughly, and this model contains some of the most difficult polynomials to find adaptively: those including
-all of the inputs. 
+Moving to an input space with dimensionality 10, we predictably see the static HDMR methods performing quite
+poorly for this model.  Because the model includes polynomial interactions up to tenth order, truncating at
+even three orders incurs significant error.  However, we note the adaptive HDMR method appears to be
+performing at least as well as any other method for this larger dimensionality, for the same reasons as
+discussed in the 5-input case.  Note also that the adaptive HDMR method obtains representation long before the
+total degree or tensor product methods do.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/tensor_monomial_10_mean_vals}
@@ -190,22 +157,22 @@ all of the inputs.
 
 
 \section{Sudret Polynomial}
-This model is described in section \ref{mod:sudret}.  The Sudret polynomial model is a near neighbor to the
-tensor monomials model; however, it includes only even-ordered polynomials, which provides more of a challenge
-to the adaptive methods.  Because the model is still a tensor product, the tensor product collocation method 
-converges most directly in all dimensionality cases.
+This model is described in section \ref{mod:sudret}.  This model is similar to the tensor linear polynomials,
+but instead is a tensor product of second-order polynomials.  We observe similar performance here as for the
+tensor monomials, but with faster degredation as the input dimensionality increases.
 
 \subsection{3 Inputs}
-As with the tensor monomials, we see a good rate of convergence for many of the polynomial methods.  With
-this model, the mean is not trivially given by the zeroth-order polynomial, and so some convergence is seen
-in obtaining the expected value.  The total degree and adaptive HDMR methods converge at a similar rate for
-the mean, while the hyperbolic cross demonstrates its poor convergence for highly regular systems with
-nonlinear cross-term effects.  Quickest to converge (aside from the tensor product case) is the adaptive
-SCgPC, because its search method allows it to discover the second-order polynomials quickly.
-
-Similar behavior is seen for the standard deviation, with the exception of the adaptive HDMR algorithm, which
-is not as effective as the adaptive SCgPC at finding the second-order polynomials for inclusion in the expansion.
-The tensor product still converges very rapidly, and total degree shows a good rate of convergence.
+Because of the tensor construction of these polynomials, the HDMR truncation level once again plays a critical
+role in determining the error of the HDMR methods.  The three plateaus for HDMR 1, HDMR 2, and HDMR 3 show
+that adding higher than second-order polynomials will not substantially decrease the error in these
+expansions, indicating that the error is dominated by the HDMR truncation error.  Note also that while the
+adaptive HDMR method performs well, it is outperformed by adaptive SCgPC.  This is because it is challenging
+for the adaptive HDMR method to find the second-order polynomials while the first-order polynomials have no
+contribution to the expansion.  This is especially seen in the convergence of the standard deviation.  Note
+that for the standard deviation, HDMR 3 is still converging; this is because the HDMR subsets are expanded in
+total degree index sets, which require higher-order polynomial limits to obtain the tensor product of
+second-order polynomials; in particular, third-order interaction subsets require total degree order 6 to
+obtain the polynomial with orders $k=(2,2,2)$, which is required for this model.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/sudret_3_mean_vals}
@@ -233,14 +200,9 @@ The tensor product still converges very rapidly, and total degree shows a good r
 \end{figure}
 
 \subsection{5 Inputs}
-In the five-input case for the Sudret polynomials, we see slower convergence for all methods, as expected
-for collocation-based methods.  For the mean, the adaptive HDMR shows the most rapid rate of convergence,
-but generally each method is showing some level of exponential convergence.  For the standard deviation,
-however, the radius of curvature for the convergence is quite large, and the adaptive HDMR method seems
-to be searching fairly ineffectively for the most crucial polynomials in the expansion.  This is likely
-because all the first-order effects are missing in the expansion, leading the algorithm to be blinded as
-to the most effective route forward.  We discuss this limitation and approches to correcting it in 
-Chapter \ref{Chapter9}.
+We continue to see degredation of performance from HDMR methods moving from three inputs to five.  The
+truncation of HDMR 1, HDMR 2, and HDMR 3 incurs too much error to converge significantly, and the adaptive
+HDMR method struggles like the adaptive SCgPC method to explore the polynomial space effectively.  
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/sudret_5_mean_vals}
@@ -269,14 +231,19 @@ Chapter \ref{Chapter9}.
 
 
 \section{Attenuation}
-This model is described in section \ref{mod:attenuation}.  Similar to the tensor monomial model and Sudret
-polynomial model, the attenuation model can be expanded as the infinite sum of ever-increasing polynomials,
-making it tensor product in shape.  However, unlike the previous two models, the magnitude of the contribution
-from the higher-order polynomials decreases swiftly, making lower-order polynomials more characteristic of the
-model in general.  Because this model is still a tensor model and the response is infinitely continuous,
-we expect to see a similar trend in the most effective methods for polynomial expansion.
+This model is described in section \ref{mod:attenuation}.  As the tensor product of polynomials whose scaling
+drops off with increasing order (see Table \ref{tab:atten coeffs}), this model is well-suited to HDMR methods.
+However, this model demonstrates some of the limitations in the default search parameters for the adaptive
+HDMR method.  While combinations of polynomials of similar order are most important to this expansion, the
+adaptive HDMR method tends to expand polynomials with low interaction because of the sensitivity estimation
+methods.  This demonstrates when the adaptive HDMR might be ill-suited to exploring the input space.
 
 \subsection{2 Inputs}
+Because the input space is only two-dimensional, HDMR 3 is equivalent to HDMR 2 and not shown in this case.
+As with the SCgPC methods, all HDMR methods show exponential convergence on the mean and standard deviation
+for this response, although the adaptive HDMR does not perform as well as the adaptive SCgPC method because of
+the way the polynomial coefficients decay.  The HDMR 1 method stagnates at first-order interactions, and
+error is dominated by the HDMR truncation instead of polynomial truncation.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_2_mean_vals}
@@ -305,6 +272,11 @@ we expect to see a similar trend in the most effective methods for polynomial ex
 
 
 \subsection{4 Inputs}
+The same trends exist here as for the two-dimensional case, but with degradation because of the increase in
+dimensionality.  The plateaus for HDMR 1, HDMR 2, and HDMR 3 are all clearly evident.  These plateaus indicate
+when error is dominated by HDMR truncation instead of polynomial truncation.  It is also worth noting that
+while the adaptive HDMR method hits a plateau for some time in this model, it obtains a decent approximation
+of the standard deviation and mean earlier than most of the other static methods.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_4_mean_vals}
@@ -332,6 +304,9 @@ we expect to see a similar trend in the most effective methods for polynomial ex
 \end{figure}
 
 \subsection{6 Inputs}
+The SCgPC and HDMR methods continue to degrade as input space increases in dimensionality.  The static method
+plateaus are still evident.  The adaptive SCgPC and adaptive HDMR methods both struggle to find the
+appropriate polynomials to use to most accurately represent this model.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/attenuate_6_mean_vals}
@@ -361,7 +336,13 @@ we expect to see a similar trend in the most effective methods for polynomial ex
 
 \section{Gauss Peak}
 This model is described in section \ref{mod:gausspeak}.
+As discussed there, this model exhibits slow polynomial coefficient drop off, and all polynomials containing
+an odd number have a zero coefficient.  This yields the adaptive search algorithms paralyzed, as any attempts
+the assumption of monotonically-decreasing polynomial coefficients is a poor assumption for this model.
 \subsection{3 Inputs}
+The static HDMR methods show no improvement over Monte Carlo for this model.  It
+requires a great number of polynomials in tensor combination to accurately reproduce this response; as a
+result, even HDMR 3 shows poor convergence for this model.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/sfu_gauss_peak_3_mean_vals}
@@ -389,6 +370,9 @@ This model is described in section \ref{mod:gausspeak}.
 \end{figure}
 
 \subsection{5 Inputs}
+The same trends for the three-input case are observed here for the five-input case, and exacerbated.  This
+model requires a great number of high-order, tensor-product polynomials to produce an accurate surrogate, and
+neither HDMR nor SCgPC methods are well-equipped to provides them efficiently.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/sfu_gauss_peak_5_mean_vals}
@@ -419,7 +403,16 @@ This model is described in section \ref{mod:gausspeak}.
 
 
 \section{Ishigami}
+\subsection{3 Inputs}
 This model is described in section \ref{mod:ishigami}.
+The behavior for the HDMR method on this model are quite interesting.  Because much of this response is
+determined by single-order interactions, the static HDMR 1 method converges the mean quite effectively
+compared to other methods.  Both HDMR 2 and HDMR 3 also perform well, but HDMR 3 wastes substantial effort as
+there are no third-order interactions in this model.  The adaptive HDMR method fails in its search because it
+misses the important interaction between $y_3$ and $y_1$, which isn't observed until the fourth-order
+polynomial of $y_3$.  Additionally, both $y_1$ and $y_2$ are arguments to sine functions, which when expanded
+in polynomials only contain odd powers.  As a result, upon obtaining zero contribution from even-ordered
+polynomials, the adaptive algorithm has no metric by which to search for additional contributions.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/ishigami_3_mean_vals}
@@ -449,6 +442,11 @@ This model is described in section \ref{mod:ishigami}.
 
 \section{Sobol G-Function}
 This model is described in section \ref{mod:gfunc}.
+Unsurprisingly, this zeroth-order continuous response continues to provide a great challenge to any
+polynomial-based method representation.  The adaptive SCgPC and adaptive HDMR methods both fail to converge
+more than a single data point, and the static methods all show no clear benefits over traditional Monte Carlo
+sampling.
+\subsection{3 Inputs}
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{anlmodels/sobolG_3_mean_vals}
@@ -475,5 +473,42 @@ This model is described in section \ref{mod:gfunc}.
   \label{fig:sobolG var errors 3}
 \end{figure}
 
+\subsection{5 Inputs}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sobolG_5_mean_vals}
+  \caption{Sobol G-Function, $N=5$, Mean Values}
+  \label{fig:sobolG mean values 5}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sobolG_5_var_vals}
+  \caption{Sobol G-Function, $N=5$, Std. Dev. Values}
+  \label{fig:sobolG var values 5}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sobolG_5_mean_errs}
+  \caption{Sobol G-Function, $N=5$, Mean Convergence}
+  \label{fig:sobolG mean errors 5}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{anlmodels/sobolG_5_variance_errs}
+  \caption{Sobol G-Function, $N=5$, Std. Dev. Convergence}
+  \label{fig:sobolG var errors 5}
+\end{figure}
+
+
 \section{Conclusions}
-todo
+We have demonstrated the performance of HDMR methods using three different truncation orders as well as
+adaptive HDMR subset construction, all based on SCgPC expansions for the HDMR subsets.  We observed good
+performance of the adaptive HDMR algorithm when the input space is limit in size and behaves predictably, and
+good performance in the static truncated HDMR methods when the interaction terms in the model were limited.
+Additionally, we observed that adaptive HDMR and HDMR 1 could obtain UQ solutions with fewer evaluations than
+the other SCgPC and HDMR methods, which can be valuable when only very few realizations are practical.
+
+However, in general SCgPC methods outperform HDMR when the input space is regular and isotropic.  This leads
+to the conclusion that when computational resources are available, the SCgPC methods may be a better initial choice
+than the HDMR methods, while if resources are limited, the adaptive HDMR method can still be a good candidate.
