@@ -12,7 +12,7 @@
  - make sure I mention Monte Carlo bands are 1 std dev somewhere
  - RAVEN flowcharts and stuff in introduction
  - Check figures for bad MC error bars
+   - Also check SCgPC Results eq. 2 MC error for error in variance
+      should be SE_sigma = sigma/sqrt(2*(N-1))
  - Swap double citations [1][2] to commas [1,2]
- - Check chapter references have right numbers!
 
- - Results: change "3 outputs" section headers to repeat polynomial type
