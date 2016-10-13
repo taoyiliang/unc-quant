@@ -331,19 +331,19 @@ this steep truncation, we see much of the original response preserved.
   \label{tab:c5g7 importance}
 \end{table}
 
-\begin{figure}[htb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{c5g7/C5G7_eigenvalue_impranks}
   \caption{C5G7 Eigenvalue Importance Ranking}
   \label{fig:c5g7 eigenvalue imprank}
 \end{figure}
-\begin{figure}[htb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{c5g7/C5G7_center_flux_0_impranks}
   \caption{C5G7 Center Flux ($g=1$) Importance Ranking}
   \label{fig:c5g7 flux 0 imprank}
 \end{figure}
-\begin{figure}[htb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{c5g7/C5G7_center_flux_5_impranks}
   \caption{C5G7 Center Flux ($g=5$) Importance Ranking}
@@ -368,37 +368,37 @@ as the importance eigenvalues in Table \ref{tab:c5g7 importance} drop off somewh
 performed.  With another 12 inputs retained, it is possible to reduce the error in the $k$-eigenvalue
 truncation from roughly 25 percent to nearer 10 percent.  However, this truncation is suitable for
 demonstration.
-\begin{figure}[htb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{c5g7/C5G7_eigenvalue_mean_reduction}
   \caption{C5G7 Eigenvalue Input Reduction, Mean}
   \label{fig:c5g7 eigenvalue red mean}
 \end{figure}
-\begin{figure}[htb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{c5g7/C5G7_eigenvalue_stddev_reduction}
   \caption{C5G7 Eigenvalue Input Reduction, Std. Dev.}
   \label{fig:c5g7 eigenvalue red stdev}
 \end{figure}
-\begin{figure}[htb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{c5g7/C5G7_center_flux_g0_mean_reduction}
   \caption{C5G7 Center Flux $g=1$ Input Reduction, Mean}
   \label{fig:c5g7 center_flux_g0 red mean}
 \end{figure}
-\begin{figure}[htb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{c5g7/C5G7_center_flux_g0_stddev_reduction}
   \caption{C5G7 Center Flux $g=1$ Input Reduction, Std. Dev.}
   \label{fig:c5g7 center_flux_g0 red stdev}
 \end{figure}
-\begin{figure}[htb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{c5g7/C5G7_center_flux_g5_mean_reduction}
   \caption{C5G7 Center Flux $g=5$ Input Reduction, Mean}
   \label{fig:c5g7 center_flux_g5 red mean}
 \end{figure}
-\begin{figure}[htb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{c5g7/C5G7_center_flux_g5_stddev_reduction}
   \caption{C5G7 Center Flux $g=5$ Input Reduction, Std. Dev.}
@@ -412,20 +412,92 @@ Comparison to the original model can be done by comparing to the reduced case MC
 MC with the original model as we have shown here.
 
 \section{Results}
-Todo, intro to results
+In general, we observe that no one particular SCgPC or HDMR method stands out as faster converging for the
+responses in this model.  All of them converge quite quickly on a solution that is reasonably close to the one
+obtained by MC.  While occasionally the converged values are just outside the error bands shown in the plots,
+these error bands only guarantee 75 percent certainty (see section \ref{sec:stat moments}).  Thus, we do not
+see significant disagreement between the MC values and the SCgPC and HDMR values in these cases.
+
+We also note that in none of the responses does adding additional polynomial affect the predicted mean and
+standard deviation from the SCgPC and HDMR methods.  This suggests strong linearity between the responses and
+the input parameters, which can be captured by only first-order polynomial expansions.  For this particular
+model, the results obtained with under 20 samples with any of the SCgPC or HDMR methods is as good as spending
+ten thousand samples using MC.
 
 \subsection{$k$-Eigenvalue}
-As can be seen in Figures TODO, even linear polynomials are sufficient to quite accurately capture the first
-two statistical moments of the $k$-eigenvalue for this model.  This suggests a strongly linear dependence of
+The performance of SCgPC and HDMR methods for the C5G7 uncertainty quantification problem are shown in Figures
+\ref{fig:c5g7 eigenvalue means} and \ref{fig:c5g7 eigenvalue vars}.  All the results shown, including the
+Monte Carlo comparison case, are performed with the reduced-size input space.
+As seen in the figures, for this response even linear polynomials are sufficient to quite accurately capture the first
+two statistical moments of the $k$-eigenvalue.  This suggests a strongly linear dependence of
 $k$ on cross sections, which can be justified through analyzing the first derivatives Eq. \ref{eq:diffusion}
 with respect to each cross section independently.  This means that any of the collocation methods are very
 well-suited to represent the original model, and a cost of far less computational solves than traditional
-Monte Carlo.
+MC.  Even when scaling the plot to very small ranges, the various collocation-based methods have
+indistinguishable values for both the mean and standard deviation.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{c5g7/C5G7_eigenvalue_mean_vals}
+  \caption{C5G7 $k$-Eigenvalue Mean Values}
+  \label{fig:c5g7 eigenvalue means}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{c5g7/C5G7_eigenvalue_var_vals}
+  \caption{C5G7 $k$-Eigenvalue Std. Dev. Values}
+  \label{fig:c5g7 eigenvalue vars}
+\end{figure}
 
 \subsection{Center Flux, $g=1$}
-Todo.
+As with the $k$-eigenvalue, the high-energy flux response appears to be entirely linearly-dependent on the
+input parameters.  Adding additional polynomials to any SCgPC or HDMR method does not notably change the
+predicted mean or standard deviation.  In the case of the HDMR method, adding pairwise interactions also seems
+to have no effect on the predicted response moments.  This suggests the response is not only linear with
+respect to the inputs, but that there is little interaction between the inputs when considering the first two
+statistical moments of the response.  However, for the standard deviation of this response, there does appear
+to be some small amount of shape in the SCgPC and HDMR series, suggesting some level on nonlinearity.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{c5g7/C5G7_center_flux_g0_mean_vals}
+  \caption{C5G7 Center Flux $g=1$ Mean Values}
+  \label{fig:c5g7 center_flux_g0 means}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{c5g7/C5G7_center_flux_g0_var_vals}
+  \caption{C5G7 Center Flux $g=1$ Std. Dev. Values}
+  \label{fig:c5g7 center_flux_g0 vars}
+\end{figure}
 
 \subsection{Center Flux, $g=5$}
-Todo.
+The low-energy flux demonstrates similar performance to the other two responses.  Whatever nonlinearity
+between inputs and the response was present in the high-energy flux standard deviation does not appear to be
+present in the low-energy flux.  This seems reasonable, as the mean free path of neutrons in the high-energy
+flux is much larger than the low-energy flux, making interaction with many different cross sections in a
+variety of ways more likely.  As with the $k$-eigenvalue response, the second-order statistics for the
+low-energy flux converge with first-order interactions and first-order polynomials, and show no change
+in value after that point.  Both the mean and standard deviation are in good agreement with the estimate
+provided by MC.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{c5g7/C5G7_center_flux_g5_mean_vals}
+  \caption{C5G7 Center Flux $g=5$ Mean Values}
+  \label{fig:c5g7 center_flux_g5 means}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{c5g7/C5G7_center_flux_g5_var_vals}
+  \caption{C5G7 Center Flux $g=5$ Std. Dev. Values}
+  \label{fig:c5g7 center_flux_g5 vars}
+\end{figure}
 
 \section{Conclusion}
+Through this model we have explored application of SCgPC and HDMR to responses that are without analytic form
+and are solved using an engineering-scale production code.  We observed the methodology for using input space
+reduction techniques in order to make collocation-based method more accessible.  We observed that for all
+three responses of this model, the SCgPC and HDMR methods both very efficiently converged on statistical
+moments in less than 20 computational solves that agreed with MC after ten thousand samples.  For this
+particular model and set of responses, SCgPC and HDMR are both excellent uncertainty quantification tools.

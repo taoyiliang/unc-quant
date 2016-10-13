@@ -16,3 +16,4 @@
       should be SE_sigma = sigma/sqrt(2*(N-1))
  - Swap double citations [1][2] to commas [1,2]
 
+ - C5G7 and Pincell plots need to use updated plot naming conventions
