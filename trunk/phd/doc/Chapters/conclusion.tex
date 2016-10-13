@@ -11,24 +11,85 @@
 %----------------------------------------------------------------------------------------
 
 \section{Introduction}
-In this work we have explored advanced uncertainty quantification methods and their application to a variety of models.
-In addition to implementing existing algorithms, new predictive methods for adaptive algorithms have been introduced
-and demonstrated.  We have compared convergence performance to traditional analog Monte Carlo, and observed cases both
-when collocation-based methods are desirable and when Monte Carlo is preferable.  We have also demonstrated performance
-of these methods on a multiphyics engineering problem, as well as in time-dependent analysis of and OECD benchmark.  Here we
-summarize the obsesrved results and generalize them, as well as discuss limitations discovered during this work.
+In this work we have explored the advanced uncertainty quantification methods Stochastic Collocation for
+generalized Polynomial Chaos (SCgPC) and High-Dimensional Model Representation (HDMR), and their application 
+to a variety of models.
+In addition to implementing existing algorithms in uncertainty quantification framework \raven{},
+new predictive methods for adaptive algorithms have been introduced
+and demonstrated.  We have compared convergence performance to traditional analog Monte Carlo (MC), and observed cases both
+when collocation-based methods are desirable and when MC is preferable.  We have also demonstrated performance
+of these methods on three engineering problems, including single physics neutronics, multiphysics
+coupled neutronics and nuclear fuels performance, and time-dependent analysis of an OECD benchmark.  Here we
+summarize the observed results and generalize them, as well as discuss limitations discovered during this work.
+
+In Chapter \ref{ch:methods basic} we discussed uncertainty quantification in general, including the concepts
+of uncertain input spaces and uncertain responses.  We discussed statistical moments and why they are valuable
+in describing output responses.  We also considered analysis that can be performed once basic uncertainty
+quantification has been completed.  We considered three traditional uncertainty quantification techniques for numerical
+models, including MC, Grid, and Latin Hypercube sampling, and motivated advanced methods for uncertainty
+quantification.
+
+In Chapter \ref{ch:methods scgpc} we introduced the generalized Polynomial Chaos (gPC) expansion method, and its
+applicability to response-input relationships.  We discussed several static methods for choosing polynomials
+to include in gPC expansions, and the merits of each.  We also introduced Smolyak-based sparse grid quadrature
+as a collocation technique to numerically construct gPC methods, leading to the full Stochastic Collocation
+for generalized Polynomial Chaos (SCgPC) methodology.
+Finally, we introduced existing adaptive techniques for SCgPC and expanded them to include novel prediction
+algorithms.
+
+In Chapter \ref{ch:results scgpc} we considered the application of SCgPC to a variety of analytic models of
+increasing complexity, varying the regularity and size of the input space for many problems.  We mostly
+considered problems that are tensor and isotropic in nature, but also evaluated models with a wide range of
+analytic polynomial representations.  We set convergence of second-order statistics with as few computational
+solves as possible as the benchmark for uncertainty quantification methods.  We observed SCgPC to outperform
+MC in cases when the response was regular and the dimensionality of the input space was small.  At worst,
+SCgPC usually performed on-par with Monte Carlo except when the response was discontinuous.
+
+In Chapter \ref{ch:methods hdmr} we furthered SCgPC by introducing the high-dimensional model representation
+(HDMR),
+in which the response is expanded as the linear superposition of many subset terms that rely on some subset of
+the input space.  We demonstrated the ANOVA approach to HDMR, and also demonstrated its inconvenience for
+numerical computation.  We introduced cut-HDMR, which makes some approximation to ANOVA HDMR but simplifies
+calculations substantially.  We also showed that ANOVA expansion moments could be recovered for cut-HDMR.  We
+further showed that SCgPC made an ideal candidate to expand the subset terms in cut-HDMR because of their
+orthogonal properties and efficiency converging regular responses with small-dimensionality input spaces.
+Finally, we introduced adaptive HDMR with adaptive SCgPC subsets, and indicated novel algorithms to reduce the
+cost of performing adaptive searches.
+
+In Chapter \ref{ch:results hdmr} we considered the application of HDMR methods to the analytic models
+introduced in Chapter \ref{ch:results scgpc}.  In general we observed similar performance, and noted that HDMR
+methods seldom outperform SCgPC methods, but might allow uncertainty quantification to be performed even when
+SCgPC is prohibitively expensive.
+
+In Chapter \ref{ch:c5g7} we demonstrated SCgPC and HDMR on a single-physics neutronics benchmark calculation.
+We observed strong linearity in the responses, which allowed all the static SCgPC and HDMR methods to very
+quickly converge on solutions for the moments of the responses.  We demonstrated several orders of magnitude
+improvement in convergence for SCgPC and HDMR over MC for these responses.
+
+In Chapter \ref{ch:mammoth} we increased model complexity by considering a multiphysics coupled neutronics and
+fuel performance benchmark.  We applied SCgPC and HDMR to this model and discovered once again several orders
+of magnitude faster convergence on second-order statistics from SCgPC and HDMR when compared to MC, continuing
+to support the idea that significant linearity still exists in this model despite the multiphysics coupling.
+
+In Chapter \ref{ch:timedep} we applied low-order HDMR to a time-dependent sensitivity study of an OECD fuels
+performance benchmark case.  We observed that with only a few evaluations, significant patterns of changing
+physics were detectable in changing sensitivities as a function of time.  These changing sensitivities present
+valuable information that would not be accessible without time-dependent sensitivity analysis, which was made
+possible by implementing this analysis for SCgPC and HDMR methods in \raven{}.
 
 \section{Performance Determination}
-As seen in several analytic models as well as engineering performance models, the convergence rate of both stochastic collocation
-for generalized polynomial chaos as well as high-density model reduction (using stochastic collocation for subsets) depend primarily
+As seen in several analytic models as well as engineering performance models, the convergence rate of both 
+SCgPC as well as HDMR (using SCgPC subsets) depends primarily
 on two factors. 
 First, despite many tools to combat the curse of dimensionality, grid-based collocation methods still degrade
 significantly as the size of the input space increases.  For any more than approximately 10 independent inputs, collocation-based
-methods perform little better than Monte Carlo until many thousands of samples are taken.  Second, SCgPC and HDMR perform much
+methods often perform little better than Monte Carlo until many thousands of 
+samples are taken.  Second, SCgPC and HDMR perform much
 better for models with a high level of continuity than discontinuous models.  As seen in the Sobol G-Function, the collocation
 methods have great difficulty representing the absolute value function.  
 However, for models with high levels of continuity and low dimensionality, collocation methods prove very effective in comparison
-to traditional Monte Carlo methods.
+to traditional Monte Carlo methods, often by requiring orders of magnitude fewer evaluations for similar
+accuracy.
 
 Between different collocation-based methods, we also see several trends.  First, static HDMR methods never outperform their
 corresponding SCgPC methods; that is, second-order polynomial expansions in SCgPC always match or outperform HDMR methods
@@ -38,14 +99,15 @@ can be obtained with few runs.  For example, for first-order HDMR using first-or
 dimensionality samples are required to obtain a solution.  For very costly models, it may not be possible to use SCgPC without
 HDMR.
 
-Second, we observe for all continuous functions, the total degree polynomial construction method significantly outperforms
+Second, we observe for all continuous functions the total degree polynomial construction method significantly outperforms
 the hyperbolic cross method, as expected by its design.  Since polynomial expansion methods struggle to perform well for
 discontinuous models anyway, total degree is a good method to use if the response is expected to be smooth.
 
 Finally, we note that in general the adaptive methods seldom completely outperform all the other collocation methods.  Because the
 prediction algorithm is imperfect, there will always be a static choice of polynomials that is more effecient.  However, if
 the nature of the response in polynomial representation is not well-known, the adaptive algorithms can be effective tools in
-exploring the response polynomial space.
+exploring the response polynomial space, especially when anisotropic dependence of a response on some inputs
+is expected but the degree of anisotropy is unknown.
 
 \section{Limitations Discovered}\label{sec:limits}
 One limitation discovered during this work is the reliability of model algorithms.  Because many engineering codes are
@@ -53,7 +115,7 @@ complicated and involve a great number of options to assure particular realizati
 somewhat fragile.  Changes in the input space can require changes in other solution options, such as preconditioning tools,
 spatial and temporal step sizes, and so on.  The changes required are often not predictable, and if not applied, can result
 in regular failure to converge a solution.  Traditional Monte Carlo methods overcome this issue by rejecting failed points and
-choosing new samples.  This introduces some bias, but hopefully a small amount relative to the overall sample size.  For
+choosing new samples.  This introduces some bias, but ideally a small amount relative to the overall sample size.  For
 collocation-based methods, however, re-sampling is not a valid option, and failure to converge results for any
 quadrature point results in a failure of the method.
 In the process of searching for a suitable engineering demonstration model, many months were spent considering
@@ -65,4 +127,41 @@ robustness of the algorithms used to solve the model responses must be considere
 SCgPC or HDMR methods.
 
 \section{Future Work}\label{sec:future}
-TODO
+There are results in this work that naturally lead to areas of improvement that could be explored.  We mention
+some of them here.
+
+\subsection{Adaptive Quadrature Order}
+One limitation observed for Smolyak sparse grid quadrature is integrating low-order polynomials poorly if
+there are no higher-order polynomials in the index set.  The assumption made is that acceptable error should
+be of the same order as the truncation error of the SCgPC expansion.  While this works well for higher-order
+polynomials, it can lead to very poor integration of expansion coefficients at low orders.  As a result, it
+could be beneficial to provide a parameter that is the lowest bound for quadrature size that can be set by an
+analyst in the event poor results are observed.
+
+Additionally, it should be possible to implement some sort of convergence algorithm for quadrature use so that
+the SCgPC can estimate how well expansion coefficients are being calculated.  If the error estimate is
+sufficiently high, the algorithm could adaptively increase the order of the quadrature in hopes of performing
+much better integration for low-order polynomials.
+
+One of the struggles for this algorithm will be efficiency.  Because most models using only low-order
+polynomials are probably computationally expensive, arbitrarily increasing quadrature orders may not be
+possible given available resources.  An intelligent method of estimating quadrature integration convergence
+might close this gap.
+
+\subsection{Impact Inertia for Adaptive Samplers}
+The failure of adaptive SCgPC and adaptive HDMR to resolve responses that are exclusively even or exclusively
+odd in polynomial order is troubling.  This failure occurs because the algorithm currently only uses the
+immediate proceeding entries in the expansions to determine the likelihood of a future term in the expansion
+contributing to the variance of the response.  Thus, if a zero-contribution term exists between two
+contributing terms, it prevents the algorithm from moving forward.
+
+One way to combat this stagnation would be to include an inertia term in the expansion predictions.  This
+would allow a potential expansion addition to not only consider its most immediate predecessors, but several
+additional terms as well.  For example, when estimating the impact of a fourth-order polynomial, not only the
+third-order polynomial impact is considered, but the second- and first-order as well.  Presumably there would
+be a decay of impact as distance from the proposed expansion term increased, or perhaps a hard line set by the
+user for how many past terms could be considered.
+
+While this would not prevent stagnation entirely, it would greatly increase the robustness of the algorithm in
+seeking out the expansion terms most likely to help resolve the approximation of the response.
+
