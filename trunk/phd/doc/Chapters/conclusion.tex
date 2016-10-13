@@ -47,20 +47,22 @@ prediction algorithm is imperfect, there will always be a static choice of polyn
 the nature of the response in polynomial representation is not well-known, the adaptive algorithms can be effective tools in
 exploring the response polynomial space.
 
-\section{Limitations Discovered}
-One limitation that has not yet been discussed is the reliablity of model algorithms.  Because many engineering codes are
-complicated and involve a great number of opttions to assure particular realizations can be solved, they are also often
+\section{Limitations Discovered}\label{sec:limits}
+One limitation discovered during this work is the reliability of model algorithms.  Because many engineering codes are
+complicated and involve a great number of options to assure particular realizations can be solved, they are also often
 somewhat fragile.  Changes in the input space can require changes in other solution options, such as preconditioning tools,
-spatial and temportal step sizes, and so on.  The changes required are often not predictable, and if not applied, can result
+spatial and temporal step sizes, and so on.  The changes required are often not predictable, and if not applied, can result
 in regular failure to converge a solution.  Traditional Monte Carlo methods overcome this issue by rejecting failed points and
-chosing a new sample.  This introduces some bias, but hopefully a small amount relative to the overall sample size.  For
-collocation-based methods, however, re-sampling is not a valid option, and failure to converge results in a failure of the method.
-In the process of searching for a suitable engineering demonstration model, many problems were considering using a variety of
+choosing new samples.  This introduces some bias, but hopefully a small amount relative to the overall sample size.  For
+collocation-based methods, however, re-sampling is not a valid option, and failure to converge results for any
+quadrature point results in a failure of the method.
+In the process of searching for a suitable engineering demonstration model, many months were spent considering
+problems using a variety of
 codes; however, after extensive collaboration, it was determined many of these codes accepted as much as a 10\% failure rate
 in random perturbations of the input space.  This failure rate almost surely renders the collocation-based methods
-unusable.  Thus, in addition to considering the dimnsionality of the input space and regularity of the response, the
-robustness of the algorithms used to solve the model responses must be considered before applying stochastic collocation for
-generalized polynomial chaos expansion or high-density model reductions methods.
+unusable.  Thus, in addition to considering the dimensionality of the input space and regularity of the response, the
+robustness of the algorithms used to solve the model responses must be considered before applying
+SCgPC or HDMR methods.
 
 \section{Future Work}\label{sec:future}
 TODO

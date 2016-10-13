@@ -9,11 +9,9 @@
  - normalize derivative dxdy to \ dx\ dy
  - cite papers I published while doing this work??
  - make sure I say "std dev" and not variance when it applies
- - make sure I mention Monte Carlo bands are 1 std dev somewhere
- - RAVEN flowcharts and stuff in introduction
  - Check figures for bad MC error bars
    - Also check SCgPC Results eq. 2 MC error for error in variance
       should be SE_sigma = sigma/sqrt(2*(N-1))
  - Swap double citations [1][2] to commas [1,2]
 
- - C5G7 and Pincell plots need to use updated plot naming conventions
+ - MC matching for pincell model.  Need Falcon for this.
