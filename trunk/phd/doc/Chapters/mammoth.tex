@@ -219,11 +219,11 @@ convergence plots for this model.
   \label{fig:mammoth var zoom}
 \end{figure}
 
-Table \ref{tab:mammoth
-runs} summarizes the number of calculations required for each collocation method.  Entries marked with a
+Table \ref{tab:mammoth runs} 
+summarizes the number of calculations required for each collocation method.  Entries marked with a
 $\dagger$ indicate results that were not obtained because of \mammoth{} simulations that failed to converge.
 Entries marked with a $*$ indicate results that were not attempted because of the number of samples required.
-We note that in Table \ref{tab:mammoth} for first-order static HDMR method successive runs have the same
+We note that in Table \ref{tab:mammoth runs} for first-order static HDMR method successive runs have the same
 number of evaluations required despite constructing higher-order polynomials.  This is because we enforced a
 floor function for quadrature, requiring a minimum number of quadrature points for a polynomial despite its
 low order.  This
@@ -248,7 +248,7 @@ poor integration.
     HDMR (2)$^*$ & 5 & 13571 \\
   \end{tabular}
   \caption{Evaluations Required for 23 Input Pin Cell Model}
-  \label{tab:mammoth}
+  \label{tab:mammoth runs}
 \end{table}
 
 We observe that for both the mean and the variance, the collocation-based methods all converge within the

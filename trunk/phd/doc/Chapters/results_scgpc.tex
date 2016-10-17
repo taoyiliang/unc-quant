@@ -364,7 +364,7 @@ it also is the model for a common physical problem.
 Consider a one-dimensional geometry that consists of a material with unit length and vacuum to the left and
 right of the material.  We consider a beam of neutral particles that have a probability of interacting
 with the material through absorption, or passing through it.  This beam enters the material on the left
-and exits on the right with a fraction of its original flux.  See for example Figure \ref{fig:atten}, where
+and exits on the right with a fraction of its original flux.  See for example Figure \ref{fig: atten}, where
 the dark arrows represent beam travel direction and their thickness generally depicts the beam attenuating
 through the material.  The spatial domain is [0,1].
 The quantity of interest is the percent of particles that pass through the material without interacting
@@ -409,43 +409,6 @@ Table \ref{tab:attenuation moments}.
   \caption{Analytic Expressions for Attenuation Case}
   \label{tab:attenuation moments}
 \end{table}
-
-This model has some interesting properties to demonstrate performance of polynomial-based UQ methods.  First,
-because the solution is a product of exponential functions, it cannot be exactly represented by a finite
-number of polynomials.  Second, the Taylor development of the exponential function (about the origin) 
-includes all increasing polynomial orders,
-\begin{equation}
-e^{-ay} = 1 - ay + \frac{(ay)^2}{2} - \frac{(ay)^3}{6} + \frac{(ay)^4}{24} - \frac{(ay)^5}{120} + \mathcal{O}(y^6).
-\end{equation}
-As a result, the product of several exponential functions is effectively a tensor combination of
-polynomials for each dimension.  The coefficients of higher-order polynomials are smaller than lower-order
-polynomials.  Further, coefficients for combined polynomials 
-have larger coefficients than single-dimensional
-polynomials with the same effective order.  For example, for a two-dimensional exponential function and
-considering effective fourth-order polynomials, the coefficient for $y_1^2y_2^2$ is $a^4/4$, while the
-coefficient for $y_1^4$ is $a^4/24$.  This is shown graphically in Table \ref{tab:atten coeffs}.  The
-magnitude of each coefficient for the tensor product of two Taylor expansions of the exponential function are
-given tabularly.  The grayed entries are those for which the total polynomial order is four.  We can see
-that the coefficients for polynomials equally split between the two input variables have a smaller denominator than
-those made up entirely of one input variable, and so those that are equal in both dimensions are more
-important to include in the expansion than those that are solely of one order or another.
-\begin{table}
-  \centering
-  \begin{tabular}{|c c|c c c c c|}
-    \cline{3-7}\multicolumn{2}{c|}{ } & \multicolumn{5}{c|}{Polynomial Order ($y_1$)} \\
-               \multicolumn{2}{c|}{ } & 0 & 1 & 2 & 3 & 4 \\
-    \hline & 0 & 1        & $a$      & $a^2/2$  & $a^3/6$   & \cellcolor{Gray6}$a^4/24$  \\
-Polynomial & 1 & $a$      & $a^2   $ & $a^3/2 $ & \cellcolor{Gray6}$a^4/6  $ & $a^5/24 $ \\
-Order      & 2 & $a^2/2$  & $a^3/2 $ & \cellcolor{Gray6}$a^4/4 $ & $a^5/12 $ & $a^6/48 $ \\
-($y_2$)    & 3 & $a^3/ 6$ & \cellcolor{Gray6}$a^4/ 6$ & $a^5/12$ & $a^6/ 36$ & $a^7/144$ \\
-           & 4 & \cellcolor{Gray6}$a^4/24$ & $a^5/24$ & $a^6/48$ & $a^7/144$ & $a^8/576$ \\
-    \hline
-  \end{tabular}
-  \caption{Coefficient Magnitudes, Tensor Taylor Development of $e^{-ay}$}
-  \label{tab:atten coeffs}
-\end{table}
-Note that in our case, $a=1/N$, which causes the polynomial coefficients to drop off more quickly, so that
-low-order polynomial orders are more important to the expansion.
 
 \subsection{Discussion}
 This model has some interesting properties to demonstrate performance of polynomial-based UQ methods.  First,
