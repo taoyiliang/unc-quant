@@ -3,9 +3,8 @@
 
  - replace int_Omega everywhere with intom, intomn, or intomx
  - spell check everywhere
- - go through methods and make sure it's updated for split scgpc and hdmr
  - http://grad.unm.edu/degree-completion/thesis-dissertations/guidelines.html <- UNM thesis guidelines
- - check references for ?? and consistency with author names
+ - check references for consistency with author names
  - normalize derivative dxdy to \ dx\ dy
  - cite papers I published while doing this work??
  - make sure I say "std dev" and not variance when it applies

@@ -1,6 +1,6 @@
 % Chapter Template
 
-\chapter{SCgPC and HDMR for Time-Dependent Analysis} % Main chapter title
+\chapter{Time-Dependent Analysis Example} % Main chapter title
 
 \label{ch:timedep} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
@@ -102,16 +102,16 @@ inlet\_temp & Inlet Temperature         & 558.0    & 564.0
 
 \begin{table}[htb]
   \centering \footnotesize
-  \begin{tabular}{l|l|c}\hline
-Raven Name       & Bison Path                                                 & Calculation \\\hline
-clad\_inner       & {Kernals.heat\_source\_clad.inner\_diameter}                & 2*(fuel\_rad + gap\_width) \\
-outer\_diam\_heat  & {Kernals.heat\_source\_clad.outer\_diameter}              & 2*(fuel\_rad + gap\_width + clad\_thick) \\
-sys\_press\_cool   & {CoolantChannel.convective\_clad\_surface.inlet\_pressure}& sys\_press \\
-outer\_diam\_cool  & {CoolantChannel.convective\_clad\_surface.rod\_diameter}  & 2*(fuel\_rad + gap\_width + clad\_thick) \\
-porosity\_thermal & {Materials.fuel\_thermal.intial\_porosity}                 & 1 - fuel\_dens/10980 \\
-fuel\_diam        & {Materials.fuel\_relocation.diameter}                      & 2*fuel\_rad \\
-gap\_diam         & {Materials.fuel\_relocation.gap}                           & 2*gap\_thick \\
-porosity\_sifgr   & {Materials.fission\_gas\_release.initial\_porosity}         & 1 - fuel\_dens/10980
+  \begin{tabular}{l|l}\hline
+Variable           & Calculation \\\hline
+clad\_inner        & 2*(fuel\_rad + gap\_width) \\
+outer\_diam\_heat  & 2*(fuel\_rad + gap\_width + clad\_thick) \\
+sys\_press\_cool   & sys\_press \\
+outer\_diam\_cool  & 2*(fuel\_rad + gap\_width + clad\_thick) \\
+porosity\_thermal  & 1 - fuel\_dens/10980 \\
+fuel\_diam         & 2*fuel\_rad \\
+gap\_diam          & 2*gap\_thick \\
+porosity\_sifgr    & 1 - fuel\_dens/10980
   \end{tabular}
   \caption{OECD Benchmark Dependent Inputs}
   \label{tab:oecd deps}

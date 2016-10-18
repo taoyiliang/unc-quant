@@ -51,7 +51,7 @@ geometric construction parameters, moderator inlet temperatures, and so forth.  
 temperature, maximum fuel centerline temperature, clad elongation, percent fission gas released, and so on.
 
 \subsection{Uncertain Inputs}
-Essential to using simulation models is understanding the possibility that significant uncertainties existing in
+Essential to using simulation models is understanding the possibility that significant uncertainties exist in
 the inputs.  These could be aleatoric uncertainties due to intrinsic randomness in the inputs, or epistemic
 uncertainties due to model imperfections or lack of knowledge.  
 For example, quantum behaviors or Brownian motion often provide non-deterministic sources of aleatoric uncertainty.
@@ -63,8 +63,9 @@ Each of these aleatoric and epistemic uncertainties has some
 distribution defining the likelihood of an input to have a particular value.  Sometimes these distributions
 are known; often, they can only be approximated.  These distributions might be
 assumed or constructed from experiment; for our work, we will assume distributions are given, and that the given 
-distributions are accurate.  The
-input likelihood distribution is the probability distribution function (PDF) $\rho_n(y_n)$.  
+distributions are accurate.  
+
+The distribution of input likelihoods is the probability distribution function (PDF) $\rho_n(y_n)$.  
 An integral over any portion of the input space of the PDF provides the probability that the input's value
 is within that portion.
 We require
@@ -77,7 +78,7 @@ lies between $a$ and $b$ almost surely.
 
 \subsection{Multidimensional Input Spaces}
 % multidimensional
-When there are more than one uncertain input, the combination of distributions for these inputs span an
+When there are more than one uncertain input, the combination of distributions for these inputs make up an
 uncertainty space $\Omega$. $\Omega$ is a part of the probability space $(\Omega,\sigma,\rho)$, where $\Omega$
 is the set of all possible outcomes, $\sigma$ is the set of events $\omega$, and $\rho$ is the probability function for
 the space.  The dimensionality of $\Omega$ is $N$,
@@ -104,7 +105,7 @@ dependency of a realization on $\omega$ will be omitted and referred to as \emph
 realization}.
 
 % correlation
-\subsection{Correlation and the Karhunen-Loevre expansion}\label{sec:KL}
+\subsection{Correlation and the Karhunen-Loeve expansion}\label{sec:KL}
 We note the possibility that multiple inputs may be correlated with each other.  When inputs are not
 independent, the joint probability distribution is not the product of each individual probability distribution
 distribution.  When this is the case, each distribution cannot be sampled independently, and this
@@ -143,6 +144,7 @@ are within $k$ standard deviations from the mean.  This is true whenever the mea
 defined.  Table
 \ref{tab:cheby stdev} shows the minimum percent of the response covered by including multiples of the
 standard deviation from the mean.
+
 Some distributions are much more restrictive than Chebyshev's inequality requires.  For instance, we 
 show a similar table for a normal Gaussin distribution in Table \ref{tab:norm stdev}.  Fig. \ref{fig:stdev pct}
 shows the same information graphically.
@@ -202,13 +204,13 @@ is a ``standard'' distribution, and the red demonstrates increasing the indicate
 While both skewness and kurtosis provide insight to the distribution of responses,
 most uncertainty quantification is centered on second-order metrics.
 Second-order uncertainty quantification seeks for the mean and variance of
-the perturbed response.  Mathematically, the mean of a model is the first moment,
+the perturbed response.  Mathematically, the mean ($\mu$) of a model is the first moment,
 \begin{equation}
-  \text{mean} = \expv{u(Y)} = \int_\Omega \rho(Y) u(Y) dY,
+  \mu = \expv{u(Y)} = \int_\Omega u(Y) dY,
 \end{equation}
-and the variance is the second moment less the square of the first,
+and the variance ($\sigma^2$) is the second moment less the square of the first,
 \begin{equation}
-  \text{variance} = \expv{u(Y)^2} - \expv{u(Y)}^2 = \int_\Omega \rho(Y) u(Y)^2 dY - \text{mean}^2.
+  \sigma^2 = \expv{u(Y)^2} - \expv{u(Y)}^2 = \int_\Omega u(Y)^2 dY - \mu^2.
 \end{equation}
  
 Another use for uncertainty quantification is understanding the sensitivity of the output responses to the
@@ -281,7 +283,7 @@ the inputs are small compared to the partial derivatives \cite{sandwich2}.
 For models with gradients that are simple to calculate accurately (and sufficiently small input
 uncertainties), this formula is very effective at propagating error.  However, computing or estimating such
 gradients accurately for complex models is prohibitive, and leads to numerical approaches to uncertainty
-quantification, as we discuss in this thesis.
+quantification, as we discuss in this work.
 
 
 \subsection{Uncertainty Quantification Techniques}
@@ -365,14 +367,14 @@ In multidimensional input spaces, the tensor product of each grid is taken to re
 Since the grid nodes are user-defined, approximating integrals are slightly more complicated than in the Monte
 Carlo space.  The mean is approximated by
 \begin{equation}
-  \expv{u(Y)} = \int_\Omega \rho(Y) u(Y) dY \approx \sum_{m=1}^M w_m u(Y(\omega_m)),
+  \expv{u(Y)} = \int_\Omega u(Y) dY \approx \sum_{m=1}^M w_m u(Y(\omega_m)),
 \end{equation}
 where $m$ iterates over each node in the grid, $Y(\omega_m)$ is the multidimensional input realization at grid node $m$, and
 $w_m$ is a probability weight determined by the volume of probability represented by the grid node.  In grids
 constructed by CDF, all $w_m$ are of the same value, while in grids spaced equally by value, $w_m$ can vary
 significantly.  Similarly, the second moment is approximated by
 \begin{equation}
-  \expv{u(Y)^2} = \int_\Omega \rho(Y) u(Y)^2 dY \approx \sum_{m=1}^M w_m u(Y(\omega_m))^2.
+  \expv{u(Y)^2} = \int_\Omega u(Y)^2 dY \approx \sum_{m=1}^M w_m u(Y(\omega_m))^2.
 \end{equation}
 
 An advantage to grid sampling is its regular construction, which can give more clarity to how a response
@@ -422,4 +424,15 @@ probability weight of the sampled points \cite{raven}.
 \end{figure}
 
 As in the Grid method, the weight of each sample is the probability volume of the hypervolume it represents.
+While LHS has been a boon to computational researchers due to its low sample size, it struggles to resolve
+responses with significant nonlinear shape.  Because only a small portion of the input space is used to obtain
+the response statistics, there is a risk of missing important response features that may include
+high-probability spaces.
+
+\section{Conclusion}
+Monte Carlo, Grid, and LHS sampling are all useful tools in uncertainty quantification.  Each one, however,
+also has weak points that make it undesirable for some responses.  Monte Carlo tends to be slow in converging
+to high-order accuracy, Grid suffers greatly from the curse of dimensionality, and LHS relies on
+slowly-changing responses.  In the remainder of this work we explore advanced UQ methods to improve on these
+three standard techniques.
 

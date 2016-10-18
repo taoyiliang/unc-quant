@@ -42,8 +42,8 @@ distributions; the other uses the Wiener-Askey polynomials \cite{xiu}.  We consi
 
 We consider a simulation code that produces a quantity of interest $u(Y)$ whose
 arguments are the uncertain, distributed input
-parameters $Y=(Y_1,\ldots,Y_n,\ldots,Y_N)$.  A particular realization $\omega$ of $Y_n$ is expressed by
-$Y_n(\omega)$, and a single realization of the entire input space results in a solution to the function as
+parameters $Y=(y_1,\ldots,y_n,\ldots,y_N)$.  A particular realization $\omega$ of $y_n$ is expressed by
+$y_n(\omega)$, and a single realization of the entire input space results in a solution to the response as
 $u(Y(\omega))$.  We acknowledge obtaining a realization of $u(Y)$ may take considerable computation time and
 effort, and may be solved nonlinearly.  There also may be other input parameters that
 contribute to the solution of $u(Y)$ but have no associated uncertainty; we neglect these, as our interest 
@@ -75,21 +75,21 @@ The gPC for $u(Y)$ using this notation is
 \end{equation}
 where $u_k$ is a scalar weighting polynomial expansion coefficient, sometimes called a polynomial expansion
 moment. The polynomials used in the expansion are determined
-by the $\Lambda$, a set of chosen multi-indices, which can be selected in a variety of ways we will discuss in section
+by $\Lambda$, a set of chosen multi-indices, which can be selected in a variety of ways we will discuss in section
 \ref{sec:index sets}.  In the limit
 that $\Lambda$ contains all possible combinations of polynomials of any order, Eq. \ref{eq:gPC} is exact.
 Practically, however, $\Lambda$ is truncated to some finite set of multidimensional polynomials.
 
 We make use of orthonormal Wiener-Askey polynomials
 \begin{equation}
-  \int_\Omega \Phi_k(Y)\Phi_{\hat k}(Y) \rho(Y) dY = \delta_{k\hat k},
+  \int_\Omega \Phi_k(Y)\Phi_{\hat k}(Y) dY = \delta_{k\hat k},
 \end{equation}
-where $\rho(Y)$ is the combined PDF of $Y$, $\Omega$ is the multidimensional domain of $Y$, and $\delta_{nm}$
+where $\Omega$ is the multidimensional domain of $Y$ and $\delta_{nm}$
 is the Dirac delta.  We can isolate an expression for the polynomial expansion coefficients using the
-properties of orthonormality..
+properties of orthonormality.
 We multiply both sides of Eq. \ref{eq:gPC} by
 $\Phi_{\hat k}(Y)$, integrate both sides over the probability-weighted input domain, and sum over all $\hat k$
-to obtain the coefficients, sometimes referred to as polynomial expansion moments,
+to obtain the coefficients $u_k$, sometimes referred to as polynomial expansion moments,
 \begin{equation}
   u(Y) = \sum_{k\in\Lambda(L)} u_k\Phi_k(Y),
 \end{equation}
@@ -98,11 +98,11 @@ to obtain the coefficients, sometimes referred to as polynomial expansion moment
            u_k\Phi_k(Y)\ dy,
 \end{equation}
 \begin{equation}
-  \langle u(Y),\Phi_{\hat k}(Y)\rangle = <langle \Phi_{\hat k}(Y),\sum_{k\in\Lambda(L)}
+  \langle u(Y),\Phi_{\hat k}(Y)\rangle = \langle \Phi_{\hat k}(Y),\sum_{k\in\Lambda(L)}
            u_k\Phi_k(Y) \rangle,
 \end{equation}
 \begin{equation}
-  \langle u(Y),\Phi_{\hat k}(Y)\rangle = <langle \Phi_{\hat k}(Y),\sum_{k\in\Lambda(L)}
+  \langle u(Y),\Phi_{\hat k}(Y)\rangle = \langle \Phi_{\hat k}(Y),\sum_{k\in\Lambda(L)}
            u_k\Phi_k(Y) \rangle,
 \end{equation}
 \begin{equation}
@@ -371,7 +371,7 @@ The naive choice for multidimensional quadrature is to find the largest quadratu
 then take the grid of all possible combinations of the largest quadrature points as the multidimensional
 points and weights.
 While a tensor product of highest-necessary quadrature orders could serve as a suitable multidimensional
-quadrature set, the necessary model evaluations grows very quickly.  We can make use of Smolyak-like sparse 
+quadrature set, the number of necessary model evaluations grows very quickly.  We can make use of Smolyak-like sparse 
 quadratures to reduce the number of model
 evaluations necessary for the TD and HC polynomial index set construction strategies.
 
@@ -391,8 +391,8 @@ quadrature.  Additional discussion and some example figures are included in \cit
 
 In our case, the
 polynomial index sets determine the quadrature orders each one needs in each dimension to be integrated
-accurately.  For example, the polynomial index set point (2,1,3) requires three points in $Y_1$, two in $Y_2$,
-and four in $Y_3$,or
+accurately.  For example, the polynomial index set point (2,1,3) requires three points in $y_1$, two in $y_2$,
+and four in $y_3$,or
 \begin{equation}
   Q^{(2,1,3)} = q^{(3)}_1 \otimes q^{(2)}_2 \otimes q^{(4)}_3.
 \end{equation}
@@ -448,7 +448,7 @@ proceeds generally as follows:
   \item Begin with the mean (zeroth-order) polynomial expansion.
   \item While not converged:
     \begin{enumerate}
-      \item Collect a list of the prospective polynomial index set whose predecessors have all been evaluated.
+      \item Collect a list of the prospective polynomial index sets whose predecessors have all been evaluated.
         \label{item:adsc start}
       \item Calculate the impact of adding each prospective polynomial to the existing polynomial index set.
         \label{item:calc impact}
@@ -535,7 +535,9 @@ The next polynomial
 index set combinations are $k=(0,1)$ and $k=(1,0)$.  For $k=(0,1)$, the quadrature points required are
 $Y_\omega=(0,\pm\sqrt{1/3})$.  This evaluates to $f(0,\pm\sqrt{1/3})=0$, as well.  Because of model symmetry, we obtain the
 same result for $k=(1,0)$.  According to our algorithm, because our old value was 0, and the sum of the new
-contributions is 0, we have converged; however, we know this is false convergence.  While we expect few
+contributions is 0, we have converged; however, we know this is false convergence.  
+
+While we expect few
 applications for SCgPC to exhibit these zero partial derivatives in the input space, it is a limitation to
 consider.  An argument can be made that, since lower-order polynomials correspond to lower-energy modes of the
 modeled physics, it is expected that higher-order polynomials should not often contribute to an accurate

@@ -1,6 +1,6 @@
 % Chapter Template
 
-\chapter{SCgPC and HDMR for Fuel Pin Cell} % Main chapter title
+\chapter{Fuel Pin Cell Example} % Main chapter title
 
 \label{ch:mammoth} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
@@ -47,11 +47,17 @@ The specific model to simulate is a coupled multiphysics engineering-scale model
 It simulates fuel behavior for a pressurized
 water reactor fuel rod as it is used as fuel in a nuclear reactor.  It simulates fuel behavior through the 
 depletion of fissile material over a year-long process without reactor power changes.
-The domain is a single two-dimensional slice of a fuel rod.  The mesh contains fuel, gap, clad, and
-moderator, and represents a symmetric quarter pin cell.  
-The response of interest is the $k$-eigenvalue of the infinite reactor.
 
-There are two meshes used in this coupled model, one each for \bison{} and \rattlesnake{}.  The distinction is
+\subsection{Physical Problem}
+The domain for this two-dimensional slice of a fuel rod is from 0 to 6.3 millimeters square, with reflective
+boundaries on all sides.
+The fuel pin radius is 4.09575 millimeters including the cladding.
+The heterogeneous materials include fuel, gap, clad, and
+moderator, and represents a symmetric quarter fuel pin cell.  
+The response of interest is the $k$-eigenvalue of the infinite reactor, which serves the same function as
+described in Chapter \ref{ch:c5g7}.
+
+There are two meshes used in this coupled model, one for \bison{} and another for \rattlesnake{}.  The distinction is
 necessary because of the physics solved by each.  In \bison{} it is important to not mesh the gap between fuel
 and cladding, as in the limit that the fuel expands and makes contact with the cladding, the gap mesh cells
 will become infinitely long and thin.  This causes a number of numerical errors.  For \rattlesnake{} however
@@ -59,9 +65,7 @@ it is critical to mesh the gap, as neutron transport will be affected by the mat
 meshes are shown in Figures \ref{fig:pincell fuel mesh} and \ref{fig:pincell neutron mesh}.
 The meshes each contain 20 rings of fuel element groups (red) and the clad (green),
 and the neutronics mesh additionally contains the gap (yellow) and the moderator (blue).  
-The fuel pin radius is 4.09575 millimeters including the cladding, and the domain including the moderator is
-from 0 to 6.3 millimeters square.  The boundaries are reflective on all sides to simulate operation in an
-infinite reactor.
+The boundaries are reflective on all sides to simulate operation in an infinite reactor.
 
 \begin{figure}[H]
   \centering
@@ -78,15 +82,20 @@ infinite reactor.
 
 The neutronics is calculated using 8 energy groups and second-order level-symmetric quadrature for angle, and 
 takes as uncertain inputs 671 material cross
-sections, including fission, capture, scattering, and neutron multiplication factor.  Variance and covariance
-data was previously collected for these inputs using cross section code \texttt{SCALE} \cite{scale} with a Monte Carlo (MC)
+sections, including fission, capture, scattering, and neutron multiplication factor.  
+
+\subsection{Uncertainty}
+Variance and covariance
+data was previously collected for all the material inputs using cross section code \texttt{SCALE} \cite{scale}
+with a Monte Carlo (MC)
 random sampling approach.  In an effort to capture more interesting physics and uncertainties, the covariance
 matrix was scaled up uniformly by a factor of 10 for this work.  The resulting covariance matrix was used to
-construct a multidimensional Gaussian distribution.  Additionally, we perturb three material properties from
+construct a multidimensional Gaussian distribution to encompass the collective neutronics inputs.
+Additionally, we perturb three material properties from
 the \bison{} simulation: the fuel thermal expansion coefficient, fuel thermal conductivity, and cladding
 thermal conductivity.  The uncertain distribution for these parameters are provided in Table 
 \ref{tab:pincell bison distros}.  Note that the fuel thermal conductivity is in actuality a scaling factor to
-the value used within \bison{}, which is calculated based on changing material properties.
+the value used within \bison{}, while the actual value is calculated based on changing material properties.
 \begin{table}
   \centering
   \begin{tabular}{c|c c|c}
@@ -106,6 +115,7 @@ in Chapter \ref{ch:c5g7}.  The resulting variables and distributions are \emph{l
 translated back to the \emph{manifest} (original) space by way of a transformation matrix.
 Table \ref{tab:pcarank} gives the first several importance ranking eigenvalues for latent variables, which are
 identified only by their ranking in the KL expansion.  We elected to truncate at 20 input variables.  
+
 Figure \ref{fig:pincell impranks} shows the importance rank
 information graphically.  The red cross line associated with the left y-axis shows the importance rank
 eigenvalue for each latent variable, sorted by value.  The blue circle line associated with the right y-axis
@@ -114,6 +124,12 @@ cases the x-axis is log scale; this is because the importance eigenvalues drop o
 to emphasize the first eigenvalues over the remainder.  We also add a black line to the plot and chart
 to indicate where the truncation was performed.
 
+Figures \ref{fig:pincell trunc mean} and \ref{fig:pincell trunc stdev} show the level of matching between the
+original and truncated input spaces for the mean and standard deviation, respectively.  The values for both
+metrics are taken at several numbers of samples and shown in the left plot of each, and the final values are
+shown on the right along with (at least) 75 percent confidence bars.  Unlike the neutronics case in Chapter
+\ref{ch:c5g7}, we included more terms from the KL expansion, and the resulting match between the mean and
+standard deviations is largely within the Monte Carlo sampling error.
 \begin{table}[H]
   \centering
   \begin{tabular}{c|c}
@@ -153,7 +169,20 @@ KL Rank & Importance Eigenvalue \\ \hline
   \caption{Pincell $k$-Eigenvalue Importance Ranks}
   \label{fig:pincell impranks}
 \end{figure}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\linewidth]{mammoth/pincell_k-eff-correction_mean_reduction}
+  \caption{Pincell $k$-Eigenvalue Input Reduction, Mean}
+  \label{fig:pincell trunc mean}
+\end{figure}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\linewidth]{mammoth/pincell_k-eff-correction_stddev_reduction}
+  \caption{Pincell $k$-Eigenvalue Input Reduction, Std. Dev.}
+  \label{fig:pincell trunc mean}
+\end{figure}
 
+\subsection{Code Versions}
 \moose{} and its applications including \rattlesnake{}, \bison{}, and \mammoth{} do not generally have a
 versioning system or release
 schedule; instead, it is tracked by \texttt{Git} \cite{git} commit hashes.
