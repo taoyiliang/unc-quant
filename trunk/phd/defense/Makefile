@@ -5,7 +5,7 @@ all: tidy
 tidy: defense_present.tex
 
 	pdflatex $(SRC).tex
-	# pdflatex $(SRC).tex
+	pdflatex $(SRC).tex
 	# pdflatex $(SRC).tex
 
 .PHONY: clean
