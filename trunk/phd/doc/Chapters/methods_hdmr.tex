@@ -165,16 +165,17 @@ consider each of these an independent uncertain model, with many of the same fea
 $u(Y)$.  These subset terms have their own mean, variance, and sensitivities.  Additionally
 these subsets can each be represented by a SCgPC expansion,
 \begin{equation}
-  t_n \approx \sum_{k'\in\Lambda'(L')} t_{n;k'}\Phi_{k'}(Y_n),
+  t_n \approx \sum_{k'\in\Lambda'(L')} t_{n;k'}\Phi_{k'}(Y_n) - t_r,
 \end{equation}
 where we make use of prime notation $k'$, $\Lambda'$, $L'$ to denote a SCgPC expansion
 for a subset term of a cut-HDMR expansion and $t_{n;k'}$ are the scalar expansion coefficients.  Eq.
 \ref{eq:cuthdmr} can then be written
 \begin{align}\label{eq:cut and gpc}
-  T(Y) \approx t_r &+ \sum_{n=1}^N \qty(\sum_{k'\in\Lambda_n'(L')} t_{n;k'}\Phi_{k'}(Y_n)) \\ \nonumber
-  &+ \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} \qty(\sum_{k'\in\Lambda_{m,n}'(L')} t_{m,n;k'}\Phi_{k'}(Y_m,Y_n)) \\
+  T(Y) \approx t_r &+ \sum_{n=1}^N \qty(\sum_{k'\in\Lambda_n'(L')} t_{n;k'}\Phi_{k'}(Y_n)-t_r) \\ \nonumber
+  &+ \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} \qty(\sum_{k'\in\Lambda_{m,n}'(L')} t_{m,n;k'}\Phi_{k'}(Y_m,Y_n)
+-t_m -t_n - t_r)\\
   \nonumber &+\cdots \\ \nonumber
-  &+ \qty(\sum_{k'\in\Lambda_{1,\cdots,N}'(L')} t_{1,\cdots,N;k'}\Phi_{k'}(Y_1,\cdots,Y_N)).
+  &+ \qty(\sum_{k'\in\Lambda_{1,\cdots,N}'(L')} t_{1,\cdots,N;k'}\Phi_{k'}(Y_1,\cdots,Y_N) - (\cdots)).
 \end{align}
 
 There are several synergies make available by using SCgPC to expand the subset terms in

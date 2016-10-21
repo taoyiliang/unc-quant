@@ -310,7 +310,7 @@ corresponding to the polynomial expansion polynomials for numerical integration 
 dists}).  Quadrature integration takes
 the form
 \begin{align}
-  \int_a^b f(x)\rho(x) &= \sum_{\ell=1}^\infty w_\ell f(x_\ell),\\
+  \int_a^b f(x)\rho(x)\ dx &= \sum_{\ell=1}^\infty w_\ell f(x_\ell),\\
   &\approx \sum_{\ell=1}^{\hat L} w_\ell f(x_\ell),
 \end{align}
 where $w_\ell,x_\ell$ are corresponding points and weights belonging to the quadrature set truncated at order
@@ -356,16 +356,20 @@ Using orthogonal properties of the polynomials, this reduces as $\hat L\to\infty
 \begin{equation}
   u_k\approx \sum_{\ell=1}^{\hat L} w_\ell u_k \Phi_k(Y_\ell)^2.
 \end{equation}
-Thus, the integral, to the same error introduced by truncating the  gPC expansion, the quadrature is
-approximating an integral of order $2k$. As a result, the quadrature order should be order 
+Accepting the truncation error, the order of the integral to determine the expansion coefficient is
+$2k$. As a result, the quadrature order needed to exactly integrate this expression should be order 
 \begin{equation}
   p=\frac{2k+1}{2}=k+\frac{1}{2}<k+1,
 \end{equation}
 so we can conservatively use $p=k+1$.  In the case of the largest polynomials with order
-$k=L$, the quadrature size $\hat L$ is the same as $L+1$.  It is worth noting that if $u(Y)$ is effectively of
+$k=L$, the quadrature size $\hat L$ is the same as $L+1$.  This balances the truncation error with quadrature
+integration error.
+
+It is worth noting that if $u(Y)$ is effectively of
 much higher-order polynomial than $L$, this equality for quadrature order does not hold true; however, it also
-means that gPC of order $L$ will be a poor approximation.  In this case, a ``quadrature floor'' can be
-enforced, limiting the smallest allowable quadrature with which to integrate any expression.
+means that gPC of order $L$ will be a poor approximation.  In some cases, a ``quadrature floor'' can be
+enforced, limiting the smallest allowable quadrature with which to integrate any expression.  This can result
+in more expansion coefficients when only low-order polynomials are used in the gPC expansion.
 
 The naive choice for multidimensional quadrature is to find the largest quadrature needed in each dimension,
 then take the grid of all possible combinations of the largest quadrature points as the multidimensional

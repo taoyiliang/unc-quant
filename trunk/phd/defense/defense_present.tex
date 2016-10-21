@@ -2200,12 +2200,115 @@ Retained latent dimensions 24, 9, 0, 17, 10, 116, 100, 13
 
 \section{Multiphysics Example}
 \subsection{Problem}
+\begin{frame}{Multiphysics Example}{Introduction}\vspace{-20pt}
+  \vfill
+Coupled multiphysics problem
+  \vfill
+\begin{itemize}
+  \item Neutronics
+    \begin{itemize}
+      \item neutron transport and interaction
+      \item Provides flux/power shapes to fuels performance
+    \end{itemize}
+  \vfill
+  \item Fuels Performance
+    \begin{itemize}
+      \item temperature, depletion, fuel oxidation, 
+      \item fission product swelling, densification, fuel fracture,
+      \item interstitial heat transfer, mechanical contact,
+      \item cladding creep, thermal expansion, plasticity
+      \item Provides temperature fields to neutronics
+    \end{itemize}
+\end{itemize}
+  \vfill
+\end{frame}
+
+\begin{frame}{Multiphysics Example}{Geometry}\vspace{-20pt}
+      \begin{figure}
+        \centering
+        \includegraphics[width=0.8\linewidth]{mammoth/NeutronicsMesh}
+      \end{figure}
+\end{frame}
+
 \subsection{Uncertainty}
+\begin{frame}{Multiphysics Example}{Geometry and Uncertainty}\vspace{-20pt}
+  \vfill
+  Dimensions
+  \begin{itemize}
+    \item Domain is 6.3 mm square
+    \item Reflective boundaries
+    \item Fuel pin radius is 4.09575 mm with clad
+  \end{itemize}
+  \vfill
+  Response is $k$-eigenvalue
+  \vfill
+  Uncertain inputs
+  \begin{itemize}
+    \item 671 correlated interaction cross sections
+    \item Fuel thermal expansion coefficient
+    \item Clad thermal conductivity
+    \item Fuel thermal conductivity
+  \end{itemize}
+  \vfill
+\end{frame}
+
+\begin{frame}{Multiphysics Example}{Uncertainty Correlation}\vspace{-20pt}
+      \begin{figure}
+        \centering
+        \includegraphics[width=0.8\linewidth]{mammoth/pincell_eigenvalue_impranks}
+      \end{figure}
+\end{frame}
+
+\begin{frame}{Multiphysics Example}{Uncertainty Correlation}\vspace{-20pt}
+      \begin{figure}
+        \centering
+        \includegraphics[width=0.6\linewidth]{mammoth/pincell_k-eff-correction_mean_reduction}
+      \end{figure}
+      \vspace{-30pt}
+      \begin{figure}
+        \centering
+        \includegraphics[width=0.6\linewidth]{mammoth/pincell_k-eff-correction_stddev_reduction}
+      \end{figure}
+\end{frame}
+
+
 \subsection{Results}
+\begin{frame}{Multiphysics Example}{Results}%\vspace{-20pt}
+      \begin{figure}
+        \centering
+        \includegraphics[width=0.8\linewidth]{mammoth/MAMMOTH_pincell_mean_vals}
+      \end{figure}
+\end{frame}
 
+\begin{frame}{Multiphysics Example}{Results}%\vspace{-20pt}
+      \begin{figure}
+        \centering
+        \includegraphics[width=0.8\linewidth]{mammoth/MAMMOTH_pincell_var_vals}
+      \end{figure}
+\end{frame}
 
-
-
+\begin{frame}{Multiphysics Example}{Run Times}%\vspace{-20pt}
+\begin{table}
+\footnotesize
+  \centering
+  \begin{tabular}{c c|c}
+    Method & Degree & Runs \\ \hline
+    Total Degree & 1 & 47 \\
+    Total Degree & 2 & 1105 \\
+    Total Degree$^*$ & 3 & 17389 \\ \hline
+    HDMR (1) & 1 & 47 \\
+    HDMR (1) & 2 & 47 \\
+    HDMR (1) & 3 & 93 \\
+    HDMR (1) & 4 & 93 \\
+    HDMR (1) & 5 & 139\\ \hline
+    HDMR (2) & 1 & 47 \\
+    HDMR (2) & 2 & 1105 \\
+    HDMR (2)$^\dagger$ & 3 & 3221 \\
+    HDMR (2)$^\dagger$ & 4 & 7361 \\
+    HDMR (2)$^*$ & 5 & 13571 \\
+  \end{tabular}
+\end{table}
+\end{frame}
 
 \section{Time-Dependent Example}
 \subsection{Problem}

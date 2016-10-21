@@ -20,8 +20,11 @@ expansion, which results in significant reduction of terms due to gPC orthogonal
 We begin at the cut-HDMR expansion with
 subsets determined by generalized polynomial chaos expansions by repeating Eq. \ref{eq:cut and gpc},
 \begin{align}\label{eq:trunchdmr}
-  T(Y) \approx t_r &+ \sum_{n=1}^N \qty(\sum_{k'\in\Lambda_n'(L')} t_{n;k'}\Phi_{k'}(Y_n)) \\ \nonumber
-  &+ \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} \qty(\sum_{k'\in\Lambda_{m,n}'(L')} t_{m,n;k'}\Phi_{k'}(Y_m,Y_n)),
+  T(Y) \approx t_r &+ \sum_{n=1}^N \qty(\sum_{k'\in\Lambda_n'(L')} t_{n;k'}\Phi_{k'}(Y_n)-t_r) \\ \nonumber
+  &+ \sum_{n_1=1}^N \sum_{n_2=1}^{n_1-1} \qty(\sum_{k'\in\Lambda_{m,n}'(L')} t_{m,n;k'}\Phi_{k'}(Y_m,Y_n)
+-t_m -t_n - t_r)\\
+  \nonumber &+\cdots \\ \nonumber
+  &+ \qty(\sum_{k'\in\Lambda_{1,\cdots,N}'(L')} t_{1,\cdots,N;k'}\Phi_{k'}(Y_1,\cdots,Y_N) - (\cdots)),
 \end{align}
 and recall the definition of ANOVA in Eq. \ref{eq:anova}, \ref{eq:hdmr 0}, \ref{eq:hdmr 1}, and \ref{eq:hdmr 2}.
 For demonstration, note we truncate the cut-HDMR to second-order effects in Eq. \ref{eq:trunchdmr}, but the 
