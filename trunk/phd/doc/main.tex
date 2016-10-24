@@ -213,18 +213,18 @@ Albuquerque, New Mexico
 
 \abstract{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
 
-As experiment complexity in fields such as nuclear engineering continues to increase, so does the
+As experiment complexity in fields such as nuclear engineering continually increases, so does the
 demand for robust computational methods to simulate them.  In many 
-simulations, input design parameters as well as intrinsic experiment properties are sources
-of input uncertainty.  Often, small perturbations in uncertain parameters have significant impact on the
-experiment outcome.  For instance, when considering nuclear fuel performance, small changes
-in the fuel thermal conductivity can greatly affect the maximum stress on the surrounding cladding.
-The difficulty of quantifying input uncertainty impact in such systems has grown with the
-complexity of the numerical models.  Traditionally, uncertainty quantification has been approached using
+simulations, input design parameters and intrinsic experiment properties are sources
+of uncertainty.  Often small perturbations in uncertain parameters have significant impact on the
+experiment outcome.  For instance, in nuclear fuel performance, small changes
+in fuel thermal conductivity can greatly affect maximum stress on the surrounding cladding.
+The difficulty quantifying input uncertainty impact in such systems has grown with the
+complexity of numerical models.  Traditionally, uncertainty quantification has been approached using
 random sampling methods like Monte Carlo.
 For some models, the input parametric space and corresponding
-quantity-of-interest output space is sufficiently explored with a few low-cost calculations.
-For other models, it is computationally costly to obtain a
+response output space is sufficiently explored with few low-cost calculations.
+For other models, it is computationally costly to obtain
 good understanding of the output space.  
 
 To combat the expense of random sampling, 
@@ -232,19 +232,19 @@ this research explores the possibilities of advanced methods in
 Stochastic Collocation for generalized Polynomial Chaos (SCgPC) as an alternative to traditional uncertainty
 quantification techniques such as Monte Carlo (MC) and Latin Hypercube Sampling (LHS) methods.  In this
 thesis we explore the behavior of traditional SCgPC construction strategies as well as
-truncated polynomial spaces using Total Degree (TD) and Hyperbolic Cross (HC) construction strategies.  While
-an infinite number of polynomials can exactly represent any mathematical model, of necessity we limit (or
-truncate) the number of polynomials for practical application.  We
+truncated polynomial spaces using Total Degree and Hyperbolic Cross construction strategies.  While
+an infinite number of polynomials can exactly represent any model, of necessity we limit
+the number of polynomials for practical application.  We
 also consider applying anisotropy (unequal treatment of different dimensions) to the polynomial space, 
-and analyze methods whereby the optimal level of
-anisotropy can be approximated.  We review and develop potential adaptive polynomial construction
+and analyze methods whereby optimal levels of
+anisotropy can be approximated.  We review and develop adaptive polynomial construction
 strategies.  Finally, we add High-Dimensional Model Reduction (HDMR) expansions, using SCgPC representations for
 the subspace terms, and consider adaptive methods to construct them.
-We analyze these methods on a series of models of increasing complexity.  We use a series of analytic methods of
+We analyze these methods on a series of models of increasing complexity.  We use analytic models of
 various levels of complexity, then demonstrate performance on two engineering-scale problems: a single-physics
 nuclear reactor neutronics problem, and a multiphysics fuel cell problem coupling fuels performance and
 neutronics.  Lastly, we demonstrate sensitivity analysis for a time-dependent fuels performance problem.
-For this analysis, we demonstrate the application of the
+We demonstrate the application of all the
 algorithms in \raven, a production-level uncertainty quantification framework.
 }
 
