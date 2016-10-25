@@ -176,6 +176,34 @@ at \\Idaho National Laboratory}
 \end{frame}
 
 
+\begin{frame}{Introduction}{Safety Margins}\vspace{-10pt}
+  Traditional simulation approach to Safety Margins
+  \vfill
+  \begin{itemize}
+    \item Build excess conservatism into models
+    \item Assume final calculations are sufficiently conservative
+  \end{itemize}
+  \vfill
+  More advanced approach: Best Estimate Plus Uncertainty (BEPU)
+  \vfill
+  \begin{itemize}
+    \item Analyze models as accurately as possible
+    \item Propagate uncertainty to determine safety margins
+    \item Example: RISMC
+  \end{itemize}
+  \vfill
+\end{frame}
+
+
+\begin{frame}{Introduction}{Uncertainty Quantification}
+  Uncertainty Quantification as explained by \raven{}
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{present/uq}
+  \end{figure}
+\end{frame}
+
+
 \begin{frame}{Introduction}{Nomenclature}\vspace{-10pt}
   Consider a generic simulation
   \begin{itemize}
@@ -198,31 +226,6 @@ at \\Idaho National Laboratory}
 \end{frame}
 
 
-\begin{frame}{Introduction}{Safety Margins}\vspace{-10pt}
-  Traditional simulation approach to Safety Margins
-  \vfill
-  \begin{itemize}
-    \item Build excess conservatism into models
-    \item Assume final calculations are sufficiently conservative
-  \end{itemize}
-  \vfill
-  More advanced approach: Best Estimate Plus Uncertainty (BEPU)
-  \vfill
-  \begin{itemize}
-    \item Analyze models as accurately as possible
-    \item Propagate uncertainty to determine safety margins
-    \item Example: RISMC
-  \end{itemize}
-  \vfill
-\end{frame}
-
-\begin{frame}{Introduction}{Uncertainty Quantification}
-  Uncertainty Quantification as explained by \raven{}
-  \begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.7\linewidth]{present/uq}
-  \end{figure}
-\end{frame}
 
 \begin{frame}{Introduction}{Nomenclature}\vspace{-10pt}
   More Definitions
@@ -230,7 +233,7 @@ at \\Idaho National Laboratory}
   \begin{itemize}
     \item $u(Y)$ is stochastic response
   \vfill
-    \item $Y$ is stochastic vector
+\item $Y$ is stochastic vector, $Y=(y_1,\ldots,y_N)$
     \item Probability space ($\Omega,\sigma,\rho$)
   \vfill
     \item Each uncertain input $y_n$:
@@ -244,6 +247,7 @@ at \\Idaho National Laboratory}
   \end{itemize}
   \vfill
 \end{frame}
+
 
 \subsection{Tradition}
 \begin{frame}{Introduction}{Traditional Uncertainty Quantification Methods}\vspace{-10pt}
@@ -323,7 +327,8 @@ Objectives of this work
   \end{columns}
 \end{frame}
 
-\AtBeginSubsection[]{\begin{frame}[shrink=10]{Outline}\vspace{-20pt}
+\AtBeginSubsection[]
+{\begin{frame}[shrink=20,noframenumbering]{Outline}\vspace{-20pt}
   \begin{columns}
     \begin{column}{0.1\textwidth}
     \end{column}
@@ -332,7 +337,8 @@ Objectives of this work
       \tableofcontents[currentsection,currentsubsection,subsectionstyle=show/shaded/hide]%,hideothersubsections]%hideothersubsections]%,subsectionsonly]
     \end{column}
   \end{columns}
-\end{frame}}
+\end{frame}
+}
 
 
 
@@ -715,6 +721,36 @@ Considered impact of
   \vfill
 \end{frame}
 
+\begin{frame}{SCgPC Results}{Models}\vspace{-20pt}
+  \vfill
+  Analytic models used
+  \vfill
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+  \vfill
+      \begin{itemize}
+        \item Tensor Monomials
+  \vfill
+        \item Sudret Polynomial
+  \vfill
+        \item Attenuation
+      \end{itemize}
+  \vfill
+    \end{column}
+    \begin{column}{0.5\textwidth}
+  \vfill
+      \begin{itemize}
+        \item Gauss Peak
+  \vfill
+        \item Ishigami
+  \vfill
+        \item Sobol G-Function
+      \end{itemize}
+  \vfill
+    \end{column}
+  \end{columns}
+  \vfill
+\end{frame}
 
 
 \subsubsection{Tensor Monomials}
