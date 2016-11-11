@@ -102,6 +102,13 @@
 \hypersetup{pdfkeywords=\keywordnames}
 
 %----------------------------------------------------------------------------------------
+%	DECLARATION PAGE
+%	Your institution may give you a different text to place here
+%----------------------------------------------------------------------------------------
+\clearpage
+\includepdf[offset=75 -75,angle=0,pagecommand={}]{university/diss_approval_pdf}  
+\clearpage % Start a new page
+%----------------------------------------------------------------------------------------
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
@@ -117,14 +124,14 @@
  
 %\begin{minipage}{0.4\textwidth}
 %\begin{flushleft}
-  \centering{
+  %\centering{
   \large
   by\\[1cm]
 %\href{http://www.johnsmith.com}
   \authornames\\[1cm]% Author name - remove the \href bracket to remove the link
 \normalsize
 B.S., Physics, Brigham Young University-Idaho, 2010 \\
-M.S., Nuclear Engineering, Oregon State University, 2013}
+M.S., Nuclear Engineering, Oregon State University, 2013%}
 %\end{minipage}
 %\begin{minipage}{0.4\textwidth}
 %\begin{flushright} \large
@@ -151,59 +158,64 @@ Albuquerque, New Mexico
  
 \vfill
 \end{center}
-
 \end{titlepage}
 
+\clearpage % Start a new page
+%%----------------------------------------------------------------------------------------
+%%	DEDICATION
+%%----------------------------------------------------------------------------------------
+%
+\setstretch{1.3} % Return the line spacing back to 1.3
+%
+%\pagestyle{empty} % Page style needs to be empty for this page
+%
+\setcounter{page}{3}
+\begin{center}
+\dedicatory{To my dear wife, Heather, whose support has provided refuge and 
+sanctuary through my every endeavor, and to my children, who remind me who I am.} % Dedication text
+\end{center}
+%
+\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
+
 %----------------------------------------------------------------------------------------
-%	DECLARATION PAGE
-%	Your institution may give you a different text to place here
+%	ACKNOWLEDGEMENTS
 %----------------------------------------------------------------------------------------
 
-%\Declaration{
+\setstretch{1.3} % Reset the line-spacing to 1.3 for body text (if it has changed)
 %
-%\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
+\acknowledgements{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
 %
-%TODO replace this with the official UNM pages.
-%
-%I, \authornames, declare that this thesis titled, '\ttitle' and the work presented in it are my own. I confirm that:
-%
-%\begin{itemize} 
-%\item[\tiny{$\blacksquare$}] This work was done wholly or mainly while in candidature for a research degree at this University.
-%\item[\tiny{$\blacksquare$}] Where any part of this thesis has previously been submitted for a degree or any other qualification at this University or any other institution, this has been clearly stated.
-%\item[\tiny{$\blacksquare$}] Where I have consulted the published work of others, this is always clearly attributed.
-%\item[\tiny{$\blacksquare$}] Where I have quoted from the work of others, the source is always given. With the exception of such  quotations, this thesis is entirely my own work.
-%\item[\tiny{$\blacksquare$}] I have acknowledged all main sources of help.
-%\item[\tiny{$\blacksquare$}] Where the thesis is based on work done by myself jointly with others, I have made clear exactly what was done by others and what I have contributed myself.\\
-%\end{itemize}
-% 
-%Signed:\\
-%\rule[1em]{25em}{0.5pt} % This prints a line for the signature
-% 
-%Date:\\
-%\rule[1em]{25em}{0.5pt} % This prints a line to write the date
-\clearpage
-\includepdf[offset=75 -75,angle=0,pagecommand={}]{university/diss_approval_pdf}  
-%}
+\begin{em}
+\vfill
+First and foremost, I offer my thanks to my adviser, Dr. Anil Prinja, for his dedicated support of my research and
+my family as we've explored this work.  Without him, this opportunity would not have been possible.
 
+\vfill
+On a similar note, I extend warm thanks to the \raven{} team: Drs. Cristian Rabiti, Andrea Alfonsi, 
+Joshua Cogliati, Diego Mandelli, Bob Kinoshita, CongJian Wang, and Dan
+Maljovec.  These remarkable gentlemen have provided no end of assistance as I learned, used, and contributed
+to their (or should I say ``our'') project.  It has been an honor and a phantasmagoric pleasure working on the team.
+
+\vfill
+Thanks also to University of New Mexico colleagues Drs. Aaron Olson, David Dixon, Nick Myers, and Matthew Gonzalez, 
+whose collaboration dried
+out many whiteboard markers but led to many discoveries and much better understanding.  Special thanks also to
+Dr. Mohammad Motamed, whose efforts to bridge mathematics and engineering for polynomial chaos provided much
+of the education for this work.
+
+\vfill
+I extend my gratitude to Idaho National Laboratory researchers Sebastian Schunert, for his efforts in helping me 
+use both \mammoth{} and 
+\rattlesnake{}, and Kyle Gamble and Giovanni Pastori, for their contributions in using \bison{}.
+
+\vfill
+Finally, my thanks rests upon my parents, Will and Mary Lynn, whose choice to take the time to answer ``why''
+questions from an inquisitive child has made all the difference.
+\end{em}
+\vfill
+}
 \clearpage % Start a new page
 
-%----------------------------------------------------------------------------------------
-%	QUOTATION PAGE
-%----------------------------------------------------------------------------------------
-
-\pagestyle{empty} % No headers or footers for the following pages
-
-%\null\vfill % Add some space to move the quote down the page a bit
-%
-%\textit{``Thanks to my solid academic training, today I can write hundreds of words on virtually any topic without possessing a shred of information, which is how I got a good job in journalism."}
-%
-%\begin{flushright}
-%Dave Barry
-%\end{flushright}
-%
-%\vfill\vfill\vfill\vfill\vfill\vfill\null % Add some space at the bottom to position the quote just right
-%
-%\clearpage % Start a new page
 
 %----------------------------------------------------------------------------------------
 %	ABSTRACT PAGE
@@ -212,7 +224,7 @@ Albuquerque, New Mexico
 \addtotoc{Abstract} % Add the "Abstract" page entry to the Contents
 
 \abstract{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
-
+\begin{flushleft}
 As experiment complexity in fields such as nuclear engineering continually increases, so does the
 demand for robust computational methods to simulate them.  In many 
 simulations, input design parameters and intrinsic experiment properties are sources
@@ -246,38 +258,7 @@ nuclear reactor neutronics problem, and a multiphysics fuel cell problem couplin
 neutronics.  Lastly, we demonstrate sensitivity analysis for a time-dependent fuels performance problem.
 We demonstrate the application of all the
 algorithms in \raven, a production-level uncertainty quantification framework.
-}
-
-\clearpage % Start a new page
-
-%----------------------------------------------------------------------------------------
-%	ACKNOWLEDGEMENTS
-%----------------------------------------------------------------------------------------
-
-\setstretch{1.3} % Reset the line-spacing to 1.3 for body text (if it has changed)
-%
-\acknowledgements{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
-%
-First and foremost, I offer my thanks to my adviser, Dr. Anil Prinja, for his dedicated support of my research and
-my family as we've explored this work.  Without him, this opportunity would not have been possible.
-
-On a similar note, I extend warm thanks to the \raven{} team: Drs. Cristian Rabiti, Andrea Alfonsi, 
-Joshua Cogliati, Diego Mandelli, Bob Kinoshita, CongJian Wang, and Dan
-Maljovec.  These remarkable gentlemen have provided no end of assistance as I learned, used, and contributed
-to their (or should I say ``our'') project.  It has been an honor and a phantasmagoric pleasure working on the team.
-
-Thanks also to University of New Mexico colleagues Drs. Aaron Olson, David Dixon, Nick Myers, and Matthew Gonzalez, 
-whose collaboration dried
-out many whiteboard markers but led to many discoveries and much better understanding.  Special thanks also to
-Dr. Mohammad Motamed, whose efforts to bridge mathematics and engineering for polynomial chaos provided much
-of the education for this work.
-
-I extend my gratitude to Idaho National Laboratory researchers Sebastian Schunert, for his efforts in helping me 
-use both \mammoth{} and 
-\rattlesnake{}, and Kyle Gamble and Giovanni Pastori, for their contributions in using \bison{}.
-
-Finally, my thanks rests upon my parents, Will and Mary Lynn, whose choice to take the time to answer ``why''
-questions from an inquisitive child has made all the difference.
+\end{flushleft}
 }
 \clearpage % Start a new page
 
@@ -370,18 +351,6 @@ questions from an inquisitive child has made all the difference.
  $T(Y)$ & Cut-HDMR expansion of $u(Y)$ & \\
 }
 %
-%%----------------------------------------------------------------------------------------
-%%	DEDICATION
-%%----------------------------------------------------------------------------------------
-%
-\setstretch{1.3} % Return the line spacing back to 1.3
-%
-\pagestyle{empty} % Page style needs to be empty for this page
-%
-\dedicatory{Dedicated to my dear wife, Heather, whose support has provided refuge and 
-sanctuary through my every endeavor, and to my children, who remind me who I am.} % Dedication text
-%
-\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
 
 %----------------------------------------------------------------------------------------
 %	THESIS CONTENT - CHAPTERS

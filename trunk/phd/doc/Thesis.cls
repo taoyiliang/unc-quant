@@ -291,13 +291,20 @@
 \newenvironment{abstract}
 {
   \btypeout{Abstract Page}
-  \thispagestyle{empty}
-  \null\vfil
+  \thispagestyle{plain}
+  \null%\vfil
   \begin{center}
     \setlength{\parskip}{0pt}
-    %{\normalsize \UNIVNAME \par} % University name in capitals
-    %\bigskip
-    {\huge{\textit{Abstract}} \par}
+    {\MakeUppercase{\@title} \par}
+    \bigskip
+    by \par
+    \bigskip
+    \authornames \par
+    \vspace{10pt}
+    B.S., Physics, Brigham Young University-Idaho, 2010 \par
+    M.S., Nuclear Engineering, Oregon STate University, 2013 \par
+    \bigskip
+    {\large{ABSTRACT} \par}
     \bigskip
     %{\normalsize \facname \par} % Faculty name
     %{\normalsize \deptname \par} % Department name
@@ -412,7 +419,7 @@
 \btypeout{Acknowledgements}
 \addtotoc{Acknowledgements}
 \thispagestyle{plain}
-\begin{center}{\huge{\textit{Acknowledgements}} \par}\end{center}
+\begin{center}{\huge{ACKNOWLEDGEMENTS} \par}\end{center}
 {\normalsize #1}
 \vfil\vfil\null
 
@@ -420,6 +427,7 @@
 \newcommand\dedicatory[1]{
 \btypeout{Dedicatory}
 \thispagestyle{plain}
+\LARGE{DEDICATION}
 \null\vfil
 \vskip 60\p@
 \begin{center}{\Large \sl #1}\end{center}
