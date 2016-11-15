@@ -106,7 +106,8 @@
 %	Your institution may give you a different text to place here
 %----------------------------------------------------------------------------------------
 \clearpage
-\includepdf[offset=75 -75,angle=0,pagecommand={}]{university/diss_approval_pdf}  
+\thispagestyle{plain}
+\includepdf[offset=75 -75,angle=0,pagecommand={}]{university/diss_approval_pdf_filled}  
 \clearpage % Start a new page
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
@@ -240,19 +241,17 @@ For other models, it is computationally costly to obtain
 good understanding of the output space.  
 
 To combat the expense of random sampling, 
-this research explores the possibilities of advanced methods in
+this research explores the possibilities of using advanced methods in
 Stochastic Collocation for generalized Polynomial Chaos (SCgPC) as an alternative to traditional uncertainty
-quantification techniques such as Monte Carlo (MC) and Latin Hypercube Sampling (LHS) methods.  In this
-thesis we explore the behavior of traditional SCgPC construction strategies as well as
-truncated polynomial spaces using Total Degree and Hyperbolic Cross construction strategies.  While
-an infinite number of polynomials can exactly represent any model, of necessity we limit
-the number of polynomials for practical application.  We
+quantification techniques such as Monte Carlo (MC) and Latin Hypercube Sampling (LHS) methods for applications
+in nuclear engineering.  We consider traditional SCgPC construction strategies as well as
+truncated polynomial spaces using Total Degree and Hyperbolic Cross constructions.  We
 also consider applying anisotropy (unequal treatment of different dimensions) to the polynomial space, 
-and analyze methods whereby optimal levels of
-anisotropy can be approximated.  We review and develop adaptive polynomial construction
-strategies.  Finally, we add High-Dimensional Model Reduction (HDMR) expansions, using SCgPC representations for
-the subspace terms, and consider adaptive methods to construct them.
-We analyze these methods on a series of models of increasing complexity.  We use analytic models of
+and offer methods whereby optimal levels of
+anisotropy can be approximated.  We contribute development to existing adaptive polynomial construction
+strategies.  Finally, we consider High-Dimensional Model Reduction (HDMR) expansions, using SCgPC representations for
+the subspace terms, and contribute new adaptive methods to construct them.
+We apply these methods on a series of models of increasing complexity.  We use analytic models of
 various levels of complexity, then demonstrate performance on two engineering-scale problems: a single-physics
 nuclear reactor neutronics problem, and a multiphysics fuel cell problem coupling fuels performance and
 neutronics.  Lastly, we demonstrate sensitivity analysis for a time-dependent fuels performance problem.

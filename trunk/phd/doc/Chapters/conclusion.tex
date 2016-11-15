@@ -53,7 +53,7 @@ numerical computation.  We introduced cut-HDMR, which makes some approximation t
 calculations substantially.  We also showed that ANOVA expansion moments could be recovered for cut-HDMR.  We
 further showed that SCgPC made an ideal candidate to expand the subset terms in cut-HDMR because of their
 orthogonal properties and efficiency converging regular responses with small-dimensionality input spaces.
-Finally, we introduced adaptive HDMR with adaptive SCgPC subsets, and indicated novel algorithms to reduce the
+Finally, we introduced adaptive HDMR with adaptive SCgPC subsets, and added novel algorithms to reduce the
 cost of performing adaptive searches.
 
 In Chapter \ref{ch:results hdmr} we considered the application of HDMR methods to the analytic models
@@ -78,6 +78,13 @@ valuable information that would not be accessible without time-dependent sensiti
 possible by implementing this analysis for SCgPC and HDMR methods in \raven{}.
 
 \section{Performance Determination}
+The results of this work are twofold.  First, we added novel prediction algorithms for both the SCgPC and HDMR
+(using SCgPC subsets) adaptive expansion algorithms.  Second, we demonstrated performance of these algorithms
+in an industry uncertainty quantification code (\raven({}), and applied them to analysis of existing industry
+codes (\bison{}, \rattlesnake{}, and \mammoth{}).  While we can observe trends in behavior, we acknowledge our
+observations are taken from analysis of only a few applications, and are not representative of all possible
+uses.
+
 As seen in several analytic models as well as engineering performance models, the convergence rate of both 
 SCgPC as well as HDMR (using SCgPC subsets) depends primarily
 on two factors. 
@@ -103,6 +110,12 @@ HDMR.
 Second, we observe for all continuous functions the total degree polynomial construction method significantly outperforms
 the hyperbolic cross method, as expected by its design.  Since polynomial expansion methods struggle to perform well for
 discontinuous models anyway, total degree is a good method to use if the response is expected to be smooth.
+
+Third, we note that for the engineering applications considered, low-order polynomials with low-order
+interactions were sufficient to capture the uncertainty of the responses considered as accurately as using
+Monte Carlo with ten thousand samples.  This lends to the idea that, in general, the quantities of interest in
+fuels performance and neutronics codes have low-order interactions between inputs, and a nearly linear
+relationship between the inputs and the response.
 
 Finally, we note that in general the adaptive methods seldom completely outperform all the other collocation methods.  Because the
 prediction algorithm is imperfect, there will always be a static choice of polynomials that is more effecient.  However, if
