@@ -1,0 +1,118 @@
+\documentclass{mc2015}
+
+
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{graphicx}%
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{cite}
+
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{physics}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+
+%----------------------ANS TEMPLATE STUFF-------------------------------------------------%
+\usepackage[T1]{fontenc}         % Use T1 encoding instead of OT1
+\usepackage[utf8]{inputenc}      % Use UTF8 input encoding
+\usepackage{microtype}           % Improve typography
+\usepackage{booktabs}            % Publication quality tables
+%\usepackage{amsmath}
+%\usepackage{graphicx}
+%\usepackage{float}
+\usepackage[exponent-product=\cdot]{siunitx}
+\usepackage[colorlinks,breaklinks]{hyperref}
+\hypersetup{linkcolor=black, citecolor=black, urlcolor=black}
+\usepackage{lipsum}
+\def\equationautorefname{Eq.}
+\def\figureautorefname{Fig.}
+\authorHead{Paul W. Talbot, CongJian Wang, Cristian Rabiti, Anil K. Prinja}
+\shortTitle{Collocation for UQ in Nuclear Engineering}
+
+
+\newcommand{\expv}[1]{\ensuremath{\mathbb{E}[ #1]}}
+\newcommand{\xs}[2]{\ensuremath{\Sigma_{#1}^{(#2)}}}
+\newcommand{\intO}{\ensuremath{\int\limits_{4\pi}}}
+\newcommand{\intz}{\ensuremath{\int\limits_0^1}}
+\newcommand{\intf}{\ensuremath{\int\limits_{-\infty}^\infty}}
+\newcommand{\intzf}{\ensuremath{\int\limits_{0}^\infty}}
+\newcommand{\LargerCdot}{\raisebox{-0.25ex}{\scalebox{1.2}{$\cdot$}}}
+
+%\textwidth6.6in
+%\textheight9in
+
+
+%\setlength{\topmargin}{0.3in} \addtolength{\topmargin}{-\headheight}
+%\addtolength{\topmargin}{-\headsep}
+
+%\setlength{\oddsidemargin}{0in}
+
+%\oddsidemargin  0.0in \evensidemargin 0.0in \parindent0em
+
+%\pagestyle{fancy}\lhead{MATH 579 (UQ for PDEs)} \rhead{02/24/2014}
+%\chead{Project Proposal} \lfoot{} \rfoot{\bf \thepage} \cfoot{}
+
+\begin{document}
+\title{Collocation Methods for Uncertainty Quantification in Nuclear Engineering Applications}
+
+\author{Paul W. Talbot\footnote{paul.talbot@inl.gov}}
+\author{CongJian Wang}
+\author{Cristian Rabiti}
+\author{Andrea Alfonsi}
+\author{Joshua Cogliati}
+\author{Daniel Maljovec}
+\author{Diego Mandelli}
+\author{Robert Kinoshita}
+\affil{
+  Idaho National Laboratory\\ Nuclear System Design and Analysis Division\\ P.O. Box 1625 MS 3870
+}
+
+\author{Anil K. Prinja}
+\affil{University of New Mexico \\
+     Department of Nuclear Engineering \\ 209 Farris Engineering Center \\ Albuquerque, NM 87131}
+\maketitle
+
+\begin{abstract}
+  TODO abstract
+
+\emph{Key Words}: Uncertainty Quantification, Stochastic Collocation, HDMR, Sparse Grid
+\end{abstract}
+
+%\begin{document}
+\graphicspath{../graphics}
+
+%\section{Introduction}
+\input{intro.tex}
+
+%\section{Methods}
+\input{methods.tex}
+
+%\section{Implementation}
+\input{implement.tex}
+
+%\section{Results}
+\input{results.tex}
+
+\section{Conclusion}
+TODO conclusion
+
+\section{Acknowledgments}
+TODO acknowledgements
+
+\setlength{\baselineskip}{12pt}
+
+\bibliographystyle{mc2015}
+%\bibliography{references}
+
+%\newpage
+\bibliography{../bibliography/uq}
+%\bibliographystyle{plain}
+\end{document}
