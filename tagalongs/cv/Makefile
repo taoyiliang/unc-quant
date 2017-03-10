@@ -1,8 +1,8 @@
-SRC = cv
+SRC = cv_2016
 
 all: tidy
 
-tidy: cv.tex
+tidy: cv_2016.tex
 
 	pdflatex $(SRC).tex
 	# bibtex $(SRC)
