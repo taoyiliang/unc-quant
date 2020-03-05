@@ -6,6 +6,7 @@
 %\usepackage{newcent}   % uses new century schoolbook postscript font
 \newsectionwidth{0pt}  % So the text is not indented under section headings
 \usepackage{fancyhdr}  % use this package to get a 2 line header
+\usepackage{graphicx}
 \renewcommand{\headrulewidth}{0pt} % suppress line drawn by default by fancyhdr
 \setlength{\headheight}{24pt} % allow room for 2-line header
 \setlength{\headsep}{24pt}  % space between header and text
@@ -23,7 +24,8 @@
 %  University of New Mexico \\   Albuquerque, NM 87106}
 
 %\address{{\bf Home Address} \\ 3643 B Deloy Dr. \\Idaho Falls, ID 83401 \\ (509) 713-2842}
-\address{3643 B Deloy Dr. \\Idaho Falls, ID 83401 \\ (509) 713-2842}
+\address{3201 Florian Ave. \\Idaho Falls, ID 83401 \\ (509) 713-2842}
+
 
 
 
@@ -58,11 +60,12 @@ BYU-Idaho, Rexburg, Idaho, GPA 3.84     \hfill    April 2010
 RAVEN project \hfill    Fall 2014 - Present
 
  \begin{itemize} \itemsep -2pt
-  \item High-dimension model reduction method implementation
-  \item Sparse grid collocation method implementation
-  \item Extensive framework improvement, refactoring, development
-  \item Uncertainty quantification for BISON, MAMMOTH, RATTLESNAKE
-  \item Python, C++
+  \item Integrated energy system energy, economics modeling and analysis
+  \item Stochastic gradient descent optimization methods
+  \item High-dimension model reduction and sparse grid collocation
+  \item Agile development, maintenance, refactoring, quality assurance
+  \item Continuous integration implementation
+  \item RAVEN, Python, Conda, Bash, C++
 \end{itemize} \vspace{-6pt}
 
 
@@ -73,7 +76,6 @@ MOOSE projects \hfill    Summers 2010, 2012
   \item Worked within multiphysics object-oriented software environment (MOOSE)
   \item Used method of manufactured solutions to test functionality
   \item Optimized polynomial fits for interstitials and voids in MARMOT
-  \item C++, Python
 \end{itemize} \vspace{-6pt}
 
 
@@ -99,13 +101,21 @@ BWR Neutronics \hfill    Summers 2008, 2009
 \section{\centerline{ COMPUTING SKILLS }}
 \vspace{8pt}
 \center{
-Experienced with Python, C++, Git, Bash, MatLab, Visual Basic\\
-Some experience in Java, Javascript, Fortran, C}
+	Extensive use of Python (Pandas, Xarray, SciKitLearn, Object and Functional), Git, Bash\\
+Experience with C++, MatLab, Visual Basic}
 
 \vspace{0.2in}
-\section{\centerline{PUBLICATIONS}}
+\section{\centerline{SAMPLE PUBLICATIONS}}
 \vspace{15pt}
 \begin{itemize}
+  \item P. W. Talbot, C. Rabiti, et al, ``Correlated Synthetic Time Series Generation using Fourier
+  and ARMA signal processing,'' Int. J. Energy Res. 2020; 1-12. https://doi.org/10.1002/er.5115
+  \item P. Talbot, et al, "Analysis of Differential Financial Impacts on LWR Load-Following Operations", INL
+	  report INL/EXT-19-55614, 2019
+  \item K. Frick, P. Talbot, et al, "Evaluation of Hydrogen Production Feasibility for a Light Water Reactor
+	  in the Midwest", INL report INL/EXT-19-55395, 2019
+  \item A. Epiney, C. Rabiti, P. Talbot, et al, "Case Study: Nuclear-Renewable-Water Integration in Arizona", INL report INL/EXT-18-51369, 2018
+  \item C. Rabiti, A. Epiney, P. W. Talbot, et al, "Status Report on Modeling and Simulation Capabilities for Nuclear-Renewable Hybrid Energy Systems", INL Report INL/EXT-17-43441, 2017
   \item P. W. Talbot, ``Advanced Stochastic Collocation Methods for Polynomial Chaos in RAVEN,'', Ph. D.
     Dissertation, Department of Nuclear Engineering, University of New Mexico, December 2016
   \item P. W. Talbot, C. Wang, et al, ``Multistep Input Reduction for High
@@ -121,29 +131,45 @@ Some experience in Java, Javascript, Fortran, C}
   \item P. W. Talbot, A. K. Prinja, ``Sparse-Grid Stochastic Collocation Uncertainty Quantification Convergence
     for Multigroup Diffusion,'' 2014 ANS winter conference transactions
   \item P. W. Talbot, ``Extending the Discrete Maximum Principle for the IMC equations,'' Oregon State University masters thesis, September 2012
-   \item P. W. Talbot, A. B. Wollaber, T. Palmer, ``Implementing a Discrete Maximum Principle for the IMC Equations," 2012 ANS general conference transactions, M \& C division
-   \item M. R. Tonks, D. Gaston, P. C. Millett, D. Andrs, P. W. Talbot, ``An object-oriented finite element framework for multiphysics phase field simulations," J. Computational Materials Science, Vol. 50 issue 3, January 2011
-   \end{itemize}
+  \item P. W. Talbot, A. B. Wollaber, T. Palmer, ``Implementing a Discrete Maximum Principle for the IMC Equations," 2012 ANS general conference transactions, M \& C division
+\end{itemize}
 
 
 \vspace{0.2in}
 \section{\centerline{MEMBERSHIPS}}
 \vspace{-5pt} % reduce space between section title and contents
 \begin{center}
+      Reviewer, \emph{Energies}, ANS, ANS M\&C\\
+      Technical Program Committee, ANS M\&C 2019\\
+      Copyright holder, RAVEN code\\
       American Nuclear Society - Alpha Nu Sigma \\
-      Society of Physics Students \\
  \end{center}
- \vspace{0.2in}
 
+ \begin{center}
+	 \emph{References available on request.}
+ \end{center}
+
+\end{resume}
+\end{document}
+
+
+
+%%%%%% EXCESS
 \vspace{0.2in}
+\section{\centerline{REFERENCES}}
+% \vspace{-5pt} % reduce space between section title and contents
+\begin{itemize}
+  \item Cristian Rabiti, Relationship Manager, Idaho National Laboratory, cristian.rabiti@inl.gov
+  \item Andrea Alfonsi, Technical Lead, Idaho National Laboratory, andrea.alfonsi@inl.gov
+  \item Anil Prinja, Department Head, University of New Mexico, prinja@unm.edu
+ \end{itemize}
+ \vspace{0.2in}
 %\section{\centerline{INTERESTS}}
 %\vspace{-5pt}
 %\begin{center}
 %scripting and coding, Jazz, family, rock climbing
 %\end{center}
 
-\end{resume}
-\end{document}
 
 
 
