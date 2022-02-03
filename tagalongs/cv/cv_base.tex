@@ -1,0 +1,234 @@
+% LaTeX file for resume
+% This file uses the resume document class (res.cls)
+\let\nofiles\relax
+\documentclass{res}
+%\usepackage{helvetica} % uses helvetica postscript font (download helvetica.sty)
+%\usepackage{newcent}   % uses new century schoolbook postscript font
+\newsectionwidth{0pt}  % So the text is not indented under section headings
+\usepackage{fancyhdr}  % use this package to get a 2 line header
+\usepackage{graphicx}
+\usepackage{hyperref}
+\renewcommand{\headrulewidth}{0pt} % suppress line drawn by default by fancyhdr
+\setlength{\headheight}{24pt} % allow room for 2-line header
+\setlength{\headsep}{24pt}  % space between header and text
+\setlength{\headheight}{24pt} % allow room for 2-line header
+\pagestyle{fancy}     % set pagestyle for document
+\rhead{ {\it P. Talbot}\\{\it p. \thepage} } % put text in header (right side)
+\cfoot{}                                     % the foot is empty
+\topmargin=-0.5in % start text higher on the page
+
+\begin{document}
+\thispagestyle{empty} % this page has no header
+\name{Paul W. Talbot\\[12pt]}% the \\[12pt] adds a blank line after name
+
+%\address{{\bf School Address} \\ Farris Engineering Center, Suite 209 \\
+%  University of New Mexico \\   Albuquerque, NM 87106}
+
+%\address{{\bf Home Address} \\ 3643 B Deloy Dr. \\Idaho Falls, ID 83401 \\ (509) 713-2842}
+\address{3201 Florian Ave. \\Idaho Falls, ID 83401 \\ (509) 713-2842}
+
+
+
+
+\begin{resume}
+
+%\section{\centerline{OBJECTIVE}}
+%\vspace{8pt} % provide vertical space between section title and contents
+%A summer position with the MOOSE team at Idaho National Laboratory working on numerical methods.
+
+\vspace{0.2in}
+\section{\centerline{PROFESSIONAL EXPERIENCE}}
+\vspace{8pt}
+
+{\sl Idaho National Laboratory, Idaho Falls, ID} \\[2pt]
+Integrated Energy Systems (IES) \hfill    2017 - Present
+\begin{itemize} \itemsep -2pt
+  \item \emph{PI and lead developer, HERON (github.com/idaholab/HERON)} \\
+  Led a small team of developers in implementing HERON, a Python-based object-oriented plugin of RAVEN
+  for stochastic techno-economic optimization of grid-energy systems. Planned, designed, and deployed
+  software under continuous-deployment version control and software quality assurance. Provided training
+  and deployed plugin for analyses of novel integrated energy system technologies in several markets,
+   with partner industries, other national laboratories, and universities.
+  \item \emph{2021 LDRD awarded: Signal processing for cybersecurity} \\
+  Managed a 3-year \$1.5M project including lab and university researchers to explore using high/low
+  order correlation for false data injection detection in physical process signals, including
+  toolset software development and demonstration on experimental systems.
+  \item \emph{Stochastic gradient descent optimization R\&D} \\
+  Extended RAVEN software to perform system optimization using stochastic gradient descent algorithms,
+  including forward and central differencing as well as Simultaneous Perturbation Stochastic Approximation
+  (SPSA) gradient descent. Extended existing algorithms to solve stochastic system optimization problems.
+  \item \emph{Point of contact for multiple awarded university-led (NEUP) proposals}
+\end{itemize} \vspace{-6pt}
+
+Uncertainty Quantification \hfill    2014 - 2017
+\begin{itemize} \itemsep -2pt
+  \item \emph{Sparse grid collocation for generalized polynomial chaos} \\
+  As part of doctorate work, extended RAVEN sampling and reduced-order model methods to include
+  sparse grid collocation sampling for multidimensional polynomial surrogate models. Demonstrated
+  strengths and weaknesses of algorithm on several analytic as well as real-world problems.
+  \item \emph{High-dimension model reduction} \\
+  Implemented HDMR to accelerate polynomial fitting using sparse grid collocation, including both
+  static and adaptive sampling strategies.
+  \item \emph{Agile development, maintenance, refactoring, quality assurance}
+  \item \emph{Continuous integration deployment}
+  \item \emph{Senior developer, RAVEN (github.com/idaholab/raven)} \\
+  Trained new users and developers in RAVEN as well as orchestrated signifcant new development and reworks
+  of several systems in RAVEN as needs adjusted, managing performance in both memory and speed.
+  Responded frequently to user queries, offering guidance or implementing code changes. Reviewed
+  proposed code changes for software quality assurance, iterating with developers to improve code
+  contributions.
+  \item \emph{Python, LaTeX, C++, Conda, Bash}
+\end{itemize} \vspace{-6pt}
+
+{\sl Internships} %\\[2pt]
+\begin{itemize} \itemsep -2pt
+  \item 2012 INL, MOOSE Deployment packages and regression testing
+  \item 2011 LANL, Discrete maximum principle for iMC equations
+  \item 2010 INL, MARMOT Frenkel pair distribution R\&D
+  \item 2009 AREVA, BLEU effective enrichment research
+  \item 2008 AREVA, CASMO4 and MICROBURN-B2, benchmarking
+\end{itemize} \vspace{-6pt}
+
+\vspace{0.2in}
+\section{\centerline{EDUCATION}}
+\vspace{8pt}
+{\sl Doctor of Philosophy}, Nuclear Engineering \\
+University of New Mexico, Albuquerque, New Mexico, GPA 4.08 \hfill December 2016 \\
+Thesis - Advanced Stochastic Collocation Methods for Polynomial Chaos in RAVEN
+\begin{itemize} \itemsep -2pt
+\item Researched, implemented multidimensional sparse grid sampling techniques
+\item Distribution-specific polynomial fitting for uncertain variables
+\item Vast statistical convergence improvement demonstrated for continuous responses
+\item Development in Object-Oriented Python (RAVEN framework, github.com/idaholab/raven)
+\item Software quality assurance, version control (Git)
+\item Intership, Idaho National Laboratory
+\end{itemize}
+
+{\sl Master of Science}, Nuclear Engineering \\
+Oregon State University, Corvallis, Oregon, GPA 3.75 \hfill March 2013 \\
+Thesis - Extending the Discrete Maximum Principle for the IMC Equations
+\begin{itemize} \itemsep -2pt
+\item Research, implemented theoretical maximum for implicit Monte Carlo
+\item Improved solve strategy for nonlinear photon transport
+\item Intership, Los Alamos National Laboratory
+\end{itemize}
+
+{\sl Bachelor of Science}, Physics \\
+BYU-Idaho, Rexburg, Idaho, GPA 3.84     \hfill    April 2010
+\begin{itemize} \itemsep -2pt
+\item Investigate down-blended vs fresh UO2 performance in BWR assembly
+\item CASMO4, MICROBURN-B2, ALLADIN benchmarking
+\item Power shapes, pin peaking, design limits
+\item Intership, AREVA NP in Richland, WA
+\end{itemize}
+
+\vspace{0.2in}
+\section{\centerline{ COMPUTING SKILLS }}
+\vspace{8pt}
+\center{
+Extensive use of Python (Conda, Pandas, Xarray, SKLearn, Statsmodels, OOP/Functional), Git, Bash\\
+Experience with C++, MatLab, Visual Basic}
+
+\vspace{0.2in}
+\section{\centerline{SAMPLE PUBLICATIONS}}
+\vspace{15pt}
+\begin{itemize}
+  \item K. Frick, D. Wendt, P. W. Talbot, et al, ``Technoeconomic Assessment of Hydrogen Cogeneration via High Temperature Steam Electrolysis with a Light-Water Reactor,''
+    Applied Energy 2022; vol 306 part B, pp. 118044. https://doi.org/10.1016/j.apenergy.2021.118044
+  \item Y. Li, A. Sundaram, HS. Abdel-Khalik, P. W. Talbot, ``Real-Time Monitoring for Detection of Adversarial Subtle Process Variations,''
+    Nuclear Science and Engineering 2022; pp. 1024. https://doi.org/10.1080/00295639.2021.1997041
+  \item D. McDowell, P. W. Talbot, et al, ``A Technical and Economic Assessment of LWR Flexible Operation for Generation and Demand Balancing to Optimize Plant Revenue'',
+    INL report INL/EXT-21-65443, 2021
+  \item R. R. Flanagan, P. W. Talbot, et al, ``Isolating cloud induced noise to improve generation of synthetic surface solar irradiances,''
+    Advances in Applied Energy 2021, vol 3, pp. 100045. https://doi.org/10.1016/j.adapen.2021.100045
+  \item P. W. Talbot, D. McDowell, et al, ``Evaluation of Hybrid FPOG Applications in Regulated and Deregulated Markets using HERON'',
+    INL report INL/EXT-20-60968, 2020
+  \item P. W. Talbot, C. Rabiti, et al, ``Correlated Synthetic Time Series Generation using Fourier and ARMA signal processing,''
+    Int. J. Energy Res. 2020; 1-12. https://doi.org/10.1002/er.5115
+  \item A. Epiney, C. Rabiti, P. Talbot, et al, "Economic analysis of a nuclear hybrid energy system in a stochastic environment including wind turbines in an electricity grid",
+    Applied Energy 2020; 260, 114227
+  \item P. W. Talbot, et al, "Analysis of Differential Financial Impacts on LWR Load-Following Operations", INL
+	  report INL/EXT-19-55614, 2019
+  \item K. Frick, P. Talbot, et al, "Evaluation of Hydrogen Production Feasibility for a Light Water Reactor
+	  in the Midwest", INL report INL/EXT-19-55395, 2019
+  \item A. Epiney, C. Rabiti, P. Talbot, et al, "Case Study: Nuclear-Renewable-Water Integration in Arizona", INL report INL/EXT-18-51369, 2018
+  \item C. Rabiti, A. Epiney, P. W. Talbot, et al, "Status Report on Modeling and Simulation Capabilities for Nuclear-Renewable Hybrid Energy Systems", INL Report INL/EXT-17-43441, 2017
+  \item P. W. Talbot, ``Advanced Stochastic Collocation Methods for Polynomial Chaos in RAVEN,'', Ph. D.
+    Dissertation, Department of Nuclear Engineering, University of New Mexico, December 2016
+  \item P. W. Talbot, C. Wang, et al, ``Multistep Input Reduction for High
+    Dimensional Uncertainty Quantification in RAVEN Code,'' ANS PHYSOR 2016
+  \item P. W. Talbot, K. Gamble, et al, ``Time-Dependent Sensitivity Analysis of OECD Benchmark using BISON
+    and RAVEN,'' 2016 ANS winter conference transactions
+  \item P. W. Talbot, A. K. Prinja, C. Rabiti, ``Adaptive Sparse-Grid Stochastic Collocation Uncertainty
+    Quantification Convergence for Multigroup Diffusion,'' 2016 ANS annual conference transactions
+  \item C. Wang, P. W. Talbot, et al, ``An efficient Sampling-Based Method for Sensitivity and
+    Uncertainty Analysis through RAVEN,'' 2016 ANS annual conference transactions
+  \item P. W. Talbot, A. K. Prinja, C. Rabiti, ``High Density Model Reduction Uncertainty Quantification
+    for Multigroup Diffusion Neutronics,'' 2015 ANS M\&C topical conference transactions
+  \item P. W. Talbot, A. K. Prinja, ``Sparse-Grid Stochastic Collocation Uncertainty Quantification Convergence
+    for Multigroup Diffusion,'' 2014 ANS winter conference transactions
+  \item P. W. Talbot, ``Extending the Discrete Maximum Principle for the IMC equations,'' Oregon State University masters thesis, September 2012
+  \item P. W. Talbot, A. B. Wollaber, T. Palmer, ``Implementing a Discrete Maximum Principle for the IMC Equations," 2012 ANS general conference transactions, M \& C division
+\end{itemize}
+\vspace{10pt}
+\begin{itemize}
+  \item ORCID: \href{https://orcid.org/0000-0002-9672-9044}{0000-0002-9672-9044}
+  \item OSTI: \url{https://www.osti.gov/search/orcid:0000000296729044}
+  \item Publons (reviews): \url{https://publons.com/researcher/3839497/paul-talbot/}
+\end{itemize}
+
+\vspace{0.2in}
+\section{\centerline{MEMBERSHIPS}}
+\vspace{-5pt} % reduce space between section title and contents
+\begin{itemize}
+  \item Reviewer:
+  \begin{itemize}
+    \item \emph{Applied Energy}
+    \item \emph{Energies}
+    \item \emph{Mathematics}
+    \item \emph{Nuclear Science and Engineering}
+    \item \emph{Nuclear Technology}
+  \end{itemize}
+  \item Conference reviewer: ANS, ANS M\&C\\
+  \item Technical Program Committee, ANS M\&C 2019\\
+  \item Member, American Nuclear Society
+ \end{itemize}
+
+ \begin{center}
+	 \emph{References available on request.}
+ \end{center}
+
+\end{resume}
+\end{document}
+
+
+
+%%%%%% EXCESS
+\vspace{0.2in}
+\section{\centerline{REFERENCES}}
+% \vspace{-5pt} % reduce space between section title and contents
+\begin{itemize}
+  \item Cristian Rabiti, Relationship Manager, Idaho National Laboratory, cristian.rabiti@inl.gov
+  \item Andrea Alfonsi, Technical Lead, Idaho National Laboratory, andrea.alfonsi@inl.gov
+  \item Anil Prinja, Department Head, University of New Mexico, prinja@unm.edu
+ \end{itemize}
+ \vspace{0.2in}
+%\section{\centerline{INTERESTS}}
+%\vspace{-5pt}
+%\begin{center}
+%scripting and coding, Jazz, family, rock climbing
+%\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
