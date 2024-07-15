@@ -1,0 +1,163 @@
+% LaTeX file for resume
+% This file uses the resume document class (res.cls)
+\let\nofiles\relax
+\documentclass{res}
+%\usepackage{helvetica} % uses helvetica postscript font (download helvetica.sty)
+%\usepackage{newcent}   % uses new century schoolbook postscript font
+\newsectionwidth{0pt}  % So the text is not indented under section headings
+\usepackage{fancyhdr}  % use this package to get a 2 line header
+\usepackage{graphicx}
+\usepackage{hyperref}
+\renewcommand{\headrulewidth}{0pt} % suppress line drawn by default by fancyhdr
+\setlength{\headheight}{24pt} % allow room for 2-line header
+\setlength{\headsep}{24pt}  % space between header and text
+\setlength{\headheight}{24pt} % allow room for 2-line header
+\pagestyle{fancy}     % set pagestyle for document
+\rhead{ {\it P. Talbot}\\{\it p. \thepage} } % put text in header (right side)
+\cfoot{}                                     % the foot is empty
+\topmargin=-0.5in % start text higher on the page
+
+\begin{document}
+\thispagestyle{empty} % this page has no header
+\name{Paul W. Talbot\\[12pt]}% the \\[12pt] adds a blank line after name
+
+%\address{{\bf School Address} \\ Farris Engineering Center, Suite 209 \\
+%  University of New Mexico \\   Albuquerque, NM 87106}
+
+%\address{{\bf Home Address} \\ 3643 B Deloy Dr. \\Idaho Falls, ID 83401 \\ (509) 713-2842}
+\address{3201 Florian Ave. \\Idaho Falls, ID 83401 \\ (509) 713-2842}
+
+
+
+
+\begin{resume}
+
+%\section{\centerline{OBJECTIVE}}
+%\vspace{8pt} % provide vertical space between section title and contents
+%A summer position with the MOOSE team at Idaho National Laboratory working on numerical methods.
+\vspace{0.2in}
+\section{\centerline{EDUCATION}}
+\vspace{8pt}
+{\sl Doctor of Philosophy}, Nuclear Engineering \\
+University of New Mexico, Albuquerque, New Mexico, GPA 4.08 \hfill December 2016 \\
+Thesis - Advanced Stochastic Collocation Methods for Polynomial Chaos in RAVEN
+% \begin{itemize} \itemsep -2pt
+% \item Researched, implemented multidimensional sparse grid sampling techniques
+% \item Distribution-specific polynomial fitting for uncertain variables
+% \item Vast statistical convergence improvement demonstrated for continuous responses
+% \item Development in Object-Oriented Python (RAVEN framework, github.com/idaholab/raven)
+% \item Software quality assurance, version control (Git)
+% \item Intership, Idaho National Laboratory
+% \end{itemize}
+
+{\sl Master of Science}, Nuclear Engineering \\
+Oregon State University, Corvallis, Oregon, GPA 3.75 \hfill March 2013 \\
+Thesis - Extending the Discrete Maximum Principle for the IMC Equations
+% \begin{itemize} \itemsep -2pt
+% \item Research, implemented theoretical maximum for implicit Monte Carlo
+% \item Improved solve strategy for nonlinear photon transport
+% \item Intership, Los Alamos National Laboratory
+% \end{itemize}
+
+{\sl Bachelor of Science}, Physics \\
+BYU-Idaho, Rexburg, Idaho, GPA 3.84     \hfill    April 2010
+% \begin{itemize} \itemsep -2pt
+% \item Investigate down-blended vs fresh UO2 performance in BWR assembly
+% \item CASMO4, MICROBURN-B2, ALLADIN benchmarking
+% \item Power shapes, pin peaking, design limits
+% \item Intership, AREVA NP in Richland, WA
+% \end{itemize}
+
+
+%\vspace{0.2in}
+\section{\centerline{PROFESSIONAL EXPERIENCE}}
+\vspace{8pt}
+
+{\sl Idaho National Laboratory, Idaho Falls, ID} \\[2pt]
+Integrated Energy Systems (IES) \hfill    2017 - Present
+\begin{itemize} \itemsep -2pt
+  \item \emph{Software architect, FORCE (github.com/idaholab/FORCE)}
+  \item \emph{2021 LDRD awarded: Signal processing for cybersecurity}
+  \item \emph{Stochastic gradient descent optimization R\&D}
+\end{itemize} \vspace{-6pt}
+
+Uncertainty Quantification \hfill    2014 - 2017
+\begin{itemize} \itemsep -2pt
+  \item \emph{Sparse grid collocation for generalized polynomial chaos}
+  \item \emph{High-dimension model reduction}
+  \item \emph{Continuous integration deployment}
+  \item \emph{Senior developer, RAVEN (github.com/idaholab/raven)}
+\end{itemize} \vspace{-6pt}
+
+{\sl Internships} %\\[2pt]
+\begin{itemize} \itemsep -2pt
+  \item 2012 INL, MOOSE Deployment packages and regression testing
+  \item 2011 LANL, Discrete maximum principle for iMC equations
+  \item 2010 INL, MARMOT Frenkel pair distribution R\&D
+  \item 2009 AREVA, BLEU effective enrichment research
+  \item 2008 AREVA, CASMO4 and MICROBURN-B2, benchmarking
+\end{itemize} \vspace{-6pt}
+
+\vspace{10pt}
+{\sl Publications} %\\[2pt]
+\begin{itemize}
+  \item ORCID: \href{https://orcid.org/0000-0002-9672-9044}{0000-0002-9672-9044}
+  \item OSTI: \url{https://www.osti.gov/search/orcid:0000000296729044}
+  \item Publons (reviews): \url{https://publons.com/researcher/3839497/paul-talbot/}
+\end{itemize}
+
+\vspace{0.2in}
+% \section{\centerline{MEMBERSHIPS}}
+% \vspace{-5pt} % reduce space between section title and contents
+% \begin{itemize}
+%   \item Reviewer:
+%   \begin{itemize}
+%     \item \emph{Applied Energy}
+%     \item \emph{Energies}
+%     \item \emph{Mathematics}
+%     \item \emph{Nuclear Science and Engineering}
+%     \item \emph{Nuclear Technology}
+%   \end{itemize}
+%   \item Conference reviewer: ANS, ANS M\&C\\
+%   \item Technical Program Committee, ANS M\&C 2019\\
+%   \item Member, American Nuclear Society
+%  \end{itemize}
+
+%  \begin{center}
+% 	 \emph{References available on request.}
+%  \end{center}
+
+\end{resume}
+\end{document}
+
+
+
+%%%%%% EXCESS
+\vspace{0.2in}
+\section{\centerline{REFERENCES}}
+% \vspace{-5pt} % reduce space between section title and contents
+\begin{itemize}
+  \item Cristian Rabiti, Relationship Manager, Idaho National Laboratory, cristian.rabiti@inl.gov
+  \item Andrea Alfonsi, Technical Lead, Idaho National Laboratory, andrea.alfonsi@inl.gov
+  \item Anil Prinja, Department Head, University of New Mexico, prinja@unm.edu
+ \end{itemize}
+ \vspace{0.2in}
+%\section{\centerline{INTERESTS}}
+%\vspace{-5pt}
+%\begin{center}
+%scripting and coding, Jazz, family, rock climbing
+%\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
